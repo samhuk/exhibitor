@@ -1,0 +1,3 @@
+import { watchServer } from '.'
+
+watchServer()

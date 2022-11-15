@@ -1,0 +1,3 @@
+import { watchClient } from '.'
+
+watchClient()

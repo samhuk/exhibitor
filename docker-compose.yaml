@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  client:
+    container_name: client
+    build:
+      context: ./src/client
+    ports:
+    - "80:80"
+  api:
+    container_name: api
+    user: node
+    build:
+      context: ./src/server
+    volumes:
+      - ./import:/import
+      - ./content:/content
+    env_file:
+      - ./prod.env
+    ports:
+    - "81:80"

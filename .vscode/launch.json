@@ -1,0 +1,47 @@
+{
+  "configurations": [
+    {
+      "name": "Run Unit Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+      "args": [
+          "--runInBand",
+          "--no-cache"
+      ],
+      "preLaunchTask": "unitTestsDebugPreLaunchTask"
+    },
+    {
+      "name": "Attach Client",
+      "type": "firefox",
+      "request": "attach",
+      "url": "http://localhost:8080/",
+      "webRoot": "/build/client",
+      "pathMappings": [
+        {
+          "url": "http://localhost:8080/src",
+          "path": "${workspaceFolder}/src"
+        }
+      ]
+    },
+    {
+      "name": "Attach Server",
+      "port": 5003,
+      "request": "attach",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+    {
+      "name": "Start Server",
+      "program": "./build/server/out.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "preLaunchTask": "buildServerDev",
+      "type": "pwa-node"
+    }
+  ]
+}

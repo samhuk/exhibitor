@@ -1,0 +1,99 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb"
+  ],
+  "ignorePatterns": [
+    "node_modules/**/*",
+    "build/**/*",
+    "build-test/**/*",
+    "import/**/*",
+    "content/**/*",
+    "pgdata/**/*",
+    "package.lock.json",
+    "nginx.conf",
+    "LICENSE",
+    "Dockerfile",
+    "*.yaml",
+    "*.go",
+    "*.sh",
+    "*.md",
+    "*.sql",
+    "*.json",
+    "*.scss",
+    "*.html",
+    "*.ico",
+    "*.ttf",
+    "*.woff2",
+    "*.txt",
+    "*.env",
+    "*.md",
+    "*.bat",
+    "*.js"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 13,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "@typescript-eslint"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts", ".tsx", ".js", ".jsx", ".scss"]
+      }
+    }
+  },
+  "rules": {
+    "semi": [2, "never"],
+    "prefer-destructuring": "off",
+    "import/extensions": "off",
+    "radix": "off",
+    "object-curly-newline": "off",
+    "react/function-component-definition": [2, {
+      "namedComponents": "arrow-function",
+      "unnamedComponents": "arrow-function"
+    }],
+    "comma-dangle": ["error", "always-multiline"],
+    "nonblock-statement-body-position": ["error", "any"],
+    "curly": ["error", "multi-or-nest", "consistent"],
+    "max-len": ["error", { "code": 150, "ignoreTemplateLiterals": true }],
+    "react/jsx-filename-extension": [1, {
+      "extensions": [".ts", ".tsx"]
+    }],
+    "react/require-default-props": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "arrow-parens": [2, "as-needed"],
+    "no-return-assign": [0],
+    "react/destructuring-assignment": [0],
+    "brace-style": [2, "stroustrup"],
+    "no-underscore-dangle": [0],
+    "no-nested-ternary": [0],
+    "react/jsx-one-expression-per-line": "off",
+    "import/prefer-default-export": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error",
+    "react/no-array-index-key": "warn",
+    "class-methods-use-this": "off",
+    "react/jsx-max-props-per-line": "off",
+    "react/jsx-first-prop-new-line": "off",
+    "no-useless-constructor": "off",
+    "no-empty-function": "off",
+    "lines-between-class-members": "off",
+    "no-param-reassign": "warn",
+    "react/jsx-no-useless-fragment": "warn",
+    "object-shorthand": ["error", "properties"],
+    "space-before-function-paren": "off"
+  }
+}
