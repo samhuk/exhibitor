@@ -26,16 +26,16 @@ If you found this delightful, feel free to [buy me a coffee](https://www.buymeac
 
 ---
 
-<h1 align="center">{{app-name}}</h1>
+<h1 align="center">exhibitor</h1>
 <p align="center">
-  <em>{{app-slogan}}</em>
+  <em>Delightful App</em>
 </p>
 
 > Badges like license type and current build status can go here. Uncomment the HTML below within this README to show them.
 
 <!-- <p align="center">
-  <a href="https://github.com/{{github-user-name}}/{{app-name}}/actions/workflows/ci.yaml/badge.svg" target="_blank">
-    <img src="https://github.com/{{github-user-name}}/{{app-name}}/actions/workflows/ci.yaml/badge.svg" alt="ci status" />
+  <a href="https://github.com/samhuk/exhibitor/actions/workflows/ci.yaml/badge.svg" target="_blank">
+    <img src="https://github.com/samhuk/exhibitor/actions/workflows/ci.yaml/badge.svg" alt="ci status" />
   </a>
   <a href="https://img.shields.io/badge/License-MIT-green.svg" target="_blank">
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="license" />

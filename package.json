@@ -8,39 +8,53 @@
     "build-unit-tests": "npx tsc -p ./src/tsconfig.test.json",
     "run-unit-tests": "jest",
     "unit-tests": "npm run clean-unit-tests && npm run build-unit-tests && npm run run-unit-tests",
+  
     "lint": "eslint -c .eslintrc.json ./src --ext .ts,.tsx",
     "lint-errors-only": "eslint -c .eslintrc.json ./src --ext .ts,.tsx --quiet",
+
     "clean-ts": "rimraf ./build",
     "build-ts-client": "tsc -p ./src/client/tsconfig.json",
     "build-ts-server": "tsc -p ./src/server/tsconfig.json",
     "build-ts": "npm run clean-ts && npm run build-ts-server && npm run build-ts-client",
+
     "check": "npm rum lint-errors-only && npm run build-ts && npm run unit-tests",
+
     "clean-build": "rimraf ./buildScripts/build",
     "build-build": "npm run clean-build && tsc -p ./buildScripts/tsconfig.json",
+
     "build-client-dev": "npm run build-build && env-cmd -e dev node ./buildScripts/build/buildClient.js",
     "build-server-dev": "npm run build-build && env-cmd -e dev node ./buildScripts/build/buildServer.js",
     "build-dev": "npm run build-build && env-cmd -e dev node ./buildScripts/build/build.js",
+
     "build-client-prod": "npm run build-build && env-cmd -e prod node ./buildScripts/build/buildClient.js",
     "build-server-prod": "npm run build-build && env-cmd -e prod node ./buildScripts/build/buildServer.js",
     "build-prod": "npm run build-build && env-cmd -e prod node ./buildScripts/build/build.js",
+
     "watch-client-dev": "env-cmd -e dev node ./buildScripts/build/watchClient.js",
     "watch-server-dev": "env-cmd -e dev node ./buildScripts/build/watchServer.js",
-    "watch-client-dev-zen": "env-cmd -e dev-zen node ./buildScripts/build/watchClient.js",
-    "watch-server-dev-zen": "env-cmd -e dev-zen node ./buildScripts/build/watchServer.js",
+
     "start": "npm run build-build && concurrently -n \"ui ,api\" -c \"cyan,blue\" \"npm run watch-client-dev\" \"npm run watch-server-dev\"",
-    "start-zen": "npm run build-build && concurrently -n \"ui ,api\" -c \"cyan,blue\" \"npm run watch-client-dev-zen\" \"npm run watch-server-dev-zen\"",
-    "start-server-dev": "npm run build-server-dev && env-cmd -e dev node ./build/server/out.js"
+
+    "start-server-dev": "npm run build-server-dev && env-cmd -e dev node ./build/server/out.js",
+
+    "build-api-builder": "tsc -p ./src/api/builder/tsconfig.json",
+    "watch-test-components-build": "env-cmd -e dev node ./bin/builder/index.js",
+
+    "start-all": "npm run build-build && npm run build-api-builder && concurrently -n \"builder, ui ,api\" -c \"green, cyan,blue\" \"npm run watch-test-components-build\" \"npm run watch-client-dev\" \"npm run watch-server-dev\""
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.6",
+    "@samhuk/type-helpers": "^1.0.3",
     "ajax": "^0.0.4",
+    "chokidar": "^3.5.3",
     "concurrently": "^7.4.0",
     "connect-livereload": "^0.6.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "globsie": "^0.0.10",
     "livereload": "^0.9.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -64,7 +78,7 @@
     "@typescript-eslint/parser": "^5.40.0",
     "babel-jest": "^29.1.2",
     "env-cmd": "^10.1.0",
-    "esdar": "^0.0.4",
+    "esdar": "^0.0.6",
     "eslint": "^8.25.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.26.0",

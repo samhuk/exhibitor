@@ -2,14 +2,15 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.json",
   "include": [
-    "../common",
-    "../api/builder",
     "./"
   ],
   "compilerOptions": {
-    "declaration": false,
+    "jsx": "react",
+    "target": "es2017",
+    "declaration": true,
     "sourceMap": false,
     "noEmit": false,
-    "outDir": "../../build/server"
+    "outDir": "../../example-component-library-dist",
+    "skipLibCheck": true
   }
 }

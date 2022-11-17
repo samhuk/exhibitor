@@ -1,0 +1,31 @@
+// Branding
+$brand-background-color: #8E44AD;
+
+// Texts
+$text-color: #222;
+$link-color: #1F8ACC;
+$icon-color: #444;
+
+// Backgrounds
+$background-color: #fafafa;
+$secondary-background-color: #ccc;
+
+// Borders
+$border-color: #ccc;
+$border-color-darker-1: darken($border-color, 20);
+
+// Statuses
+$green-color: #3dc451;
+$green-bg-color: lighten($green-color, 45);
+
+$yellow-color: #ffcc00;
+$yellow-bg-color: lighten($yellow-color, 45);
+
+$red-color: #eb4034;
+$red-bg-color: lighten($red-color, 40);
+
+$blue-color: #2465ff;
+$blue-bg-color: lighten($blue-color, 40);
+
+// Specifics
+$root-header-background-color: #ddd;

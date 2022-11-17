@@ -37,20 +37,25 @@ const Healthcheck = (props: { value: HealthcheckStatus, loadingState: LoadingSta
   )
 }
 
-const Links = () => (
-  <div className="links">
-    <div className="title">Learn the tech:</div>
-    <ul>
-      <li><a href="https://reactjs.org/" target="_blank" rel="noreferrer">React</a></li>
-      <li><a href="https://react-redux.js.org/" target="_blank" rel="noreferrer">React with Redux</a></li>
-      <li><a href="https://esbuild.github.io/" target="_blank" rel="noreferrer">esbuild</a></li>
-      <li><a href="http://expressjs.com/" target="_blank" rel="noreferrer">express.js</a></li>
-      <li><a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer">Typescript</a></li>
-      <li><a href="https://eslint.org/" target="_blank" rel="noreferrer">ESLint</a></li>
-      <li><a href="https://jestjs.io/" target="_blank" rel="noreferrer">Jest</a></li>
-    </ul>
-  </div>
-)
+const ComponentExhibits = () => {
+  const componentExhibits = useAppSelector(s => s.componentExhibits)
+
+  if (!componentExhibits.ready)
+    return <div>Waiting for component exhibits to load...</div>
+
+  return (
+    <div>
+      {componentExhibits.value.map(exhibit => (
+        exhibit.variants.map(variant => (
+          <div>
+            <div>{variant.name}</div>
+            <div>{exhibit.renderFn(variant.props)}</div>
+          </div>
+        ))
+      ))}
+    </div>
+  )
+}
 
 export const App = () => {
   const healthcheckStatus = useAppSelector(s => s.healthcheck)
@@ -61,12 +66,8 @@ export const App = () => {
 
   return (
     <div className="app">
-      <div className="title">web-app-template</div>
-      <Links />
-      <div className="health-check">
-        <div className="title">server health-check:</div>
-        <Healthcheck value={healthcheckStatus.value} loadingState={healthcheckStatus.loadingState} error={healthcheckStatus.error} />
-      </div>
+      <div className="title">Exhibitor</div>
+      <ComponentExhibits />
     </div>
   )
 }

@@ -1,0 +1,150 @@
+@import './colors';
+@import './borders';
+
+.cl-button {
+  border: $border;
+  border-radius: $border-radius;
+  padding: 5px 8px;
+  cursor: pointer;
+
+  &.size-normal {
+    &.icon-left {
+      i {
+        margin-right: 7px;
+      }
+    }
+  
+    &.icon-right {
+      i {
+        margin-left: 7px;
+      }
+    }
+  }
+
+  &.size-large {
+    padding: 11px 20px;
+    font-size: 20px;
+
+    &.icon-left {
+      i {
+        margin-right: 17px;
+      }
+    }
+  
+    &.icon-right {
+      i {
+        margin-left: 17px;
+      }
+    }
+  }
+
+  &[disabled] {
+    cursor: default;
+  
+    &.color-default {
+      color: #888;
+      i {
+        color: #888;
+      }
+    }
+
+    &.color-green {
+      background-color: lighten($green-color, 20);
+    }
+
+    &.color-yellow {
+      background-color: lighten($yellow-color, 10);
+    }
+
+    &.color-red {
+      background-color: lighten($red-color, 20);
+    }
+
+    &.color-blue {
+      background-color: lighten($blue-color, 20);
+    }
+  }
+
+  &.color-default {
+    background-color: $background-color;
+
+    &:not([disabled]):hover {
+      background-color: darken($background-color, 5);
+      border-color: darken($border-color, 5);
+      transition: 0.15s;
+    }
+  }
+
+  &.color-green {
+    color: white;
+    border-color: transparent;
+    background-color: $green-color;
+    
+    i {
+      color: white;
+    }
+
+    &:not([disabled]):hover {
+      background-color: darken($green-color, 5);
+      transition: 0.15s;
+    }
+  }
+
+  &.color-yellow {
+    color: white;
+    border-color: transparent;
+    background-color: $yellow-color;
+    
+    i {
+      color: white;
+    }
+
+    &:not([disabled]):hover {
+      background-color: darken($yellow-color, 2);
+      transition: 0.15s;
+    }
+  }
+
+  &.color-red {
+    color: white;
+    border-color: transparent;
+    background-color: $red-color;
+    
+    i {
+      color: white;
+    }
+
+
+    &:not([disabled]):hover {
+      background-color: darken($red-color, 7);
+      transition: 0.15s;
+    }
+  }
+
+  &.color-blue {
+    color: white;
+    border-color: transparent;
+    background-color: $blue-color;
+    
+    i {
+      color: white;
+    }
+
+    &:not([disabled]):hover {
+      background-color: darken($blue-color, 7);
+      transition: 0.15s;
+    }
+  }
+
+  &.icon-button {
+    background-color: transparent;
+    border-color: transparent;
+    padding: 2px 5px;
+
+    &:not([disabled]):hover {
+      background-color: #dadada;
+      border-color: transparent;
+      box-shadow: 0px 0px 1px 1px #ccc;
+    }
+  }
+}

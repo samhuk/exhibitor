@@ -23,13 +23,9 @@ type FetchedAction<
 }
 
 type BasicStoreSegmentArtifacts<
-  // TSegmentName extends string,
-  // TActionSegmentName extends string,
   TValue extends any,
   TFetchRequestFn extends (...args: any[]) => Promise<ResponseBase<TValue>> = (...args: any[]) => Promise<ResponseBase<TValue>>,
 > = {
-  // fetchAction: () => ({ type: `FETCH_${TActionSegmentName}` }),
-  // fetchedAction: (newValue: TValue) => ({ type: `${TActionSegmentName}_FETCHED` }),
   fetchThunk: (...args: Parameters<TFetchRequestFn>) => ThunkAction<void, any, any, any>
   reducer: (state: State<TValue>, action: any) => State<TValue>,
 }

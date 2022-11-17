@@ -1,0 +1,59 @@
+import { IsTrueAndFalse } from '@samhuk/type-helpers/dist/type-helpers/types'
+
+export type PropsOfReactComponent<
+  TReactComponent extends ReactComponent = ReactComponent,
+> = Parameters<TReactComponent>[0]
+
+export type ReactComponent<TProps extends any = any> = (props: TProps) => JSX.Element
+
+type IncludeIfTrue<TBool extends boolean, ObjToInclude> = IsTrueAndFalse<TBool> extends true
+  ? ObjToInclude
+  : (TBool extends true ? ObjToInclude : {})
+
+type IncludeIfFalse<TBool extends boolean, ObjToInclude> = IsTrueAndFalse<TBool> extends true
+  ? ObjToInclude
+  : (TBool extends false ? ObjToInclude : {})
+
+type EventsDict = { [eventName: string]: (...eventProps: any) => any }
+
+export type EventsSelector<
+  TProps extends any = any,
+> = (props: TProps) => EventsDict
+
+type _ComponentExhibitBuilder<
+  TProps extends any = any,
+  THasDefinedEvents extends boolean = boolean,
+  THasDefinedDefaultProps extends boolean = boolean,
+  TDefaultProps extends TProps = TProps,
+> = IncludeIfFalse<THasDefinedEvents, {
+  events: (selector: EventsSelector<TProps>) => _ComponentExhibitBuilder<TProps, true>
+}> & IncludeIfFalse<THasDefinedDefaultProps, {
+  defaults: <TNewDefaultProps extends TProps>(
+    defaultProps: TNewDefaultProps
+  ) => _ComponentExhibitBuilder<TProps, THasDefinedEvents, true, TNewDefaultProps>
+}> & {
+  variant: (
+    name: string,
+    props: TProps | ((defaults: TDefaultProps) => TProps)
+  ) => _ComponentExhibitBuilder<TProps, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps>
+} & {
+  build: () => ComponentExhibit<TProps, TDefaultProps>
+}
+
+export type ComponentExhibitBuilder<
+  TReactComponent extends ReactComponent = ReactComponent,
+  THasDefinedEvents extends boolean = boolean,
+  THasDefinedDefaultProps extends boolean = boolean,
+  TDefaultProps extends undefined = undefined,
+> = _ComponentExhibitBuilder<PropsOfReactComponent<TReactComponent>, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps>
+
+export type ComponentExhibit<
+  TProps extends any = any,
+  TDefaultProps extends TProps = TProps,
+> = {
+  name: string
+  renderFn: ReactComponent<TProps>
+  defaultProps: TDefaultProps
+  eventPropsSelector: EventsSelector<TProps>
+  variants: { name: string, props: TProps }[]
+}

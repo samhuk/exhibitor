@@ -1,0 +1,1 @@
+export { exhibit } from './componentExhibit'

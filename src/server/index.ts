@@ -7,6 +7,7 @@ import { addHotReloadingMiddleware } from './appFeatures'
 import { env } from './env'
 import { sendErrorResponse } from './api/responses'
 import { notFound } from './api/errorVariants'
+import { COMPONENTS_BUNDLE_DIR } from '../api/builder/paths'
 
 const app = express()
 
@@ -28,7 +29,13 @@ if (!env.isProd) {
 
   app
     .get('*', (req, res) => {
-      const clientFilePath = path.resolve(clientDir, `./${req.url}`)
+      // Special handling for if the requested url is the component bundle output file
+      if (req.url.startsWith('/index.exh')) {
+        res.sendFile(req.path, { root: COMPONENTS_BUNDLE_DIR })
+        return
+      }
+
+      const clientFilePath = path.resolve(clientDir, `./${req.path}`)
       // If the client file exists, serve it
       if (fs.existsSync(clientFilePath))
         res.sendFile(req.url, { root: clientDir })

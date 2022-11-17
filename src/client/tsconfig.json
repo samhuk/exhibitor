@@ -7,6 +7,7 @@
   ],
   "compilerOptions": {
     "jsx": "react",
-    "outDir": "../../build/client"
+    "outDir": "../../build/client",
+    "types": ["./types.d.ts"]
   }
 }
