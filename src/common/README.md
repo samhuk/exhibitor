@@ -1,0 +1,1 @@
+This directory contains common Typescript for all of Exhibitor. This includes things like paths for various locations in the repository, useful utility functions like string helpers, and so on.

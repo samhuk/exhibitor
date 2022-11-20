@@ -1,0 +1,1 @@
+This directory contains the exhibitor site, which consumes the user's component library and exhibits them with a user-friendly website.

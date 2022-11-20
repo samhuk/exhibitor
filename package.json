@@ -1,46 +1,50 @@
 {
-  "name": "web-app-template",
+  "name": "exhibitor",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "React component library workshop platform",
+  "main": "./build/api/index.js",
+  "types": "./build/api/index.d.ts",
+  "bin": "./build/cmd/index.js",
   "scripts": {
     "clean-unit-tests": "rimraf ./build-test",
     "build-unit-tests": "npx tsc -p ./src/tsconfig.test.json",
     "run-unit-tests": "jest",
     "unit-tests": "npm run clean-unit-tests && npm run build-unit-tests && npm run run-unit-tests",
-  
+
     "lint": "eslint -c .eslintrc.json ./src --ext .ts,.tsx",
     "lint-errors-only": "eslint -c .eslintrc.json ./src --ext .ts,.tsx --quiet",
 
-    "clean-ts": "rimraf ./build",
-    "build-ts-client": "tsc -p ./src/client/tsconfig.json",
-    "build-ts-server": "tsc -p ./src/server/tsconfig.json",
-    "build-ts": "npm run clean-ts && npm run build-ts-server && npm run build-ts-client",
+    "build-site-ts-client": "tsc -p ./src/site/client/tsconfig.json",
+    "build-site-ts-server": "tsc -p ./src/site/server/tsconfig.json",
+    "build-site-ts": "npm run clean-ts && npm run build-ts-server && npm run build-ts-client",
 
-    "check": "npm rum lint-errors-only && npm run build-ts && npm run unit-tests",
+    "check": "npm rum lint-errors-only && npm run build-site-ts && npm run unit-tests",
 
-    "clean-build": "rimraf ./buildScripts/build",
-    "build-build": "npm run clean-build && tsc -p ./buildScripts/tsconfig.json",
+    "clean-site-build": "rimraf ./build/site-build",
+    "_build-site-build": "tsc -p ./src/site/build/tsconfig.json",
+    "build-site-build": "npm run clean-site-build && npm run _build-site-build",
 
-    "build-client-dev": "npm run build-build && env-cmd -e dev node ./buildScripts/build/buildClient.js",
-    "build-server-dev": "npm run build-build && env-cmd -e dev node ./buildScripts/build/buildServer.js",
-    "build-dev": "npm run build-build && env-cmd -e dev node ./buildScripts/build/build.js",
+    "clean-site": "rimraf ./build/site-client && rimraf ./build/site-server",
+    "_build-site-client-dev": "env-cmd -e dev node ./build/site-build/bin/buildClient.js",
+    "_build-site-server-dev": "env-cmd -e dev node ./build/site-build/bin/buildServer.js",
+    "build-site-dev": "npm run clean-site && npm run build-site-build && npm run _build-site-server-dev && npm run _build-site-client-dev",
 
-    "build-client-prod": "npm run build-build && env-cmd -e prod node ./buildScripts/build/buildClient.js",
-    "build-server-prod": "npm run build-build && env-cmd -e prod node ./buildScripts/build/buildServer.js",
-    "build-prod": "npm run build-build && env-cmd -e prod node ./buildScripts/build/build.js",
+    "_build-site-client-prod": "env-cmd -e prod node ./build/site-build/bin/buildClient.js",
+    "_build-site-server-prod": "env-cmd -e prod node ./build/site-build/bin/buildServer.js",
+    "build-site-prod": "npm run clean-site && npm run build-site-build && npm run _build-site-server-prod && npm run _build-site-client-prod",
 
-    "watch-client-dev": "env-cmd -e dev node ./buildScripts/build/watchClient.js",
-    "watch-server-dev": "env-cmd -e dev node ./buildScripts/build/watchServer.js",
+    "watch-client-dev": "env-cmd -e dev node ./build/site-build/bin/watchClient.js",
+    "watch-server-dev": "env-cmd -e dev node ./build/site-build/bin/watchServer.js",
 
-    "start": "npm run build-build && concurrently -n \"ui ,api\" -c \"cyan,blue\" \"npm run watch-client-dev\" \"npm run watch-server-dev\"",
+    "clean-api": "rimraf ./build/api",
+    "build-api": "tsc -p ./src/api/tsconfig.json",
 
-    "start-server-dev": "npm run build-server-dev && env-cmd -e dev node ./build/server/out.js",
+    "clean-cli": "rimraf ./build/cli",
+    "_build-cli": "tsc -p ./src/cli/tsconfig.json",
+    "build-cli": "npm run clean-cli && npm run _build-cli",
+    "cli": "env-cmd -e dev node ./build/cli/cli/index.js",
 
-    "build-api-builder": "tsc -p ./src/api/builder/tsconfig.json",
-    "watch-test-components-build": "env-cmd -e dev node ./bin/builder/index.js",
-
-    "start-all": "npm run build-build && npm run build-api-builder && concurrently -n \"builder, ui ,api\" -c \"green, cyan,blue\" \"npm run watch-test-components-build\" \"npm run watch-client-dev\" \"npm run watch-server-dev\""
+    "start": "npm run build-build && npm run build-test-components-builder && concurrently -n \"builder,ui,api\" -c \"red,green,blue\" \"npm run watch-test-components\" \"npm run watch-client-dev\" \"npm run watch-server-dev\""
   },
   "author": "",
   "license": "MIT",
@@ -53,6 +57,8 @@
     "connect-livereload": "^0.6.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "esbuild": "^0.15.14",
+    "esbuild-sass-plugin": "^2.4.1",
     "express": "^4.18.2",
     "globsie": "^0.0.10",
     "livereload": "^0.9.3",

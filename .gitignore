@@ -9,3 +9,4 @@ auth.json
 /pgdata
 /import/**/*
 /content
+/.exh

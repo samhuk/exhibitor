@@ -1,3 +1,0 @@
-import { watchServer } from '.'
-
-watchServer()

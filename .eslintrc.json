@@ -94,6 +94,7 @@
     "no-param-reassign": "warn",
     "react/jsx-no-useless-fragment": "warn",
     "object-shorthand": ["error", "properties"],
-    "space-before-function-paren": "off"
+    "space-before-function-paren": "off",
+    "timport/no-extraneous-dependencies": "off"
   }
 }

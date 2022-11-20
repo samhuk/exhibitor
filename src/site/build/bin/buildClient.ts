@@ -1,0 +1,3 @@
+import { buildClient } from '..'
+
+buildClient()
