@@ -1,13 +1,14 @@
-import express from 'express'
-import path from 'path'
-import * as fs from 'fs'
 import cookieParser from 'cookie-parser'
+import express from 'express'
+import * as fs from 'fs'
+import path from 'path'
+
+import { BUILD_OUTPUT_ROOT_DIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import api from './api'
+import { notFound } from './api/errorVariants'
+import { sendErrorResponse } from './api/responses'
 import { addHotReloadingMiddleware } from './appFeatures'
 import { env } from './env'
-import { sendErrorResponse } from './api/responses'
-import { notFound } from './api/errorVariants'
-import { BUILD_OUTPUT_ROOT_DIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 
 const app = express()
 
@@ -31,13 +32,15 @@ if (!env.isProd) {
     .get('*', (req, res) => {
       // Special handling for if the requested url is a component library build file
       if (req.url.startsWith('/index.exh')) {
-        res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
+        if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`)))
+          res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
+        else
+          sendErrorResponse(req, res, notFound('Component library file not found.'))
         return
       }
 
-      const fullFilePath = path.resolve(clientDir, `./${req.path}`)
       // If the client file exists, serve it
-      if (fs.existsSync(fullFilePath))
+      if (fs.existsSync(path.resolve(clientDir, `./${req.path}`)))
         res.sendFile(req.path, { root: clientDir })
       // Else send index.html
       else

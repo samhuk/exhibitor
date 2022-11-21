@@ -5,7 +5,7 @@
   "main": "./build/api/index.js",
   "types": "./build/api/index.d.ts",
   "bin": {
-    "exhibitor": "./build/cli/index.js"
+    "exhibitor": "./build/cli/cli/index.js"
   },
   "scripts": {
     "clean-unit-tests": "rimraf ./build-test",
@@ -41,15 +41,20 @@
     "clean-api": "rimraf ./build/api",
     "build-api": "tsc -p ./src/api/tsconfig.json",
 
-    "clean-cli": "rimraf ./build/cli",
-    "_build-cli": "tsc -p ./src/cli/tsconfig.json",
-    "build-cli": "npm run clean-cli && npm run _build-cli",
-    "cli": "env-cmd -e dev node ./build/cli/cli/index.js",
+    "clean-cli-poc": "rimraf ./build/cli-poc",
+    "_build-cli-poc": "tsc -p ./src/cli-poc/tsconfig.json",
+    "build-cli-poc": "npm run clean-cli-poc && npm run _build-cli-poc",
+    "cli-poc-dev": "env-cmd -e dev node ./build/cli-poc/cli-poc/index.js",
+    "cli-poc-prod": "env-cmd -e prod node ./build/cli-poc/cli-poc/index.js",
 
-    "build-component-library-bin": "tsc -p ./src/cli/componentLibrary/bin/tsconfig.json",
-    "watch-component-library": "env-cmd -e dev node ./build/component-library-bin/cli/componentLibrary/bin/watch.js",
+    "build-watch-component-library": "tsc -p ./src/cli-poc/componentLibrary/bin/tsconfig.json",
+    "watch-component-library": "env-cmd -e dev node ./build/component-library-bin/cli-poc/componentLibrary/bin/watch.js",
 
-    "start": "npm run build-site-build && npm run build-component-library-bin && concurrently -n \"comp    ,site-ui ,site-api\" -c \"red,green,blue\" \"npm run watch-component-library\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\""
+    "start": "npm run build-site-build && npm run build-watch-component-library && concurrently -n \"testcomp,site-ui ,site-api\" -c \"red,green,blue\" \"npm run watch-component-library\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\"",
+
+    "clean": "rimraf ./.exh ./build",
+    
+    "build-all-dist": "npm run clean && npm run build-site-build && npm run build-site-prod && npm run build-api && npm run build-cli"
   },
   "author": "",
   "license": "MIT",

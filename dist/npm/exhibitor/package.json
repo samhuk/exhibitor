@@ -1,0 +1,11 @@
+{
+  "name": "exhibitor",
+  "version": "1.0.0",
+  "description": "React component library workshop platform",
+  "main": "./build/api/index.js",
+  "types": "./build/api/index.d.ts",
+  "bin": {
+    "exhibitor": "./build/cli/cli/index.js"
+  },
+  "license": "MIT"
+}
