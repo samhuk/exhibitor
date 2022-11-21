@@ -38,7 +38,7 @@ if (!env.isProd) {
       const fullFilePath = path.resolve(clientDir, `./${req.path}`)
       // If the client file exists, serve it
       if (fs.existsSync(fullFilePath))
-        res.sendFile(req.url, { root: clientDir })
+        res.sendFile(req.path, { root: clientDir })
       // Else send index.html
       else
         res.sendFile('/', { root: clientDir })

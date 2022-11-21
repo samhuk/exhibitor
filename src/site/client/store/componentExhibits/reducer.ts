@@ -4,7 +4,6 @@ import { READY, ComponentExhibitsActions, ComponentExhibitsState } from './actio
 const initialState: ComponentExhibitsState = {
   error: null,
   loadingState: LoadingState.IDLE,
-  value: null,
   ready: false,
 }
 
@@ -16,7 +15,6 @@ export const componentExhibitsReducer = (
   switch (action.type) {
     case READY:
       return {
-        value: action.value,
         error: action.error,
         loadingState: action.error == null ? LoadingState.IDLE : LoadingState.FAILED,
         ready: true,

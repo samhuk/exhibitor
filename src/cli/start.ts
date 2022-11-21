@@ -1,8 +1,9 @@
 import path from 'path'
+import { NPM_PACKAGE_NAME } from '../common/name'
 import { TEST_COMPONENT_LIBRARY_ROOT_DIR } from '../common/paths'
 import { watchClient, watchServer } from '../site/build'
-import { buildIndexExhTsFile, createIndexExhTsFile } from './componentLibraryBuild'
-import watch from './componentLibraryBuild/debouncedChokidar'
+import { buildIndexExhTsFile, createIndexExhTsFile } from './componentLibrary'
+import watch from './componentLibrary/debouncedChokidar'
 import { Config } from './types'
 
 const isTesting = process.env.IS_EXHIBITOR_TESTING === 'true'
@@ -38,7 +39,16 @@ export const start = (
 ) => {
   watchComponentLibrary(config)
 
-  watchClient()
-
-  watchServer()
+  // If in testing mode, we watch the site client and server
+  if (isTesting) {
+    watchClient()
+    watchServer()
+  }
+  // Else, we execute the built site server js script that is in the node_modules lib dir
+  else {
+    const npmDir = require.resolve(NPM_PACKAGE_NAME)
+    const serverJsPath = path.join(npmDir, './build/site-server/out.js')
+    // eslint-disable-next-line import/no-dynamic-require, global-require
+    require(serverJsPath)
+  }
 }

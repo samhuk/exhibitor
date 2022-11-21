@@ -29,5 +29,5 @@ const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise((re
 
 export const init = async (dispatch: AppDispatch) => {
   await waitUntilComponentExhibitsAreLoaded()
-  dispatch(componentExhibitsReady(exh.default, null))
+  dispatch(componentExhibitsReady(null))
 }

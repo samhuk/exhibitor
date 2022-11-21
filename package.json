@@ -4,7 +4,9 @@
   "description": "React component library workshop platform",
   "main": "./build/api/index.js",
   "types": "./build/api/index.d.ts",
-  "bin": "./build/cmd/index.js",
+  "bin": {
+    "exhibitor": "./build/cli/index.js"
+  },
   "scripts": {
     "clean-unit-tests": "rimraf ./build-test",
     "build-unit-tests": "npx tsc -p ./src/tsconfig.test.json",
@@ -33,8 +35,8 @@
     "_build-site-server-prod": "env-cmd -e prod node ./build/site-build/bin/buildServer.js",
     "build-site-prod": "npm run clean-site && npm run build-site-build && npm run _build-site-server-prod && npm run _build-site-client-prod",
 
-    "watch-client-dev": "env-cmd -e dev node ./build/site-build/bin/watchClient.js",
-    "watch-server-dev": "env-cmd -e dev node ./build/site-build/bin/watchServer.js",
+    "watch-site-client-dev": "env-cmd -e dev node ./build/site-build/bin/watchClient.js",
+    "watch-site-server-dev": "env-cmd -e dev node ./build/site-build/bin/watchServer.js",
 
     "clean-api": "rimraf ./build/api",
     "build-api": "tsc -p ./src/api/tsconfig.json",
@@ -44,7 +46,10 @@
     "build-cli": "npm run clean-cli && npm run _build-cli",
     "cli": "env-cmd -e dev node ./build/cli/cli/index.js",
 
-    "start": "npm run build-build && npm run build-test-components-builder && concurrently -n \"builder,ui,api\" -c \"red,green,blue\" \"npm run watch-test-components\" \"npm run watch-client-dev\" \"npm run watch-server-dev\""
+    "build-component-library-bin": "tsc -p ./src/cli/componentLibrary/bin/tsconfig.json",
+    "watch-component-library": "env-cmd -e dev node ./build/component-library-bin/cli/componentLibrary/bin/watch.js",
+
+    "start": "npm run build-site-build && npm run build-component-library-bin && concurrently -n \"comp    ,site-ui ,site-api\" -c \"red,green,blue\" \"npm run watch-component-library\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\""
   },
   "author": "",
   "license": "MIT",

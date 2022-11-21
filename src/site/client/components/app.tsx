@@ -45,9 +45,9 @@ const ComponentExhibits = () => {
 
   return (
     <div>
-      {componentExhibits.value.map(exhibit => (
-        exhibit.variants.map(variant => (
-          <div>
+      {exh.default.map(exhibit => (
+        exhibit.variants.map((variant, i) => (
+          <div key={i + 1}>
             <div>{variant.name}</div>
             <div>{exhibit.renderFn(variant.props)}</div>
           </div>

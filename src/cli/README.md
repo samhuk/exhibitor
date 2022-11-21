@@ -1,7 +1,7 @@
-This directory contains the JS CLI that contains commands like `run`.
+This directory contains the CLI that contains commands like `exhibitor run`.
 
 ## Commands
 
 ### `run`
 
-This command starts up the exhibitor site, consuming the user's component library, and with hot-reloading functionality.
+This command starts up the exhibitor site, consuming the user's component library with hot-reloading functionality.

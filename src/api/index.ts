@@ -1,6 +1,6 @@
 /**
- * This file defines the public Javascript API of exhibitor. Things
- * exposed here wil be available like:
+ * This file defines the public ("exported") Javascript API of exhibitor.
+ * Things exposed here wil be available like:
  * ```
  * import exhibit, { ... } from 'exhibitor'
  * ```

@@ -1,12 +1,6 @@
 /node_modules
 /build
-/build-test
-/buildScripts/build
 .DS_Store
 /debug.log
 /package-lock.json
-auth.json
-/pgdata
-/import/**/*
-/content
 /.exh
