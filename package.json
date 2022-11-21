@@ -54,7 +54,7 @@
 
     "clean": "rimraf ./.exh ./build",
     
-    "build-all-dist": "npm run clean && npm run build-site-build && npm run build-site-prod && npm run build-api && npm run build-cli"
+    "build-all-dist": "npm run build-site-build && npm run build-site-prod && npm run build-api && npm run build-cli-poc"
   },
   "author": "",
   "license": "MIT",
