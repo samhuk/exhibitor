@@ -17,13 +17,9 @@ limitations under the License.
 package main
 
 import (
-	"os"
-	"path/filepath"
+	"github.com/samhuk/exhibitor/src/cli/internal/cmd/exhibitor"
 )
 
 func main() {
-	baseName := filepath.Base(os.Args[0])
-
-	// err := velero.NewCommand(baseName).Execute()
-	// cmd.CheckError(err)
+	exhibitor.Command()
 }

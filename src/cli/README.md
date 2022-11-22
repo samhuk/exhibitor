@@ -1,0 +1,1 @@
+This is the CLI for exhibitor. It contains commands like `exhibitor run`. It is written in Go and is built for various OS and architecture combinations, and then surfaced npm in a similar way to how esbuild does it.
