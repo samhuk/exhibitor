@@ -1,54 +1,29 @@
-# web-app-template
-
-This is a template repository for a web application.
-
-* Typescript, React, and Redux front-end
-* Typescript and express.js back-end
-* All built and bundled with esbuild
-* Ultra-fast hot-reloading front- and back-ends
-* Production deployment with docker and docker-compose
-* gzip for large client files
-* Etc.
-
-## Usage
-
-1. Click the "**Use Template**" button on Github to create your own repository from this template
-2. Locally clone your new remote Github repository
-3. From the root directory of your new local clone, run `node setup.js`, entering in some details.
-4. After it completes, you can remove `setup.js`.
-5. Run `npm start` and navigate to http://localhost:8080
-6. For information on how to develop on your new codebase, see [./contributing/development.md](./contributing/development.md)
-7. Have fun!
-
-This template is approximately based off of the architecture of [samhuk.com](http://www.samhuk.com).
-
-If you found this delightful, feel free to [buy me a coffee](https://www.buymeacoffee.com/samhuk) ✨
-
----
-
 <h1 align="center">exhibitor</h1>
 <p align="center">
-  <em>Delightful App</em>
+  <em>Extremely fast React component workshop</em>
 </p>
 
-> Badges like license type and current build status can go here. Uncomment the HTML below within this README to show them.
-
-<!-- <p align="center">
-  <a href="https://github.com/samhuk/exhibitor/actions/workflows/ci.yaml/badge.svg" target="_blank">
-    <img src="https://github.com/samhuk/exhibitor/actions/workflows/ci.yaml/badge.svg" alt="ci status" />
-  </a>
+<p align="center">
   <a href="https://img.shields.io/badge/License-MIT-green.svg" target="_blank">
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="license" />
   </a>
-</p> -->
+</p>
+
+<div style="color: red; border: 1px solid red; padding: 5px; border-radius: 5px; font-weight: bold;">exhibitor is currently in early development phase. Current state is not necessarily reflective of eventual release state. Production use is not advised.</div>
 
 ## Overview
 
-> Provide a quick overview of what your app does.
+exhibitor is an extremely fast React component workshop, using Go and esbuild.
 
-> An image of what the app looks like goes a long way.
+The main goal of exhibitor is to continue the Javascript tooling revolution started by esbuild, creating a delightful zen-like component workshop along the way.
 
-> If it is a large app, you can put a "Getting Started" wiki page link here.
+## Major Features
+
+* Extremely fast CLI, hot-reloading, and general developer experience
+* Simple
+* Sane defaults
+* e2e testing integration (puppeteer?)
+* Beautiful Javascript API with Typescript-centric design for zero guesswork.
 
 ## Development
 
@@ -56,8 +31,4 @@ See [./contributing/development.md](./contributing/development.md)
 
 ---
 
-> If desired, briefly mention any donation links here. Here's Buy Me a Coffee as an example:
-
-If you found this app delightful, feel free to buy me a coffee ✨
-
-<a href="https://www.buymeacoffee.com/{{buy-me-a-coffee-user-name}}" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+If you would like to support my work, feel free to [buy me a coffee](https://www.buymeacoffee.com/samhuk) or sponsor me on GH ✨

@@ -2,6 +2,11 @@
 #
 # This script builds the application from source for multiple platforms.
 
+# We don't want loads of different build dirs everywhere. We will tell
+# this script to output all build artifacts to the centralized top-level
+# build dir along with all the other stuff, in the "cli" subdirectory.
+BUILD_OUTPUT_ROOT_DIR='../../build/cli'
+
 # Get the parent directory of where this script is.
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
@@ -17,12 +22,13 @@ XC_EXCLUDE_OSARCH="!darwin/arm !darwin/386"
 
 # Delete the old dir
 echo "==> Removing old directory..."
-rm -f bin/*
-rm -rf pkg/*
-mkdir -p bin/
+rm -f $BUILD_OUTPUT_ROOT_DIR/bin/*
+rm -rf $BUILD_OUTPUT_ROOT_DIR/pkg/*
+mkdir -p $BUILD_OUTPUT_ROOT_DIR/bin/
 
 # If its dev mode, only build for ourself
-if [[ -n "${TF_DEV}" ]]; then
+if [[ -n "${EXH_DEV}" ]]; then
+    echo "In dev mode, setting OS and ARCH to only local machine's"
     XC_OS=$(go env GOOS)
     XC_ARCH=$(go env GOARCH)
 fi
@@ -39,13 +45,15 @@ export CGO_ENABLED=0
 export GOFLAGS="-mod=readonly"
 
 # In release mode we don't want debug information in the binary
-if [[ -n "${TF_RELEASE}" ]]; then
+if [[ -n "${EXH_RELEASE}" ]]; then
     LD_FLAGS="-s -w"
 fi
 
 # Ensure all remote modules are downloaded and cached before build so that
 # the concurrent builds launched by gox won't race to redundantly download them.
 go mod download
+
+mkdir ../../build/cli/pkg
 
 # Build!
 echo "==> Building..."
@@ -54,8 +62,8 @@ gox \
     -arch="${XC_ARCH}" \
     -osarch="${XC_EXCLUDE_OSARCH}" \
     -ldflags "${LD_FLAGS}" \
-    -output "pkg/{{.OS}}_{{.Arch}}/terraform" \
-    .
+    -output "$BUILD_OUTPUT_ROOT_DIR/pkg/{{.OS}}_{{.Arch}}/exhibitor" \
+    ./cmd/exhibitor
 
 # Move all the compiled things to the $GOPATH/bin
 GOPATH=${GOPATH:-$(go env GOPATH)}
@@ -75,18 +83,18 @@ if [ ! -d $MAIN_GOPATH/bin ]; then
 fi
 
 # Copy our OS/Arch to the bin/ directory
-DEV_PLATFORM="./pkg/$(go env GOOS)_$(go env GOARCH)"
+DEV_PLATFORM="$BUILD_OUTPUT_ROOT_DIR/pkg/$(go env GOOS)_$(go env GOARCH)"
 if [[ -d "${DEV_PLATFORM}" ]]; then
     for F in $(find ${DEV_PLATFORM} -mindepth 1 -maxdepth 1 -type f); do
-        cp ${F} bin/
+        cp ${F} $BUILD_OUTPUT_ROOT_DIR/bin/
         cp ${F} ${MAIN_GOPATH}/bin/
     done
 fi
 
-if [ "${TF_DEV}x" = "x" ]; then
+if [ "${EXH_DEV}x" = "x" ]; then
     # Zip and copy to the dist dir
     echo "==> Packaging..."
-    for PLATFORM in $(find ./pkg -mindepth 1 -maxdepth 1 -type d); do
+    for PLATFORM in $(find $BUILD_OUTPUT_ROOT_DIR/pkg -mindepth 1 -maxdepth 1 -type d); do
         OSARCH=$(basename ${PLATFORM})
         echo "--> ${OSARCH}"
 
@@ -98,5 +106,5 @@ fi
 
 # Done!
 echo
-echo "==> Results:"
-ls -hl bin/
+echo "==> Results ($BUILD_OUTPUT_ROOT_DIR/bin/):"
+ls -hl $BUILD_OUTPUT_ROOT_DIR/bin/

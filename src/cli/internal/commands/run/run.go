@@ -1,9 +1,10 @@
 package run
 
 import (
-	"fmt"
+	"github.com/samhuk/exhibitor/src/cli/internal/siteBuild"
 )
 
 func Command() {
-	fmt.Println("Hello, world!")
+	siteBuild.BuildClient()
+	siteBuild.BuildServer()
 }
