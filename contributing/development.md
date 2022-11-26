@@ -14,6 +14,8 @@ It runs on MacOS, Windows, and Linux environments.
 
 It runs on many versions of Node.js, tested back to version 14.x.
 
+Additionally, gcc is required: `sudo apt install gcc`.
+
 ## Structure
 
 This section details the basic structure of the repository.

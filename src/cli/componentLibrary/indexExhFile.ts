@@ -4,29 +4,28 @@ import * as fs from 'fs'
 import glob from 'globsie'
 import path from 'path'
 
+import { createBuilder } from '../../common/esbuilder'
 import { NPM_PACKAGE_NAME } from '../../common/name'
 import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../../common/paths'
-import { createBuilder } from './buildUtils'
 
-const prod = process.env.NODE_ENV === 'production'
-const isTesting = process.env.IS_EXHIBITOR_TESTING === 'true'
+const isDev = process.env.EXH_DEV === 'true'
 
 fs.mkdirSync(BUILD_OUTPUT_ROOT_DIR, { recursive: true })
 
 const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
 const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
-export const buildIndexExhTsFile = createBuilder('component library', () => esbuild.build({
+export const buildIndexExhTsFile = createBuilder('component library', true, () => esbuild.build({
   entryPoints: [bundleInputFilePath],
   outfile: bundleOutputFilePath,
   platform: 'browser',
   format: 'iife',
   globalName: 'exh',
   bundle: true,
-  minify: prod,
-  sourcemap: !prod,
+  minify: !isDev,
+  sourcemap: isDev,
   metafile: true,
-  incremental: !prod,
+  incremental: isDev,
   plugins: [sassPlugin() as unknown as esbuild.Plugin],
   loader: {
     '.ttf': 'file',
@@ -41,14 +40,14 @@ export const createIndexExhTsFile = async (
   const includedFilePaths = await glob(configInclude)
 
   // Path from '.exh' dir to the path '../exhibit' relative to this file,
-  // E.g. ../../../node_modules/exhibitor (in production)
-  // E.g. ./src/componentsBuild/exhibit
-  const exhibitApiFunctionPath = (isTesting
-    ? path.relative(BUILD_OUTPUT_ROOT_DIR, './src/api/exhibit')
-    : path.join(NPM_PACKAGE_NAME, './build/api/exhibit')).replace(/\\/g, '/')
+  const exhibitApiFunctionPath = isDev
+    // E.g. ../src/componentsBuild/exhibit
+    ? path.relative(BUILD_OUTPUT_ROOT_DIR, './src/api/exhibit').replace(/\\/g, '/')
+    // E.g. exhibitor/build/api/exhibit
+    : `${NPM_PACKAGE_NAME}/build/api/exhibit`
 
   const text = [
-    // E.g. import { exhibit } from '../../../node_modules/exhibitor' (in production)
+    // E.g. import { exhibit } from '../../../node_modules/exhibitor' (in release)
     `import { __exhibits } from '${exhibitApiFunctionPath}'`,
     // E.g. list of "export {} from '../myComponentLibraryDir/button.exh.ts'"
     includedFilePaths

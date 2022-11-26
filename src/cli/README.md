@@ -1,1 +1,1 @@
-This is the CLI for exhibitor. It contains commands like `exhibitor run`. It is written in Go and is built for various OS and architecture combinations, and then surfaced npm in a similar way to how esbuild does it.
+This directory contains a proof-of-concept CLI that starts up the site server, client, and component library build watch.

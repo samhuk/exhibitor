@@ -10,6 +10,6 @@
     "sourceMap": false,
     "noEmit": false,
     "skipLibCheck": true,
-    "outDir": "../../../build/site-build"
+    "outDir": "../../../build/site/build"
   }
 }

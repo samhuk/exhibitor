@@ -19,7 +19,7 @@ The main goal of exhibitor is to continue the Javascript tooling revolution star
 
 ## Major Features
 
-* Extremely fast CLI, hot-reloading, and general developer experience
+* Extremely fast
 * Simple
 * Sane defaults
 * e2e testing integration (puppeteer?)

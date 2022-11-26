@@ -10,6 +10,6 @@
     "sourceMap": true,
     "noEmit": false,
     "skipLibCheck": true,
-    "outDir": "../../build/cli-poc"
+    "outDir": "../../build/cli"
   }
 }

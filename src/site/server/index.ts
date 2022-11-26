@@ -48,7 +48,7 @@ if (!env.isProd) {
     })
 }
 
-app.listen(env.port, '0.0.0.0', () => {
-  const url = `http://localhost:${env.port}`
-  console.log(`API started in ${env.isProd ? 'Production' : 'Development'} mode. Access via ${url}.`)
+app.listen(env.port, env.host, () => {
+  const url = `http://${env.host}:${env.port}`
+  console.log(`Exhibitor active. Access via ${url}.`)
 })

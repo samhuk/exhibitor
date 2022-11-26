@@ -1,14 +1,22 @@
 export type Env = {
   isProd: boolean
   /**
-   * The port the server is hosted on. Default: `8080`
+   * The port the server is hosted on.
+   * 
+   * @default 4001
    */
   port: number
+  /**
+   * The host the server is hosted on.
+   * 
+   * @default 'localhost'
+   */
+  host: string
   /**
    * Indicated whether exhibitor is being locally tested, i.e. developed on,
    * instead of actually being used by a user.
    */
-  isTesting: boolean
+  isDev: boolean
 }
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -109,8 +117,9 @@ const getEnvironmentVariableString = (
 
 const getEnv = (): Env => ({
   isProd,
-  port: getEnvironmentVariableNumber('SERVER_PORT', 8080),
-  isTesting: getEnvironmentVariableBoolean('IS_EXHIBITOR_TESTING', false),
+  port: getEnvironmentVariableNumber('SERVER_PORT', 4001),
+  host: getEnvironmentVariableString('SERVER_HOST', 'localhost'),
+  isDev: getEnvironmentVariableBoolean('EXH_DEV', false),
 })
 
 export const env: Env = getEnv()

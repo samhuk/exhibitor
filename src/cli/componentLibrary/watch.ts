@@ -1,11 +1,8 @@
 import path from 'path'
 
-import { TEST_COMPONENT_LIBRARY_ROOT_DIR } from '../../common/paths'
 import { Config } from '../types'
 import watch from './debouncedChokidar'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
-
-const isTesting = process.env.IS_EXHIBITOR_TESTING === 'true'
 
 const iteration = async (
   includeGlobPatterns: string[],
@@ -16,11 +13,11 @@ const iteration = async (
 
 export const watchComponentLibrary = async (
   config: Config,
+  configDir: string,
 ) => {
-  const includeGlobPatterns = isTesting
+  const includeGlobPatterns = config.include
     // eslint-disable-next-line prefer-regex-literals
-    ? config.include.map(globPattern => path.join(TEST_COMPONENT_LIBRARY_ROOT_DIR, globPattern).replace(new RegExp('\\\\', 'g'), '/'))
-    : config.include
+    .map(globPattern => path.join(configDir, globPattern).replace(new RegExp('\\\\', 'g'), '/'))
 
   await iteration(includeGlobPatterns)
 
