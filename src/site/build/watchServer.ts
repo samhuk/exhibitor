@@ -1,11 +1,10 @@
 import { ChildProcess, fork, ForkOptions } from 'child_process'
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
-import path from 'path'
 
 import { DEBUG_SERVER_PORT } from '../../common/debug'
 import { printBuildResult } from '../../common/esbuilder'
-import { SITE_COMMON_DIR, SITE_SERVER_DIR, SITE_SERVER_OUTDIR } from '../../common/paths'
+import { SITE_COMMON_DIR, SITE_SERVER_DIR, SITE_SERVER_OUTFILE } from '../../common/paths'
 import { buildServer } from './buildServer'
 import { CustomBuildResult, WatchServerOptions } from './types'
 
@@ -73,7 +72,7 @@ export const createWatchServerOptions = (): WatchServerOptions => {
     sourceMap: isDev,
     incremental: isDev,
     minify: !isDev,
-    outfile: path.join(SITE_SERVER_OUTDIR, 'index.js'),
+    outfile: SITE_SERVER_OUTFILE,
     watchedDirPatterns: [SITE_SERVER_DIR, SITE_COMMON_DIR],
     serverHost: process.env.SITE_SERVER_HOST ?? 'localhost',
     serverPort: process.env.SITE_SERVER_PORT != null ? parseInt(process.env.SITE_SERVER_PORT) : 4001,

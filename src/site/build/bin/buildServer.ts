@@ -1,7 +1,6 @@
-import path from 'path'
 import { exit } from 'process'
 
-import { SITE_SERVER_OUTDIR } from '../../../common/paths'
+import { SITE_SERVER_OUTFILE } from '../../../common/paths'
 import { buildServer } from '../buildServer'
 
 const isRelease = process.env.EXH_RELEASE === '1'
@@ -11,5 +10,5 @@ buildServer({
   sourceMap: true,
   incremental: !isRelease,
   minify: isRelease,
-  outfile: path.join(SITE_SERVER_OUTDIR, 'index.js'),
+  outfile: SITE_SERVER_OUTFILE,
 }).then(() => exit(0)).catch(() => exit(1))

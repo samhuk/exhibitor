@@ -1,5 +1,4 @@
 export type Env = {
-  isProd: boolean
   /**
    * The port the server is hosted on.
    * 
@@ -19,8 +18,7 @@ export type Env = {
   isDev: boolean
 }
 
-const isProd = process.env.NODE_ENV === 'production'
-const SECRET_KEYWORD = '{DEFINE}'
+const isDev = process.env.EXH_DEV === 'true'
 
 const getEnvironmentVariableNumber = (
   envVarName: string,
@@ -33,24 +31,25 @@ const getEnvironmentVariableNumber = (
 
   const envVar = process.env[envVarName]
 
-  if (isProd && envVar === SECRET_KEYWORD)
-    throw new Error(`Encountered fatal error while getting environment variable "${envVarName}": Has been left as "${SECRET_KEYWORD}", which indicates that it's likely a production secret.`)
-
   if (envVar == null && defaultValue == null) {
-    console.warn(`Environment variable ${envVarName} is not defined.${_notProvidedMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not defined.${_notProvidedMessage}.`)
     return null
   }
   if (envVar == null) {
-    console.warn(`Environment variable ${envVarName} is not defined. Using default ${defaultValue}.${_notProvidedMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not defined. Using default ${defaultValue}.${_notProvidedMessage}.`)
     return defaultValue
   }
   const parsedEnvVar = parseInt(envVar)
   if (Number.isNaN(parsedEnvVar) && defaultValue == null) {
-    console.warn(`Environment variable ${envVarName} is not valid (${envVar}).${_invalidMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not valid (${envVar}).${_invalidMessage}.`)
     return null
   }
   if (Number.isNaN(parsedEnvVar)) {
-    console.warn(`Environment variable ${envVarName} is not valid (${envVar}). Using default ${defaultValue}.${_invalidMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not valid (${envVar}). Using default ${defaultValue}.${_invalidMessage}.`)
     return defaultValue
   }
   return parsedEnvVar
@@ -67,25 +66,26 @@ const getEnvironmentVariableBoolean = (
 
   const envVar = process.env[envVarName]
 
-  if (isProd && envVar === SECRET_KEYWORD)
-    throw new Error(`Encountered fatal error while getting environment variable "${envVarName}": Has been left as "${SECRET_KEYWORD}", which indicates that it's likely a production secret.`)
-
   if (envVar == null && defaultValue == null) {
-    console.warn(`Environment variable ${envVarName} is not defined.${_notProvidedMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not defined.${_notProvidedMessage}.`)
     return null
   }
   if (envVar == null) {
-    console.warn(`Environment variable ${envVarName} is not defined. Using default ${defaultValue}.${_notProvidedMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not defined. Using default ${defaultValue}.${_notProvidedMessage}.`)
     return defaultValue
   }
 
   if (envVar !== 'true' && envVar !== 'false') {
     if (defaultValue == null) {
-      console.warn(`Environment variable ${envVarName} is not valid (${envVar}).${_invalidMessage}.`)
+      if (isDev)
+        console.warn(`Environment variable ${envVarName} is not valid (${envVar}).${_invalidMessage}.`)
       return null
     }
 
-    console.warn(`Environment variable ${envVarName} is not valid (${envVar}). Using default ${defaultValue}.${_invalidMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not valid (${envVar}). Using default ${defaultValue}.${_invalidMessage}.`)
     return defaultValue
   }
 
@@ -100,15 +100,14 @@ const getEnvironmentVariableString = (
   const _notProvidedMessage = notProvidedMessage != null ? ` ${notProvidedMessage}` : ''
   const envVar = process.env[envVarName]
 
-  if (isProd && envVar === SECRET_KEYWORD)
-    throw new Error(`Encountered fatal error while getting environment variable "${envVarName}": Has been left as "${SECRET_KEYWORD}", which indicates that it's likely a production secret.`)
-
   if (envVar == null && defaultValue == null) {
-    console.warn(`Environment variable ${envVarName} is not defined.${_notProvidedMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not defined.${_notProvidedMessage}.`)
     return null
   }
   if (envVar == null) {
-    console.warn(`Environment variable ${envVarName} is not defined. Using default ${defaultValue}.${_notProvidedMessage}.`)
+    if (isDev)
+      console.warn(`Environment variable ${envVarName} is not defined. Using default ${defaultValue}.${_notProvidedMessage}.`)
     return defaultValue
   }
 
@@ -116,7 +115,6 @@ const getEnvironmentVariableString = (
 }
 
 const getEnv = (): Env => ({
-  isProd,
   port: getEnvironmentVariableNumber('SERVER_PORT', 4001),
   host: getEnvironmentVariableString('SERVER_HOST', 'localhost'),
   isDev: getEnvironmentVariableBoolean('EXH_DEV', false),

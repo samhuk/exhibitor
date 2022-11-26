@@ -2,6 +2,7 @@ import { fork } from 'child_process'
 import path from 'path'
 
 import { NPM_PACKAGE_NAME } from '../common/name'
+import { SITE_SERVER_OUTFILE } from '../common/paths'
 import { createWatchClientOptions, watchClient } from '../site/build/watchClient'
 import { createWatchServerOptions, watchServer } from '../site/build/watchServer'
 import { watchComponentLibrary } from './componentLibrary/watch'
@@ -35,7 +36,7 @@ export const start = (
     catch {
       npmDir = `./node_modules/${NPM_PACKAGE_NAME}`
     }
-    const serverJsPath = path.join(npmDir, './build/site-server/out.js').replace(/\\/g, '/')
+    const serverJsPath = path.join(npmDir, SITE_SERVER_OUTFILE).replace(/\\/g, '/')
     const env = {
       ...process.env,
       SERVER_PORT: config.site?.port?.toString() ?? '4001',

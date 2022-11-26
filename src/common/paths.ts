@@ -20,5 +20,6 @@ export const SITE_SERVER_ENTRYPOINT = `${SITE_SERVER_DIR}/index.ts` as const
 
 export const SITE_CLIENT_OUTDIR = './build/site/client' as const
 export const SITE_SERVER_OUTDIR = './build/site/server' as const
+export const SITE_SERVER_OUTFILE = `${SITE_SERVER_OUTDIR}/index.js` as const
 
 export const SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH = '../client' as const
