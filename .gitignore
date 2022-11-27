@@ -4,3 +4,6 @@
 /debug.log
 /package-lock.json
 /.exh
+/dist/npm/exhibitor/lib
+/dist/npm/exhibitor/node_modules
+/dist/npm/exhibitor/package-lock.json

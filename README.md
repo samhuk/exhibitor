@@ -9,21 +9,59 @@
   </a>
 </p>
 
-<div style="color: red; border: 1px solid red; padding: 5px; border-radius: 5px; font-weight: bold;">exhibitor is currently in early development phase. Current state is not necessarily reflective of eventual release state. Production use is not advised.</div>
+**exhibitor is in early alpha. Current state is not necessarily reflective of eventual release state. Production use is not advised.**
 
 ## Overview
 
-exhibitor is an extremely fast React component workshop, using Go and esbuild.
+exhibitor is an extremely fast React component workshop with an easy-to-use Javascript API and Website.
 
-The main goal of exhibitor is to continue the Javascript tooling revolution started by esbuild, creating a delightful zen-like component workshop along the way.
+## Usage Overview
+
+Install:
+
+```
+npm i -S exhibitor
+```
+
+Declare exhibitions of your components with the Javascript API:
+
+```typescript
+// src/button.exh.ts
+import exhibit from 'exhibitor'
+
+import Button from './button'
+
+exhibit('button', Button)
+  .events(p => ({
+    onClick: p.onClick,
+  }))
+  .defaults({
+    onClick: () => console.log('click!!'),
+    color: 'default',
+    ...
+  })
+  .variant('default', p => p)
+  .variant('green', p => ({
+    ...p,
+    color: 'green',
+  }))
+  .build()
+```
+
+Using the CLI, view your exhibitions:
+
+```
+npx exhibitor start
+```
 
 ## Major Features
 
 * Extremely fast
 * Simple
 * Sane defaults
-* e2e testing integration (puppeteer?)
-* Beautiful Javascript API with Typescript-centric design for zero guesswork.
+* e2e testing integration
+* Delightful Javascript API with Typescript-centric design for zero guesswork.
+* esbuild
 
 ## Development
 

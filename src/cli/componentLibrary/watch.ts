@@ -23,7 +23,7 @@ export const watchComponentLibrary = async (
 
   watch(() => {
     iteration(includeGlobPatterns).then(() => undefined).catch(() => undefined)
-  }, includeGlobPatterns, 150, () => {
-    console.log('Watching for changes...')
+  }, config.watch, 150, () => {
+    console.log('Watching for changes within:', config.watch, '...')
   })
 }

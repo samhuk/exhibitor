@@ -43,8 +43,8 @@ export const createIndexExhTsFile = async (
   const exhibitApiFunctionPath = isDev
     // E.g. ../src/componentsBuild/exhibit
     ? path.relative(BUILD_OUTPUT_ROOT_DIR, './src/api/exhibit').replace(/\\/g, '/')
-    // E.g. exhibitor/build/api/exhibit
-    : `${NPM_PACKAGE_NAME}/build/api/exhibit`
+    // E.g. exhibitor/lib/api/exhibit
+    : `${NPM_PACKAGE_NAME}/lib/api/exhibit`
 
   const text = [
     // E.g. import { exhibit } from '../../../node_modules/exhibitor' (in release)

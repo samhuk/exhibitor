@@ -1,10 +1,11 @@
+import merge from 'deepmerge'
 import * as fs from 'fs'
-import mergeDeep from 'merge-deep'
 
 import { Config } from './types'
 
 export const DEFAULT_CONFIG: Config = {
   include: ['./**/*.exh.ts'],
+  watch: ['./**/*'],
   site: {
     host: 'localhost',
     port: 4001,
@@ -22,5 +23,7 @@ export const getConfig = (
   configFilePath: string = './exh.config.json',
 ) => {
   const configFromFile = fs.existsSync(configFilePath) ? readAndParseConfig(configFilePath) : {}
-  return mergeDeep(configFromFile, DEFAULT_CONFIG)
+  return merge(configFromFile, DEFAULT_CONFIG, {
+    arrayMerge: (t, s, o) => t,
+  })
 }

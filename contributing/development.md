@@ -1,42 +1,58 @@
 # Development
 
-This document describes the process for setting up and running this app on your local computer.
+This document describes the process for setting up and running this package on your local computer.
 
 ## Prerequisites
 
-This app uses Node.js and Docker (Docker only for production deployment).v
+This app uses Node.js.
 
-You can get Node.js [here](https://nodejs.org/en/), or if you are using Chocolatey run `choco install nodejs`.
-
-You can get Docker [here](https://docs.docker.com/get-docker/).
+You can get Node.js [here](https://nodejs.org/en/). If you are using Chocolatey, run `choco install nodejs`.
 
 It runs on MacOS, Windows, and Linux environments.
 
 It runs on many versions of Node.js, tested back to version 14.x.
 
-Additionally, gcc is required: `sudo apt install gcc`.
-
 ## Structure
 
 This section details the basic structure of the repository.
 
-This repository is split into three main parts - the **client**, **server**, and **common**.
+This repository is split into three main parts - the **Javascript API**, the **CLI**, and the **Site**.
 
-### Client
+### Javascript API
+
+The Typescript for the Javascript API is at `/src/api`.
+
+This defines what the use will consume in their code in order to use the package.
+
+### CLI
+
+The Typescript for the CLI is at `/src/cli`.
+
+This is the Command Line Interface application that the user runs to do things like start the exhibitor site.
+
+The CLI uses Node.js.
+
+### Site
+
+The Typescript for the Site is at `/src/site`.
+
+This contains all of the code for the Exhibitor website that the user uses. It is split into three main parts - **Client**, **Server**, and **Common**.
+
+#### Client
+
+The Typescript for the client is at `/src/site/client`.
+
+The SCSS for the client is at `/src/site/client/assets/styles`.
 
 The client uses React and Redux.
 
-The Typescript for the client is at `/src/client`.
+#### Server
 
-The SCSS for the client is at `/src/client/assets/styles`
-
-### Server
+The Typescript for the server is at `/src/site/server`.
 
 The server uses express.js.
 
-The Typescript for the server is at `/src/server`.
-
-### Common
+#### Common
 
 The common directory holds all of the Typescript code that is shared by the client and server. This is particularly useful for sharing types between client and server.
 
@@ -46,52 +62,58 @@ ESLint is used for Typescript linting. To lint the Typescript code, run `npm run
 
 ## Building
 
-To build the app's Typescript, run `npm run build-ts`
+To build all three parts of the package, run `npm run build`. This will output many build artifacts to `/build`, separated by package area, i.e. `/build/api`, `/build/cli`, etc.
 
-## Deploying
+## Development Deployment
 
-### Development
+For a development deployment, run `npm start`.
 
-To deploy the app for development, run `npm start`. This starts a hot-reloading server and client.
+This starts the site, consuming the test components within `/test/componentLibrary`. The site and the component library are all watched for changes, with site clients hot-reloaded upon those changes.
 
-### Production
+## Releasing
 
-To deploy the app for production, first build the app:
-  * If on Windows, run `build-prod` from a cmd prompt.
-  * If on a Unix-based OS, run `sh build-prod.sh`.
+From the repo root dir:
 
-Then, run `docker-compose up -d` (likely will need `sudo` for Unix-based OSes).
+Run `npm run build`
+
+Run `sh ./scripts/dist.sh` (if bash-like is available), or `"scripts/dist.bat"` (if on Windows)
+
+`/dist/npm/exhibitor/lib` will now be populated and is ready for puiblishing to npm.
 
 ## Debugging
 
-### Server
+TODO. Tentative content:
 
-For VSCode, to attach the debugger to the running server, run the **Attach Server** launch configuration.
-
-For VSCode, to debug the server from start (to debug the initialization of the server), run the **Run Server** launch configuration.
-
-### Unit Tests
-
-For VSCode, to debug the unit tests, run the **Run Unit Tests** launch configuration.
-
-## Testing
-
-### Unit Tests
-
-Jest is used for unit testing. To build and run the unit tests, run `npm run unit-tests`.
-
-The unit tests can be debugged with Visual Studio Code by running the **Run Unit Tests** debug task.
-
-## Miscellaneous Scripts
-
-`npm run check` - Useful to run before committing to check the full validity of a change. This runs linting, Typescript build, unit tests.
+> ### Server
+> 
+> For VSCode, to attach the debugger to the running server, run the **Attach Server** launch configuration.
+> 
+> For VSCode, to debug the server from start (to debug the initialization of the server), run the **Run Server** launch configuration.
+> 
+> ### Unit Tests
+> 
+> For VSCode, to debug the unit tests, run the **Run Unit Tests** launch configuration.
+> 
+> ## Testing
+> 
+> ### Unit Tests
+> 
+> Jest is used for unit testing. To build and run the unit tests, run `npm run unit-tests`.
+> 
+> The unit tests can be debugged with Visual Studio Code by running the **Run Unit Tests** debug task.
+> 
+> ## Miscellaneous Scripts
+> 
+> `npm run check` - Useful to run before committing to check the full validity of a change. This runs linting, Typescript build, unit tests.
 
 ## Pull Requests
 
-Pull requests automatically run a CI pipeline that checks various criteria:
+TODO. Tentative content:
 
-* Linting
-* Typescript build
-* Unit tests
-
-These must pass for a pull request to be approved and merged.
+> Pull requests automatically run a CI pipeline that checks various criteria:
+> 
+> * Linting
+> * Typescript build
+> * Unit tests
+> 
+> These must pass for a pull request to be approved and merged.
