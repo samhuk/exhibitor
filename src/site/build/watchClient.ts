@@ -34,8 +34,7 @@ export const watchClient = (options: WatchClientOptions) => {
       startRebuildWatch(options, result)
     })
     // Else, watch for changes until we get a successful initial build
-    .catch(e => {
-      console.log(e)
+    .catch(() => {
       if (initialBuildWatcher != null)
         return
       initialBuildWatcher = chokidar.watch(options.watchedDirPatterns)

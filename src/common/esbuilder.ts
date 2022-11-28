@@ -80,6 +80,6 @@ export const createBuilder = (
     })
     .catch(err => {
       console.log(err)
-      return null
+      throw err
     })
 }
