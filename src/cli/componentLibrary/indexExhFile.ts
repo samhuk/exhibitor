@@ -25,7 +25,7 @@ export const buildIndexExhTsFile = createBuilder('component library', true, () =
   minify: !isDev,
   sourcemap: isDev,
   metafile: true,
-  incremental: isDev,
+  incremental: true,
   plugins: [sassPlugin() as unknown as esbuild.Plugin],
   loader: {
     '.ttf': 'file',
