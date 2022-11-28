@@ -11,7 +11,7 @@ const debounce = <TArgs extends any[], TReturn>(fn: (...args: TArgs) => TReturn,
 }
 
 export const watch = (fn: () => any, dirsOrWatcher: string[] | FSWatcher, delayMs?: number, onReadyFn?: () => any) => {
-  const debouncedFn = debounce(fn, delayMs ?? 500)
+  const debouncedFn = debounce(fn, delayMs ?? 150)
   const watcher = Array.isArray(dirsOrWatcher) ? _watch(dirsOrWatcher) : dirsOrWatcher
 
   watcher.on('ready', () => {

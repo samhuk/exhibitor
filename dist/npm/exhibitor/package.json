@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "chokidar": "^3.5.3",
+    "chokidar-debounced": "^1.0.4",
     "commander": "^9.4.1",
     "esbuild": "^0.15.14",
     "deepmerge": "^4.2.2",
