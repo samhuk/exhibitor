@@ -15,6 +15,7 @@ $font-weight: 400;
 $fa-font-path: "../fa/webfonts";
 
 @import './header.scss';
+@import './home/index.scss';
 
 html {
   height: 100vh;

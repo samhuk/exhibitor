@@ -68,7 +68,7 @@ To build all three parts of the package, run `npm run build`. This will output m
 
 For a development deployment, run `npm start`.
 
-This starts the site, consuming the test components within `/test/componentLibrary`. The site and the component library are all watched for changes, with site clients hot-reloaded upon those changes.
+This starts a hot-reloading build of the site client, server, and test component library (within `/test/componentLibrary`), and serves the client by default at http://localhost:4001.
 
 ## Releasing
 

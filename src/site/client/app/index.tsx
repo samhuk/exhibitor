@@ -2,36 +2,21 @@ import '../assets/styles/standard.scss'
 
 import React from 'react'
 
-import { useAppSelector } from '../store'
 import Header from './header'
-
-// styles
-const ComponentExhibits = () => {
-  const componentExhibits = useAppSelector(s => s.componentExhibits)
-
-  if (!componentExhibits.ready)
-    return <div>Waiting for component exhibits to load...</div>
-
-  return (
-    <div>
-      {exh.default.map(exhibit => (
-        exhibit.variants.map((variant, i) => (
-          <div key={i + 1}>
-            <div>{variant.name}</div>
-            <div>{exhibit.renderFn(variant.props)}</div>
-          </div>
-        ))
-      ))}
-    </div>
-  )
-}
+import { Routes, Route } from 'react-router-dom'
+import Home from './home'
+import { ComponentExhibit } from './home/componentExhibit'
 
 export const App = () => {
 
   return (
     <div className="exh-app">
       <Header />
-      <ComponentExhibits />
+      <Routes>
+        <Route path="" element={<Home />}>
+          <Route path=":name" element={<ComponentExhibit />} />
+        </Route>
+      </Routes>
     </div>
   )
 }

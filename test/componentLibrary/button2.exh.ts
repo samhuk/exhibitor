@@ -9,7 +9,7 @@ exhibit('Button2', Button2)
     onClick: () => undefined,
     color: ButtonColor.DEFAULT,
     iconPosition: IconPosition.LEFT,
-    text: 'Button Text (button 2!)',
+    text: 'Button Text (button 2)',
     size: ButtonSize.NORMAL,
     disabled: false,
   })
