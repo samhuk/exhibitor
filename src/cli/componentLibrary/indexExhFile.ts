@@ -57,4 +57,6 @@ export const createIndexExhTsFile = async (
   ].join('\n\n')
 
   fs.writeFileSync(bundleInputFilePath, text)
+
+  return text
 }

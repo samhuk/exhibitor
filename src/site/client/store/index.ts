@@ -1,10 +1,11 @@
 import { applyMiddleware, combineReducers, configureStore } from '@reduxjs/toolkit'
-import thunkMiddleware from 'redux-thunk'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from './types'
-import { healthcheckArtifacts } from './healthcheck'
+import thunkMiddleware from 'redux-thunk'
+
 import { componentExhibitsReducer } from './componentExhibits/reducer'
+import { healthcheckArtifacts } from './healthcheck'
 import { init } from './init'
+import { AppDispatch, RootState } from './types'
 
 // Set the root reducer. This defines the root state (see ./types.ts).
 export const rootReducer = combineReducers({

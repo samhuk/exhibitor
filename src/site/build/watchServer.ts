@@ -28,11 +28,11 @@ const startRebuildWatch = (options: WatchServerOptions, buildResult: CustomBuild
   watch(() => {
     // Kill existing server process
     serverProc?.kill()
-    console.log(`Changes detected [${new Date().toLocaleTimeString()}], rebuilding server...`)
+    console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding server...`)
     const startTime = Date.now()
     // Rebuild server
     buildResult.buildResult.rebuild().then(_result => {
-      console.log(`Done (${Date.now() - startTime} ms).${!options.verbose ? ' Watching for changes...' : ''}`)
+      console.log(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
       // If verbose, print build info on every rebuild
       if (options.verbose) {
         printBuildResult(_result, startTime, options.verbose)
@@ -58,7 +58,6 @@ export const watchServer = (options: WatchServerOptions) => {
     .catch(() => {
       if (initialBuildWatcher != null)
         return
-
       initialBuildWatcher = chokidar.watch(options.watchedDirPatterns)
       watch(() => watchServer(options), initialBuildWatcher, 150, () => console.log('Watching for changes...'))
     })

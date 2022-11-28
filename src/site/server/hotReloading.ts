@@ -1,11 +1,11 @@
-import { Express } from 'express'
-import path from 'path'
-import livereload from 'livereload'
 import connectLivereload from 'connect-livereload'
-import { BUILD_OUTPUT_ROOT_DIR } from '../../common/paths'
+import { Express } from 'express'
+import livereload from 'livereload'
+
+import { BUILD_OUTPUT_ROOT_DIR, SITE_CLIENT_OUTDIR } from '../../common/paths'
 import { env } from './env'
 
-export const addHotReloadingMiddleware = (app: Express): void => {
+export const enableHotReloading = (app: Express): void => {
   const liveReloadServer = livereload.createServer()
   liveReloadServer.server.once('connection', () => {
     setTimeout(() => {
@@ -13,10 +13,10 @@ export const addHotReloadingMiddleware = (app: Express): void => {
     }, 100)
   })
   liveReloadServer.watch([
-    /* If exhibitor is in testing mode, we will watch for
-     * changes to own client and server output files.
+    /* If exhibitor is in dev mode, we will watch for
+     * changes to client build output dir
      */
-    env.isTesting ? path.resolve(__dirname, '../') : null,
+    env.isDev ? SITE_CLIENT_OUTDIR : null,
     // Watch for changes to the components build output directory
     BUILD_OUTPUT_ROOT_DIR,
   ].filter(v => v != null))

@@ -22,8 +22,8 @@ export const readAndParseConfig = (
 export const getConfig = (
   configFilePath: string = './exh.config.json',
 ) => {
-  const configFromFile = fs.existsSync(configFilePath) ? readAndParseConfig(configFilePath) : {}
-  return merge(configFromFile, DEFAULT_CONFIG, {
-    arrayMerge: (t, s, o) => t,
+  const configFromFile = fs.existsSync(configFilePath) ? readAndParseConfig(configFilePath) : null
+  return merge(DEFAULT_CONFIG, configFromFile, {
+    arrayMerge: (t, s) => ((s != null && s.length > 0) ? s : t),
   })
 }

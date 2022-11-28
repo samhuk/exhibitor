@@ -1,9 +1,9 @@
+import './button.scss'
+
 import { OmitTyped } from '@samhuk/type-helpers'
 import React, { MouseEventHandler } from 'react'
 
 import Ternary from './ternary'
-
-import './button.scss'
 
 export enum IconPosition {
   LEFT = 'left',

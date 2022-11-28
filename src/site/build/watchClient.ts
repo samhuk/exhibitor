@@ -8,12 +8,12 @@ import { CustomBuildResult, WatchClientOptions } from './types'
 
 const startRebuildWatch = (options: WatchClientOptions, buildResult: CustomBuildResult) => {
   watch(() => {
-    console.log(`Changes detected [${new Date().toLocaleTimeString()}], rebuilding client...`)
+    console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding client...`)
     const startTime = Date.now()
     // Rebuild client
     buildResult.buildResult.rebuild()
       .then(_result => {
-        console.log(`Done (${Date.now() - startTime} ms).${!options.verbose ? ' Watching for changes...' : ''}`)
+        console.log(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
         // If verbose, print build info on every rebuild
         if (options.verbose) {
           printBuildResult(_result, startTime, options.verbose)
@@ -30,10 +30,12 @@ export const watchClient = (options: WatchClientOptions) => {
   buildClient(options)
     // If initial build successful, start rebuild watch
     .then(result => {
-      initialBuildWatcher.close()
+      initialBuildWatcher?.close()
       startRebuildWatch(options, result)
     })
-    .catch(() => {
+    // Else, watch for changes until we get a successful initial build
+    .catch(e => {
+      console.log(e)
       if (initialBuildWatcher != null)
         return
       initialBuildWatcher = chokidar.watch(options.watchedDirPatterns)

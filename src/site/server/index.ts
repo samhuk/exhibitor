@@ -7,13 +7,12 @@ import { BUILD_OUTPUT_ROOT_DIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PA
 import api from './api'
 import { notFound } from './api/errorVariants'
 import { sendErrorResponse } from './api/responses'
-import { addHotReloadingMiddleware } from './appFeatures'
 import { env } from './env'
+import { enableHotReloading } from './hotReloading'
 
 const app = express()
 
-// Hot-reloading
-addHotReloadingMiddleware(app)
+enableHotReloading(app)
 
 app.use(cookieParser())
 
@@ -29,23 +28,28 @@ const clientDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_
 app
   .get('*', (req, res) => {
     // Special handling for if the requested url is a component library build file
-    if (req.url.startsWith('/index.exh')) {
-      if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`)))
+    if (req.path.startsWith('/index.exh')) {
+      if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`))) {
         res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
-      else
-        sendErrorResponse(req, res, notFound('Component library file not found.'))
-      return
+        return
+      }
+
+      sendErrorResponse(req, res, notFound('Component library file not found.'))
     }
 
     // If the client file exists, serve it
-    if (fs.existsSync(path.resolve(clientDir, `./${req.path}`)))
+    if (fs.existsSync(path.resolve(clientDir, `./${req.path}`))) {
       res.sendFile(req.path, { root: clientDir })
+      return
+    }
+
     // Else send index.html
-    else
-      res.sendFile('/', { root: clientDir })
+    res.sendFile('/', { root: clientDir })
   })
 
-app.listen(env.port, env.host, () => {
+const server = app.listen(env.port, env.host, () => {
   const url = `http://${env.host}:${env.port}`
-  console.log(`Exhibitor active. Access via ${url}.`)
+  console.log(`Exhibitor active. Access via ${url}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
 })
+
+server.keepAliveTimeout = 10000 * 1000;
