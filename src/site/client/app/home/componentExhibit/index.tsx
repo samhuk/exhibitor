@@ -18,8 +18,8 @@ export const ComponentExhibit = () => {
   return (
     <div className="component-exhibit">
       {componentExhibit.variants.map((variant, i) => (
-        <div key={i + 1}>
-          <div>{variant.name}</div>
+        <div key={i + 1} className="variant">
+          <div className="name">{variant.name}</div>
           <div>{componentExhibit.renderFn(variant.props)}</div>
         </div>
       ))}

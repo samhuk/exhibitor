@@ -1,11 +1,13 @@
 .exh-home {
   width: 100%;
+  flex-grow: 1;
   display: flex;
 
   .vertical-nav-bar {
     display: flex;
     flex-direction: column;
     min-width: 150px;
+    border-right: $border;
 
     a {
       padding: 5px;
@@ -17,6 +19,16 @@
 
     .component-exhibit {
       padding: 10px;
+
+      .variant {
+        margin-bottom: 10px;
+
+        .name {
+          border-bottom: $border;
+          padding-bottom: 5px;
+          margin-bottom: 10px;
+        }
+      }
     }
   }
 }
