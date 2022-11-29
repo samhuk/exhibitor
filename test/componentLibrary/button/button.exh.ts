@@ -1,7 +1,7 @@
-import exhibit from '../../src/api'
+import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './button'
 
-exhibit('button', Button)
+exhibit(Button, 'Button')
   .events(p => ({
     onClick: p.onClick,
   }))
@@ -13,7 +13,6 @@ exhibit('button', Button)
     size: ButtonSize.NORMAL,
     disabled: false,
   })
-  .variant('default', p => p)
   .variant('green', p => ({
     ...p,
     color: ButtonColor.GREEN,

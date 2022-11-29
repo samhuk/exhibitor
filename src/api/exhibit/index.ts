@@ -8,8 +8,8 @@ export const __exhibits: ComponentExhibit[] = []
 export const exhibit = <
   TReactComponent extends ReactComponent
 >(
-    name: string,
     renderFn: TReactComponent,
+    name: string,
   ): ComponentExhibitBuilder<TReactComponent, false, false, undefined> => {
   let eventPropsSelector: any = null
   let defaultProps: any = null
@@ -18,12 +18,12 @@ export const exhibit = <
   const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, undefined> = {
     events: _eventPropsSelector => {
       eventPropsSelector = _eventPropsSelector
-      delete componentExhibitBuilder.events
+      delete (componentExhibitBuilder as any).events
       return componentExhibitBuilder
     },
     defaults: _defaultProps => {
       defaultProps = _defaultProps
-      delete componentExhibitBuilder.defaults
+      delete (componentExhibitBuilder as any).defaults
       return componentExhibitBuilder
     },
     variant: (_name, props) => {

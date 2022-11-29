@@ -1,18 +1,22 @@
 import { IsTrueAndFalse } from '@samhuk/type-helpers/dist/type-helpers/types'
 
+export type ReactComponent<TProps extends any = any> = ((props: TProps) => JSX.Element) | (() => JSX.Element)
+
 export type PropsOfReactComponent<
   TReactComponent extends ReactComponent = ReactComponent,
 > = Parameters<TReactComponent>[0]
 
-export type ReactComponent<TProps extends any = any> = (props: TProps) => JSX.Element
+export type DoesReactComponentHavePropsArg<
+  TReactComponent extends ReactComponent = ReactComponent,
+> = Parameters<TReactComponent> extends { 0: any } ? true : false
 
-type IncludeIfTrue<TBool extends boolean, ObjToInclude> = IsTrueAndFalse<TBool> extends true
+type IncludeIfTrue<TBool extends boolean, ObjToInclude, ExplicitElseObj extends any = {}> = IsTrueAndFalse<TBool> extends true
   ? ObjToInclude
-  : (TBool extends true ? ObjToInclude : {})
+  : (TBool extends true ? ObjToInclude : ExplicitElseObj)
 
-type IncludeIfFalse<TBool extends boolean, ObjToInclude> = IsTrueAndFalse<TBool> extends true
+type IncludeIfFalse<TBool extends boolean, ObjToInclude, ExplicitElseObj extends any = {}> = IsTrueAndFalse<TBool> extends true
   ? ObjToInclude
-  : (TBool extends false ? ObjToInclude : {})
+  : (TBool extends false ? ObjToInclude : ExplicitElseObj)
 
 type EventsDict = { [eventName: string]: (...eventProps: any) => any }
 
@@ -22,21 +26,27 @@ export type EventsSelector<
 
 type _ComponentExhibitBuilder<
   TProps extends any = any,
+  THasProps extends boolean = boolean,
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
   TDefaultProps extends TProps = TProps,
-> = IncludeIfFalse<THasDefinedEvents, {
-  events: (selector: EventsSelector<TProps>) => _ComponentExhibitBuilder<TProps, true>
-}> & IncludeIfFalse<THasDefinedDefaultProps, {
-  defaults: <TNewDefaultProps extends TProps>(
-    defaultProps: TNewDefaultProps
-  ) => _ComponentExhibitBuilder<TProps, THasDefinedEvents, true, TNewDefaultProps>
-}> & {
-  variant: (
-    name: string,
-    props: TProps | ((defaults: TDefaultProps) => TProps)
-  ) => _ComponentExhibitBuilder<TProps, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps>
-} & {
+> =
+  IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedEvents, {
+    events: (
+      selector: EventsSelector<TProps>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, TDefaultProps>
+  }>>
+  & IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedDefaultProps, {
+    defaults: <TNewDefaultProps extends TProps>(
+      defaultProps: TNewDefaultProps
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, TNewDefaultProps>
+  }>>
+  & IncludeIfTrue<THasProps, {
+    variant: (
+      name: string,
+      props: TProps | ((defaults: TDefaultProps) => TProps)
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps>
+  }> & {
   build: () => ComponentExhibit<TProps, TDefaultProps>
 }
 
@@ -45,7 +55,13 @@ export type ComponentExhibitBuilder<
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
   TDefaultProps extends undefined = undefined,
-> = _ComponentExhibitBuilder<PropsOfReactComponent<TReactComponent>, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps>
+> = _ComponentExhibitBuilder<
+  PropsOfReactComponent<TReactComponent>,
+  DoesReactComponentHavePropsArg<TReactComponent>,
+  THasDefinedEvents,
+  THasDefinedDefaultProps,
+  TDefaultProps
+>
 
 export type ComponentExhibit<
   TProps extends any = any,
