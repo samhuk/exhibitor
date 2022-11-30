@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Extremely fast React component workshop",
   "main": "./lib/api/index.js",
   "types": "./lib/api/index.d.ts",
@@ -13,6 +13,7 @@
 		"email": "samhughes1701@hotmail.co.uk",
 		"url": "http://samhuk.com/about"
   },
+  "repository": "https://github.com/samhuk/exhibitor",
   "dependencies": {
     "chokidar": "^3.5.3",
     "chokidar-debounced": "^1.0.4",
