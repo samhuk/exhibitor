@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Extremely fast React component workshop",
   "main": "./lib/api/index.js",
   "types": "./lib/api/index.d.ts",
@@ -20,6 +20,7 @@
     "esbuild": "^0.15.14",
     "deepmerge": "^4.2.2",
     "esbuild-sass-plugin": "^2.4.1",
-    "globsie": "^0.0.12"
+    "globsie": "^0.0.12",
+    "livereload": "^0.9.3"
   }
 }
