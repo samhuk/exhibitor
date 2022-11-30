@@ -20,6 +20,6 @@
     "esbuild": "^0.15.14",
     "deepmerge": "^4.2.2",
     "esbuild-sass-plugin": "^2.4.1",
-    "globsie": "^0.0.10"
+    "globsie": "^0.0.11"
   }
 }
