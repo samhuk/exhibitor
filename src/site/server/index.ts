@@ -27,6 +27,11 @@ const clientDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_
 
 app
   .get('*', (req, res) => {
+    if (req.path === '/') {
+      res.sendFile('/', { root: clientDir })
+      return
+    }
+
     // If file exists in build output dir, then serve it
     if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`))) {
       res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
@@ -34,7 +39,7 @@ app
     }
 
     // If the site client file exists, then serve it
-    if (fs.existsSync(path.resolve(clientDir, `./${req.path}`))) {
+    if (fs.existsSync(path.resolve(clientDir, `.${req.path}`))) {
       res.sendFile(req.path, { root: clientDir })
       return
     }

@@ -11,6 +11,16 @@
 
     a {
       padding: 5px;
+      color: $link-color;
+      text-decoration: none;
+
+      &:hover {
+        background-color: #ddd;
+      }
+
+      &.active {
+        background-color: #ddd;
+      }
     }
   }
 
