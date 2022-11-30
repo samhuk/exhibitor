@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Extremely fast React component workshop",
   "main": "./lib/api/index.js",
   "types": "./lib/api/index.d.ts",
