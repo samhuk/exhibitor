@@ -1,11 +1,11 @@
 import '../assets/styles/standard.scss'
 
 import React from 'react'
+import { Route, Routes } from 'react-router-dom'
 
 import Header from './header'
-import { Routes, Route } from 'react-router-dom'
 import Home from './home'
-import { ComponentExhibit } from './home/componentExhibit'
+import ComponentExhibit from './home/componentExhibit'
 
 export const App = () => {
 

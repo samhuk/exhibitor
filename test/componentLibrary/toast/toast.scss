@@ -1,0 +1,50 @@
+@import '../colors.scss';
+@import '../borders.scss';
+
+.cl-toast {
+  display: inline-flex;
+  padding: 8px;
+  border-radius: $border-radius;
+  align-items: top;
+  box-shadow: 0px 2px 2px 0px #aaa;
+
+  &.type-success {
+    background-color: $green-bg-color;
+    border-left: 3px solid $green-color;
+  }
+
+  &.type-warn {
+    background-color: $yellow-bg-color;
+    border-left: 3px solid $yellow-color;
+  }
+
+  &.type-error {
+    background-color: $red-bg-color;
+    border-left: 3px solid $red-color;
+  }
+
+  &.type-info {
+    background-color: $blue-bg-color;
+    border-left: 3px solid $blue-color;
+  }
+
+  .type-icon {
+    margin-right: 10px;
+  }
+
+  .title-text-container {
+    margin-top: 2px;
+    display: flex;
+    flex-direction: column;
+
+    .title {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+  }
+
+  .close-button {
+    margin-left: 5px;
+    align-self: start;
+  }
+}

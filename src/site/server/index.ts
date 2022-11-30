@@ -27,17 +27,13 @@ const clientDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_
 
 app
   .get('*', (req, res) => {
-    // Special handling for if the requested url is a component library build file
-    if (req.path.startsWith('/index.exh')) {
-      if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`))) {
-        res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
-        return
-      }
-
-      sendErrorResponse(req, res, notFound('Component library file not found.'))
+    // If file exists in build output dir, then serve it
+    if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`))) {
+      res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
+      return
     }
 
-    // If the client file exists, serve it
+    // If the site client file exists, then serve it
     if (fs.existsSync(path.resolve(clientDir, `./${req.path}`))) {
       res.sendFile(req.path, { root: clientDir })
       return

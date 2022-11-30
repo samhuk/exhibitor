@@ -1,3 +1,4 @@
 {
-  "include": ["./**/*.exh.ts"]
+  "include": ["./**/*.exh.ts"],
+  "rootStyle": "./styles.scss"
 }

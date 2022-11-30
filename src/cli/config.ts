@@ -1,5 +1,6 @@
 import merge from 'deepmerge'
 import * as fs from 'fs'
+import path from 'path'
 
 import { Config } from './types'
 
@@ -27,3 +28,11 @@ export const getConfig = (
     arrayMerge: (t, s) => ((s != null && s.length > 0) ? s : t),
   })
 }
+
+export const makePathRelativeToConfigDir = (p: string, configDir: string): string => (
+  // eslint-disable-next-line prefer-regex-literals
+  path.join(configDir, p).replace(new RegExp('\\\\', 'g'), '/')
+)
+
+export const makePathsRelativeToConfigDir = (paths: string[], configDir: string): string[] => paths
+  .map(p => makePathRelativeToConfigDir(p, configDir))

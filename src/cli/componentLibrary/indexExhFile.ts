@@ -36,6 +36,7 @@ export const buildIndexExhTsFile = createBuilder('component library', true, () =
 
 export const createIndexExhTsFile = async (
   configInclude: string[],
+  rootStylePath?: string,
 ) => {
   const includedFilePaths = await glob(configInclude)
 
@@ -46,17 +47,23 @@ export const createIndexExhTsFile = async (
     // E.g. exhibitor/lib/api/exhibit
     : `${NPM_PACKAGE_NAME}/lib/api/exhibit`
 
+  const _rootStylePath = rootStylePath != null
+    ? path.relative(BUILD_OUTPUT_ROOT_DIR, rootStylePath).replace(/\\/g, '/')
+    : null
+
   const text = [
     // E.g. import { exhibit } from '../../../node_modules/exhibitor' (in release)
     `import { __exhibits } from '${exhibitApiFunctionPath}'`,
+    // E.g. import '../myComponentLibraryDir/styles.scss'
+    _rootStylePath != null ? `import '${_rootStylePath}'` : null,
     // E.g. list of "export {} from '../myComponentLibraryDir/button.exh.ts'"
     includedFilePaths
       .map(_path => `export {} from '${path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')}'`)
       .join('\n'),
     'export default __exhibits',
-  ].join('\n\n')
+  ].filter(s => s != null).join('\n\n')
 
   fs.writeFileSync(bundleInputFilePath, text)
 
-  return text
+  return { includedFilePaths, text }
 }

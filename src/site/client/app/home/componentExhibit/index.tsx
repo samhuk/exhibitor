@@ -1,18 +1,21 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
+import { ComponentExhibit } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
 
 // TODO
 
-const Variant = (props: { renderFn: (props: any) => JSX.Element, variant: { name: string, props: any }, key: string|number }) => (
-  <div key={props.key} className="variant">
-    <div className="name">{props.variant.name}</div>
-    <div>{props.renderFn(props.variant.props)}</div>
-  </div>
-)
+const Variant = (props: { exhibit: ComponentExhibit, variant: { name: string, props: any }, id: string|number }) => {
+  return (
+    <div key={props.id} className="variant">
+      <div className="name">{props.variant.name}</div>
+      <div>{props.exhibit.renderFn(props.variant.props)}</div>
+    </div>
+  )
+}
 
-export const ComponentExhibit = () => {
+export const render = () => {
   const componentExhibits = useAppSelector(s => s.componentExhibits)
   const name = useParams().name
 
@@ -26,10 +29,12 @@ export const ComponentExhibit = () => {
 
   return (
     <div className="component-exhibit">
-      <Variant key="default" renderFn={componentExhibit.renderFn} variant={{ name: 'default', props: componentExhibit.defaultProps }} />
+      <Variant id="default" exhibit={componentExhibit} variant={{ name: 'default', props: componentExhibit.defaultProps }} />
       {componentExhibit.variants.map((variant, i) => (
-        <Variant key={i + 1} renderFn={componentExhibit.renderFn} variant={variant} />
+        <Variant id={i + 1} exhibit={componentExhibit} variant={variant} />
       ))}
     </div>
   )
 }
+
+export default render

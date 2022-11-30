@@ -23,3 +23,6 @@ export const SITE_SERVER_OUTDIR = './build/site/server' as const
 export const SITE_SERVER_OUTFILE = `${SITE_SERVER_OUTDIR}/index.js` as const
 
 export const SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH = '../client' as const
+
+export const META_DATA_FILE_NAME = 'metadata.json' as const
+export const META_DATA_FILE = `${BUILD_OUTPUT_ROOT_DIR}/${META_DATA_FILE_NAME}` as const

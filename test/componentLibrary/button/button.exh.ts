@@ -1,3 +1,5 @@
+import './button.scss'
+
 import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './button'
 
@@ -16,5 +18,26 @@ exhibit(Button, 'Button')
   .variant('green', p => ({
     ...p,
     color: ButtonColor.GREEN,
+  }))
+  .variant('yellow', p => ({
+    ...p,
+    color: ButtonColor.YELLOW,
+  }))
+  .variant('red', p => ({
+    ...p,
+    color: ButtonColor.RED,
+  }))
+  .variant('blue', p => ({
+    ...p,
+    color: ButtonColor.BLUE,
+  }))
+  .variant('large', p => ({
+    ...p,
+    size: ButtonSize.LARGE,
+  }))
+  .variant('with icon', p => ({
+    ...p,
+    iconName: 'paper-plane',
+    text: 'Send',
   }))
   .build()

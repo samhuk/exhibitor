@@ -1,22 +1,36 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
-import path from 'path'
+import * as fs from 'fs'
 
 import { printBuildResult } from '../../common/esbuilder'
+import { MetaData } from '../../common/metadata'
+import { META_DATA_FILE } from '../../common/paths'
 import { CustomBuildResult } from '../../common/types'
+import { makePathRelativeToConfigDir, makePathsRelativeToConfigDir } from '../config'
 import { Config } from '../types'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
+
+const createMetaDataFile = (
+  includedFilePaths: string[],
+) => {
+  const metaData: MetaData = {
+    includedFilePaths,
+  }
+  fs.writeFileSync(META_DATA_FILE, JSON.stringify(metaData, null, 2))
+}
 
 const rebuildIteration = async (
   buildResult: CustomBuildResult,
   includeGlobPatterns: string[],
+  rootStylePath?: string,
 ) => {
   console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
 
   const options = { verbose: false } // TODO: add to config
   try {
     const startTime = Date.now()
-    await createIndexExhTsFile(includeGlobPatterns)
+    const { includedFilePaths } = await createIndexExhTsFile(includeGlobPatterns, rootStylePath)
+    createMetaDataFile(includedFilePaths)
     const rebuildResult = await buildResult.buildResult.rebuild()
     console.log(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
     // If verbose, print build info on every rebuild
@@ -30,19 +44,6 @@ const rebuildIteration = async (
   }
 }
 
-const startRebuildWatch = (
-  watchedDirPatterns: string[],
-  includeGlobPatterns: string[],
-  buildResult: CustomBuildResult,
-  config: Config,
-) => {
-  watch(() => rebuildIteration(buildResult, includeGlobPatterns), watchedDirPatterns, 150, () => console.log('Watching for changes...'))
-}
-
-const makePathsRelativeToConfigDir = (paths: string[], configDir: string): string[] => paths
-  // eslint-disable-next-line prefer-regex-literals
-  .map(globPattern => path.join(configDir, globPattern).replace(new RegExp('\\\\', 'g'), '/'))
-
 let initialBuildWatcher: FSWatcher = null
 export const watchComponentLibrary = async (
   config: Config,
@@ -50,12 +51,15 @@ export const watchComponentLibrary = async (
 ) => {
   const includeGlobPatterns = makePathsRelativeToConfigDir(config.include, configDir)
   const watchGlobPatterns = makePathsRelativeToConfigDir(config.watch, configDir)
+  const rootStylePath = config.rootStyle != null ? makePathRelativeToConfigDir(config.rootStyle, configDir) : null
 
   try {
-    await createIndexExhTsFile(includeGlobPatterns)
+    const { includedFilePaths } = await createIndexExhTsFile(includeGlobPatterns, rootStylePath)
+    createMetaDataFile(includedFilePaths)
     const buildResult = await buildIndexExhTsFile()
     initialBuildWatcher?.close()
-    startRebuildWatch(watchGlobPatterns, includeGlobPatterns, buildResult, config)
+    const rebuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: '*.exh' })
+    watch(() => rebuildIteration(buildResult, includeGlobPatterns), rebuildWatcher, 150, () => console.log('Watching for changes...'))
   }
   catch (e) {
     console.log(e)

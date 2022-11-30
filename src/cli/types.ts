@@ -29,4 +29,5 @@ export type Config = {
     host?: string
   }
   verbose?: boolean
+  rootStyle?: string
 }
