@@ -15,17 +15,11 @@ export const start = (
   watchComponentLibrary(config, configDir)
 
   let npmDir: string
-  if (isDev) {
+  if (isDev)
     npmDir = './'
-  }
-  else {
-    try {
-      npmDir = require.resolve(NPM_PACKAGE_NAME)
-    }
-    catch {
-      npmDir = `./node_modules/${NPM_PACKAGE_NAME}`
-    }
-  }
+  else
+    npmDir = `./node_modules/${NPM_PACKAGE_NAME}`
+
   const serverJsPath = path.join(npmDir, isDev ? SITE_SERVER_OUTFILE : './lib/site/server/index.js').replace(/\\/g, '/')
   const env = {
     ...process.env,
