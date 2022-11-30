@@ -24,9 +24,9 @@ export const getConfig = (
   configFilePath: string = './exh.config.json',
 ) => {
   const configFromFile = fs.existsSync(configFilePath) ? readAndParseConfig(configFilePath) : null
-  return merge(DEFAULT_CONFIG, configFromFile, {
+  return configFromFile != null ? merge(DEFAULT_CONFIG, configFromFile, {
     arrayMerge: (t, s) => ((s != null && s.length > 0) ? s : t),
-  })
+  }) : DEFAULT_CONFIG
 }
 
 export const makePathRelativeToConfigDir = (p: string, configDir: string): string => (

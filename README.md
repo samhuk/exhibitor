@@ -23,6 +23,20 @@ Install:
 npm i -S exhibitor
 ```
 
+Have a standard React component:
+
+```tsx
+// src/button.tsx
+import './button.scss'
+
+export const render = (props: { onClick: ..., color: ... }) => {
+  ...
+  return <button>...</button>
+}
+
+export default render
+```
+
 Declare exhibitions of your components with the Javascript API:
 
 ```typescript
@@ -31,7 +45,7 @@ import exhibit from 'exhibitor'
 
 import Button from './button'
 
-exhibit('button', Button)
+exhibit(Button, 'Button')
   .events(p => ({
     onClick: p.onClick,
   }))
@@ -54,14 +68,34 @@ Using the CLI, view your exhibitions:
 npx exhibitor start
 ```
 
+Optionally define a configuration file for the `start` command:
+
+```json
+// exh.config.json
+{
+  "include": ["./src/**/*.exh.ts"],
+  "watch": ["./src/**/*"],
+  "rootStyle": "./src/styles/index.scss",
+  ...
+}
+```
+
+```
+npx exhibitor start -c ./exh.config.json
+```
+
+Navigate to http://localhost:4001 to see your component exhibitions:
+
+![](./img/img1.png)
+
 ## Major Features
 
 * Extremely fast
 * Simple
 * Sane defaults
-* e2e testing integration
 * Delightful Javascript API with Typescript-centric design for zero guesswork.
 * esbuild
+* e2e testing integration **[Planned]**
 
 ## Development
 
