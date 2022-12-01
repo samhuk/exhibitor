@@ -2,11 +2,12 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 
 import { ComponentExhibit } from '../../../../../api/exhibit/types'
+import Ternary from '../../../common/ternary'
 import { useAppSelector } from '../../../store'
 
 // TODO
 
-const Variant = (props: { exhibit: ComponentExhibit, variant: { name: string, props: any }, id: string|number }) => {
+const Variant = (props: { exhibit: ComponentExhibit, variant: { name: string, props?: any }, id: string|number }) => {
   return (
     <div key={props.id} className="variant">
       <div className="name">{props.variant.name}</div>
@@ -29,10 +30,18 @@ export const render = () => {
 
   return (
     <div className="component-exhibit">
-      <Variant id="default" exhibit={componentExhibit} variant={{ name: 'default', props: componentExhibit.defaultProps }} />
-      {componentExhibit.variants.map((variant, i) => (
-        <Variant id={i + 1} exhibit={componentExhibit} variant={variant} />
-      ))}
+      {componentExhibit.hasProps
+        ? (
+          <>
+            <Ternary bool={componentExhibit.defaultProps != null} t={<Variant id="default" exhibit={componentExhibit} variant={{ name: 'default', props: componentExhibit.defaultProps }} />} />
+            {componentExhibit.variants.map((variant, i) => (
+              <Variant id={i + 1} exhibit={componentExhibit} variant={variant} />
+            ))}
+          </>
+        )
+        : (
+          <Variant id="default" exhibit={componentExhibit} variant={{ name: 'default' }} />
+        )}
     </div>
   )
 }

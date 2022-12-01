@@ -1,4 +1,4 @@
-import { IsTrueAndFalse } from '@samhuk/type-helpers/dist/type-helpers/types'
+import { BoolDependant, IsTrueAndFalse } from '@samhuk/type-helpers/dist/type-helpers/types'
 
 export type ReactComponent<TProps extends any = any> = ((props: TProps) => JSX.Element) | (() => JSX.Element)
 
@@ -44,10 +44,10 @@ type _ComponentExhibitBuilder<
   & IncludeIfTrue<THasProps, {
     variant: (
       name: string,
-      props: TProps | ((defaults: TDefaultProps) => TProps)
+      props: THasDefinedDefaultProps extends true ? (TProps | ((defaults: TDefaultProps) => TProps)) : TProps
     ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps>
   }> & {
-  build: () => ComponentExhibit<TProps, TDefaultProps>
+  build: () => ComponentExhibit<THasProps, TProps, TDefaultProps>
 }
 
 export type ComponentExhibitBuilder<
@@ -64,12 +64,21 @@ export type ComponentExhibitBuilder<
 >
 
 export type ComponentExhibit<
+  THasProps extends boolean = boolean,
   TProps extends any = any,
   TDefaultProps extends TProps = TProps,
 > = {
   name: string
   renderFn: ReactComponent<TProps>
-  defaultProps: TDefaultProps
-  eventPropsSelector: EventsSelector<TProps>
-  variants: { name: string, props: TProps }[]
-}
+} & BoolDependant<
+  {
+    true: {
+      defaultProps?: TDefaultProps
+      variants: { name: string, props: TProps }[]
+      eventPropsSelector: EventsSelector<TProps>
+    }
+    false: { }
+  },
+  THasProps,
+  'hasProps'
+>

@@ -15,25 +15,28 @@ export const exhibit = <
   let defaultProps: any = null
   const variants: any[] = []
 
+  const hasProps = renderFn.length > 0
+
   const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, undefined> = {
-    events: _eventPropsSelector => {
+    events: hasProps ? (_eventPropsSelector => {
       eventPropsSelector = _eventPropsSelector
       delete (componentExhibitBuilder as any).events
       return componentExhibitBuilder
-    },
-    defaults: _defaultProps => {
+    }) : undefined,
+    defaults: hasProps ? (_defaultProps => {
       defaultProps = _defaultProps
       delete (componentExhibitBuilder as any).defaults
       return componentExhibitBuilder
-    },
-    variant: (_name, props) => {
+    }) : undefined,
+    variant: hasProps ? ((_name, props) => {
       const _props = typeof props === 'function' ? (props as Function)(defaultProps) : props
       variants.push({ name: _name, props: _props })
       return componentExhibitBuilder
-    },
+    }) : undefined,
     build: () => {
       const componentExhibit: ComponentExhibit = {
         name,
+        hasProps,
         renderFn,
         defaultProps,
         eventPropsSelector,

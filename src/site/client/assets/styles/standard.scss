@@ -52,3 +52,10 @@ body {
 * {
   box-sizing: border-box;
 }
+
+// Default focus styling
+*:focus-visible {
+  transition: none;
+  box-shadow: 0 0 0 1px $link-color inset;
+  outline: none;
+}
