@@ -21,12 +21,12 @@ export const render = () => {
   const name = useParams().name
 
   if (!componentExhibits.ready)
-    return <div>Loading component exhibits...</div>
+    return <div className="component-exhibit loading">Loading component exhibits...</div>
 
   const componentExhibit = exh.default.find(e => e.name === name)
 
   if (componentExhibit == null)
-    return <div>Component exhibit does not exist.</div>
+    return <div className="component-exhibit not-found">Component exhibit for "{name}" does not exist.</div>
 
   return (
     <div className="component-exhibit">

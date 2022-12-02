@@ -1,6 +1,7 @@
 // This is used for jest unit tests to make breakpoints not move.
 // Source: https://stackoverflow.com/questions/52191409
 {
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/babelrc.json",
   "sourceMap": "inline",
   "retainLines": true
 }

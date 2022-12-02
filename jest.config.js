@@ -5,6 +5,9 @@ module.exports = {
   transformIgnorePatterns: [
     'node_modules\\(?!(@samhuk)\\)',
   ],
+  moduleNameMapper: {
+    "^.+\\.(css|less|scss)$": "babel-jest"
+  },
   rootDir: './build-test',
   transform: {
     '\\.[jt]sx?$': ['babel-jest', { configFile: './jest.babelrc' }],

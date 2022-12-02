@@ -5,6 +5,7 @@
     "./**/*.spec.ts"
   ],
   "compilerOptions": {
+    "jsx": "react",
     "module": "CommonJS",
     "declaration": false,
     "sourceMap": true,

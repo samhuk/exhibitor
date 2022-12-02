@@ -7,3 +7,4 @@
 /dist/npm/exhibitor/lib
 /dist/npm/exhibitor/node_modules
 /dist/npm/exhibitor/package-lock.json
+/build-test
