@@ -34,7 +34,7 @@ export const render = () => {
         ? (
           <>
             <Ternary bool={componentExhibit.defaultProps != null} t={<Variant id="default" exhibit={componentExhibit} variant={{ name: 'default', props: componentExhibit.defaultProps }} />} />
-            {componentExhibit.variants.map((variant, i) => (
+            {Object.values(componentExhibit.variants).map((variant, i) => (
               <Variant id={i + 1} exhibit={componentExhibit} variant={variant} />
             ))}
           </>

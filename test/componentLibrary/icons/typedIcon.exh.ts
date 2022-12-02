@@ -3,7 +3,7 @@ import './typedIcon.scss'
 import exhibit from '../../../src/api'
 import TypedIcon, { IconType } from './typedIcon'
 
-exhibit(TypedIcon, 'TypedIcon')
+exhibit(TypedIcon, 'TypedIcon', { group: 'GA' })
   .variant('Success', {
     type: IconType.SUCCESS,
   })

@@ -25,14 +25,14 @@ const nonRootExhibit = (
       delete (nonRootExhibit as any).defaults
       return _nonRootExhibit
     },
-    variant: (_name, props) => {
+    variant: (variantName, props) => {
       const _props = typeof props === 'function' ? (props as Function)(defaultProps) : props
-      variantGroup.variants.push({ name: _name, props: _props })
+      variantGroup.variants[variantName] = { name: variantName, props: _props }
       return _nonRootExhibit
     },
     group: (groupName, fn) => {
-      const newNumVariantGroups = variantGroup.variantGroups.push({ name: groupName, variants: [], variantGroups: [] })
-      return fn(nonRootExhibit(_defaultProps, variantGroup.variantGroups[newNumVariantGroups - 1])) as any
+      variantGroup.variantGroups[groupName] = { name: groupName, variants: {}, variantGroups: {} }
+      return fn(nonRootExhibit(_defaultProps, variantGroup.variantGroups[groupName])) as any
     },
   }
 
@@ -48,11 +48,11 @@ export const exhibit = <
   ): ComponentExhibitBuilder<TReactComponent, false, false, undefined> => {
   let eventPropsSelector: any = null
   let defaultProps: any = null
-  const variants: Variant[] = []
+  const variants: { [variantName: string]: Variant } = {}
 
   const hasProps = renderFn.length > 0
 
-  const variantGroups: VariantGroup[] = []
+  const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
   const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, undefined> = {
     events: hasProps ? (_eventPropsSelector => {
@@ -65,15 +65,14 @@ export const exhibit = <
       delete (componentExhibitBuilder as any).defaults
       return componentExhibitBuilder
     }) : undefined,
-    variant: hasProps ? ((_name, props) => {
+    variant: hasProps ? ((variantName, props) => {
       const _props = typeof props === 'function' ? (props as Function)(defaultProps) : props
-      variants.push({ name: _name, props: _props })
+      variants[variantName] = { name: variantName, props: _props }
       return componentExhibitBuilder
     }) : undefined,
     group: hasProps ? ((groupName, fn) => {
-      const newNumVariantGroups = variantGroups.push({ name: groupName, variants: [], variantGroups: [] })
-      // TODO
-      fn(nonRootExhibit(defaultProps, variantGroups[newNumVariantGroups - 1]))
+      variantGroups[groupName] = { name: groupName, variants: {}, variantGroups: {} }
+      fn(nonRootExhibit(defaultProps, variantGroups[groupName]))
       return componentExhibitBuilder
     }) : undefined,
     build: () => {

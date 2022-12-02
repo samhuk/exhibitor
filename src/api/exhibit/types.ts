@@ -107,8 +107,8 @@ export type Variant<TProps extends any = any> = {
 
 export type VariantGroup<TProps extends any = any> = {
   name: string
-  variants: Variant<TProps>[]
-  variantGroups: VariantGroup<TProps>[]
+  variants: { [variantName: string]: Variant<TProps> }
+  variantGroups: { [variantGroupName: string]: VariantGroup<TProps> }
 }
 
 export type ComponentExhibit<
@@ -123,10 +123,8 @@ export type ComponentExhibit<
   {
     true: {
       defaultProps?: TDefaultProps
-      variants: Variant<TProps>[]
-      variantGroups: VariantGroup<TProps>[]
       eventPropsSelector: EventsSelector<TProps>
-    }
+    } & VariantGroup<TProps>
     false: { }
   },
   THasProps,

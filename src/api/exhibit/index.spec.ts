@@ -58,46 +58,12 @@ describe('exhibit', () => {
       hasProps: true,
       name: 'Toast',
       renderFn: Toast,
-      variantGroups: [
-        {
-          name: 'W/o close button',
-          variantGroups: [],
-          variants: [
-            {
-              name: 'Success',
-              props: {
-                text: 'That completed successfully!',
-                type: 'success',
-              },
-            },
-            {
-              name: 'Warn',
-              props: {
-                text: 'That completed but something bad occured!',
-                type: 'warn',
-              },
-            },
-            {
-              name: 'Error',
-              props: {
-                text: "That didn't complete successfully.",
-                type: 'error',
-              },
-            },
-            {
-              name: 'Info',
-              props: {
-                text: 'You can do this a better way.',
-                type: 'info',
-              },
-            },
-          ],
-        },
-        {
+      variantGroups: {
+        'Variable Text Lengths': {
           name: 'Variable Text Lengths',
-          variantGroups: [],
-          variants: [
-            {
+          variantGroups: {},
+          variants: {
+            'Long text': {
               name: 'Long text',
               props: {
                 // eslint-disable-next-line max-len
@@ -105,18 +71,52 @@ describe('exhibit', () => {
                 type: 'info',
               },
             },
-            {
+            'Short text': {
               name: 'Short text',
               props: {
                 text: 'No.',
                 type: 'info',
               },
             },
-          ],
+          },
         },
-      ],
-      variants: [
-        {
+        'W/o close button': {
+          name: 'W/o close button',
+          variantGroups: {},
+          variants: {
+            Error: {
+              name: 'Error',
+              props: {
+                text: "That didn't complete successfully.",
+                type: 'error',
+              },
+            },
+            Info: {
+              name: 'Info',
+              props: {
+                text: 'You can do this a better way.',
+                type: 'info',
+              },
+            },
+            Success: {
+              name: 'Success',
+              props: {
+                text: 'That completed successfully!',
+                type: 'success',
+              },
+            },
+            Warn: {
+              name: 'Warn',
+              props: {
+                text: 'That completed but something bad occured!',
+                type: 'warn',
+              },
+            },
+          },
+        },
+      },
+      variants: {
+        'W/ close button': {
           name: 'W/ close button',
           props: {
             onCloseButtonClick,
@@ -125,7 +125,7 @@ describe('exhibit', () => {
             type: 'info',
           },
         },
-      ],
+      },
     })
   })
 })

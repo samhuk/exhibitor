@@ -9,10 +9,39 @@
     min-width: 150px;
     border-right: $border;
 
+    .group {
+      margin-bottom: 10px;
+
+      .name {
+        padding: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        border-bottom: $border;
+      }
+
+      .exhibits {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+      }
+    }
+
+    .ungrouped {
+      .exhibits {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
     a {
-      padding: 5px;
+      padding: 3px 5px;
+      margin-bottom: 2px;
+      width: 100%;
       color: $link-color;
       text-decoration: none;
+      border-radius: $border-radius;
+      transition: background-color 0.15s;
 
       &:hover {
         background-color: #ddd;
@@ -20,6 +49,7 @@
 
       &.active {
         background-color: #ddd;
+        font-weight: bold; // TODO: use workaround to not make boldness cause shift
       }
     }
   }

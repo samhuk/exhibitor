@@ -2,7 +2,7 @@ import exhibit from '../../../src/api'
 import { ButtonColor } from '../button/button'
 import IconButton from './iconButton'
 
-exhibit(IconButton, 'IconButton')
+exhibit(IconButton, 'IconButton', { group: 'GA' })
   .defaults({
     onClick: () => undefined,
     iconName: 'user',

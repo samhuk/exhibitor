@@ -5,6 +5,7 @@ exhibit(Toast, 'Toast', { group: 'Design Phase' })
   .defaults({
     text: '',
     type: ToastType.INFO,
+    showCloseButton: false,
   })
   .group('W/o close button', ex => ex
     .variant('Success', {
