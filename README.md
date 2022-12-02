@@ -28,12 +28,10 @@ Have a standard React component:
 ```tsx
 // src/button.tsx
 import './button.scss'
-
 export const render = (props: { onClick: ..., color: ... }) => {
   ...
   return <button>...</button>
 }
-
 export default render
 ```
 
@@ -42,10 +40,9 @@ Declare exhibitions of your components with the Javascript API:
 ```typescript
 // src/button.exh.ts
 import exhibit from 'exhibitor'
-
 import Button from './button'
 
-exhibit(Button, 'Button')
+exhibit(Button, 'Button', { group: 'Final Review' })
   .events(p => ({
     onClick: p.onClick,
   }))
@@ -70,7 +67,7 @@ npx exhibitor start
 
 Optionally define a configuration file for the `start` command:
 
-```json
+```jsonc
 // exh.config.json
 {
   "include": ["./src/**/*.exh.ts"],
