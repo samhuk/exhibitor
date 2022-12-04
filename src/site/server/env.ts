@@ -1,13 +1,13 @@
 export type Env = {
   /**
    * The port the server is hosted on.
-   * 
+   *
    * @default 4001
    */
   port: number
   /**
    * The host the server is hosted on.
-   * 
+   *
    * @default 'localhost'
    */
   host: string

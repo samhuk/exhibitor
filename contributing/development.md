@@ -10,25 +10,33 @@ You can get Node.js [here](https://nodejs.org/en/). If you are using Chocolatey,
 
 It runs on MacOS, Windows, and Linux environments.
 
+One exception is **release builds**. This uses `make`, which is not natively available on Windows. It is recommended to use WSL.
+
 It runs on many versions of Node.js, tested back to version 14.x.
+
+## Development Deployment
+
+For a development deployment, run `npm start`.
+
+This starts a hot-reloading build of the site client, server, and test component library (within `/test/componentLibrary`), and serves the client and server by default at http://localhost:4001.
 
 ## Structure
 
 This section details the basic structure of the repository.
 
-This repository is split into three main parts - the **Javascript API**, the **CLI**, and the **Site**.
+This repository is split into three main parts - the **API**, the **CLI**, and the **Site**.
 
-### Javascript API
+### API
 
-The Typescript for the Javascript API is at `/src/api`.
+The Typescript for the API is at `/src/api`.
 
-This defines what the use will consume in their code in order to use the package.
+This is the Javascript API that user consume in their code in order to use the package.
 
 ### CLI
 
 The Typescript for the CLI is at `/src/cli`.
 
-This is the Command Line Interface application that the user runs to do things like start the exhibitor site.
+This is the Command Line Interface application that the user runs to do things like start the Site.
 
 The CLI uses Node.js.
 
@@ -58,25 +66,17 @@ The common directory holds all of the Typescript code that is shared by the clie
 
 ## Linting
 
-ESLint is used for Typescript linting. To lint the Typescript code, run `npm run lint`. To only lint for errors (excluding warnings), run `npm run lint-errors-only`.
+ESLint is used for Typescript linting. To lint the Typescript code, run `make lint`. To only lint for errors (excluding warnings), run `make lint-errors-only`.
 
 ## Building
 
-To build all three parts of the package, run `npm run build`. This will output many build artifacts to `/build`, separated by package area, i.e. `/build/api`, `/build/cli`, etc.
-
-## Development Deployment
-
-For a development deployment, run `npm start`.
-
-This starts a hot-reloading build of the site client, server, and test component library (within `/test/componentLibrary`), and serves the client by default at http://localhost:4001.
+To build all three parts of the package, run `make build-all`. This will output build artifacts to `/build`, separated by package area, i.e. `/build/api`, `/build/cli`, `/build/site/client`, `/build/site/server`, etc.
 
 ## Releasing
 
 From the repo root dir:
 
-Run `npm run build`
-
-Run `sh ./scripts/dist.sh` (if bash-like is available), or `"scripts/dist.bat"` (if on Windows)
+Run `make prepublish`
 
 `/dist/npm/exhibitor/lib` will now be populated and is ready for puiblishing to npm.
 

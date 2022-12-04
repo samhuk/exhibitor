@@ -7,7 +7,6 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './app'
 import store from './store'
 
-
 const container = document.getElementById('exh-root')
 
 const root = createRoot(container)

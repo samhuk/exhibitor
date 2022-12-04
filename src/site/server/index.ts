@@ -53,4 +53,4 @@ const server = app.listen(env.port, env.host, () => {
   console.log(`Exhibitor active. Access via ${url}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
 })
 
-server.keepAliveTimeout = 10000 * 1000;
+server.keepAliveTimeout = 10000 * 1000

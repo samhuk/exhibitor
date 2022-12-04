@@ -7,14 +7,12 @@ import { useAppSelector } from '../../../store'
 
 // TODO
 
-const Variant = (props: { exhibit: ComponentExhibit, variant: { name: string, props?: any }, id: string|number }) => {
-  return (
-    <div key={props.id} className="variant">
-      <div className="name">{props.variant.name}</div>
-      <div>{props.exhibit.renderFn(props.variant.props)}</div>
-    </div>
-  )
-}
+const Variant = (props: { exhibit: ComponentExhibit, variant: { name: string, props?: any }, id: string|number }) => (
+  <div key={props.id} className="variant">
+    <div className="name">{props.variant.name}</div>
+    <div>{props.exhibit.renderFn(props.variant.props)}</div>
+  </div>
+)
 
 export const render = () => {
   const componentExhibits = useAppSelector(s => s.componentExhibits)
@@ -26,14 +24,23 @@ export const render = () => {
   const componentExhibit = exh.default.find(e => e.name === name)
 
   if (componentExhibit == null)
-    return <div className="component-exhibit not-found">Component exhibit for "{name}" does not exist.</div>
+    return <div className="component-exhibit not-found">Component exhibit for &quot;{name}&quot; does not exist.</div>
 
   return (
     <div className="component-exhibit">
       {componentExhibit.hasProps
         ? (
           <>
-            <Ternary bool={componentExhibit.defaultProps != null} t={<Variant id="default" exhibit={componentExhibit} variant={{ name: 'default', props: componentExhibit.defaultProps }} />} />
+            <Ternary
+              bool={componentExhibit.defaultProps != null}
+              t={(
+                <Variant
+                  id="default"
+                  exhibit={componentExhibit}
+                  variant={{ name: 'default', props: componentExhibit.defaultProps }}
+                />
+              )}
+            />
             {Object.values(componentExhibit.variants).map((variant, i) => (
               <Variant id={i + 1} exhibit={componentExhibit} variant={variant} />
             ))}

@@ -6,7 +6,6 @@
     "./**/*"
   ],
   "compilerOptions": {
-    "jsx": "react",
-    "types": ["./types.d.ts"]
+    "jsx": "react"
   }
 }
