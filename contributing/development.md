@@ -80,6 +80,10 @@ Run `make prepublish`
 
 `/dist/npm/exhibitor/lib` will now be populated and is ready for puiblishing to npm.
 
+Run `make npm-publish-dry` for a dry-run test of the npm publish.
+
+Run `make npm-publish` to publish to npm. Be sure the increment the version.
+
 ## Debugging
 
 TODO. Tentative content:

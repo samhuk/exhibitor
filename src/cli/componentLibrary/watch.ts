@@ -59,7 +59,7 @@ export const watchComponentLibrary = async (
     const buildResult = await buildIndexExhTsFile()
     initialBuildWatcher?.close()
     const rebuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: '*.exh' })
-    watch(() => rebuildIteration(buildResult, includeGlobPatterns), rebuildWatcher, 150, () => console.log('Watching for changes...'))
+    watch(() => rebuildIteration(buildResult, includeGlobPatterns, rootStylePath), rebuildWatcher, 150, () => console.log('Watching for changes...'))
   }
   catch (e) {
     console.log(e)
