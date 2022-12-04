@@ -174,6 +174,12 @@ prepublish:
 		build-all \
 		populate-dist
 
+npm-publish-dry:
+	npm publish dist/npm/exhibitor --dry-run
+
+npm-publish:
+	npm publish dist/npm/exhibitor
+
 # -- Test component library watch [dev only] TODO: concurrently needs to be used here.
 
 build-watch-component-library:
