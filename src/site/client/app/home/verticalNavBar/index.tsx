@@ -137,7 +137,7 @@ const ExhibitGroupNameEl = (props: {
   <button type="button" className="name-wrapper" onClick={() => props.onClick()}>
     <div className="name">
       <i className={`fas ${props.isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
-      {props.groupName}
+      <span className="text">{props.groupName}</span>
     </div>
   </button>
 )

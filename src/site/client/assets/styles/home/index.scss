@@ -54,6 +54,12 @@ $hover-color: #eeeeee;
             background-color: $hover-color;
           }
 
+          .text {
+            letter-spacing: 2px;
+            color: #aaa;
+            font-style: italic;
+          }
+
           i {
             width: 13px;
           }
