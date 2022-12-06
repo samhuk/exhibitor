@@ -24,44 +24,80 @@ const VariantGroupEl = (props: {
   path?: string
   key: string|number
   isTopLevel?: boolean
-}) => (
-  <div key={props.key} className="variant-group">
-    <button type="button" className="name">
-      <i className="fas fa-angle-down" />
-      <div className="text">{props.variantGroup.name}</div>
-    </button>
-    <div className="variants">
-      <Ternary
-        bool={(props.isTopLevel ?? true) && (props.exhibit.showDefaultVariant ?? true) && props.exhibit.defaultProps != null}
-        t={(
-          <VariantEl path={props.path} variant={{ name: 'Default', props: props.exhibit.defaultProps }} key="default" />
-        )}
-      />
-      {Object.values(props.variantGroup.variants).map((variant, i) => (
-        <VariantEl path={props.path} variant={variant} key={i + 1} />
-      ))}
+  expandedPaths: string[]
+  onGroupCollapse: (path: string) => void
+  onGroupExpand: (path: string) => void
+}) => {
+  const initialIsExpanded = props.expandedPaths.indexOf(props.path) !== -1
+  const [isExpanded, setIsExpanded] = useState(initialIsExpanded)
+  const onGroupNameClick = () => {
+    if (isExpanded)
+      props.onGroupCollapse(props.path)
+    else
+      props.onGroupExpand(props.path)
+
+    setIsExpanded(!isExpanded)
+  }
+
+  return (
+    <div key={props.key} className="variant-group">
+      <button type="button" className="name" onClick={() => onGroupNameClick()}>
+        <i className={`fas ${isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
+        <div className="text">{props.variantGroup.name}</div>
+      </button>
+      {isExpanded
+        ? (
+          <>
+            <div className="variants">
+              <Ternary
+                bool={(props.isTopLevel ?? true) && (props.exhibit.showDefaultVariant ?? true) && props.exhibit.defaultProps != null}
+                t={(
+                  <VariantEl path={props.path} variant={{ name: 'Default', props: props.exhibit.defaultProps }} key="default" />
+                )}
+              />
+              {Object.values(props.variantGroup.variants).map((variant, i) => (
+                <VariantEl path={props.path} variant={variant} key={i + 1} />
+              ))}
+            </div>
+            <div className="variant-groups">
+              {Object.values(props.variantGroup.variantGroups).map((variantGroup, i) => (
+                <VariantGroupEl
+                  key={i + 1}
+                  exhibit={props.exhibit}
+                  variantGroup={variantGroup}
+                  path={props.path != null ? `${props.path}/${encodeURIComponent(variantGroup.name)}` : encodeURIComponent(variantGroup.name)}
+                  isTopLevel={false}
+                  expandedPaths={props.expandedPaths}
+                  onGroupCollapse={props.onGroupCollapse}
+                  onGroupExpand={props.onGroupExpand}
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
     </div>
-    <div className="variant-groups">
-      {Object.values(props.variantGroup.variantGroups).map((variantGroup, i) => (
-        <VariantGroupEl
-          key={i + 1}
-          exhibit={props.exhibit}
-          variantGroup={variantGroup}
-          path={props.path != null ? `${props.path}/${encodeURIComponent(variantGroup.name)}` : encodeURIComponent(variantGroup.name)}
-          isTopLevel={false}
-        />
-      ))}
-    </div>
-  </div>
-)
+  )
+}
 
 const ExhibitEl = (props: {
   exhibit: ComponentExhibit
   key: string | number
+  expandedPaths: string[]
+  onGroupCollapse: (path: string) => void
+  onGroupExpand: (path: string) => void
 }) => (
   props.exhibit.hasProps
-    ? <VariantGroupEl exhibit={props.exhibit} variantGroup={props.exhibit} path={props.exhibit.name} key={props.key} />
-    : <VariantEl path="" variant={{ name: props.exhibit.name, props: undefined }} key="default" />
+    ? (
+      <VariantGroupEl
+        exhibit={props.exhibit}
+        variantGroup={props.exhibit}
+        path={props.exhibit.name}
+        key={props.key}
+        expandedPaths={props.expandedPaths}
+        onGroupCollapse={props.onGroupCollapse}
+        onGroupExpand={props.onGroupExpand}
+      />
+    ) : <VariantEl path="" variant={{ name: props.exhibit.name, props: undefined }} key="default" />
 )
 
 const determineExhibitGroupingInfo = () => {
@@ -88,15 +124,37 @@ const determineExhibitGroupingInfo = () => {
   }
 }
 
+const ExhibitGroupNameEl = (props: {
+  groupName: string
+  isExpanded: boolean
+  onClick: () => void
+}) => (
+  <button type="button" className="name-wrapper" onClick={() => props.onClick()}>
+    <div className="name">
+      <i className={`fas ${props.isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
+      {props.groupName}
+    </div>
+  </button>
+)
+
 export const render = () => {
   const state = useAppSelector(s => s.componentExhibits)
   const [expandedExhibitGroupsState, setExpandedExhibitGroupsState] = useState<string[]>([])
+  const [expandedPaths, setExpandedPaths] = useState<string[]>([])
 
   const onGroupNameClick = (groupName: string) => {
     if (expandedExhibitGroupsState.indexOf(groupName) === -1)
       setExpandedExhibitGroupsState(expandedExhibitGroupsState.concat(groupName))
     else
       setExpandedExhibitGroupsState(expandedExhibitGroupsState.filter(n => n !== groupName))
+  }
+
+  const onVariantGroupExpand = (path: string) => {
+    setExpandedPaths(expandedPaths.concat(path))
+  }
+
+  const onVariantGroupCollapse = (path: string) => {
+    setExpandedPaths(expandedPaths.filter(p => p !== path))
   }
 
   if (state.ready) {
@@ -108,17 +166,17 @@ export const render = () => {
           const isExpanded = expandedExhibitGroupsState.indexOf(groupName) !== -1
           return (
             <div className={`group ${isExpanded ? 'expanded' : 'collapsed'}`}>
-              <button type="button" className="name-wrapper" onClick={() => onGroupNameClick(groupName)}>
-                <div className="name">
-                  <i className={`fas ${isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
-                  {groupName}
-                </div>
-              </button>
+              <ExhibitGroupNameEl groupName={groupName} isExpanded={isExpanded} onClick={() => onGroupNameClick(groupName)} />
               {isExpanded
                 ? (
                   <div className="exhibits">
                     {exhibitGroupingInfo.groupNameToExhibits[groupName].map((exhibit, i) => (
-                      <ExhibitEl exhibit={exhibit} key={i + 1} />
+                      <ExhibitEl
+                        exhibit={exhibit} key={i + 1}
+                        expandedPaths={expandedPaths}
+                        onGroupCollapse={n => onVariantGroupCollapse(n)}
+                        onGroupExpand={n => onVariantGroupExpand(n)}
+                      />
                     ))}
                   </div>
                 ) : null}
@@ -128,7 +186,12 @@ export const render = () => {
         <div className="ungrouped">
           <div className="exhibits">
             {exhibitGroupingInfo.ungroupedExhibits.map((exhibit, i) => (
-              <ExhibitEl exhibit={exhibit} key={i + 1} />
+              <ExhibitEl
+                exhibit={exhibit} key={i + 1}
+                expandedPaths={expandedPaths}
+                onGroupCollapse={n => onVariantGroupCollapse(n)}
+                onGroupExpand={n => onVariantGroupExpand(n)}
+              />
             ))}
           </div>
         </div>

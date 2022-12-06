@@ -55,7 +55,7 @@ $hover-color: #eeeeee;
           }
 
           i {
-            margin-right: 5px;
+            width: 13px;
           }
         }
       }
@@ -91,7 +91,7 @@ $hover-color: #eeeeee;
             }
             
             i {
-              margin-right: 4px;
+              width: 13px;
             }
 
             .text {
@@ -107,14 +107,6 @@ $hover-color: #eeeeee;
             >a {
               margin-left: -$variant-x-padding;
             }
-          }
-        }
-      }
-
-      &.collapsed {
-        >.name-wrapper {
-          i {
-            margin-right: 9px;
           }
         }
       }
