@@ -11,6 +11,8 @@
 
 **exhibitor is in early alpha. Current state is not necessarily reflective of eventual release state. Production use is not advised.**
 
+![](./img/img1.png)
+
 ## Overview
 
 exhibitor is an extremely fast React component workshop with an easy-to-use Javascript API and Website.
@@ -81,9 +83,7 @@ Optionally define a configuration file for the `start` command:
 npx exhibitor start -c ./exh.config.json
 ```
 
-Navigate to http://localhost:4001 to see your component exhibitions:
-
-![](./img/img1.png)
+Navigate to http://localhost:4001 to see your component exhibitions.
 
 ## Major Features
 
