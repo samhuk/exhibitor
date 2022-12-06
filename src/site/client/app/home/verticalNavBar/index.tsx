@@ -6,6 +6,11 @@ import Ternary from '../../../common/ternary'
 import { useAppSelector } from '../../../store'
 import { LoadingState } from '../../../store/types'
 
+/* This is early PoC code for the vertical nav side bar. It's my first time making one
+ * with React so it's not in a high-quality state with concerns separated and such at the moment.
+ * TODO: Improve this. See note above.
+ */
+
 const VariantEl = (
   props: {
     path: string
@@ -137,24 +142,68 @@ const ExhibitGroupNameEl = (props: {
   </button>
 )
 
+type NavBarState = {
+  expandedExhibitGroups: string[]
+  expandedPaths: string[]
+}
+
+const saveNavBarState = (state: NavBarState) => {
+  const date = new Date().setFullYear(new Date().getFullYear() + 1)
+  document.cookie = `navbar=${JSON.stringify(state)}; expires=${date}; path=/`
+}
+
+const restoreNavBarState = (): NavBarState => {
+  const rawValue = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('navbar='))
+    ?.split('=')[1]
+  if (rawValue == null)
+    return { expandedExhibitGroups: [], expandedPaths: [] }
+  try {
+    const parsed = JSON.parse(rawValue) as NavBarState
+    return {
+      expandedExhibitGroups: parsed.expandedExhibitGroups ?? [],
+      expandedPaths: parsed.expandedPaths ?? [],
+    }
+  }
+  catch {
+    return { expandedExhibitGroups: [], expandedPaths: [] }
+  }
+}
+
 export const render = () => {
   const state = useAppSelector(s => s.componentExhibits)
-  const [expandedExhibitGroupsState, setExpandedExhibitGroupsState] = useState<string[]>([])
-  const [expandedPaths, setExpandedPaths] = useState<string[]>([])
+  const initialState = restoreNavBarState()
+  const [expandedExhibitGroups, setExpandedExhibitGroups] = useState<string[]>(initialState.expandedExhibitGroups)
+  const [expandedPaths, setExpandedPaths] = useState<string[]>(initialState.expandedPaths)
 
   const onGroupNameClick = (groupName: string) => {
-    if (expandedExhibitGroupsState.indexOf(groupName) === -1)
-      setExpandedExhibitGroupsState(expandedExhibitGroupsState.concat(groupName))
-    else
-      setExpandedExhibitGroupsState(expandedExhibitGroupsState.filter(n => n !== groupName))
+    const newExpandedExhibitGroups = expandedExhibitGroups.indexOf(groupName) === -1
+      ? expandedExhibitGroups.concat(groupName)
+      : expandedExhibitGroups.filter(n => n !== groupName)
+    setExpandedExhibitGroups(newExpandedExhibitGroups)
+    saveNavBarState({
+      expandedExhibitGroups: newExpandedExhibitGroups,
+      expandedPaths,
+    })
   }
 
   const onVariantGroupExpand = (path: string) => {
+    const newExpandedPaths = expandedPaths.concat(path)
     setExpandedPaths(expandedPaths.concat(path))
+    saveNavBarState({
+      expandedExhibitGroups,
+      expandedPaths: newExpandedPaths,
+    })
   }
 
   const onVariantGroupCollapse = (path: string) => {
-    setExpandedPaths(expandedPaths.filter(p => p !== path))
+    const newExpandedPaths = expandedPaths.filter(p => p !== path)
+    setExpandedPaths(newExpandedPaths)
+    saveNavBarState({
+      expandedExhibitGroups,
+      expandedPaths: newExpandedPaths,
+    })
   }
 
   if (state.ready) {
@@ -163,7 +212,7 @@ export const render = () => {
     return (
       <div className="vertical-nav-bar">
         {exhibitGroupingInfo.groupNames.map(groupName => {
-          const isExpanded = expandedExhibitGroupsState.indexOf(groupName) !== -1
+          const isExpanded = expandedExhibitGroups.indexOf(groupName) !== -1
           return (
             <div className={`group ${isExpanded ? 'expanded' : 'collapsed'}`}>
               <ExhibitGroupNameEl groupName={groupName} isExpanded={isExpanded} onClick={() => onGroupNameClick(groupName)} />
