@@ -3,7 +3,7 @@ import './button.scss'
 import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './button'
 
-exhibit(Button, 'Button', { group: 'Final Review' })
+exhibit(Button, 'Button')
   .events(p => ({
     onClick: p.onClick,
   }))

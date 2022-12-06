@@ -123,6 +123,10 @@ export type ComponentExhibit<
   {
     true: {
       defaultProps?: TDefaultProps
+      /**
+       * @default true
+       */
+      showDefaultVariant?: boolean
       eventPropsSelector: EventsSelector<TProps>
     } & VariantGroup<TProps>
     false: { }

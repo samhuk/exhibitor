@@ -12,7 +12,7 @@ export const App = () => (
     <Header />
     <Routes>
       <Route path="" element={<Home />}>
-        <Route path=":name" element={<ComponentExhibit />} />
+        <Route path="*" element={<ComponentExhibit />} />
       </Route>
     </Routes>
   </div>

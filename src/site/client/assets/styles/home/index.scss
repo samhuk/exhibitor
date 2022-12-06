@@ -1,30 +1,128 @@
+$indentation: 8px;
+$variant-x-padding: 5px;
+$row-y-sep: 0px;
+$active-color: #ddd;
+$hover-color: #eeeeee;
+
+.row-button {
+  background-color: $color-background;
+  border: none;
+  cursor: pointer;
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  color: lighten($color-text, 15);
+  padding: 0;
+  white-space: nowrap;
+}
+
 .exh-home {
   width: 100%;
   flex-grow: 1;
   display: flex;
+  height: calc(100vh - 42px); // Screen minus header
 
   .vertical-nav-bar {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     min-width: 150px;
     border-right: $border;
+    overflow-y: auto;
+    padding-top: 5px;
 
-    .group {
-      margin-bottom: 4px;
+    .group, .ungrouped {
+      padding-left: 5px;
+      padding-right: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
 
-      .name {
-        padding: 5px;
-        margin-left: 5px;
-        margin-right: 5px;
-        margin-bottom: 5px;
+      >.name-wrapper {
+        @extend .row-button;
+        margin-bottom: $row-y-sep;
         border-bottom: $border;
+        cursor: pointer;
+        padding-bottom: $row-y-sep;
+        user-select: none;
+
+        .name {
+          padding: 4px 6px; 
+          border-radius: 5px;
+
+          &:hover {
+            background-color: $hover-color;
+          }
+
+          i {
+            margin-right: 5px;
+          }
+        }
       }
 
       .exhibits {
         display: flex;
         flex-direction: column;
-        margin-left: 10px;
-        margin-right: 5px;
+        align-items: stretch;
+        margin-left: $indentation;
+
+        // Special handling for the case of an exhibit with no variants
+        >a {
+          margin-left: $indentation - $variant-x-padding;
+        }
+
+        .variant-group {
+          margin-left: $indentation;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+
+          >.name {
+            @extend .row-button;
+            margin-left: -6px;
+            border-radius: 5px;
+            padding: 3px 5px;
+            margin-bottom: $row-y-sep;
+            cursor: pointer;
+            padding-right: 25px; // Weird workaround for bad interaction with long group names and vertical overflow.
+
+            &:hover {
+              background-color: $hover-color;
+            }
+            
+            i {
+              margin-right: 4px;
+            }
+
+            .text {
+              display: inline-block;
+            }
+          }
+
+          .variants {
+            display: flex;
+            flex-direction: column;
+            margin-left: $indentation;
+
+            >a {
+              margin-left: -$variant-x-padding;
+            }
+          }
+        }
+      }
+
+      &.collapsed {
+        >.name-wrapper {
+          i {
+            margin-right: 9px;
+          }
+        }
+      }
+    }
+
+    .ungrouped {
+      .exhibits {
+        margin-left: 0;
       }
     }
 
@@ -36,21 +134,27 @@
     }
 
     a {
-      padding: 3px 5px;
-      margin-bottom: 2px;
-      width: 100%;
+      padding: 1px $variant-x-padding;
+      margin-bottom: $row-y-sep;
       color: $link-color;
       text-decoration: none;
       border-radius: $border-radius;
-      transition: background-color 0.15s;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
 
       &:hover {
-        background-color: #ddd;
+        background-color: $hover-color;
       }
 
       &.active {
-        background-color: #ddd;
+        background-color: $active-color;
         font-weight: bold; // TODO: use workaround to not make boldness cause shift
+      }
+
+      i {
+        margin-right: 6px;
+        font-size: 12px;
       }
     }
   }

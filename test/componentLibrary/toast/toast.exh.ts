@@ -24,7 +24,7 @@ exhibit(Toast, 'Toast', { group: 'Design Phase' })
       text: 'You can do this a better way.',
       type: ToastType.INFO,
     }))
-  .group('Variable Text Lengths', ex => ex
+  .group('Variable Text Lengthsssss sss sss sss', ex => ex
     .variant('Long text', {
       // eslint-disable-next-line max-len
       text: 'You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.',

@@ -1,54 +1,63 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
-import { ComponentExhibit } from '../../../../../api/exhibit/types'
-import Ternary from '../../../common/ternary'
+import { ComponentExhibit, Variant, VariantGroup } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
 
-// TODO
-
-const Variant = (props: { exhibit: ComponentExhibit, variant: { name: string, props?: any }, id: string|number }) => (
-  <div key={props.id} className="variant">
-    <div className="name">{props.variant.name}</div>
+const VariantEl = (props: { exhibit: ComponentExhibit, variant: Variant }) => (
+  <div className="variant">
     <div>{props.exhibit.renderFn(props.variant.props)}</div>
   </div>
 )
 
 export const render = () => {
   const componentExhibits = useAppSelector(s => s.componentExhibits)
-  const name = useParams().name
+  /* Workaround because react-router-dom's useParams auto-decodes URI components,
+   * which means the "/" character in variant or variant group names would conflict
+   * URI syntax.
+   */
+  const variantPathUriPath = useLocation().pathname
 
   if (!componentExhibits.ready)
     return <div className="component-exhibit loading">Loading component exhibits...</div>
 
-  const componentExhibit = exh.default.find(e => e.name === name)
+  const variantPathComponents = variantPathUriPath.split('/').filter(s => s.length > 0).map(decodeURIComponent)
+  const exhibitName = variantPathComponents[0]
 
-  if (componentExhibit == null)
-    return <div className="component-exhibit not-found">Component exhibit for &quot;{name}&quot; does not exist.</div>
+  const exhibit = exh.default.find(e => e.name === exhibitName)
+  if (exhibit == null)
+    return <div className="component-exhibit not-found">Component exhibit for &quot;{exhibitName}&quot; does not exist.</div>
+
+  let variant: Variant
+  if (!exhibit.hasProps) {
+    variant = { name: exhibit.name, props: undefined }
+  }
+  else {
+    const variantName = variantPathComponents[variantPathComponents.length - 1]
+    let currentVariantGroup: VariantGroup = exhibit
+    let i = 1
+    while (i < variantPathComponents.length - 1) {
+      currentVariantGroup = currentVariantGroup.variantGroups[variantPathComponents[i]]
+      i += 1
+    }
+    // TODO: Improve this logic
+    variant = variantName === 'Default' ? { name: 'Default', props: exhibit.defaultProps } : currentVariantGroup.variants[variantName]
+  }
+
+  if (variant == null) {
+    return (
+      <div className="component-exhibit not-found">
+        Variant &quot;{variantPathComponents[variantPathComponents.length - 1]}&quot; of Component exhibit &quot;{exhibitName}&quot; does not exist.
+      </div>
+    )
+  }
 
   return (
     <div className="component-exhibit">
-      {componentExhibit.hasProps
-        ? (
-          <>
-            <Ternary
-              bool={componentExhibit.defaultProps != null}
-              t={(
-                <Variant
-                  id="default"
-                  exhibit={componentExhibit}
-                  variant={{ name: 'default', props: componentExhibit.defaultProps }}
-                />
-              )}
-            />
-            {Object.values(componentExhibit.variants).map((variant, i) => (
-              <Variant id={i + 1} exhibit={componentExhibit} variant={variant} />
-            ))}
-          </>
-        )
-        : (
-          <Variant id="default" exhibit={componentExhibit} variant={{ name: 'default' }} />
-        )}
+      <VariantEl
+        exhibit={exhibit}
+        variant={variant}
+      />
     </div>
   )
 }
