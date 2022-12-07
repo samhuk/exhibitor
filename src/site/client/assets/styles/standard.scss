@@ -1,12 +1,8 @@
-// Colors
-$color-background: #fff;
-$color-text: #222;
-$color-border: #ccc;
-$link-color: #1F8ACC;
+// Common
+@import './common/colors.scss';
 
-// Borders
-$border-radius: 5px;
-$border: 1px solid $color-border;
+@import './header.scss';
+@import './home/index.scss';
 
 // Typography
 $font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantrell, "Open Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -14,9 +10,6 @@ $font-size: 14.5px;
 $font-weight: 400;
 
 $fa-font-path: "../fa/webfonts";
-
-@import './header.scss';
-@import './home/index.scss';
 
 html {
   height: 100vh;

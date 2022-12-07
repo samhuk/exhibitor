@@ -1,0 +1,19 @@
+@import '../common/borders.scss';
+
+@mixin component-exhibit {
+  flex-grow: 1;
+
+  .component-exhibit {
+    padding: 10px;
+
+    .variant {
+      margin-bottom: 10px;
+
+      .name {
+        border-bottom: $border;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
