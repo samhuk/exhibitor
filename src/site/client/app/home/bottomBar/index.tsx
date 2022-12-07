@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useAppSelector } from '../../../store'
 import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
 import { getSelectedVariant } from '../componentExhibit'
+import PropsComponent from './props'
 
 const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.Props]: 'Props',
@@ -73,7 +74,16 @@ export const render = () => {
             </>
           ) : null}
       </div>
-      {barNameFromQuery} for {resolvedInfo.exhibit.name} - {resolvedInfo.variant.name}
+      {(() => {
+        switch (selectedBarType) {
+          case BottomBarType.Props:
+            return <PropsComponent exhibit={resolvedInfo.exhibit} variant={resolvedInfo.variant} />
+          case BottomBarType.EventLog:
+            return <div>[Event log page]</div>
+          default:
+            return null
+        }
+      })()}
     </div>
   )
 }
