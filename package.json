@@ -1,12 +1,4 @@
 {
-  "name": "exhibitor",
-  "version": "1.0.0",
-  "description": "React component library workshop platform",
-  "main": "./build/api/index.js",
-  "types": "./build/api/index.d.ts",
-  "bin": {
-    "exhibitor": "./build/cli/cli/index.js"
-  },
   "scripts": {
     "clean-site-build": "rimraf ./build/site/build",
     "_build-site-build": "tsc -p ./src/site/build/tsconfig.json",
@@ -17,12 +9,6 @@
     "watch-component-library": "env-cmd -e dev node ./build/component-library-bin/cli/componentLibrary/bin/watch.js",
     "start": "npm run build-site-build && npm run build-watch-component-library && concurrently -n \"testcomp,site-ui ,site-api\" -c \"red,green,blue\" \"npm run watch-component-library\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\""
   },
-  "author": {
-    "name": "Sam Hughes",
-    "email": "samhughes1701@hotmail.co.uk",
-    "url": "http://samhuk.com/about"
-  },
-  "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.20.2",
     "@reduxjs/toolkit": "^1.9.0",
