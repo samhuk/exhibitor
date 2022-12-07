@@ -1,0 +1,11 @@
+@import '../common/borders.scss';
+
+@mixin bottom-bar {
+  flex-grow: 1;
+
+  .bottom-bar {
+    padding: 10px;
+    border: $border;
+    height: 400px;
+  }
+}

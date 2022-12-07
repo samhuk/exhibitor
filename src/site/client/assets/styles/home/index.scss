@@ -1,5 +1,6 @@
 @use './vertical-nav-bar.scss';
 @use './component-exhibit.scss';
+@use './bottom-bar.scss';
 
 .exh-home {
   width: 100%;
@@ -12,6 +13,11 @@
   }
 
   .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
     @include component-exhibit.component-exhibit;
+    @include bottom-bar.bottom-bar;
   }
 }

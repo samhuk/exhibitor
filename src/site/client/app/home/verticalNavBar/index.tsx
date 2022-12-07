@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { ComponentExhibit, Variant, VariantGroup } from '../../../../../api/exhibit/types'
+import { NavLinkKeeyQuery } from '../../../common/navLinkKeepQuery'
 import Ternary from '../../../common/ternary'
 import { useAppSelector } from '../../../store'
 import { LoadingState } from '../../../store/types'
@@ -17,7 +18,7 @@ const VariantEl = (
     variant: Variant
   },
 ) => (
-  <NavLink
+  <NavLinkKeeyQuery
     to={props.path != null ? `${props.path}/${encodeURIComponent(props.variant.name)}` : encodeURIComponent(props.variant.name)}
     onKeyDown={e => {
       if (e.key === ' ')
@@ -26,7 +27,7 @@ const VariantEl = (
   >
     <i className="far fa-file" />
     <span className="name">{props.variant.name}</span>
-  </NavLink>
+  </NavLinkKeeyQuery>
 )
 
 const VariantGroupEl = (props: {
