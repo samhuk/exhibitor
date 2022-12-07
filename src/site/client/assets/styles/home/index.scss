@@ -31,6 +31,10 @@ $hover-color: #eeeeee;
     overflow-y: auto;
     padding-top: 5px;
 
+    &.focused {
+      box-shadow: 0 0 0 1px $link-color inset;
+    }
+
     .group, .ungrouped {
       padding-left: 5px;
       padding-right: 5px;
@@ -45,8 +49,14 @@ $hover-color: #eeeeee;
         cursor: pointer;
         padding-bottom: $row-y-sep;
         user-select: none;
+        padding: 1px;
+
+        &:focus {
+          box-shadow: 0 0 0 1px $link-color inset;
+        }
 
         .name {
+          font-weight: 1000;
           padding: 4px 6px; 
           border-radius: 5px;
 
@@ -95,6 +105,10 @@ $hover-color: #eeeeee;
             &:hover {
               background-color: $hover-color;
             }
+
+            &:focus {
+              box-shadow: 0 0 0 1px $link-color inset;
+            }
             
             i {
               width: 13px;
@@ -121,11 +135,6 @@ $hover-color: #eeeeee;
     .ungrouped {
       .exhibits {
         margin-left: 0;
-      }
-    }
-
-    .ungrouped {
-      .exhibits {
         display: flex;
         flex-direction: column;
       }
@@ -140,6 +149,10 @@ $hover-color: #eeeeee;
       display: flex;
       flex-direction: row;
       align-items: center;
+
+      &:focus {
+        box-shadow: 0 0 0 1px $link-color inset;
+      }
 
       &:hover {
         background-color: $hover-color;

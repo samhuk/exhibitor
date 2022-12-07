@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { ComponentExhibit, Variant, VariantGroup } from '../../../../../api/exhibit/types'
@@ -206,11 +206,71 @@ export const render = () => {
     })
   }
 
+  const el = useRef<HTMLDivElement>()
+  const [isElFocus, setIsElFocus] = useState(false)
+
+  useEffect(() => {
+    let _isElFocus = false
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        if (!e.shiftKey && _isElFocus) {
+          const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(el.current.querySelectorAll('a, button'))
+          focusableElements[0]?.focus()
+          e.preventDefault()
+        }
+        setIsElFocus(false)
+        _isElFocus = false
+        return
+      }
+
+      const isUp = e.key === 'ArrowUp'
+      const isDown = e.key === 'ArrowDown'
+      if (!isUp && !isDown)
+        return
+
+      if (!(isElFocus || el.current.contains(document.activeElement)))
+        return
+
+      const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(el.current.querySelectorAll('a, button'))
+
+      let focusedElementIndex = 0
+      for (let i = 0; i < focusableElements.length; i += 1) {
+        if (focusableElements[i] === document.activeElement) {
+          focusedElementIndex = i
+          break
+        }
+      }
+
+      const focusedElementIndexChange = isUp && focusedElementIndex > 0
+        ? -1
+        : isDown && focusedElementIndex < focusableElements.length
+          ? 1
+          : 0
+      focusableElements[focusedElementIndex + focusedElementIndexChange]?.focus()
+    }
+
+    const onClick = (e: MouseEvent) => {
+      const isEl = e.target === el.current
+      _isElFocus = isEl
+      setIsElFocus(isEl)
+    }
+
+    document.addEventListener('click', onClick)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('click', onClick)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [])
+
   if (state.ready) {
     const exhibitGroupingInfo = determineExhibitGroupingInfo()
 
     return (
-      <div className="vertical-nav-bar">
+      <div
+        className={`vertical-nav-bar${isElFocus ? ' focused' : ''}`}
+        ref={el}
+      >
         {exhibitGroupingInfo.groupNames.map(groupName => {
           const isExpanded = expandedExhibitGroups.indexOf(groupName) !== -1
           return (
