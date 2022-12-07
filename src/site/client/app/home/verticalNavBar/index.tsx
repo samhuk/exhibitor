@@ -17,7 +17,13 @@ const VariantEl = (
     variant: Variant
   },
 ) => (
-  <NavLink to={props.path != null ? `${props.path}/${encodeURIComponent(props.variant.name)}` : encodeURIComponent(props.variant.name)}>
+  <NavLink
+    to={props.path != null ? `${props.path}/${encodeURIComponent(props.variant.name)}` : encodeURIComponent(props.variant.name)}
+    onKeyDown={e => {
+      if (e.key === ' ')
+        (e.target as HTMLElement).click()
+    }}
+  >
     <i className="far fa-file" />
     <span className="name">{props.variant.name}</span>
   </NavLink>
