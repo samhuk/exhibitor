@@ -53,7 +53,7 @@ describe('exhibit', () => {
         text: '',
         type: 'info',
       },
-      eventPropsSelector: null,
+      eventProps: null,
       groupName: 'Design Phase',
       hasProps: true,
       name: 'Toast',
