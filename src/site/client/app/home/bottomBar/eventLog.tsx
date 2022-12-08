@@ -1,4 +1,7 @@
+import { prettyDOM } from '@testing-library/dom'
+import { createDataType, JsonViewer } from '@textea/json-viewer'
 import React from 'react'
+
 import { ComponentExhibit, Variant } from '../../../../../api/exhibit/types'
 import { EventLogItem, eventLogService } from '../../../services/eventLogService'
 import { useAppSelector } from '../../../store'
@@ -24,26 +27,59 @@ export const deepSetAllPropsOnMatch = (objTruther: any, objToModify: any, val: (
   return objToModify
 }
 
-const getCircularReplacer = () => {
-  const seen = new WeakSet()
-  return (key: string, value: any) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value))
-        return '[Circular]'
-      seen.add(value)
-    }
-    return value
+const EventArgValueEl = (props: {
+  arg: any
+}) => {
+  try {
+    return (
+      <JsonViewer
+        value={props.arg}
+        indentWidth={2}
+        displayDataTypes={false}
+        rootName={false}
+        maxDisplayLength={5}
+        quotesOnKeys={false}
+        defaultInspectDepth={0}
+        editable={false}
+        valueTypes={[
+          // Handle elements, which are horrible
+          createDataType(
+            v => v instanceof Node,
+            // eslint-disable-next-line react/no-unstable-nested-components
+            p => prettyDOM(p.value, 50, {
+              maxDepth: 1,
+              printFunctionName: false,
+            }) as any,
+          ),
+          // Handle functions
+          createDataType(
+            v => typeof v === 'function',
+            // eslint-disable-next-line react/no-unstable-nested-components
+            p => '[Function]' as any,
+          ),
+        ]}
+      />
+    )
+  }
+  catch (e) {
+    console.error(e)
+    return <span>[Display error occured. See console.]</span>
   }
 }
 
 const EventLogItemEl = (props: {
   item: EventLogItem,
-}) => {
-  return <div className="item">
+}) => (
+  <div className="item">
     <div className="id">{props.item.id}</div>
     <div className="path">{props.item.path}</div>
+    (
+    {props.item.args.map(arg => (
+      <div className="arg"><EventArgValueEl arg={arg} /></div>
+    ))}
+    )
   </div>
-}
+)
 
 export const render = (props: {
   exhibit: ComponentExhibit<true>

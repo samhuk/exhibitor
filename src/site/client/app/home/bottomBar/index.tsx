@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo } from 'react'
 import { batch, useDispatch } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
+
+import { ComponentExhibit } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
 import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
 import { getSelectedVariant } from '../componentExhibit'
-import PropsComponent from './props'
 import EventLogComponent from './eventLog'
-import { ComponentExhibit } from '../../../../../api/exhibit/types'
+import PropsComponent from './props'
 
 const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.Props]: 'Props',
@@ -63,7 +64,6 @@ export const render = () => {
       : shownBarTypes.indexOf(DEFAULT_BAR_TYPE) !== -1
         ? DEFAULT_BAR_TYPE
         : null
-    console.log('Going to', newBarType, 'comp:', 'redux:', selectedBarType, 'query:', barTypeFromQuery)
     const updateFns = [
       newBarType !== barTypeFromQuery
         ? () => setSearchParams({ [SEARCH_PARAM_NAME]: newBarType != null ? barTypeToName[newBarType] : undefined })
@@ -102,7 +102,7 @@ export const render = () => {
       {(() => {
         switch (selectedBarType) {
           case BottomBarType.Props:
-            return <PropsComponent exhibit={resolvedInfo.exhibit} variant={resolvedInfo.variant} />
+            return <PropsComponent exhibit={resolvedInfo.exhibit as ComponentExhibit<true>} variant={resolvedInfo.variant} />
           case BottomBarType.EventLog:
             return <EventLogComponent exhibit={resolvedInfo.exhibit as ComponentExhibit<true>} variant={resolvedInfo.variant} />
           default:
