@@ -45,9 +45,9 @@ import exhibit from 'exhibitor'
 import Button from './button'
 
 exhibit(Button, 'Button', { group: 'Final Review' })
-  .events(p => ({
-    onClick: p.onClick,
-  }))
+  .events({
+    onClick: true,
+  })
   .defaults({
     onClick: () => console.log('click!!'),
     color: 'default',
