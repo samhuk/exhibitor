@@ -6,11 +6,13 @@ This document describes the process for setting up and running this package on y
 
 This app uses Node.js.
 
-You can get Node.js [here](https://nodejs.org/en/). If you are using Chocolatey, run `choco install nodejs`.
+You can get Node.js [here](https://nodejs.org/en/).
+
+If on Windows and are using Chocolatey, run `choco install nodejs`.
 
 It runs on MacOS, Windows, and Linux environments.
 
-One exception is **release builds**. This uses `make`, which is not natively available on Windows. It is recommended to use WSL.
+One exception are the **release building scripts**. These use `make`, which can be installed via `sudo apt install make`. If on Windows, it is recommended to use WSL.
 
 It runs on many versions of Node.js, tested back to version 14.x.
 

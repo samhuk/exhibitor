@@ -93,10 +93,10 @@ export const render = () => {
     <div className="bottom-bar">
       <div className="nav">
         {showProps ? (
-          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.Props))}>Props</button>
+          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.Props))} className={`${selectedBarType === BottomBarType.Props ? 'active' : ''}`}>Props</button>
         ) : null}
         {showEventLog ? (
-          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.EventLog))}>Event Log</button>
+          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.EventLog))} className={`${selectedBarType === BottomBarType.EventLog ? 'active' : ''}`}>Event Log</button>
         ) : null}
       </div>
       {(() => {

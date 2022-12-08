@@ -60,7 +60,9 @@ export const render = (props: {
   exhibit: ComponentExhibit<true>
   variant: Variant
 }) => (
-  <PropsValueEl value={props.variant.props} />
+  <div className="props">
+    <PropsValueEl value={props.variant.props} />
+  </div>
 )
 
 export default render

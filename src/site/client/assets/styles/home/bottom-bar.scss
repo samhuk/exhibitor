@@ -1,22 +1,43 @@
+@import '../common/colors.scss';
 @import '../common/borders.scss';
 
 @mixin bottom-bar {
   flex-grow: 1;
 
   .bottom-bar {
-    padding: 10px;
     border: $border;
     height: 400px;
     display: flex;
     flex-direction: column;
 
     .nav {
-      margin-bottom: 10px;
-      padding-bottom: 5px;
+      padding: 5px;
       border-bottom: $border;
+
+      button {
+        margin-right: 5px;
+        background-color: $color-background;
+        border: $border;
+        border-radius: $border-radius;
+        padding: 3px 7px;
+        cursor: pointer;
+        
+        &:hover {
+          background-color: darken($color-background, 7);
+        }
+
+        &.active {
+          border-color: $link-color;
+        }
+      }
+    }
+
+    .props {
+      padding: 5px;
     }
 
     .event-log {
+      padding: 5px;
       flex-grow: 1;
       overflow-y: auto;
 
