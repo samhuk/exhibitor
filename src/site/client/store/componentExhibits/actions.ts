@@ -11,6 +11,8 @@ export const SELECT_VARIANT = 'componentExhibits/selectVariant'
 
 export const SELECT_BOTTOM_BAR = 'componentExhibits/selectBottomBar'
 
+export const ADD_EVENT = 'componentExhibits/addEvent'
+
 export type ComponentExhibitsState = {
   ready: boolean
   selectedVariantPath: string[]
@@ -18,6 +20,7 @@ export type ComponentExhibitsState = {
   loadingState: LoadingState
   error: any
   selectedBottomBarType: BottomBarType
+  events: number[]
 }
 
 type ReadyAction = {
@@ -36,7 +39,12 @@ type SelectBottomBarAction = {
   barType: BottomBarType
 }
 
-export type ComponentExhibitsActions = ReadyAction | SelectVariantAction | SelectBottomBarAction
+type AddEventAction = {
+  type: typeof ADD_EVENT
+  id: number
+}
+
+export type ComponentExhibitsActions = ReadyAction | SelectVariantAction | SelectBottomBarAction | AddEventAction
 
 export const componentExhibitsReady = (error: any): ComponentExhibitsActions => ({
   type: READY,
@@ -52,4 +60,9 @@ export const selectVariant = (variantPath: string[], found: boolean): ComponentE
 export const selectBottomBar = (barType: BottomBarType): ComponentExhibitsActions => ({
   type: SELECT_BOTTOM_BAR,
   barType,
+})
+
+export const addEvent = (id: number): ComponentExhibitsActions => ({
+  type: ADD_EVENT,
+  id,
 })

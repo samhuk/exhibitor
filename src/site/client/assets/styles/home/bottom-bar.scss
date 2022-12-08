@@ -7,5 +7,31 @@
     padding: 10px;
     border: $border;
     height: 400px;
+    display: flex;
+    flex-direction: column;
+
+    .nav {
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: $border;
+    }
+
+    .event-log {
+      flex-grow: 1;
+      overflow-y: auto;
+
+      .no-events {
+        font-style: italic;
+        color: #999;
+      }
+
+      .item {
+        display: flex;
+
+        .id {
+          width: 50px;
+        }
+      }
+    }
   }
 }

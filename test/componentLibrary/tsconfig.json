@@ -3,7 +3,7 @@
   "extends": "../../tsconfig.json",
   "include": [
     "./"
-  ],
+, "buttonWithGeneric/.tsx"  ],
   "compilerOptions": {
     "jsx": "react",
     "target": "es2017",

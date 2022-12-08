@@ -1,14 +1,17 @@
-import './button.scss'
+import './buttonWithGeneric.scss'
 
 import exhibit from '../../../src/api'
-import Button, { ButtonColor, ButtonSize, IconPosition } from './button'
+import Button, { ButtonColor, ButtonSize, IconPosition } from './buttonWithGeneric'
 
-exhibit(Button, 'Button')
+exhibit(Button, 'ButtonWithGeneric')
   .events({
     onClick: true,
+    onMouseEnter: true,
   })
   .defaults({
     onClick: () => undefined,
+    listenForMouseEnter: true,
+    onMouseEnter: () => undefined,
     color: ButtonColor.DEFAULT,
     iconPosition: IconPosition.LEFT,
     text: 'Button Text',

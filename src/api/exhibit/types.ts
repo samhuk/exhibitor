@@ -1,4 +1,4 @@
-import { BoolDependant, IsTrueAndFalse } from '@samhuk/type-helpers/dist/type-helpers/types'
+import { BoolDependant, IsTrueAndFalse, StringKeysOf } from '@samhuk/type-helpers/dist/type-helpers/types'
 
 export type ReactComponentWithProps<TProps extends any = any> = (props: TProps) => JSX.Element
 
@@ -22,11 +22,11 @@ type IncludeIfFalse<TBool extends boolean, ObjToInclude, ExplicitElseObj extends
   ? ObjToInclude
   : (TBool extends false ? ObjToInclude : ExplicitElseObj)
 
-type EventsDict = { [eventName: string]: (...eventProps: any) => any }
-
-export type EventsSelector<
+export type EventsOptions<
   TProps extends any = any,
-> = (props: TProps) => EventsDict
+> = Partial<{
+  [K in keyof TProps as TProps[K] extends Function ? K : never]: TProps[K] extends Function ? boolean : (TProps[K] & EventsOptions<TProps[K]>)
+}>
 
 type _ComponentExhibitBuilder<
   TProps extends any = any,
@@ -38,7 +38,7 @@ type _ComponentExhibitBuilder<
 > =
   IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedEvents, {
     events: (
-      selector: EventsSelector<TProps>
+      eventProps: EventsOptions<TProps>
     ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, TDefaultProps, TIsGroup>
   }>>>
   & IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedDefaultProps, {
@@ -127,7 +127,7 @@ export type ComponentExhibit<
        * @default true
        */
       showDefaultVariant?: boolean
-      eventPropsSelector: EventsSelector<TProps>
+      eventProps: EventsOptions<TProps>
     } & VariantGroup<TProps>
     false: { }
   },

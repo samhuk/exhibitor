@@ -46,7 +46,7 @@ export const exhibit = <
     name: string,
     options?: ComponentExhibitOptions,
   ): ComponentExhibitBuilder<TReactComponent, false, false, undefined> => {
-  let eventPropsSelector: any = null
+  let eventProps: any = null
   let defaultProps: any = null
   const variants: { [variantName: string]: Variant } = {}
 
@@ -55,8 +55,8 @@ export const exhibit = <
   const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
   const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, undefined> = {
-    events: hasProps ? (_eventPropsSelector => {
-      eventPropsSelector = _eventPropsSelector
+    events: hasProps ? (_eventProps => {
+      eventProps = _eventProps
       delete (componentExhibitBuilder as any).events
       return componentExhibitBuilder
     }) : undefined,
@@ -82,7 +82,7 @@ export const exhibit = <
         hasProps,
         renderFn,
         defaultProps,
-        eventPropsSelector,
+        eventProps,
         variants,
         variantGroups,
       }

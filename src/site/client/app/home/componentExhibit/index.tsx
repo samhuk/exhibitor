@@ -3,19 +3,33 @@ import React, { useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
+import cloneDeep from 'clone-deep'
 import { ComponentExhibit, Variant, VariantGroup } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
-import { selectVariant } from '../../../store/componentExhibits/actions'
+import { addEvent, selectVariant } from '../../../store/componentExhibits/actions'
+import { deepSetAllPropsOnMatch } from '../bottomBar/eventLog'
+import { eventLogService } from '../../../services/eventLogService'
 
-const VariantEl = (props: { exhibit: ComponentExhibit, variant: Variant }) => (
-  <div className="variant">
-    <div>{props.exhibit.renderFn(props.variant.props)}</div>
-  </div>
-)
+const VariantEl = (props: { exhibit: ComponentExhibit, variant: Variant }) => {
+  const dispatch = useDispatch()
+  const variantProps = props.exhibit.hasProps && props.exhibit.eventProps != null
+    ? deepSetAllPropsOnMatch(props.exhibit.eventProps, cloneDeep(props.variant.props), (args, path) => {
+      const item = eventLogService.add({ args, path })
+      dispatch(addEvent(item.id))
+    })
+    : props.variant.props
+
+  return (
+    <div className="variant">
+      <div>{props.exhibit.renderFn(variantProps)}</div>
+    </div>
+  )
+}
 
 enum GetSelectedVariantFailReason {
   EXHIBIT_NOT_FOUND,
-  VARIANT_NOT_FOUND
+  VARIANT_NOT_FOUND,
+  NO_PATH,
 }
 
 export type SuccessToFailReasonType<TSuccess extends boolean> = TSuccess extends false
@@ -30,34 +44,23 @@ export type GetSelectedVariantResult<
     true: {
       exhibit: ComponentExhibit
       variant: Variant
+      variantPath: string[]
     }
     false: TypeDependantBaseIntersection<GetSelectedVariantFailReason, {
-      [GetSelectedVariantFailReason.EXHIBIT_NOT_FOUND]: { }
+      [GetSelectedVariantFailReason.NO_PATH]: { }
+      [GetSelectedVariantFailReason.EXHIBIT_NOT_FOUND]: {
+        attemptedExhibitName: string
+        variantPath: string[]
+      }
       [GetSelectedVariantFailReason.VARIANT_NOT_FOUND]: {
+        attemptedExhibitName: string
+        variantPath: string[]
         exhibit: ComponentExhibit
         attemptedVariantName: string
       }
-    }, TFailReason, 'failReason'> & { attemptedExhibitName: string }
+    }, TFailReason, 'failReason'>
   }, TSuccess, 'success'
-> & { variantPath: string[] }
-
-export type GetSelectedVariantResultState<
-  TSuccess extends boolean = boolean,
-  TFailReason extends SuccessToFailReasonType<TSuccess> = SuccessToFailReasonType<TSuccess>,
-> = BoolDependant<
-{
-  true: {
-    exhibitName: string
-    variantName: string
-  }
-  false: TypeDependantBaseIntersection<GetSelectedVariantFailReason, {
-    [GetSelectedVariantFailReason.EXHIBIT_NOT_FOUND]: { }
-    [GetSelectedVariantFailReason.VARIANT_NOT_FOUND]: {
-      attemptedVariantName: string
-    }
-  }, TFailReason, 'failReason'> & { attemptedExhibitName: string }
-}, TSuccess, 'success'
-> & { variantPath: string[] }
+>
 
 const convertLocationPathToVariantPath = (locationPath: string): string[] => (
   locationPath.split('/').filter(s => s.length > 0).map(decodeURIComponent)
@@ -66,6 +69,13 @@ const convertLocationPathToVariantPath = (locationPath: string): string[] => (
 export const getSelectedVariant = (
   variantPath: string[],
 ): GetSelectedVariantResult => {
+  if (variantPath == null) {
+    return {
+      success: false,
+      failReason: GetSelectedVariantFailReason.NO_PATH,
+    }
+  }
+
   const exhibitName = variantPath[0]
 
   const exhibit = exh.default.find(e => e.name === exhibitName)
@@ -124,11 +134,17 @@ export const render = () => {
   const resolvedInfo = useMemo(() => getSelectedVariant(convertLocationPathToVariantPath(locationPath)), [locationPath])
 
   useEffect(() => {
-    dispatch(selectVariant(resolvedInfo.variantPath, resolvedInfo.success))
+    const variantPath = resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.NO_PATH
+      ? null
+      : resolvedInfo.variantPath
+    dispatch(selectVariant(variantPath, resolvedInfo.success))
   }, [locationPath])
 
   if (!componentExhibits.ready)
     return <div className="component-exhibit loading">Loading component exhibits...</div>
+
+  if (resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.NO_PATH)
+    return <div className="component-exhibit no-selected">Select a component</div>
 
   if (resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.EXHIBIT_NOT_FOUND)
     return <div className="component-exhibit not-found">Component exhibit for &quot;{resolvedInfo.attemptedExhibitName}&quot; does not exist.</div>
