@@ -1,6 +1,15 @@
 import { eventLogService } from '../../services/eventLogService'
 import { LoadingState } from '../types'
-import { READY, ComponentExhibitsActions, ComponentExhibitsState, SELECT_VARIANT, BottomBarType, SELECT_BOTTOM_BAR, ADD_EVENT } from './actions'
+import {
+  ADD_EVENT,
+  BottomBarType,
+  CHANGE_HAS_UNSEEN_EVENTS,
+  ComponentExhibitsActions,
+  ComponentExhibitsState,
+  READY,
+  SELECT_BOTTOM_BAR,
+  SELECT_VARIANT,
+} from './actions'
 
 const initialState: ComponentExhibitsState = {
   error: null,
@@ -10,6 +19,7 @@ const initialState: ComponentExhibitsState = {
   selectedVariantPathFound: false,
   selectedBottomBarType: BottomBarType.Props,
   events: [],
+  hasUnseenEvents: false,
 }
 
 export const componentExhibitsReducer = (
@@ -27,6 +37,7 @@ export const componentExhibitsReducer = (
         ready: true,
         selectedVariantPathFound: state.selectedVariantPathFound,
         selectedBottomBarType: state.selectedBottomBarType,
+        hasUnseenEvents: state.hasUnseenEvents,
         events: [],
       }
     case SELECT_VARIANT:
@@ -38,17 +49,25 @@ export const componentExhibitsReducer = (
         selectedVariantPath: action.variantPath,
         selectedVariantPathFound: action.found,
         selectedBottomBarType: state.selectedBottomBarType,
+        hasUnseenEvents: state.hasUnseenEvents,
         events: [],
       }
     case SELECT_BOTTOM_BAR:
       return {
         ...state,
         selectedBottomBarType: action.barType,
+        hasUnseenEvents: action.barType === BottomBarType.EventLog ? false : state.hasUnseenEvents,
       }
     case ADD_EVENT:
       return {
         ...state,
         events: state.events.concat(action.id),
+        hasUnseenEvents: state.selectedBottomBarType !== BottomBarType.EventLog,
+      }
+    case CHANGE_HAS_UNSEEN_EVENTS:
+      return {
+        ...state,
+        hasUnseenEvents: action.hasUnseenEvents,
       }
     default:
       return state

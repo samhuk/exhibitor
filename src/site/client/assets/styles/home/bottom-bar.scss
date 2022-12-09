@@ -22,6 +22,7 @@
         border-radius: $border-radius;
         padding: 3px 7px;
         cursor: pointer;
+        position: relative;
         
         &:hover {
           background-color: darken($color-background, 7);
@@ -29,6 +30,16 @@
 
         &.active {
           border-color: $link-color;
+        }
+
+        .has-unseen-indicator {
+          width: 8px;
+          height: 8px;
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          border-radius: 5px;
+          background-color: red;
         }
       }
     }

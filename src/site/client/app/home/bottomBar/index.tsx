@@ -26,6 +26,7 @@ export const render = () => {
   const selectedBarType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
   const selectedVariantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)
   const selectedVariantPathFound = useAppSelector(s => s.componentExhibits.selectedVariantPathFound)
+  const hasUnseenEvents = useAppSelector(s => s.componentExhibits.hasUnseenEvents)
   const [searchParams, setSearchParams] = useSearchParams()
   const dispatch = useDispatch()
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
@@ -86,7 +87,7 @@ export const render = () => {
           <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.Props))} className={`${selectedBarType === BottomBarType.Props ? 'active' : ''}`}>Props</button>
         ) : null}
         {showEventLog ? (
-          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.EventLog))} className={`${selectedBarType === BottomBarType.EventLog ? 'active' : ''}`}>Event Log</button>
+          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.EventLog))} className={`${selectedBarType === BottomBarType.EventLog ? 'active' : ''}`}>Event Log {hasUnseenEvents ? <div className="has-unseen-indicator" /> : null}</button>
         ) : null}
       </div>
       {(() => {

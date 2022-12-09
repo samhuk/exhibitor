@@ -13,6 +13,8 @@ export const SELECT_BOTTOM_BAR = 'componentExhibits/selectBottomBar'
 
 export const ADD_EVENT = 'componentExhibits/addEvent'
 
+export const CHANGE_HAS_UNSEEN_EVENTS = 'componentExhibits/changeHasUnseenEvents'
+
 export type ComponentExhibitsState = {
   ready: boolean
   selectedVariantPath: string[]
@@ -21,6 +23,7 @@ export type ComponentExhibitsState = {
   error: any
   selectedBottomBarType: BottomBarType
   events: number[]
+  hasUnseenEvents: boolean
 }
 
 type ReadyAction = {
@@ -44,7 +47,12 @@ type AddEventAction = {
   id: number
 }
 
-export type ComponentExhibitsActions = ReadyAction | SelectVariantAction | SelectBottomBarAction | AddEventAction
+type ChangeHasUnseenEvents = {
+  type: typeof CHANGE_HAS_UNSEEN_EVENTS
+  hasUnseenEvents: boolean
+}
+
+export type ComponentExhibitsActions = ReadyAction | SelectVariantAction | SelectBottomBarAction | AddEventAction | ChangeHasUnseenEvents
 
 export const componentExhibitsReady = (error: any): ComponentExhibitsActions => ({
   type: READY,
@@ -65,4 +73,9 @@ export const selectBottomBar = (barType: BottomBarType): ComponentExhibitsAction
 export const addEvent = (id: number): ComponentExhibitsActions => ({
   type: ADD_EVENT,
   id,
+})
+
+export const changeHasUnseenEvents = (hasUnseenEvents: boolean): ComponentExhibitsActions => ({
+  type: CHANGE_HAS_UNSEEN_EVENTS,
+  hasUnseenEvents,
 })
