@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react'
-import { batch, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 
 import { ComponentExhibit } from '../../../../../api/exhibit/types'
@@ -31,7 +31,7 @@ export const render = () => {
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
   const doBarTypesDisagree = !selectedVariantPathFound || barTypeFromQuery !== selectedBarType
-  const resolvedInfo = useMemo(() => getSelectedVariant(selectedVariantPath), selectedVariantPath)
+  const resolvedInfo = useMemo(() => getSelectedVariant(selectedVariantPath), [selectedVariantPath?.join('/')])
   const shownBarTypes: BottomBarType[] = []
   const showProps = resolvedInfo.success === true && resolvedInfo.exhibit.hasProps
   const showEventLog = showProps && (resolvedInfo.exhibit as ComponentExhibit<true>).eventProps
@@ -72,17 +72,7 @@ export const render = () => {
         ? () => dispatch(selectBottomBar(newBarType))
         : null,
     ].filter(v => v != null)
-    if (updateFns.length === 0)
-      return
-    if (updateFns.length === 1) {
-      updateFns[0]()
-    }
-    else {
-      batch(() => {
-        updateFns[0]()
-        updateFns[1]()
-      })
-    }
+    updateFns.forEach(fn => fn())
   }, [selectedBarType, barTypeFromQuery, selectedVariantPath])
 
   // Wait until a variant is selected and the bar types agree

@@ -31,7 +31,7 @@ const PropsValueEl = (props: {
         defaultInspectDepth={1}
         editable={false} // TODO
         valueTypes={[
-          // Handle elements, which are horrible
+          // Handle HTML elements, which are generally horrible
           createDataType(
             v => v instanceof Node,
             // eslint-disable-next-line react/no-unstable-nested-components

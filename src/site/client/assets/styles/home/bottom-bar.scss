@@ -5,7 +5,7 @@
   flex-grow: 1;
 
   .bottom-bar {
-    border: $border;
+    border-top: $border;
     height: 400px;
     display: flex;
     flex-direction: column;

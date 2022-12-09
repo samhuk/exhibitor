@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { ComponentExhibit, Variant, VariantGroup } from '../../../../../api/exhibit/types'
 import { NavLinkKeeyQuery } from '../../../common/navLinkKeepQuery'
@@ -10,6 +9,10 @@ import { LoadingState } from '../../../store/types'
 /* This is early PoC code for the vertical nav side bar. It's my first time making one
  * with React so it's not in a high-quality state with concerns separated and such at the moment.
  * TODO: Improve this. See note above.
+ *
+ * This also should probably be completely rewritten. VSCode doesn't nest their components but
+ * rather has a flat list, and they are quite a bit smarter. The state management of these
+ * nested components is getting very difficult to work with, and I see now why this is a bad idea.
  */
 
 const VariantEl = (
@@ -34,30 +37,28 @@ const VariantGroupEl = (props: {
   exhibit: ComponentExhibit<true>
   variantGroup: VariantGroup
   path?: string
-  key: string|number
+  id: string|number
   isTopLevel?: boolean
   expandedPaths: string[]
-  onGroupCollapse: (path: string) => void
-  onGroupExpand: (path: string) => void
+  onExpandChange: (path: string, newIsExpanded: boolean) => void
 }) => {
-  const initialIsExpanded = props.expandedPaths.indexOf(props.path) !== -1
-  const [isExpanded, setIsExpanded] = useState(initialIsExpanded)
-  const onGroupNameClick = () => {
-    if (isExpanded)
-      props.onGroupCollapse(props.path)
-    else
-      props.onGroupExpand(props.path)
+  const isExpandedFromProps = props.expandedPaths.indexOf(props.path) !== -1
+  const isExpanded = useRef(isExpandedFromProps)
+  if (isExpandedFromProps !== isExpanded.current)
+    isExpanded.current = isExpandedFromProps
 
-    setIsExpanded(!isExpanded)
+  const onGroupNameClick = () => {
+    props.onExpandChange(props.path, !isExpanded.current)
+    isExpanded.current = !isExpanded.current
   }
 
   return (
-    <div key={props.key} className="variant-group">
+    <div key={props.id} className="variant-group">
       <button type="button" className="name" onClick={() => onGroupNameClick()}>
-        <i className={`fas ${isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
+        <i className={`fas ${isExpanded.current ? 'fa-angle-down' : 'fa-angle-right'}`} />
         <div className="text">{props.variantGroup.name}</div>
       </button>
-      {isExpanded
+      {isExpanded.current
         ? (
           <>
             <div className="variants">
@@ -75,13 +76,13 @@ const VariantGroupEl = (props: {
               {Object.values(props.variantGroup.variantGroups).map((variantGroup, i) => (
                 <VariantGroupEl
                   key={i + 1}
+                  id={i + 1}
                   exhibit={props.exhibit}
                   variantGroup={variantGroup}
                   path={props.path != null ? `${props.path}/${encodeURIComponent(variantGroup.name)}` : encodeURIComponent(variantGroup.name)}
                   isTopLevel={false}
                   expandedPaths={props.expandedPaths}
-                  onGroupCollapse={props.onGroupCollapse}
-                  onGroupExpand={props.onGroupExpand}
+                  onExpandChange={props.onExpandChange}
                 />
               ))}
             </div>
@@ -93,10 +94,9 @@ const VariantGroupEl = (props: {
 
 const ExhibitEl = (props: {
   exhibit: ComponentExhibit
-  key: string | number
+  id: string | number
   expandedPaths: string[]
-  onGroupCollapse: (path: string) => void
-  onGroupExpand: (path: string) => void
+  onExpandChange: (path: string, newIsExpanded: boolean) => void
 }) => (
   props.exhibit.hasProps
     ? (
@@ -104,10 +104,9 @@ const ExhibitEl = (props: {
         exhibit={props.exhibit}
         variantGroup={props.exhibit}
         path={props.exhibit.name}
-        key={props.key}
+        id={props.id}
         expandedPaths={props.expandedPaths}
-        onGroupCollapse={props.onGroupCollapse}
-        onGroupExpand={props.onGroupExpand}
+        onExpandChange={props.onExpandChange}
       />
     ) : <VariantEl path="" variant={{ name: props.exhibit.name, props: undefined }} key="default" />
 )
@@ -156,7 +155,7 @@ type NavBarState = {
 
 const saveNavBarState = (state: NavBarState) => {
   const date = new Date().setFullYear(new Date().getFullYear() + 1)
-  document.cookie = `navbar=${JSON.stringify(state)}; expires=${date}; path=/`
+  document.cookie = `navbar=${JSON.stringify(state)}; expires=${date}; path=/; SameSite=Lax`
 }
 
 const restoreNavBarState = (): NavBarState => {
@@ -169,8 +168,8 @@ const restoreNavBarState = (): NavBarState => {
   try {
     const parsed = JSON.parse(rawValue) as NavBarState
     return {
-      expandedExhibitGroups: parsed.expandedExhibitGroups ?? [],
-      expandedPaths: parsed.expandedPaths ?? [],
+      expandedExhibitGroups: [...new Set(parsed.expandedExhibitGroups)] ?? [],
+      expandedPaths: [...new Set(parsed.expandedPaths)] ?? [],
     }
   }
   catch {
@@ -178,16 +177,42 @@ const restoreNavBarState = (): NavBarState => {
   }
 }
 
+const determineAllPathsOfVariantGroup = (group: VariantGroup, path: string): string[] => {
+  const encodedGroupName = encodeURIComponent(group.name)
+  const thisPath = path != null ? `${path}/${encodedGroupName}` : encodedGroupName
+  return [thisPath]
+    // .concat(Object.values(group.variants).map(v => `${thisPath}/${encodeURIComponent(v.name)}`))
+    .concat(Object.values(group.variantGroups).reduce<string[]>((acc, g) => acc.concat(determineAllPathsOfVariantGroup(g, thisPath)), []))
+}
+
+const determineAllPaths = () => (
+  exh.default
+    .filter(e => e.hasProps)
+    .reduce<string[]>((acc, exhibit) => (
+      acc.concat(determineAllPathsOfVariantGroup(exhibit as ComponentExhibit<true>, null))
+    ), [])
+)
+
 export const render = () => {
-  const state = useAppSelector(s => s.componentExhibits)
-  const initialState = restoreNavBarState()
-  const [expandedExhibitGroups, setExpandedExhibitGroups] = useState<string[]>(initialState.expandedExhibitGroups)
-  const [expandedPaths, setExpandedPaths] = useState<string[]>(initialState.expandedPaths)
+  const readyState = useAppSelector(s => s.componentExhibits.ready)
+  const loadingState = useAppSelector(s => s.componentExhibits.loadingState)
+
+  // Restore the nav bar state from cookies once. I think we can just do this in the redux store code instead.
+  const hasRestoredNavBarState = useRef(false)
+  const initialState = !hasRestoredNavBarState.current ? restoreNavBarState() : null
+  hasRestoredNavBarState.current = true
+
+  const [expandedExhibitGroups, setExpandedExhibitGroups] = useState<string[]>(initialState?.expandedExhibitGroups)
+  const [expandedPaths, setExpandedPaths] = useState<string[]>(initialState?.expandedPaths)
+  const exhibitGroupingInfo = useMemo(() => (readyState ? determineExhibitGroupingInfo() : null), [readyState ? exh.default : null])
+  const el = useRef<HTMLDivElement>()
+  const isElFocus = useRef(false)
 
   const onGroupNameClick = (groupName: string) => {
-    const newExpandedExhibitGroups = expandedExhibitGroups.indexOf(groupName) === -1
-      ? expandedExhibitGroups.concat(groupName)
-      : expandedExhibitGroups.filter(n => n !== groupName)
+    const currentlyExpanded = expandedExhibitGroups.indexOf(groupName) !== -1
+    const newExpandedExhibitGroups = currentlyExpanded
+      ? expandedExhibitGroups.filter(n => n !== groupName)
+      : expandedExhibitGroups.concat(groupName)
     setExpandedExhibitGroups(newExpandedExhibitGroups)
     saveNavBarState({
       expandedExhibitGroups: newExpandedExhibitGroups,
@@ -195,17 +220,13 @@ export const render = () => {
     })
   }
 
-  const onVariantGroupExpand = (path: string) => {
-    const newExpandedPaths = expandedPaths.concat(path)
-    setExpandedPaths(expandedPaths.concat(path))
-    saveNavBarState({
-      expandedExhibitGroups,
-      expandedPaths: newExpandedPaths,
-    })
-  }
-
-  const onVariantGroupCollapse = (path: string) => {
-    const newExpandedPaths = expandedPaths.filter(p => p !== path)
+  const onVariantGroupExpandChange = (path: string, newIsExpanded: boolean) => {
+    const isPathExpanded = expandedPaths.indexOf(path) !== -1
+    const newExpandedPaths = newIsExpanded && !isPathExpanded
+      ? expandedPaths.concat(path)
+      : !newIsExpanded && isPathExpanded
+        ? expandedPaths.filter(p => p !== path)
+        : expandedPaths
     setExpandedPaths(newExpandedPaths)
     saveNavBarState({
       expandedExhibitGroups,
@@ -213,20 +234,35 @@ export const render = () => {
     })
   }
 
-  const el = useRef<HTMLDivElement>()
-  const [isElFocus, setIsElFocus] = useState(false)
+  const onExpandAllButtonClick = () => {
+    const allPaths = determineAllPaths()
+    setExpandedExhibitGroups(exhibitGroupingInfo.groupNames)
+    setExpandedPaths(allPaths)
+    saveNavBarState({
+      expandedExhibitGroups: exhibitGroupingInfo.groupNames,
+      expandedPaths: allPaths,
+    })
+  }
+
+  const onCollapseAllButtonClick = () => {
+    setExpandedExhibitGroups([])
+    setExpandedPaths([])
+    saveNavBarState({
+      expandedExhibitGroups: [],
+      expandedPaths: [],
+    })
+  }
 
   useEffect(() => {
-    let _isElFocus = false
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {
-        if (!e.shiftKey && _isElFocus) {
+        if (!e.shiftKey && isElFocus.current) {
           const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(el.current.querySelectorAll('a, button'))
           focusableElements[0]?.focus()
           e.preventDefault()
         }
-        setIsElFocus(false)
-        _isElFocus = false
+        el.current.classList.remove('focused')
+        isElFocus.current = false
         return
       }
 
@@ -235,7 +271,7 @@ export const render = () => {
       if (!isUp && !isDown)
         return
 
-      if (!(isElFocus || el.current.contains(document.activeElement)))
+      if (!(isElFocus.current || el.current.contains(document.activeElement)))
         return
 
       const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(el.current.querySelectorAll('a, button'))
@@ -258,8 +294,8 @@ export const render = () => {
 
     const onClick = (e: MouseEvent) => {
       const isEl = e.target === el.current
-      _isElFocus = isEl
-      setIsElFocus(isEl)
+      isElFocus.current = isEl
+      el.current.classList.toggle('focused', isEl)
     }
 
     document.addEventListener('click', onClick)
@@ -270,28 +306,31 @@ export const render = () => {
     }
   }, [])
 
-  if (state.ready) {
-    const exhibitGroupingInfo = determineExhibitGroupingInfo()
-
+  if (readyState) {
     return (
       <div
-        className={`vertical-nav-bar${isElFocus ? ' focused' : ''}`}
+        className="vertical-nav-bar"
         ref={el}
       >
-        {exhibitGroupingInfo.groupNames.map(groupName => {
+        <div className="button-bar-1">
+          <button type="button" className="far fa-square-plus" onClick={() => onExpandAllButtonClick()} aria-label="Expand all" title="Expand all" />
+          <button type="button" className="far fa-square-minus" onClick={() => onCollapseAllButtonClick()} aria-label="Collapse all" title="Collapse all" />
+        </div>
+        {exhibitGroupingInfo.groupNames.map((groupName, i) => {
           const isExpanded = expandedExhibitGroups.indexOf(groupName) !== -1
           return (
-            <div className={`group ${isExpanded ? 'expanded' : 'collapsed'}`}>
+            <div className={`group ${isExpanded ? 'expanded' : 'collapsed'}`} key={i + 1}>
               <ExhibitGroupNameEl groupName={groupName} isExpanded={isExpanded} onClick={() => onGroupNameClick(groupName)} />
               {isExpanded
                 ? (
                   <div className="exhibits">
-                    {exhibitGroupingInfo.groupNameToExhibits[groupName].map((exhibit, i) => (
+                    {exhibitGroupingInfo.groupNameToExhibits[groupName].map((exhibit, _i) => (
                       <ExhibitEl
-                        exhibit={exhibit} key={i + 1}
+                        exhibit={exhibit}
+                        key={_i + 1}
+                        id={_i + 1}
                         expandedPaths={expandedPaths}
-                        onGroupCollapse={n => onVariantGroupCollapse(n)}
-                        onGroupExpand={n => onVariantGroupExpand(n)}
+                        onExpandChange={onVariantGroupExpandChange}
                       />
                     ))}
                   </div>
@@ -303,10 +342,11 @@ export const render = () => {
           <div className="exhibits">
             {exhibitGroupingInfo.ungroupedExhibits.map((exhibit, i) => (
               <ExhibitEl
-                exhibit={exhibit} key={i + 1}
+                exhibit={exhibit}
+                key={i + 1}
+                id={i + 1}
                 expandedPaths={expandedPaths}
-                onGroupCollapse={n => onVariantGroupCollapse(n)}
-                onGroupExpand={n => onVariantGroupExpand(n)}
+                onExpandChange={onVariantGroupExpandChange}
               />
             ))}
           </div>
@@ -315,10 +355,10 @@ export const render = () => {
     )
   }
 
-  if (state.loadingState === LoadingState.FETCHING)
+  if (loadingState === LoadingState.FETCHING)
     return <div className="vertical-nav-bar">Loading exhibits...</div>
 
-  if (state.loadingState === LoadingState.FAILED)
+  if (loadingState === LoadingState.FAILED)
     return <div className="vertical-nav-bar">Loading exhibits failed</div>
 
   return null

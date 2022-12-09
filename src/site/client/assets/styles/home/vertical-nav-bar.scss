@@ -26,7 +26,25 @@ $hover-color: #eeeeee;
   min-width: 150px;
   border-right: $border;
   overflow-y: auto;
-  padding-top: 5px;
+
+  .button-bar-1 {
+    display: flex;
+    justify-content: end;
+    padding: 5px;
+
+    button {
+      margin-left: 5px;
+      padding: 5px;
+      cursor: pointer;
+      background-color: $color-background;
+      border: none;
+      border-radius: 5px;
+
+      &:hover {
+        background-color: darken($color-background, 7);
+      }
+    }
+  }
 
   &.focused {
     box-shadow: 0 0 0 1px $link-color inset;
