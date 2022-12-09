@@ -313,8 +313,20 @@ export const render = () => {
         ref={el}
       >
         <div className="button-bar-1">
-          <button type="button" className="far fa-square-plus" onClick={() => onExpandAllButtonClick()} aria-label="Expand all" title="Expand all" />
-          <button type="button" className="far fa-square-minus" onClick={() => onCollapseAllButtonClick()} aria-label="Collapse all" title="Collapse all" />
+          <button
+            type="button"
+            className="far fa-square-plus"
+            onClick={() => onExpandAllButtonClick()}
+            aria-label="Expand all"
+            title="Expand all"
+          />
+          <button
+            type="button"
+            className="far fa-square-minus"
+            onClick={() => onCollapseAllButtonClick()}
+            aria-label="Collapse all"
+            title="Collapse all"
+          />
         </div>
         {exhibitGroupingInfo.groupNames.map((groupName, i) => {
           const isExpanded = expandedExhibitGroups.indexOf(groupName) !== -1
