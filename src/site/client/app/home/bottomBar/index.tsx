@@ -32,7 +32,7 @@ export const render = () => {
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
   const doBarTypesDisagree = !selectedVariantPathFound || barTypeFromQuery !== selectedBarType
-  const resolvedInfo = useMemo(() => getSelectedVariant(selectedVariantPath), [selectedVariantPath?.join('/')])
+  const resolvedInfo = useMemo(() => getSelectedVariant(selectedVariantPath), [selectedVariantPath])
   const shownBarTypes: BottomBarType[] = []
   const showProps = resolvedInfo.success === true && resolvedInfo.exhibit.hasProps
   const showEventLog = showProps && (resolvedInfo.exhibit as ComponentExhibit<true>).eventProps

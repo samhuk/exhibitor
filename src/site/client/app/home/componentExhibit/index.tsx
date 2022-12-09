@@ -1,14 +1,14 @@
 import { BoolDependant, TypeDependantBaseIntersection } from '@samhuk/type-helpers/dist/type-helpers/types'
+import cloneDeep from 'clone-deep'
 import React, { useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
-import cloneDeep from 'clone-deep'
 import { ComponentExhibit, Variant, VariantGroup } from '../../../../../api/exhibit/types'
+import { eventLogService } from '../../../services/eventLogService'
 import { useAppSelector } from '../../../store'
 import { addEvent, selectVariant } from '../../../store/componentExhibits/actions'
 import { deepSetAllPropsOnMatch } from '../bottomBar/eventLog'
-import { eventLogService } from '../../../services/eventLogService'
 
 const VariantEl = (props: { exhibit: ComponentExhibit, variant: Variant }) => {
   const dispatch = useDispatch()
@@ -62,20 +62,21 @@ export type GetSelectedVariantResult<
   }, TSuccess, 'success'
 >
 
-const convertLocationPathToVariantPath = (locationPath: string): string[] => (
-  locationPath.split('/').filter(s => s.length > 0).map(decodeURIComponent)
+const convertVariantPathToVariantPathComponents = (path: string): string[] => (
+  path.split('/').filter(s => s.length > 0).map(decodeURIComponent)
 )
 
 export const getSelectedVariant = (
-  variantPath: string[],
+  variantPathString: string,
 ): GetSelectedVariantResult => {
-  if (variantPath == null) {
+  if (variantPathString == null) {
     return {
       success: false,
       failReason: GetSelectedVariantFailReason.NO_PATH,
     }
   }
 
+  const variantPath = convertVariantPathToVariantPathComponents(variantPathString)
   const exhibitName = variantPath[0]
 
   const exhibit = exh.default.find(e => e.name === exhibitName)
@@ -124,23 +125,20 @@ export const getSelectedVariant = (
 }
 
 export const render = () => {
-  const componentExhibits = useAppSelector(s => s.componentExhibits)
+  const readyState = useAppSelector(s => s.componentExhibits.ready)
   /* Workaround because react-router-dom's useParams auto-decodes URI components,
    * which means the "/" character in variant or variant group names would conflict
    * URI syntax.
    */
-  const locationPath = useLocation().pathname
   const dispatch = useDispatch()
-  const resolvedInfo = useMemo(() => getSelectedVariant(convertLocationPathToVariantPath(locationPath)), [locationPath])
+  const locationPath = useLocation().pathname
+  const resolvedInfo = useMemo(() => getSelectedVariant(locationPath), [locationPath])
 
   useEffect(() => {
-    const variantPath = resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.NO_PATH
-      ? null
-      : resolvedInfo.variantPath
-    dispatch(selectVariant(variantPath, resolvedInfo.success))
+    dispatch(selectVariant(locationPath, resolvedInfo.success))
   }, [locationPath])
 
-  if (!componentExhibits.ready)
+  if (!readyState)
     return <div className="component-exhibit loading">Loading component exhibits...</div>
 
   if (resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.NO_PATH)

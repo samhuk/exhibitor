@@ -29,7 +29,7 @@ const PropsValueEl = (props: {
         maxDisplayLength={10}
         quotesOnKeys={false}
         defaultInspectDepth={1}
-        editable={false} // TODO
+        editable // TODO
         valueTypes={[
           // Handle HTML elements, which are generally horrible
           createDataType(

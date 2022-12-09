@@ -69,13 +69,14 @@ const EventArgValueEl = (props: {
 
 const EventLogItemEl = (props: {
   item: EventLogItem,
+  id: string | number
 }) => (
   <div className="item">
     <div className="id">{props.item.id}</div>
     <div className="path">{props.item.path}</div>
     (
-    {props.item.args.map(arg => (
-      <div className="arg"><EventArgValueEl arg={arg} /></div>
+    {props.item.args.map((arg, i) => (
+      <div className="arg" key={i}><EventArgValueEl arg={arg} /></div>
     ))}
     )
   </div>
@@ -93,7 +94,7 @@ export const render = (props: {
         ? <div className="no-events">[No Events]</div>
         : events.map(eventId => {
           const item = eventLogService.items[eventId]
-          return <EventLogItemEl item={item} />
+          return <EventLogItemEl item={item} id={item.id} key={item.id} />
         })}
     </div>
   )
