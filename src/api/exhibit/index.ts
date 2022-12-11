@@ -2,6 +2,9 @@ import {
   ComponentExhibit,
   ComponentExhibitBuilder,
   ComponentExhibitOptions,
+  ComponentExhibits,
+  ExhibitNodes,
+  ExhibitNodeType,
   NonRootComponentExhibitBuilder,
   ReactComponent,
   ReactComponentWithProps,
@@ -12,7 +15,68 @@ import {
 /**
  * DO NOT USE THIS IN YOUR COMPONENT LIBRARY CODE.
  */
-export const __exhibits: ComponentExhibit[] = []
+export const __exhibits: ComponentExhibits = {}
+
+export const __nodes: ExhibitNodes = {}
+
+export const __exhibitGroups: { [groupName: string]: ComponentExhibits } = {}
+
+export const __ungroupedExhibits: ComponentExhibits = {}
+
+const traverseGroup = (
+  variantGroup: VariantGroup,
+  path: string[],
+  variantGroupFn: (g: VariantGroup, path: string[]) => void,
+  variantFn: (v: Variant, path: string[]) => void,
+): void => {
+  const thisPath = path.length > 0 ? path.concat(variantGroup.name) : [variantGroup.name]
+  variantGroupFn(variantGroup, thisPath)
+  Object.values(variantGroup.variants).forEach(v => {
+    variantFn(v, thisPath.concat(v.name))
+  })
+  Object.values(variantGroup.variantGroups).forEach(g => traverseGroup(g, thisPath, variantGroupFn, variantFn))
+}
+
+const traverse = (
+  exhibits: ComponentExhibits,
+  exhibitGroupFn: (exhibits: ComponentExhibits, path: string[]) => void,
+  variantGroupFn: (vg: VariantGroup, path: string[]) => void,
+  variantFn: (v: Variant, path: string[]) => void,
+): void => {
+  const ungroupedExhibits: ComponentExhibits = {}
+  const groupNameToExhibits: { [groupName: string]: ComponentExhibits } = {}
+  const groupNames: string[] = Object.values(exhibits).reduce<string[]>((acc, e) => {
+    if (e.groupName == null) {
+      ungroupedExhibits[e.name] = e
+      return acc
+    }
+
+    if (groupNameToExhibits[e.groupName] == null)
+      groupNameToExhibits[e.groupName] = {}
+
+    groupNameToExhibits[e.groupName][e.name] = e
+    return acc.indexOf(e.groupName) === -1 ? acc.concat(e.groupName) : acc
+  }, [])
+
+  // Run fn for each exhibit group
+  groupNames.forEach(groupName => {
+    exhibitGroupFn(groupNameToExhibits[groupName], [encodeURIComponent(groupName)])
+  })
+
+  Object.values(exhibits).forEach(e => {
+    const basePath = e.groupName != null ? [e.groupName] : []
+    if (e.hasProps) {
+      traverseGroup(e, basePath, variantGroupFn, variantFn)
+      // If show default variant, then we add on another "virtual" variant with the default props of the exhibit
+      if (e.showDefaultVariant)
+        variantFn({ name: 'Default', props: e.defaultProps }, basePath.concat([e.name, 'Default']))
+    }
+    // Special case where component has no props, then the exhibit becomes the variant
+    else {
+      variantFn({ name: e.name, props: undefined }, basePath.concat([e.name]))
+    }
+  })
+}
 
 const nonRootExhibit = (
   defaultProps: any,
@@ -37,6 +101,47 @@ const nonRootExhibit = (
   }
 
   return _nonRootExhibit
+}
+
+export const resolve = (
+  exhibits: ComponentExhibits,
+): ExhibitNodes => {
+  const mapPathComponentsToUrlPathString = (p: string[]) => p.map(_p => encodeURIComponent(_p)).join('/')
+
+  const nodes: ExhibitNodes = {}
+
+  traverse(
+    exhibits,
+    (_exhibits, pathComponents) => {
+      const path = mapPathComponentsToUrlPathString(pathComponents)
+      nodes[path] = {
+        type: ExhibitNodeType.EXHIBIT_GROUP,
+        exhibits,
+        path,
+        pathComponents,
+      }
+    },
+    (variantGroup, pathComponents) => {
+      const path = mapPathComponentsToUrlPathString(pathComponents)
+      nodes[path] = {
+        type: ExhibitNodeType.VARIANT_GROUP,
+        variantGroup,
+        path,
+        pathComponents,
+      }
+    },
+    (variant, pathComponents) => {
+      const path = mapPathComponentsToUrlPathString(pathComponents)
+      nodes[path] = {
+        type: ExhibitNodeType.VARIANT,
+        variant,
+        path,
+        pathComponents,
+      }
+    },
+  )
+
+  return nodes
 }
 
 export const exhibit = <
@@ -87,7 +192,7 @@ export const exhibit = <
         variantGroups,
       }
 
-      __exhibits.push(componentExhibit)
+      __exhibits[componentExhibit.name] = componentExhibit
 
       return componentExhibit as any
     },

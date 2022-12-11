@@ -79,7 +79,7 @@ export const getSelectedVariant = (
   const variantPath = convertVariantPathToVariantPathComponents(variantPathString)
   const exhibitName = variantPath[0]
 
-  const exhibit = exh.default.find(e => e.name === exhibitName)
+  const exhibit = Object.values(exh.default).find(e => e.name === exhibitName)
   if (exhibit == null) {
     return {
       success: false,

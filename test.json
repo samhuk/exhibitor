@@ -1,0 +1,1469 @@
+{
+  "GA": {
+    "type": 0,
+    "exhibits": {
+      "Button": {
+        "name": "Button",
+        "hasProps": true,
+        "defaultProps": {
+          "color": "default",
+          "iconPosition": "left",
+          "text": "Button Text",
+          "size": "normal",
+          "disabled": false
+        },
+        "eventProps": {
+          "onClick": true
+        },
+        "variants": {
+          "green": {
+            "name": "green",
+            "props": {
+              "color": "green",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "yellow": {
+            "name": "yellow",
+            "props": {
+              "color": "yellow",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "red": {
+            "name": "red",
+            "props": {
+              "color": "red",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "blue": {
+            "name": "blue",
+            "props": {
+              "color": "blue",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "large": {
+            "name": "large",
+            "props": {
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "large",
+              "disabled": false
+            }
+          },
+          "with icon": {
+            "name": "with icon",
+            "props": {
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Send",
+              "size": "normal",
+              "disabled": false,
+              "iconName": "paper-plane"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "ButtonWithGeneric": {
+        "name": "ButtonWithGeneric",
+        "hasProps": true,
+        "defaultProps": {
+          "listenForMouseEnter": true,
+          "color": "default",
+          "iconPosition": "left",
+          "text": "Button Text",
+          "size": "normal",
+          "disabled": false
+        },
+        "eventProps": {
+          "onClick": true,
+          "onMouseEnter": true
+        },
+        "variants": {
+          "green": {
+            "name": "green",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "green",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "yellow": {
+            "name": "yellow",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "yellow",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "red": {
+            "name": "red",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "red",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "blue": {
+            "name": "blue",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "blue",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "large": {
+            "name": "large",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "large",
+              "disabled": false
+            }
+          },
+          "with icon": {
+            "name": "with icon",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Send",
+              "size": "normal",
+              "disabled": false,
+              "iconName": "paper-plane"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "IconButton": {
+        "name": "IconButton",
+        "groupName": "GA",
+        "hasProps": true,
+        "defaultProps": {
+          "iconName": "user",
+          "color": "default"
+        },
+        "eventProps": null,
+        "variants": {
+          "paper-plane": {
+            "name": "paper-plane",
+            "props": {
+              "iconName": "paper-plane",
+              "color": "default"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "TypedIcon": {
+        "name": "TypedIcon",
+        "groupName": "GA",
+        "hasProps": true,
+        "defaultProps": null,
+        "eventProps": null,
+        "variants": {
+          "Success": {
+            "name": "Success",
+            "props": {
+              "type": "success"
+            }
+          },
+          "Warn": {
+            "name": "Warn",
+            "props": {
+              "type": "warn"
+            }
+          },
+          "Error": {
+            "name": "Error",
+            "props": {
+              "type": "error"
+            }
+          },
+          "Info": {
+            "name": "Info",
+            "props": {
+              "type": "info"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "LoadingSpinner": {
+        "name": "LoadingSpinner",
+        "groupName": "Design Phase",
+        "hasProps": false,
+        "defaultProps": null,
+        "eventProps": null,
+        "variants": {},
+        "variantGroups": {}
+      },
+      "Toast": {
+        "name": "Toast",
+        "groupName": "Design Phase",
+        "hasProps": true,
+        "defaultProps": {
+          "text": "",
+          "type": "info",
+          "showCloseButton": false
+        },
+        "eventProps": {
+          "onCloseButtonClick": true
+        },
+        "variants": {
+          "W/ close button": {
+            "name": "W/ close button",
+            "props": {
+              "text": "You can do this a better way",
+              "showCloseButton": true,
+              "type": "info"
+            }
+          }
+        },
+        "variantGroups": {
+          "W/o close button": {
+            "name": "W/o close button",
+            "variants": {
+              "Success": {
+                "name": "Success",
+                "props": {
+                  "text": "That completed successfully!",
+                  "type": "success"
+                }
+              },
+              "Warn": {
+                "name": "Warn",
+                "props": {
+                  "text": "That completed but something bad occured!",
+                  "type": "warn"
+                }
+              },
+              "Error": {
+                "name": "Error",
+                "props": {
+                  "text": "That didn't complete successfully.",
+                  "type": "error"
+                }
+              },
+              "Info": {
+                "name": "Info",
+                "props": {
+                  "text": "You can do this a better way.",
+                  "type": "info"
+                }
+              }
+            },
+            "variantGroups": {}
+          },
+          "Variable Text Lengthsssss sss sss sss": {
+            "name": "Variable Text Lengthsssss sss sss sss",
+            "variants": {
+              "Long text": {
+                "name": "Long text",
+                "props": {
+                  "text": "You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.",
+                  "type": "info"
+                }
+              },
+              "Short text": {
+                "name": "Short text",
+                "props": {
+                  "text": "No.",
+                  "type": "info"
+                }
+              }
+            },
+            "variantGroups": {}
+          }
+        }
+      }
+    },
+    "path": "GA",
+    "pathComponents": [
+      "GA"
+    ]
+  },
+  "Design%2520Phase": {
+    "type": 0,
+    "exhibits": {
+      "Button": {
+        "name": "Button",
+        "hasProps": true,
+        "defaultProps": {
+          "color": "default",
+          "iconPosition": "left",
+          "text": "Button Text",
+          "size": "normal",
+          "disabled": false
+        },
+        "eventProps": {
+          "onClick": true
+        },
+        "variants": {
+          "green": {
+            "name": "green",
+            "props": {
+              "color": "green",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "yellow": {
+            "name": "yellow",
+            "props": {
+              "color": "yellow",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "red": {
+            "name": "red",
+            "props": {
+              "color": "red",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "blue": {
+            "name": "blue",
+            "props": {
+              "color": "blue",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "large": {
+            "name": "large",
+            "props": {
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "large",
+              "disabled": false
+            }
+          },
+          "with icon": {
+            "name": "with icon",
+            "props": {
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Send",
+              "size": "normal",
+              "disabled": false,
+              "iconName": "paper-plane"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "ButtonWithGeneric": {
+        "name": "ButtonWithGeneric",
+        "hasProps": true,
+        "defaultProps": {
+          "listenForMouseEnter": true,
+          "color": "default",
+          "iconPosition": "left",
+          "text": "Button Text",
+          "size": "normal",
+          "disabled": false
+        },
+        "eventProps": {
+          "onClick": true,
+          "onMouseEnter": true
+        },
+        "variants": {
+          "green": {
+            "name": "green",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "green",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "yellow": {
+            "name": "yellow",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "yellow",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "red": {
+            "name": "red",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "red",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "blue": {
+            "name": "blue",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "blue",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "normal",
+              "disabled": false
+            }
+          },
+          "large": {
+            "name": "large",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Button Text",
+              "size": "large",
+              "disabled": false
+            }
+          },
+          "with icon": {
+            "name": "with icon",
+            "props": {
+              "listenForMouseEnter": true,
+              "color": "default",
+              "iconPosition": "left",
+              "text": "Send",
+              "size": "normal",
+              "disabled": false,
+              "iconName": "paper-plane"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "IconButton": {
+        "name": "IconButton",
+        "groupName": "GA",
+        "hasProps": true,
+        "defaultProps": {
+          "iconName": "user",
+          "color": "default"
+        },
+        "eventProps": null,
+        "variants": {
+          "paper-plane": {
+            "name": "paper-plane",
+            "props": {
+              "iconName": "paper-plane",
+              "color": "default"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "TypedIcon": {
+        "name": "TypedIcon",
+        "groupName": "GA",
+        "hasProps": true,
+        "defaultProps": null,
+        "eventProps": null,
+        "variants": {
+          "Success": {
+            "name": "Success",
+            "props": {
+              "type": "success"
+            }
+          },
+          "Warn": {
+            "name": "Warn",
+            "props": {
+              "type": "warn"
+            }
+          },
+          "Error": {
+            "name": "Error",
+            "props": {
+              "type": "error"
+            }
+          },
+          "Info": {
+            "name": "Info",
+            "props": {
+              "type": "info"
+            }
+          }
+        },
+        "variantGroups": {}
+      },
+      "LoadingSpinner": {
+        "name": "LoadingSpinner",
+        "groupName": "Design Phase",
+        "hasProps": false,
+        "defaultProps": null,
+        "eventProps": null,
+        "variants": {},
+        "variantGroups": {}
+      },
+      "Toast": {
+        "name": "Toast",
+        "groupName": "Design Phase",
+        "hasProps": true,
+        "defaultProps": {
+          "text": "",
+          "type": "info",
+          "showCloseButton": false
+        },
+        "eventProps": {
+          "onCloseButtonClick": true
+        },
+        "variants": {
+          "W/ close button": {
+            "name": "W/ close button",
+            "props": {
+              "text": "You can do this a better way",
+              "showCloseButton": true,
+              "type": "info"
+            }
+          }
+        },
+        "variantGroups": {
+          "W/o close button": {
+            "name": "W/o close button",
+            "variants": {
+              "Success": {
+                "name": "Success",
+                "props": {
+                  "text": "That completed successfully!",
+                  "type": "success"
+                }
+              },
+              "Warn": {
+                "name": "Warn",
+                "props": {
+                  "text": "That completed but something bad occured!",
+                  "type": "warn"
+                }
+              },
+              "Error": {
+                "name": "Error",
+                "props": {
+                  "text": "That didn't complete successfully.",
+                  "type": "error"
+                }
+              },
+              "Info": {
+                "name": "Info",
+                "props": {
+                  "text": "You can do this a better way.",
+                  "type": "info"
+                }
+              }
+            },
+            "variantGroups": {}
+          },
+          "Variable Text Lengthsssss sss sss sss": {
+            "name": "Variable Text Lengthsssss sss sss sss",
+            "variants": {
+              "Long text": {
+                "name": "Long text",
+                "props": {
+                  "text": "You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.",
+                  "type": "info"
+                }
+              },
+              "Short text": {
+                "name": "Short text",
+                "props": {
+                  "text": "No.",
+                  "type": "info"
+                }
+              }
+            },
+            "variantGroups": {}
+          }
+        }
+      }
+    },
+    "path": "Design%2520Phase",
+    "pathComponents": [
+      "Design%20Phase"
+    ]
+  },
+  "Button": {
+    "type": 1,
+    "variantGroup": {
+      "name": "Button",
+      "hasProps": true,
+      "defaultProps": {
+        "color": "default",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      },
+      "eventProps": {
+        "onClick": true
+      },
+      "variants": {
+        "green": {
+          "name": "green",
+          "props": {
+            "color": "green",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "yellow": {
+          "name": "yellow",
+          "props": {
+            "color": "yellow",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "red": {
+          "name": "red",
+          "props": {
+            "color": "red",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "blue": {
+          "name": "blue",
+          "props": {
+            "color": "blue",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "large": {
+          "name": "large",
+          "props": {
+            "color": "default",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "large",
+            "disabled": false
+          }
+        },
+        "with icon": {
+          "name": "with icon",
+          "props": {
+            "color": "default",
+            "iconPosition": "left",
+            "text": "Send",
+            "size": "normal",
+            "disabled": false,
+            "iconName": "paper-plane"
+          }
+        }
+      },
+      "variantGroups": {}
+    },
+    "path": "Button",
+    "pathComponents": [
+      "Button"
+    ]
+  },
+  "Button/green": {
+    "type": 2,
+    "variant": {
+      "name": "green",
+      "props": {
+        "color": "green",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "Button/green",
+    "pathComponents": [
+      "Button",
+      "green"
+    ]
+  },
+  "Button/yellow": {
+    "type": 2,
+    "variant": {
+      "name": "yellow",
+      "props": {
+        "color": "yellow",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "Button/yellow",
+    "pathComponents": [
+      "Button",
+      "yellow"
+    ]
+  },
+  "Button/red": {
+    "type": 2,
+    "variant": {
+      "name": "red",
+      "props": {
+        "color": "red",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "Button/red",
+    "pathComponents": [
+      "Button",
+      "red"
+    ]
+  },
+  "Button/blue": {
+    "type": 2,
+    "variant": {
+      "name": "blue",
+      "props": {
+        "color": "blue",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "Button/blue",
+    "pathComponents": [
+      "Button",
+      "blue"
+    ]
+  },
+  "Button/large": {
+    "type": 2,
+    "variant": {
+      "name": "large",
+      "props": {
+        "color": "default",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "large",
+        "disabled": false
+      }
+    },
+    "path": "Button/large",
+    "pathComponents": [
+      "Button",
+      "large"
+    ]
+  },
+  "Button/with%20icon": {
+    "type": 2,
+    "variant": {
+      "name": "with icon",
+      "props": {
+        "color": "default",
+        "iconPosition": "left",
+        "text": "Send",
+        "size": "normal",
+        "disabled": false,
+        "iconName": "paper-plane"
+      }
+    },
+    "path": "Button/with%20icon",
+    "pathComponents": [
+      "Button",
+      "with icon"
+    ]
+  },
+  "ButtonWithGeneric": {
+    "type": 1,
+    "variantGroup": {
+      "name": "ButtonWithGeneric",
+      "hasProps": true,
+      "defaultProps": {
+        "listenForMouseEnter": true,
+        "color": "default",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      },
+      "eventProps": {
+        "onClick": true,
+        "onMouseEnter": true
+      },
+      "variants": {
+        "green": {
+          "name": "green",
+          "props": {
+            "listenForMouseEnter": true,
+            "color": "green",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "yellow": {
+          "name": "yellow",
+          "props": {
+            "listenForMouseEnter": true,
+            "color": "yellow",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "red": {
+          "name": "red",
+          "props": {
+            "listenForMouseEnter": true,
+            "color": "red",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "blue": {
+          "name": "blue",
+          "props": {
+            "listenForMouseEnter": true,
+            "color": "blue",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "normal",
+            "disabled": false
+          }
+        },
+        "large": {
+          "name": "large",
+          "props": {
+            "listenForMouseEnter": true,
+            "color": "default",
+            "iconPosition": "left",
+            "text": "Button Text",
+            "size": "large",
+            "disabled": false
+          }
+        },
+        "with icon": {
+          "name": "with icon",
+          "props": {
+            "listenForMouseEnter": true,
+            "color": "default",
+            "iconPosition": "left",
+            "text": "Send",
+            "size": "normal",
+            "disabled": false,
+            "iconName": "paper-plane"
+          }
+        }
+      },
+      "variantGroups": {}
+    },
+    "path": "ButtonWithGeneric",
+    "pathComponents": [
+      "ButtonWithGeneric"
+    ]
+  },
+  "ButtonWithGeneric/green": {
+    "type": 2,
+    "variant": {
+      "name": "green",
+      "props": {
+        "listenForMouseEnter": true,
+        "color": "green",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "ButtonWithGeneric/green",
+    "pathComponents": [
+      "ButtonWithGeneric",
+      "green"
+    ]
+  },
+  "ButtonWithGeneric/yellow": {
+    "type": 2,
+    "variant": {
+      "name": "yellow",
+      "props": {
+        "listenForMouseEnter": true,
+        "color": "yellow",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "ButtonWithGeneric/yellow",
+    "pathComponents": [
+      "ButtonWithGeneric",
+      "yellow"
+    ]
+  },
+  "ButtonWithGeneric/red": {
+    "type": 2,
+    "variant": {
+      "name": "red",
+      "props": {
+        "listenForMouseEnter": true,
+        "color": "red",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "ButtonWithGeneric/red",
+    "pathComponents": [
+      "ButtonWithGeneric",
+      "red"
+    ]
+  },
+  "ButtonWithGeneric/blue": {
+    "type": 2,
+    "variant": {
+      "name": "blue",
+      "props": {
+        "listenForMouseEnter": true,
+        "color": "blue",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "normal",
+        "disabled": false
+      }
+    },
+    "path": "ButtonWithGeneric/blue",
+    "pathComponents": [
+      "ButtonWithGeneric",
+      "blue"
+    ]
+  },
+  "ButtonWithGeneric/large": {
+    "type": 2,
+    "variant": {
+      "name": "large",
+      "props": {
+        "listenForMouseEnter": true,
+        "color": "default",
+        "iconPosition": "left",
+        "text": "Button Text",
+        "size": "large",
+        "disabled": false
+      }
+    },
+    "path": "ButtonWithGeneric/large",
+    "pathComponents": [
+      "ButtonWithGeneric",
+      "large"
+    ]
+  },
+  "ButtonWithGeneric/with%20icon": {
+    "type": 2,
+    "variant": {
+      "name": "with icon",
+      "props": {
+        "listenForMouseEnter": true,
+        "color": "default",
+        "iconPosition": "left",
+        "text": "Send",
+        "size": "normal",
+        "disabled": false,
+        "iconName": "paper-plane"
+      }
+    },
+    "path": "ButtonWithGeneric/with%20icon",
+    "pathComponents": [
+      "ButtonWithGeneric",
+      "with icon"
+    ]
+  },
+  "GA/IconButton": {
+    "type": 1,
+    "variantGroup": {
+      "name": "IconButton",
+      "groupName": "GA",
+      "hasProps": true,
+      "defaultProps": {
+        "iconName": "user",
+        "color": "default"
+      },
+      "eventProps": null,
+      "variants": {
+        "paper-plane": {
+          "name": "paper-plane",
+          "props": {
+            "iconName": "paper-plane",
+            "color": "default"
+          }
+        }
+      },
+      "variantGroups": {}
+    },
+    "path": "GA/IconButton",
+    "pathComponents": [
+      "GA",
+      "IconButton"
+    ]
+  },
+  "GA/IconButton/paper-plane": {
+    "type": 2,
+    "variant": {
+      "name": "paper-plane",
+      "props": {
+        "iconName": "paper-plane",
+        "color": "default"
+      }
+    },
+    "path": "GA/IconButton/paper-plane",
+    "pathComponents": [
+      "GA",
+      "IconButton",
+      "paper-plane"
+    ]
+  },
+  "GA/TypedIcon": {
+    "type": 1,
+    "variantGroup": {
+      "name": "TypedIcon",
+      "groupName": "GA",
+      "hasProps": true,
+      "defaultProps": null,
+      "eventProps": null,
+      "variants": {
+        "Success": {
+          "name": "Success",
+          "props": {
+            "type": "success"
+          }
+        },
+        "Warn": {
+          "name": "Warn",
+          "props": {
+            "type": "warn"
+          }
+        },
+        "Error": {
+          "name": "Error",
+          "props": {
+            "type": "error"
+          }
+        },
+        "Info": {
+          "name": "Info",
+          "props": {
+            "type": "info"
+          }
+        }
+      },
+      "variantGroups": {}
+    },
+    "path": "GA/TypedIcon",
+    "pathComponents": [
+      "GA",
+      "TypedIcon"
+    ]
+  },
+  "GA/TypedIcon/Success": {
+    "type": 2,
+    "variant": {
+      "name": "Success",
+      "props": {
+        "type": "success"
+      }
+    },
+    "path": "GA/TypedIcon/Success",
+    "pathComponents": [
+      "GA",
+      "TypedIcon",
+      "Success"
+    ]
+  },
+  "GA/TypedIcon/Warn": {
+    "type": 2,
+    "variant": {
+      "name": "Warn",
+      "props": {
+        "type": "warn"
+      }
+    },
+    "path": "GA/TypedIcon/Warn",
+    "pathComponents": [
+      "GA",
+      "TypedIcon",
+      "Warn"
+    ]
+  },
+  "GA/TypedIcon/Error": {
+    "type": 2,
+    "variant": {
+      "name": "Error",
+      "props": {
+        "type": "error"
+      }
+    },
+    "path": "GA/TypedIcon/Error",
+    "pathComponents": [
+      "GA",
+      "TypedIcon",
+      "Error"
+    ]
+  },
+  "GA/TypedIcon/Info": {
+    "type": 2,
+    "variant": {
+      "name": "Info",
+      "props": {
+        "type": "info"
+      }
+    },
+    "path": "GA/TypedIcon/Info",
+    "pathComponents": [
+      "GA",
+      "TypedIcon",
+      "Info"
+    ]
+  },
+  "Design%20Phase/LoadingSpinner": {
+    "type": 2,
+    "variant": {
+      "name": "LoadingSpinner"
+    },
+    "path": "Design%20Phase/LoadingSpinner",
+    "pathComponents": [
+      "Design Phase",
+      "LoadingSpinner"
+    ]
+  },
+  "Design%20Phase/Toast": {
+    "type": 1,
+    "variantGroup": {
+      "name": "Toast",
+      "groupName": "Design Phase",
+      "hasProps": true,
+      "defaultProps": {
+        "text": "",
+        "type": "info",
+        "showCloseButton": false
+      },
+      "eventProps": {
+        "onCloseButtonClick": true
+      },
+      "variants": {
+        "W/ close button": {
+          "name": "W/ close button",
+          "props": {
+            "text": "You can do this a better way",
+            "showCloseButton": true,
+            "type": "info"
+          }
+        }
+      },
+      "variantGroups": {
+        "W/o close button": {
+          "name": "W/o close button",
+          "variants": {
+            "Success": {
+              "name": "Success",
+              "props": {
+                "text": "That completed successfully!",
+                "type": "success"
+              }
+            },
+            "Warn": {
+              "name": "Warn",
+              "props": {
+                "text": "That completed but something bad occured!",
+                "type": "warn"
+              }
+            },
+            "Error": {
+              "name": "Error",
+              "props": {
+                "text": "That didn't complete successfully.",
+                "type": "error"
+              }
+            },
+            "Info": {
+              "name": "Info",
+              "props": {
+                "text": "You can do this a better way.",
+                "type": "info"
+              }
+            }
+          },
+          "variantGroups": {}
+        },
+        "Variable Text Lengthsssss sss sss sss": {
+          "name": "Variable Text Lengthsssss sss sss sss",
+          "variants": {
+            "Long text": {
+              "name": "Long text",
+              "props": {
+                "text": "You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.",
+                "type": "info"
+              }
+            },
+            "Short text": {
+              "name": "Short text",
+              "props": {
+                "text": "No.",
+                "type": "info"
+              }
+            }
+          },
+          "variantGroups": {}
+        }
+      }
+    },
+    "path": "Design%20Phase/Toast",
+    "pathComponents": [
+      "Design Phase",
+      "Toast"
+    ]
+  },
+  "Design%20Phase/Toast/W%2F%20close%20button": {
+    "type": 2,
+    "variant": {
+      "name": "W/ close button",
+      "props": {
+        "text": "You can do this a better way",
+        "showCloseButton": true,
+        "type": "info"
+      }
+    },
+    "path": "Design%20Phase/Toast/W%2F%20close%20button",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "W/ close button"
+    ]
+  },
+  "Design%20Phase/Toast/W%2Fo%20close%20button": {
+    "type": 1,
+    "variantGroup": {
+      "name": "W/o close button",
+      "variants": {
+        "Success": {
+          "name": "Success",
+          "props": {
+            "text": "That completed successfully!",
+            "type": "success"
+          }
+        },
+        "Warn": {
+          "name": "Warn",
+          "props": {
+            "text": "That completed but something bad occured!",
+            "type": "warn"
+          }
+        },
+        "Error": {
+          "name": "Error",
+          "props": {
+            "text": "That didn't complete successfully.",
+            "type": "error"
+          }
+        },
+        "Info": {
+          "name": "Info",
+          "props": {
+            "text": "You can do this a better way.",
+            "type": "info"
+          }
+        }
+      },
+      "variantGroups": {}
+    },
+    "path": "Design%20Phase/Toast/W%2Fo%20close%20button",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "W/o close button"
+    ]
+  },
+  "Design%20Phase/Toast/W%2Fo%20close%20button/Success": {
+    "type": 2,
+    "variant": {
+      "name": "Success",
+      "props": {
+        "text": "That completed successfully!",
+        "type": "success"
+      }
+    },
+    "path": "Design%20Phase/Toast/W%2Fo%20close%20button/Success",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "W/o close button",
+      "Success"
+    ]
+  },
+  "Design%20Phase/Toast/W%2Fo%20close%20button/Warn": {
+    "type": 2,
+    "variant": {
+      "name": "Warn",
+      "props": {
+        "text": "That completed but something bad occured!",
+        "type": "warn"
+      }
+    },
+    "path": "Design%20Phase/Toast/W%2Fo%20close%20button/Warn",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "W/o close button",
+      "Warn"
+    ]
+  },
+  "Design%20Phase/Toast/W%2Fo%20close%20button/Error": {
+    "type": 2,
+    "variant": {
+      "name": "Error",
+      "props": {
+        "text": "That didn't complete successfully.",
+        "type": "error"
+      }
+    },
+    "path": "Design%20Phase/Toast/W%2Fo%20close%20button/Error",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "W/o close button",
+      "Error"
+    ]
+  },
+  "Design%20Phase/Toast/W%2Fo%20close%20button/Info": {
+    "type": 2,
+    "variant": {
+      "name": "Info",
+      "props": {
+        "text": "You can do this a better way.",
+        "type": "info"
+      }
+    },
+    "path": "Design%20Phase/Toast/W%2Fo%20close%20button/Info",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "W/o close button",
+      "Info"
+    ]
+  },
+  "Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss": {
+    "type": 1,
+    "variantGroup": {
+      "name": "Variable Text Lengthsssss sss sss sss",
+      "variants": {
+        "Long text": {
+          "name": "Long text",
+          "props": {
+            "text": "You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.",
+            "type": "info"
+          }
+        },
+        "Short text": {
+          "name": "Short text",
+          "props": {
+            "text": "No.",
+            "type": "info"
+          }
+        }
+      },
+      "variantGroups": {}
+    },
+    "path": "Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "Variable Text Lengthsssss sss sss sss"
+    ]
+  },
+  "Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Long%20text": {
+    "type": 2,
+    "variant": {
+      "name": "Long text",
+      "props": {
+        "text": "You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.",
+        "type": "info"
+      }
+    },
+    "path": "Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Long%20text",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "Variable Text Lengthsssss sss sss sss",
+      "Long text"
+    ]
+  },
+  "Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Short%20text": {
+    "type": 2,
+    "variant": {
+      "name": "Short text",
+      "props": {
+        "text": "No.",
+        "type": "info"
+      }
+    },
+    "path": "Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Short%20text",
+    "pathComponents": [
+      "Design Phase",
+      "Toast",
+      "Variable Text Lengthsssss sss sss sss",
+      "Short text"
+    ]
+  }
+}

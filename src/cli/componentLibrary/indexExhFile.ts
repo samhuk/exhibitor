@@ -53,13 +53,14 @@ export const createIndexExhTsFile = async (
 
   const text = [
     // E.g. import { exhibit } from '../../../node_modules/exhibitor' (in release)
-    `import { __exhibits } from '${exhibitApiFunctionPath}'`,
+    `import { resolve, __exhibits } from '${exhibitApiFunctionPath}'`,
     // E.g. import '../myComponentLibraryDir/styles.scss'
     _rootStylePath != null ? `import '${_rootStylePath}'` : null,
     // E.g. list of "export {} from '../myComponentLibraryDir/button.exh.ts'"
     includedFilePaths
       .map(_path => `export {} from '${path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')}'`)
       .join('\n'),
+    'export const nodes = resolve(__exhibits)',
     'export default __exhibits',
   ].filter(s => s != null).join('\n\n')
 

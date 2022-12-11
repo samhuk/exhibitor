@@ -1,4 +1,4 @@
-import { BoolDependant, IsTrueAndFalse, StringKeysOf } from '@samhuk/type-helpers/dist/type-helpers/types'
+import { BoolDependant, IsTrueAndFalse, TypeDependantBaseIntersection } from '@samhuk/type-helpers/dist/type-helpers/types'
 
 export type ReactComponentWithProps<TProps extends any = any> = (props: TProps) => JSX.Element
 
@@ -134,3 +134,40 @@ export type ComponentExhibit<
   THasProps,
   'hasProps'
 >
+
+export type ComponentExhibits = { [name: string]: ComponentExhibit }
+
+export enum ExhibitNodeType {
+  EXHIBIT_GROUP,
+  VARIANT_GROUP,
+  VARIANT
+}
+
+export type ExhibitNode<
+  TType extends ExhibitNodeType = ExhibitNodeType
+> = TypeDependantBaseIntersection<
+  ExhibitNodeType,
+  {
+    [ExhibitNodeType.EXHIBIT_GROUP]: {
+      exhibits: ComponentExhibits
+    }
+    [ExhibitNodeType.VARIANT_GROUP]: {
+      variantGroup: VariantGroup
+    }
+    [ExhibitNodeType.VARIANT]: {
+      variant: Variant
+    }
+  },
+  TType
+> & {
+  /**
+   * URL-encoded joined path string
+   */
+  path: string
+  /**
+   * Unencoded path string components
+   */
+  pathComponents: string[]
+}
+
+export type ExhibitNodes = { [path: string]: ExhibitNode }

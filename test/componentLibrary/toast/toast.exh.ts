@@ -1,7 +1,7 @@
 import exhibit from '../../../src/api'
 import Toast, { ToastType } from './toast'
 
-exhibit(Toast, 'Toast', { group: 'Design Phase' })
+export const toastExhibit = exhibit(Toast, 'Toast', { group: 'Design Phase' })
   .events({
     onCloseButtonClick: true,
   })

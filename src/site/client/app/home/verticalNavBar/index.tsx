@@ -115,7 +115,7 @@ const determineExhibitGroupingInfo = () => {
   const ungroupedExhibits: ComponentExhibit[] = []
   // Determine the distinct exhibit group names
   const groupNameToExhibits: { [groupName: string]: ComponentExhibit[] } = {}
-  const groupNames: string[] = exh.default.reduce<string[]>((acc, e) => {
+  const groupNames: string[] = Object.values(exh.default).reduce<string[]>((acc, e) => {
     if (e.groupName == null) {
       ungroupedExhibits.push(e)
       return acc
@@ -186,7 +186,7 @@ const determineAllPathsOfVariantGroup = (group: VariantGroup, path: string): str
 }
 
 const determineAllPaths = () => (
-  exh.default
+  Object.values(exh.default)
     .filter(e => e.hasProps)
     .reduce<string[]>((acc, exhibit) => (
       acc.concat(determineAllPathsOfVariantGroup(exhibit as ComponentExhibit<true>, null))
