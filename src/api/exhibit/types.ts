@@ -127,7 +127,7 @@ export type ComponentExhibit<
        * @default true
        */
       showDefaultVariant?: boolean
-      eventProps: EventsOptions<TProps>
+      eventProps?: EventsOptions<TProps> | null
     } & VariantGroup<TProps>
     false: { }
   },
@@ -149,12 +149,13 @@ export type ExhibitNode<
   ExhibitNodeType,
   {
     [ExhibitNodeType.EXHIBIT_GROUP]: {
-      exhibits: ComponentExhibits
+      groupName: string
     }
     [ExhibitNodeType.VARIANT_GROUP]: {
       variantGroup: VariantGroup
     }
     [ExhibitNodeType.VARIANT]: {
+      exhibit: ComponentExhibit
       variant: Variant
     }
   },

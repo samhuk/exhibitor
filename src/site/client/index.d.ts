@@ -7,6 +7,7 @@ import { ComponentExhibits, ExhibitNodes } from '../../api/exhibit/types'
 declare interface ComponentExhibitGlobals {
   default: ComponentExhibits
   nodes: ExhibitNodes
+  pathTree: PathTree
 }
 
 declare global {

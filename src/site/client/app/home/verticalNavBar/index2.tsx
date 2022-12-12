@@ -1,9 +1,11 @@
 import React, { EffectCallback, MutableRefObject, useEffect, useRef, useState } from 'react'
+import { ExhibitNode, ExhibitNodeType, PathTree } from '../../../../../api/exhibit/types'
+import { NavLinkKeeyQuery } from '../../../common/navLinkKeepQuery'
 import { useAppSelector } from '../../../store'
 import { LoadingState } from '../../../store/types'
 
 type NavBarState = {
-  expandedPaths: string[]
+  expandedPaths: { [path: string]: boolean }
 }
 
 const saveNavBarState = (state: NavBarState) => {
@@ -17,15 +19,16 @@ const restoreNavBarState = (): NavBarState => {
     .find(row => row.startsWith('navbar='))
     ?.split('=')[1]
   if (rawValue == null)
-    return { expandedPaths: [] }
+    return { expandedPaths: {} }
   try {
     const parsed = JSON.parse(rawValue) as NavBarState
-    return {
-      expandedPaths: [...new Set(parsed.expandedPaths)] ?? [],
-    }
+    if (typeof parsed !== 'object')
+      return { expandedPaths: {} }
+
+    return { expandedPaths: parsed.expandedPaths }
   }
   catch {
-    return { expandedPaths: [] }
+    return { expandedPaths: {} }
   }
 }
 
@@ -85,28 +88,166 @@ const createTopLevelElFocusEffect = (
   }
 }
 
-export const Render = () => {
+const indentationPx = 8
+
+const calcNodePaddingLeft = (node: ExhibitNode) => (
+  (indentationPx * (node.pathComponents.length - 1))
+)
+
+const VariantNodeEl = (props: {
+  node: ExhibitNode<ExhibitNodeType.VARIANT>
+}) => (
+  <NavLinkKeeyQuery
+    to={props.node.path}
+    onKeyDown={e => {
+      if (e.key === ' ')
+        (e.target as HTMLElement).click()
+    }}
+    className="variant"
+    style={{ paddingLeft: calcNodePaddingLeft(props.node) }}
+  >
+    <i className="far fa-file" />
+    <span className="name">{props.node.variant.name}</span>
+  </NavLinkKeeyQuery>
+)
+
+const VariantGroupNodeEl = (props: {
+  node: ExhibitNode<ExhibitNodeType.VARIANT_GROUP>
+  isExpanded: boolean
+  onClick: () => void
+}) => (
+  <button
+    type="button"
+    className="variant-group"
+    style={{ paddingLeft: calcNodePaddingLeft(props.node) }}
+    onClick={props.onClick}
+  >
+    <i className={`fas ${props.isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
+    <div className="text">{props.node.variantGroup.name}</div>
+  </button>
+)
+
+const ExhibitGroupNodeEl = (props: {
+  node: ExhibitNode<ExhibitNodeType.EXHIBIT_GROUP>
+  isExpanded: boolean
+  onClick: () => void
+}) => (
+  <button
+    type="button"
+    className="exhibit-group"
+    style={{ paddingLeft: calcNodePaddingLeft(props.node) }}
+    onClick={props.onClick}
+  >
+    <i className={`fas ${props.isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
+    <div className="text">{props.node.groupName}</div>
+  </button>
+)
+
+const NodeEl = (props: {
+  node: ExhibitNode
+  isExpanded: boolean
+  onClick: () => void
+}) => {
+  if (props.node.type === ExhibitNodeType.EXHIBIT_GROUP)
+    return <ExhibitGroupNodeEl node={props.node} isExpanded={props.isExpanded} onClick={props.onClick} />
+  if (props.node.type === ExhibitNodeType.VARIANT_GROUP)
+    return <VariantGroupNodeEl node={props.node} isExpanded={props.isExpanded} onClick={props.onClick} />
+  if (props.node.type === ExhibitNodeType.VARIANT)
+    return <VariantNodeEl node={props.node} />
+  return null
+}
+
+type GroupTypeNode = ExhibitNode<ExhibitNodeType.EXHIBIT_GROUP | ExhibitNodeType.VARIANT_GROUP>
+
+const PathTreeEl = (props: {
+  pathTree: PathTree
+  expandedPaths: { [path: string]: boolean }
+  onDirExpansionChange: (node: GroupTypeNode, isExpanded: boolean) => void
+}) => (
+  <>
+    {Object.entries(props.pathTree).map(([path, childPathTree]) => {
+      const node = exh.nodes[path]
+      const isExpanded = props.expandedPaths[node.path] === true
+      return (
+        <>
+          <NodeEl node={node} isExpanded={isExpanded} onClick={() => props.onDirExpansionChange(node as GroupTypeNode, !isExpanded)} />
+          {(!isExpanded || typeof childPathTree === 'boolean')
+            ? null
+            : (
+              <PathTreeEl
+                pathTree={childPathTree}
+                expandedPaths={props.expandedPaths}
+                onDirExpansionChange={props.onDirExpansionChange}
+              />
+            )}
+        </>
+      )
+    })}
+  </>
+)
+
+const Render = () => {
   // Restore the nav bar state from cookies once. I think we can just do this in the redux store code instead.
   const hasRestoredNavBarState = useRef(false)
   const initialState = !hasRestoredNavBarState.current ? restoreNavBarState() : null
   hasRestoredNavBarState.current = true
 
-  const [expandedPaths, setExpandedPaths] = useState<string[]>(initialState?.expandedPaths)
+  const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState?.expandedPaths)
 
   const el = useRef<HTMLDivElement>()
   const isElFocus = useRef(false)
 
   useEffect(createTopLevelElFocusEffect(el, isElFocus), [])
 
+  const onGroupDirExpansionChange = (node: ExhibitNode, newIsExpanded: boolean) => {
+    if (newIsExpanded)
+      expandedPaths[node.path] = true
+    else
+      delete expandedPaths[node.path]
+    setExpandedPaths({ ...expandedPaths })
+    saveNavBarState({
+      expandedPaths,
+    })
+  }
+
+  const onExpandAllButtonClick = () => {
+    const newExpandedPaths: { [path: string]: boolean } = {}
+    Object.keys(exh.nodes).forEach(path => newExpandedPaths[path] = true)
+    setExpandedPaths(newExpandedPaths)
+    saveNavBarState({
+      expandedPaths: newExpandedPaths,
+    })
+  }
+
+  const onCollapseAllButtonClick = () => {
+    const newExpandedPaths: { [path: string]: boolean } = {}
+    setExpandedPaths(newExpandedPaths)
+    saveNavBarState({
+      expandedPaths: newExpandedPaths,
+    })
+  }
+
   return (
     <div className="navigator-side-bar" ref={el}>
-      {Object.values(exh.nodes).map(n => (
-        <div style={{
-          paddingLeft: n.pathComponents.length * 15,
-        }}
-        >{n.path}
-        </div>
-      ))}
+      <div className="button-bar-1">
+        <button
+          type="button"
+          className="far fa-square-plus"
+          onClick={() => onExpandAllButtonClick()}
+          aria-label="Expand all"
+          title="Expand all"
+        />
+        <button
+          type="button"
+          className="far fa-square-minus"
+          onClick={() => onCollapseAllButtonClick()}
+          aria-label="Collapse all"
+          title="Collapse all"
+        />
+      </div>
+      <div className="nodes">
+        <PathTreeEl pathTree={exh.pathTree} expandedPaths={expandedPaths} onDirExpansionChange={onGroupDirExpansionChange} />
+      </div>
     </div>
   )
 }

@@ -6,7 +6,7 @@ import BottomBar from './bottomBar'
 
 export const render = () => (
   <div className="exh-home">
-    <VerticalNavBar />
+    {/* <VerticalNavBar /> */}
     <VerticalNavBar2 />
     <div className="right">
       <Outlet />

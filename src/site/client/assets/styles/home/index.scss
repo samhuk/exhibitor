@@ -1,4 +1,5 @@
 @use './vertical-nav-bar.scss';
+@use './vertical-nav-bar-2.scss';
 @use './component-exhibit.scss';
 @use './bottom-bar.scss';
 
@@ -11,6 +12,8 @@
   .vertical-nav-bar {
     @include vertical-nav-bar.vertical-nav-bar;
   }
+
+  @include vertical-nav-bar-2.vertical-nav-bar-2;
 
   .right {
     display: flex;

@@ -60,7 +60,7 @@ export const createIndexExhTsFile = async (
     includedFilePaths
       .map(_path => `export {} from '${path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')}'`)
       .join('\n'),
-    'export const nodes = resolve(__exhibits)',
+    'export const { nodes, pathTree } = resolve(__exhibits)',
     'export default __exhibits',
   ].filter(s => s != null).join('\n\n')
 

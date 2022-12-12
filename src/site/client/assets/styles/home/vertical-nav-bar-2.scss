@@ -1,0 +1,101 @@
+@import '../common/colors.scss';
+@import '../common/borders.scss';
+
+@mixin vertical-nav-bar-2 {
+  .navigator-side-bar {
+    border: 1px solid transparent;
+    border-right: $border;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    max-width: 80vw;
+    flex-shrink: 0;
+
+    &.focused {
+      border-color: $link-color;
+    }
+
+    .button-bar-1 {
+      display: flex;
+      justify-content: end;
+      padding: 5px;
+  
+      button {
+        margin-left: 5px;
+        padding: 5px;
+        cursor: pointer;
+        background-color: $color-background;
+        border: none;
+        border-radius: 5px;
+  
+        &:hover {
+          background-color: darken($color-background, 7);
+        }
+      }
+    }
+
+    .nodes {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-bottom: 30px;
+
+      &>* {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        cursor: pointer;
+        padding: 2px 2px;
+        align-self: stretch;
+  
+        &>:first-child {
+          margin-left: 3px;
+        }
+  
+        i {
+          width: 15px;
+          flex-shrink: 0;
+        }
+  
+        &:hover {
+          background-color: darken($color-background, 7) !important;
+        }
+  
+        &.exhibit-group {
+          letter-spacing: 2px;
+          color: #777;
+          font-style: italic;
+        }
+  
+        &.variant-group, &.exhibit-group {
+          width: 100%;
+          text-align: left;
+          border: none;
+          background-color: $color-background;
+          box-sizing: border-box !important;
+  
+          .text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+  
+        &.variant {
+          text-decoration: none;
+  
+          .name {
+            color: $link-color;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+  }
+}
