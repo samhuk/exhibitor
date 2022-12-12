@@ -3,7 +3,7 @@ import './button.scss'
 import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './button'
 
-exhibit(Button, 'Button')
+export const buttonExhibit = exhibit(Button, 'Button')
   .events({
     onClick: true,
   })

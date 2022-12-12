@@ -4,7 +4,7 @@ import React, { useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
-import { ComponentExhibit, Variant, VariantGroup } from '../../../../../api/exhibit/types'
+import { ComponentExhibit, ExhibitNode, ExhibitNodeType, Variant } from '../../../../../api/exhibit/types'
 import { eventLogService } from '../../../services/eventLogService'
 import { useAppSelector } from '../../../store'
 import { addEvent, selectVariant } from '../../../store/componentExhibits/actions'
@@ -62,68 +62,6 @@ export type GetSelectedVariantResult<
   }, TSuccess, 'success'
 >
 
-const convertVariantPathToVariantPathComponents = (path: string): string[] => (
-  path.split('/').filter(s => s.length > 0).map(decodeURIComponent)
-)
-
-export const getSelectedVariant = (
-  variantPathString: string,
-): GetSelectedVariantResult => {
-  if (variantPathString == null) {
-    return {
-      success: false,
-      failReason: GetSelectedVariantFailReason.NO_PATH,
-    }
-  }
-
-  const variantPath = convertVariantPathToVariantPathComponents(variantPathString)
-  const exhibitName = variantPath[0]
-
-  const exhibit = exh.default.find(e => e.name === exhibitName)
-  if (exhibit == null) {
-    return {
-      success: false,
-      attemptedExhibitName: exhibitName,
-      failReason: GetSelectedVariantFailReason.EXHIBIT_NOT_FOUND,
-      variantPath,
-    }
-  }
-
-  let variant: Variant
-  if (!exhibit.hasProps) {
-    variant = { name: exhibit.name, props: undefined }
-  }
-  else {
-    const variantName = variantPath[variantPath.length - 1]
-    let currentVariantGroup: VariantGroup = exhibit
-    let i = 1
-    while (i < variantPath.length - 1) {
-      currentVariantGroup = currentVariantGroup.variantGroups[variantPath[i]]
-      i += 1
-    }
-    // TODO: Improve this logic
-    variant = variantName === 'Default' ? { name: 'Default', props: exhibit.defaultProps } : currentVariantGroup.variants[variantName]
-  }
-
-  if (variant == null) {
-    return {
-      success: false,
-      attemptedExhibitName: exhibitName,
-      attemptedVariantName: variantPath[variantPath.length - 1],
-      exhibit,
-      failReason: GetSelectedVariantFailReason.VARIANT_NOT_FOUND,
-      variantPath,
-    }
-  }
-
-  return {
-    success: true,
-    exhibit,
-    variant,
-    variantPath,
-  }
-}
-
 export const render = () => {
   const readyState = useAppSelector(s => s.componentExhibits.ready)
   /* Workaround because react-router-dom's useParams auto-decodes URI components,
@@ -132,25 +70,23 @@ export const render = () => {
    */
   const dispatch = useDispatch()
   const locationPath = useLocation().pathname
-  const resolvedInfo = useMemo(() => getSelectedVariant(locationPath), [locationPath])
+  const _locationPath = locationPath.startsWith('/') ? locationPath.slice(1) : locationPath
+  const selectedNode = readyState ? exh.nodes[_locationPath] : null
+  const selectedVariantNode = selectedNode != null && selectedNode.type === ExhibitNodeType.VARIANT
+    ? selectedNode
+    : null
 
   useEffect(() => {
-    dispatch(selectVariant(locationPath, resolvedInfo.success))
-  }, [locationPath])
+    dispatch(selectVariant(selectedVariantNode?.path))
+  }, [selectedVariantNode])
 
   if (!readyState)
     return <div className="component-exhibit loading">Loading component exhibits...</div>
 
-  if (resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.NO_PATH)
-    return <div className="component-exhibit no-selected">Select a component</div>
-
-  if (resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.EXHIBIT_NOT_FOUND)
-    return <div className="component-exhibit not-found">Component exhibit for &quot;{resolvedInfo.attemptedExhibitName}&quot; does not exist.</div>
-
-  if (resolvedInfo.success === false && resolvedInfo.failReason === GetSelectedVariantFailReason.VARIANT_NOT_FOUND) {
+  if (selectedVariantNode == null) {
     return (
       <div className="component-exhibit not-found">
-        Variant &quot;{resolvedInfo.attemptedVariantName}&quot; of Component exhibit &quot;{resolvedInfo.attemptedExhibitName}&quot; does not exist.
+        Component exhibit or variant thereof not found.
       </div>
     )
   }
@@ -158,8 +94,8 @@ export const render = () => {
   return (
     <div className="component-exhibit">
       <VariantEl
-        exhibit={resolvedInfo.exhibit}
-        variant={resolvedInfo.variant}
+        exhibit={selectedVariantNode.exhibit}
+        variant={selectedVariantNode.variant}
       />
     </div>
   )

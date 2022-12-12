@@ -18,7 +18,6 @@ export const CHANGE_HAS_UNSEEN_EVENTS = 'componentExhibits/changeHasUnseenEvents
 export type ComponentExhibitsState = {
   ready: boolean
   selectedVariantPath: string
-  selectedVariantPathFound: boolean
   loadingState: LoadingState
   error: any
   selectedBottomBarType: BottomBarType
@@ -33,8 +32,7 @@ type ReadyAction = {
 
 type SelectVariantAction = {
   type: typeof SELECT_VARIANT
-  variantPath: string
-  found: boolean
+  variantNodePath: string
 }
 
 type SelectBottomBarAction = {
@@ -59,10 +57,9 @@ export const componentExhibitsReady = (error: any): ComponentExhibitsActions => 
   error,
 })
 
-export const selectVariant = (variantPath: string, found: boolean): ComponentExhibitsActions => ({
+export const selectVariant = (variantNodePath: string): ComponentExhibitsActions => ({
   type: SELECT_VARIANT,
-  variantPath,
-  found,
+  variantNodePath,
 })
 
 export const selectBottomBar = (barType: BottomBarType): ComponentExhibitsActions => ({

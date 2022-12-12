@@ -2,7 +2,11 @@ import {
   ComponentExhibit,
   ComponentExhibitBuilder,
   ComponentExhibitOptions,
+  ComponentExhibits,
+  ExhibitNodes,
+  ExhibitNodeType,
   NonRootComponentExhibitBuilder,
+  PathTree,
   ReactComponent,
   ReactComponentWithProps,
   Variant,
@@ -12,7 +16,93 @@ import {
 /**
  * DO NOT USE THIS IN YOUR COMPONENT LIBRARY CODE.
  */
-export const __exhibits: ComponentExhibit[] = []
+export const __exhibits: ComponentExhibits = {}
+
+export const __nodes: ExhibitNodes = {}
+
+export const __exhibitGroups: { [groupName: string]: ComponentExhibits } = {}
+
+export const __ungroupedExhibits: ComponentExhibits = {}
+
+const traverseGroup = (
+  exhibit: ComponentExhibit,
+  variantGroup: VariantGroup,
+  pathComponents: string[],
+  variantGroupFn: (g: VariantGroup, path: string[]) => void,
+  variantFn: (v: Variant, path: string[], exhibit: ComponentExhibit) => void,
+): PathTree => {
+  const thisPathComponents = pathComponents.length > 0 ? pathComponents.concat(variantGroup.name) : [variantGroup.name]
+  const thisPath = thisPathComponents.map(p => encodeURIComponent(p)).join('/')
+  const pathTree: PathTree = { [thisPath]: {} }
+  const thisPathTreeNode = pathTree[thisPath] as PathTree
+  variantGroupFn(variantGroup, thisPathComponents)
+  Object.values(variantGroup.variants).forEach(v => {
+    const variantPath = thisPathComponents.concat(v.name).map(p => encodeURIComponent(p)).join('/')
+    thisPathTreeNode[variantPath] = true
+    variantFn(v, thisPathComponents.concat(v.name), exhibit)
+  })
+  const childPathTrees = Object.values(variantGroup.variantGroups).map(g => traverseGroup(exhibit, g, thisPathComponents, variantGroupFn, variantFn))
+  childPathTrees.forEach(childPathTree => Object.entries(childPathTree).forEach(([k, v]) => thisPathTreeNode[k] = v))
+  return pathTree
+}
+
+const traverse = (
+  exhibits: ComponentExhibits,
+  exhibitGroupFn: (exhibits: ComponentExhibits, path: string[]) => void,
+  variantGroupFn: (vg: VariantGroup, path: string[]) => void,
+  variantFn: (v: Variant, path: string[], exhibit: ComponentExhibit) => void,
+): PathTree => {
+  const ungroupedExhibits: ComponentExhibits = {}
+  const groupNameToExhibits: { [groupName: string]: ComponentExhibits } = {}
+  const groupNames: string[] = Object.values(exhibits).reduce<string[]>((acc, e) => {
+    if (e.groupName == null) {
+      ungroupedExhibits[e.name] = e
+      return acc
+    }
+
+    if (groupNameToExhibits[e.groupName] == null)
+      groupNameToExhibits[e.groupName] = {}
+
+    groupNameToExhibits[e.groupName][e.name] = e
+    return acc.indexOf(e.groupName) === -1 ? acc.concat(e.groupName) : acc
+  }, [])
+
+  const pathTree: PathTree = {}
+  const groupNameToUriEncodedDict: {[groupName: string]: string } = {}
+  groupNames.forEach(s => groupNameToUriEncodedDict[s] = encodeURIComponent(s))
+
+  // Run fn for each exhibit group
+  groupNames.forEach(groupName => {
+    pathTree[groupNameToUriEncodedDict[groupName]] = {}
+    exhibitGroupFn(groupNameToExhibits[groupName], [groupName])
+    Object.values(exhibits)
+  })
+
+  Object.values(exhibits).forEach(e => {
+    const basePathComponents = e.groupName != null ? [e.groupName] : []
+    const pathTreeToPopulate = (e.groupName != null
+      ? pathTree[groupNameToUriEncodedDict[e.groupName]]
+      : pathTree) as PathTree
+    if (e.hasProps) {
+      const childPathTree = traverseGroup(e, e, basePathComponents, variantGroupFn, variantFn)
+      Object.entries(childPathTree).forEach(([k, v]) => pathTreeToPopulate[k] = v)
+      // If show default variant, then we add on another "virtual" variant with the default props of the exhibit
+      if (e.showDefaultVariant) {
+        const childPathTreeKey = Object.keys(childPathTree)[0];
+        (pathTreeToPopulate[childPathTreeKey] as PathTree).Default = true
+        variantFn({ name: 'Default', props: e.defaultProps }, basePathComponents.concat([e.name, 'Default']), e)
+      }
+    }
+    // Special case where component has no props, then the exhibit becomes the variant
+    else {
+      const path = basePathComponents.concat(e.name).map(p => encodeURIComponent(p)).join('/')
+      pathTreeToPopulate[path] = true
+      variantFn({ name: e.name, props: undefined }, basePathComponents.concat([e.name]), e)
+    }
+  })
+
+  return pathTree
+}
 
 const nonRootExhibit = (
   defaultProps: any,
@@ -37,6 +127,48 @@ const nonRootExhibit = (
   }
 
   return _nonRootExhibit
+}
+
+export const resolve = (
+  exhibits: ComponentExhibits,
+): { nodes: ExhibitNodes, pathTree: PathTree } => {
+  const mapPathComponentsToUrlPathString = (p: string[]) => p.map(_p => encodeURIComponent(_p)).join('/')
+
+  const nodes: ExhibitNodes = {}
+
+  const pathTree = traverse(
+    exhibits,
+    (_exhibits, pathComponents) => {
+      const path = mapPathComponentsToUrlPathString(pathComponents)
+      nodes[path] = {
+        type: ExhibitNodeType.EXHIBIT_GROUP,
+        groupName: pathComponents[0],
+        path,
+        pathComponents,
+      }
+    },
+    (variantGroup, pathComponents) => {
+      const path = mapPathComponentsToUrlPathString(pathComponents)
+      nodes[path] = {
+        type: ExhibitNodeType.VARIANT_GROUP,
+        variantGroup,
+        path,
+        pathComponents,
+      }
+    },
+    (variant, pathComponents, _exhibit) => {
+      const path = mapPathComponentsToUrlPathString(pathComponents)
+      nodes[path] = {
+        type: ExhibitNodeType.VARIANT,
+        exhibit: _exhibit,
+        variant,
+        path,
+        pathComponents,
+      }
+    },
+  )
+
+  return { nodes, pathTree }
 }
 
 export const exhibit = <
@@ -87,7 +219,7 @@ export const exhibit = <
         variantGroups,
       }
 
-      __exhibits.push(componentExhibit)
+      __exhibits[componentExhibit.name] = componentExhibit
 
       return componentExhibit as any
     },

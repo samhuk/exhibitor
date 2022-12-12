@@ -44,7 +44,7 @@ export const render = () => {
   const variantPathComponents = variantPathUriPath.split('/').filter(s => s.length > 0).map(decodeURIComponent)
   const exhibitName = variantPathComponents[0]
 
-  const componentExhibit = exh.default.find(e => e.name === exhibitName)
+  const componentExhibit = Object.values(exh.default).find(e => e.name === exhibitName)
 
   if (componentExhibit == null)
     return <div className="component-exhibit not-found">Component exhibit for &quot;{exhibitName}&quot; does not exist.</div>

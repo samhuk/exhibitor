@@ -2,10 +2,9 @@ import React, { useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 
-import { ComponentExhibit } from '../../../../../api/exhibit/types'
+import { ComponentExhibit, ExhibitNode, ExhibitNodeType } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
 import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
-import { getSelectedVariant } from '../componentExhibit'
 import EventLogComponent from './eventLog'
 import PropsComponent from './props'
 
@@ -25,17 +24,24 @@ const DEFAULT_BAR_TYPE = BottomBarType.Props
 export const render = () => {
   const selectedBarType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
   const selectedVariantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)
-  const selectedVariantPathFound = useAppSelector(s => s.componentExhibits.selectedVariantPathFound)
   const hasUnseenEvents = useAppSelector(s => s.componentExhibits.hasUnseenEvents)
   const [searchParams, setSearchParams] = useSearchParams()
   const dispatch = useDispatch()
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
-  const doBarTypesDisagree = !selectedVariantPathFound || barTypeFromQuery !== selectedBarType
-  const resolvedInfo = useMemo(() => getSelectedVariant(selectedVariantPath), [selectedVariantPath])
+  const doBarTypesDisagree = selectedVariantPath == null || barTypeFromQuery !== selectedBarType
   const shownBarTypes: BottomBarType[] = []
-  const showProps = resolvedInfo.success === true && resolvedInfo.exhibit.hasProps
-  const showEventLog = showProps && (resolvedInfo.exhibit as ComponentExhibit<true>).eventProps
+  const variantNode: ExhibitNode<ExhibitNodeType.VARIANT> = useMemo(
+    () => {
+      const selectedNode = exh.nodes[selectedVariantPath]
+      return selectedNode != null && selectedNode.type === ExhibitNodeType.VARIANT
+        ? selectedNode
+        : null
+    },
+    [selectedVariantPath],
+  )
+  const showProps = variantNode != null && variantNode.exhibit.hasProps
+  const showEventLog = showProps && (variantNode.exhibit as ComponentExhibit<true>).eventProps
   if (showProps)
     shownBarTypes.push(BottomBarType.Props)
   if (showEventLog)
@@ -43,7 +49,7 @@ export const render = () => {
 
   // Ensure that the selected bar type from redux and search params agree
   useEffect(() => {
-    if (!selectedVariantPathFound || (selectedBarType === barTypeFromQuery && shownBarTypes.indexOf(selectedBarType) !== -1))
+    if (selectedVariantPath == null || (selectedBarType === barTypeFromQuery && shownBarTypes.indexOf(selectedBarType) !== -1))
       return
 
     let prospectiveNewBarType: BottomBarType
@@ -77,7 +83,7 @@ export const render = () => {
   }, [selectedBarType, barTypeFromQuery, selectedVariantPath])
 
   // Wait until a variant is selected and the bar types agree
-  if (doBarTypesDisagree || resolvedInfo.success === false)
+  if (doBarTypesDisagree || variantNode == null)
     return null
 
   return (
@@ -93,9 +99,9 @@ export const render = () => {
       {(() => {
         switch (selectedBarType) {
           case BottomBarType.Props:
-            return <PropsComponent exhibit={resolvedInfo.exhibit as ComponentExhibit<true>} variant={resolvedInfo.variant} />
+            return <PropsComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
           case BottomBarType.EventLog:
-            return <EventLogComponent exhibit={resolvedInfo.exhibit as ComponentExhibit<true>} variant={resolvedInfo.variant} />
+            return <EventLogComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
           default:
             return null
         }

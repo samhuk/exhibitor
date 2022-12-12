@@ -3,7 +3,7 @@ import './buttonWithGeneric.scss'
 import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './buttonWithGeneric'
 
-exhibit(Button, 'ButtonWithGeneric')
+export const buttonWithGenericExhibit = exhibit(Button, 'ButtonWithGeneric')
   .events({
     onClick: true,
     onMouseEnter: true,
