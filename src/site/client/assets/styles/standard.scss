@@ -4,12 +4,16 @@
 @import './header.scss';
 @import './home/index.scss';
 
+$fa-font-path: "../fa/webfonts";
+@import '../fa/scss/fontawesome.scss';
+@import '../fa/scss/regular.scss';
+@import '../fa/scss/solid.scss';
+@import '../fa/scss/brands.scss';
+
 // Typography
 $font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantrell, "Open Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $font-size: 14.5px;
 $font-weight: 400;
-
-$fa-font-path: "../fa/webfonts";
 
 html {
   height: 100vh;
