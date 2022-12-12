@@ -28,7 +28,7 @@ const expectedPathTree: PathTree = {
     },
   },
   'Design%20Phase': {
-    LoadingSpinner: true,
+    'Design%20Phase/LoadingSpinner': true,
     'Design%20Phase/Toast': {
       'Design%20Phase/Toast/W%2F%20close%20button': true,
       'Design%20Phase/Toast/W%2Fo%20close%20button': {
@@ -60,8 +60,6 @@ const expectedPathTree: PathTree = {
     'ButtonWithGeneric/with%20icon': true,
   },
 }
-
-const expectedNodes: ExhibitNodes = {}
 
 describe('exhibit', () => {
   describe('exhibit', () => {
@@ -205,7 +203,7 @@ describe('exhibit', () => {
       [toastExhibit.name]: toastExhibit,
     })
 
-    fs.writeFileSync('test.json', JSON.stringify(Object.keys(result.nodes), null, 2))
+    // fs.writeFileSync('test.json', JSON.stringify(Object.keys(result.nodes), null, 2))
 
     expect(result.pathTree).toEqual(expectedPathTree)
     expect(Object.keys(result.nodes)).toEqual([
