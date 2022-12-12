@@ -1,6 +1,6 @@
 <h1 align="center">exhibitor</h1>
 <p align="center">
-  <em>Extremely fast React component workshop</em>
+  <em>Snappy and delightful React component workshop</em>
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
   </a>
 </p>
 
-**exhibitor is in early alpha. Current state is not necessarily reflective of eventual release state. Production use is not advised.**
+**exhibitor is in beta.**
 
 ![](./img/img1.png)
 
@@ -30,10 +30,9 @@ Have a standard React component:
 ```tsx
 // src/button.tsx
 import './button.scss'
-export const render = (props: { onClick: ..., color: ... }) => {
-  ...
-  return <button>...</button>
-}
+export const render = (props: { onClick: ..., color: ... }) => (
+  <button>...</button>
+)
 export default render
 ```
 
@@ -53,7 +52,6 @@ exhibit(Button, 'Button', { group: 'Final Review' })
     color: 'default',
     ...
   })
-  .variant('default', p => p)
   .variant('green', p => ({
     ...p,
     color: 'green',
@@ -61,11 +59,13 @@ exhibit(Button, 'Button', { group: 'Final Review' })
   .build()
 ```
 
-Using the CLI, view your exhibitions:
+Start exhibitor:
 
 ```
 npx exhibitor start
 ```
+
+Navigate to http://localhost:4001 to see your component exhibitions.
 
 Optionally define a configuration file for the `start` command:
 
@@ -82,9 +82,6 @@ Optionally define a configuration file for the `start` command:
 ```
 npx exhibitor start -c ./exh.config.json
 ```
-
-Navigate to http://localhost:4001 to see your component exhibitions.
-
 ## Major Features
 
 * Extremely fast
