@@ -67,18 +67,11 @@
           background-color: darken($color-background, 7) !important;
         }
   
-        &.exhibit-group {
-          letter-spacing: 2px;
-          color: #777;
-          font-style: italic;
-        }
-  
         &.variant-group, &.exhibit-group {
           width: 100%;
           text-align: left;
           border: none;
           background-color: $color-background;
-          box-sizing: border-box !important;
   
           .text {
             white-space: nowrap;
@@ -86,9 +79,21 @@
             text-overflow: ellipsis;
           }
         }
+        
+        &.exhibit-group {
+          letter-spacing: 2px;
+          color: #777;
+          font-style: italic;
+          border-bottom: $border;
+          margin-bottom: 2px;
+        }
   
         &.variant {
           text-decoration: none;
+
+          &.active {
+            background-color: darken($color-background, 15) !important;
+          }
   
           .name {
             color: $link-color;
