@@ -255,16 +255,17 @@ const PathTreeEl = (props: {
 const Render = () => {
   // Restore the nav bar state from cookies once. I think we can just do this in the redux store code instead.
   const hasRestoredNavBarState = useRef(false)
-  const initialState = !hasRestoredNavBarState.current ? restoreNavBarState() : null
+  const initialState: NavBarState = !hasRestoredNavBarState.current ? restoreNavBarState() : null
   hasRestoredNavBarState.current = true
 
-  const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState.expandedPaths)
-  const widthPxRef = useRef(initialState.widthPx ?? DEFAULT_WIDTH_PX)
+  const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState?.expandedPaths)
+  const widthPxRef = useRef(initialState?.widthPx ?? DEFAULT_WIDTH_PX)
 
   const el = useRef<HTMLDivElement>()
   const isElFocus = useRef(false)
 
   const onResizeFinish = (newWidthPx: number) => {
+    widthPxRef.current = newWidthPx
     saveNavBarState({
       widthPx: newWidthPx,
       expandedPaths,
@@ -273,7 +274,7 @@ const Render = () => {
 
   useEffect(createTopLevelElFocusEffect(el, isElFocus), [])
 
-  useEffect(createTopLevelElResizableEffect(el, initialState.widthPx, onResizeFinish), [])
+  useEffect(createTopLevelElResizableEffect(el, widthPxRef.current, onResizeFinish), [])
 
   const onGroupDirExpansionChange = (node: ExhibitNode, newIsExpanded: boolean) => {
     if (newIsExpanded)
