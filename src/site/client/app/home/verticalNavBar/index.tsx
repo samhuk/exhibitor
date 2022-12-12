@@ -25,7 +25,7 @@ const restoreNavBarState = (): NavBarState => {
     return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
   try {
     const parsed = JSON.parse(rawValue) as NavBarState
-    if (typeof parsed !== 'object')
+    if (parsed == null || typeof parsed !== 'object')
       return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
 
     return {
@@ -258,8 +258,8 @@ const Render = () => {
   const initialState = !hasRestoredNavBarState.current ? restoreNavBarState() : null
   hasRestoredNavBarState.current = true
 
-  const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState?.expandedPaths)
-  const widthPxRef = useRef(initialState?.widthPx ?? DEFAULT_WIDTH_PX)
+  const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState.expandedPaths)
+  const widthPxRef = useRef(initialState.widthPx ?? DEFAULT_WIDTH_PX)
 
   const el = useRef<HTMLDivElement>()
   const isElFocus = useRef(false)
