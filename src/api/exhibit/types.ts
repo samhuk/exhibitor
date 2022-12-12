@@ -170,4 +170,8 @@ export type ExhibitNode<
   pathComponents: string[]
 }
 
+export type PathTree = {
+  [path: string]: PathTree | boolean
+}
+
 export type ExhibitNodes = { [path: string]: ExhibitNode }

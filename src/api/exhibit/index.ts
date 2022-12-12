@@ -6,6 +6,7 @@ import {
   ExhibitNodes,
   ExhibitNodeType,
   NonRootComponentExhibitBuilder,
+  PathTree,
   ReactComponent,
   ReactComponentWithProps,
   Variant,
@@ -28,8 +29,9 @@ const traverseGroup = (
   path: string[],
   variantGroupFn: (g: VariantGroup, path: string[]) => void,
   variantFn: (v: Variant, path: string[]) => void,
-): void => {
+): PathTree => {
   const thisPath = path.length > 0 ? path.concat(variantGroup.name) : [variantGroup.name]
+  const pathTree: PathTree = { [thisPath]: {} }
   variantGroupFn(variantGroup, thisPath)
   Object.values(variantGroup.variants).forEach(v => {
     variantFn(v, thisPath.concat(v.name))
@@ -42,7 +44,7 @@ const traverse = (
   exhibitGroupFn: (exhibits: ComponentExhibits, path: string[]) => void,
   variantGroupFn: (vg: VariantGroup, path: string[]) => void,
   variantFn: (v: Variant, path: string[]) => void,
-): void => {
+): PathTree => {
   const ungroupedExhibits: ComponentExhibits = {}
   const groupNameToExhibits: { [groupName: string]: ComponentExhibits } = {}
   const groupNames: string[] = Object.values(exhibits).reduce<string[]>((acc, e) => {
@@ -60,7 +62,7 @@ const traverse = (
 
   // Run fn for each exhibit group
   groupNames.forEach(groupName => {
-    exhibitGroupFn(groupNameToExhibits[groupName], [encodeURIComponent(groupName)])
+    exhibitGroupFn(groupNameToExhibits[groupName], [groupName])
   })
 
   Object.values(exhibits).forEach(e => {
