@@ -1,7 +1,7 @@
 @import '../common/colors.scss';
 @import '../common/borders.scss';
 
-@mixin vertical-nav-bar-2 {
+@mixin navigator-side-bar {
   .navigator-side-bar {
     border: 1px solid transparent;
     border-right: $border;

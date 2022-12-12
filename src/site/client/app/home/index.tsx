@@ -1,13 +1,11 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import VerticalNavBar from './verticalNavBar'
-import VerticalNavBar2 from './verticalNavBar/index2'
 import BottomBar from './bottomBar'
 
 export const render = () => (
   <div className="exh-home">
-    {/* <VerticalNavBar /> */}
-    <VerticalNavBar2 />
+    <VerticalNavBar />
     <div className="right">
       <Outlet />
       <BottomBar />

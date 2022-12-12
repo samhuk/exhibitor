@@ -1,5 +1,4 @@
-@use './vertical-nav-bar.scss';
-@use './vertical-nav-bar-2.scss';
+@use './navigator-side-bar.scss';
 @use './component-exhibit.scss';
 @use './bottom-bar.scss';
 
@@ -9,11 +8,7 @@
   display: flex;
   height: calc(100vh - 38px); // Screen minus header
 
-  .vertical-nav-bar {
-    @include vertical-nav-bar.vertical-nav-bar;
-  }
-
-  @include vertical-nav-bar-2.vertical-nav-bar-2;
+  @include navigator-side-bar.navigator-side-bar;
 
   .right {
     display: flex;
