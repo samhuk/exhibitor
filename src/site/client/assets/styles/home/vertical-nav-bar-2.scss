@@ -5,12 +5,12 @@
   .navigator-side-bar {
     border: 1px solid transparent;
     border-right: $border;
-    padding: 5px;
     display: flex;
     flex-direction: column;
     justify-content: start;
     max-width: 80vw;
     flex-shrink: 0;
+    position: relative;
 
     &.focused {
       border-color: $link-color;
@@ -42,6 +42,8 @@
       overflow-y: auto;
       overflow-x: hidden;
       padding-bottom: 30px;
+      margin-right: 5px;
+      margin-left: 5px;
 
       &>* {
         display: flex;
@@ -49,7 +51,7 @@
         justify-content: start;
         align-items: center;
         cursor: pointer;
-        padding: 2px 2px;
+        padding: 2px 5px;
         align-self: stretch;
   
         &>:first-child {
@@ -95,6 +97,18 @@
             text-overflow: ellipsis;
           }
         }
+      }
+    }
+
+    .exh-resizer {
+      position: absolute;
+      height: 100%;
+      right: -5px;
+      width: 9px;
+      
+      &:hover {
+        background-color: #ccc;
+        cursor: col-resize;
       }
     }
   }

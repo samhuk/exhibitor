@@ -4,7 +4,10 @@ import { NavLinkKeeyQuery } from '../../../common/navLinkKeepQuery'
 import { useAppSelector } from '../../../store'
 import { LoadingState } from '../../../store/types'
 
+const DEFAULT_WIDTH_PX = 300
+
 type NavBarState = {
+  widthPx: number
   expandedPaths: { [path: string]: boolean }
 }
 
@@ -19,16 +22,19 @@ const restoreNavBarState = (): NavBarState => {
     .find(row => row.startsWith('navbar='))
     ?.split('=')[1]
   if (rawValue == null)
-    return { expandedPaths: {} }
+    return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
   try {
     const parsed = JSON.parse(rawValue) as NavBarState
     if (typeof parsed !== 'object')
-      return { expandedPaths: {} }
+      return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
 
-    return { expandedPaths: parsed.expandedPaths }
+    return {
+      expandedPaths: parsed.expandedPaths ?? {},
+      widthPx: parsed.widthPx ?? DEFAULT_WIDTH_PX,
+    }
   }
   catch {
-    return { expandedPaths: {} }
+    return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
   }
 }
 
@@ -85,6 +91,66 @@ const createTopLevelElFocusEffect = (
   return () => {
     document.removeEventListener('click', onClick)
     document.removeEventListener('keydown', onKeyDown)
+  }
+}
+
+const createTopLevelElResizableEffect = (
+  elRef: MutableRefObject<HTMLDivElement>,
+  initialWidthPx: number,
+  onResizeFinish: (newWidthPx: number) => void,
+): EffectCallback => () => {
+  const resizerEl = document.createElement('div')
+  resizerEl.classList.add('exh-resizer')
+  elRef.current.appendChild(resizerEl)
+  elRef.current.style.width = `${initialWidthPx}px`
+
+  const state: any = {
+    initialUserSelectStyleValue: null,
+    initialWidth: 0,
+    x0: 0,
+    x1: 0,
+    mouseDownHandler: null,
+    mouseMoveHandler: null,
+    mouseUpHandler: null,
+  }
+
+  state.mouseDownHandler = (e: MouseEvent) => {
+    state.initialWidth = elRef.current.getBoundingClientRect().width
+    state.x0 = e.screenX
+    state.x1 = e.screenX
+    // Ensure that it's impossible to end up with dupe listeners
+    document.removeEventListener('mouseup', state.mouseUpHandler)
+    document.addEventListener('mouseup', state.mouseUpHandler)
+    document.removeEventListener('mousemove', state.mouseMoveHandler)
+    document.addEventListener('mousemove', state.mouseMoveHandler)
+    state.initialUserSelectStyleValue = elRef.current.style.userSelect
+    elRef.current.style.userSelect = 'none'
+  }
+
+  state.mouseMoveHandler = (e: MouseEvent) => {
+    state.x1 = e.screenX
+    const dx = state.x1 - state.x0
+    elRef.current.style.width = `${state.initialWidth + dx}px`
+  }
+
+  state.mouseUpHandler = (e: MouseEvent) => {
+    state.x1 = e.screenX
+    const dx = state.x1 - state.x0
+    const newWidthPx = state.initialWidth + dx
+    elRef.current.style.width = `${newWidthPx}px`
+
+    elRef.current.style.userSelect = state.initialUserSelectStyleValue
+    document.removeEventListener('mouseup', state.mouseUpHandler)
+    document.removeEventListener('mousemove', state.mouseMoveHandler)
+    onResizeFinish(newWidthPx)
+  }
+
+  resizerEl.addEventListener('mousedown', state.mouseDownHandler)
+  return () => {
+    resizerEl.removeEventListener('mousedown', state.mouseDownHandler)
+    document.removeEventListener('mouseup', state.mouseUpHandler)
+    document.removeEventListener('mousemove', state.mouseMoveHandler)
+    elRef.current.removeChild(resizerEl)
   }
 }
 
@@ -193,11 +259,21 @@ const Render = () => {
   hasRestoredNavBarState.current = true
 
   const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState?.expandedPaths)
+  const widthPxRef = useRef(initialState?.widthPx ?? DEFAULT_WIDTH_PX)
 
   const el = useRef<HTMLDivElement>()
   const isElFocus = useRef(false)
 
+  const onResizeFinish = (newWidthPx: number) => {
+    saveNavBarState({
+      widthPx: newWidthPx,
+      expandedPaths,
+    })
+  }
+
   useEffect(createTopLevelElFocusEffect(el, isElFocus), [])
+
+  useEffect(createTopLevelElResizableEffect(el, initialState.widthPx, onResizeFinish), [])
 
   const onGroupDirExpansionChange = (node: ExhibitNode, newIsExpanded: boolean) => {
     if (newIsExpanded)
@@ -206,6 +282,7 @@ const Render = () => {
       delete expandedPaths[node.path]
     setExpandedPaths({ ...expandedPaths })
     saveNavBarState({
+      widthPx: widthPxRef.current,
       expandedPaths,
     })
   }
@@ -215,6 +292,7 @@ const Render = () => {
     Object.keys(exh.nodes).forEach(path => newExpandedPaths[path] = true)
     setExpandedPaths(newExpandedPaths)
     saveNavBarState({
+      widthPx: widthPxRef.current,
       expandedPaths: newExpandedPaths,
     })
   }
@@ -223,6 +301,7 @@ const Render = () => {
     const newExpandedPaths: { [path: string]: boolean } = {}
     setExpandedPaths(newExpandedPaths)
     saveNavBarState({
+      widthPx: widthPxRef.current,
       expandedPaths: newExpandedPaths,
     })
   }
