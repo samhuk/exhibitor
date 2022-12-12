@@ -58,14 +58,14 @@ export const watchComponentLibrary = async (
     createMetaDataFile(includedFilePaths)
     const buildResult = await buildIndexExhTsFile()
     initialBuildWatcher?.close()
-    const rebuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: '*.exh' })
+    const rebuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: ['**/.exh', '**/node_modules'] })
     watch(() => rebuildIteration(buildResult, includeGlobPatterns, rootStylePath), rebuildWatcher, 150, () => console.log('Watching for changes...'))
   }
   catch (e) {
     console.log(e)
     if (initialBuildWatcher != null)
       return
-    initialBuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: '*.exh' })
+    initialBuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: ['**/.exh', '**/node_modules'] })
     watch(() => watchComponentLibrary(config, configDir), initialBuildWatcher, 150, () => console.log('Watching for changes...'))
   }
 }
