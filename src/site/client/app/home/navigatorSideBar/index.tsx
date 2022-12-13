@@ -72,7 +72,7 @@ const Render = () => {
     })
   }
 
-  useEffect(createTopLevelElFocusEffect(el, isElFocus), [])
+  useEffect(createTopLevelElFocusEffect(el, isElFocus), [expandedPaths])
 
   useEffect(createTopLevelElResizableEffect(el, widthPxRef.current, onResizeFinish), [])
 

@@ -3,7 +3,6 @@
 
 @mixin navigator-side-bar {
   .navigator-side-bar {
-    border: 1px solid transparent;
     border-right: $border;
     display: flex;
     flex-direction: column;
@@ -11,9 +10,10 @@
     max-width: 80vw;
     flex-shrink: 0;
     position: relative;
+    min-width: 120px;
 
     &.focused {
-      border-color: $link-color;
+      box-shadow: 0 0 0 1px $link-color inset;
     }
 
     .button-bar-1 {
@@ -125,6 +125,7 @@
       
       &:hover {
         background-color: #ccc;
+        opacity: 0.6;
         cursor: col-resize;
       }
     }

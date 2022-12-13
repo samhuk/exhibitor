@@ -10,7 +10,7 @@
 
   @include navigator-side-bar.navigator-side-bar;
 
-  .right {
+  &>.right {
     display: flex;
     flex-direction: column;
     justify-content: space-between;

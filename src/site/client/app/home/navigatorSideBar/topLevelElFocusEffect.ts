@@ -8,10 +8,11 @@ export const createTopLevelElFocusEffect = (
   elRef: MutableRefObject<HTMLDivElement>,
   isElFocusRef: MutableRefObject<boolean>,
 ): EffectCallback => () => {
+  const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(elRef.current.querySelectorAll('a, button'))
+
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Tab') {
       if (!e.shiftKey && isElFocusRef.current) {
-        const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(elRef.current.querySelectorAll('a, button'))
         focusableElements[0]?.focus()
         e.preventDefault()
       }
@@ -27,8 +28,6 @@ export const createTopLevelElFocusEffect = (
 
     if (!(isElFocusRef.current || elRef.current.contains(document.activeElement)))
       return
-
-    const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(elRef.current.querySelectorAll('a, button'))
 
     let focusedElementIndex = 0
     for (let i = 0; i < focusableElements.length; i += 1) {

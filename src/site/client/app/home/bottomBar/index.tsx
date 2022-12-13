@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 
@@ -6,7 +6,11 @@ import { ComponentExhibit, ExhibitNode, ExhibitNodeType } from '../../../../../a
 import { useAppSelector } from '../../../store'
 import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
 import EventLogComponent from './eventLog'
+import { DEFAULT_STATE, restoreState, saveState, State } from './persistence'
 import PropsComponent from './props'
+import { createTopLevelElResizableEffect } from './resizableEffect'
+import Nav from './nav'
+import RhsButtons from './rhsButtons'
 
 const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.Props]: 'Props',
@@ -22,14 +26,21 @@ const SEARCH_PARAM_NAME = 'bar'
 const DEFAULT_BAR_TYPE = BottomBarType.Props
 
 export const render = () => {
+  // Restore state from cookies once. I think we can just do this in the redux store code instead.
+  const hasRestoredNavBarState = useRef(false)
+  const initialState: State = !hasRestoredNavBarState.current ? restoreState() : null
+  hasRestoredNavBarState.current = true
+
+  const dispatch = useDispatch()
   const selectedBarType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
   const selectedVariantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)
-  const hasUnseenEvents = useAppSelector(s => s.componentExhibits.hasUnseenEvents)
   const [searchParams, setSearchParams] = useSearchParams()
-  const dispatch = useDispatch()
+
+  const heightPxRef = useRef(initialState?.heightPx ?? DEFAULT_STATE.heightPx)
+  const [isCollapsed, setIsCollapsed] = useState(initialState?.isCollapsed ?? DEFAULT_STATE.isCollapsed)
+
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
-  const doBarTypesDisagree = selectedVariantPath == null || barTypeFromQuery !== selectedBarType
   const shownBarTypes: BottomBarType[] = []
   const variantNode: ExhibitNode<ExhibitNodeType.VARIANT> = useMemo(
     () => {
@@ -46,6 +57,8 @@ export const render = () => {
     shownBarTypes.push(BottomBarType.Props)
   if (showEventLog)
     shownBarTypes.push(BottomBarType.EventLog)
+
+  const elRef = useRef<HTMLDivElement>()
 
   // Ensure that the selected bar type from redux and search params agree
   useEffect(() => {
@@ -82,21 +95,34 @@ export const render = () => {
     updateFns.forEach(fn => fn())
   }, [selectedBarType, barTypeFromQuery, selectedVariantPath])
 
-  // Wait until a variant is selected and the bar types agree
-  if (doBarTypesDisagree || variantNode == null)
-    return null
+  const onResizeFinish = (newHeightPx: number) => {
+    heightPxRef.current = newHeightPx
+    saveState({
+      heightPx: newHeightPx,
+      isCollapsed,
+    })
+  }
+
+  if (elRef.current != null)
+    elRef.current.style.height = isCollapsed ? '' : `${heightPxRef.current}px`
+
+  useEffect(createTopLevelElResizableEffect(elRef, heightPxRef.current, onResizeFinish), [elRef.current])
+
+  const onToggleCollapseButtonClick = () => {
+    setIsCollapsed(!isCollapsed)
+  }
 
   return (
-    <div className="bottom-bar">
-      <div className="nav">
-        {showProps ? (
-          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.Props))} className={`${selectedBarType === BottomBarType.Props ? 'active' : ''}`}>Props</button>
-        ) : null}
-        {showEventLog ? (
-          <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.EventLog))} className={`${selectedBarType === BottomBarType.EventLog ? 'active' : ''}`}>Event Log {hasUnseenEvents ? <div className="has-unseen-indicator" /> : null}</button>
-        ) : null}
+    <div className={`bottom-bar${isCollapsed ? ' collapsed' : ''}`} ref={elRef}>
+      <div className="header">
+        <div className="left">
+          <Nav />
+        </div>
+        <div className="right">
+          <RhsButtons isCollapsed={isCollapsed} onCollapseButtonClick={onToggleCollapseButtonClick} />
+        </div>
       </div>
-      {(() => {
+      {variantNode == null || isCollapsed ? null : (() => {
         switch (selectedBarType) {
           case BottomBarType.Props:
             return <PropsComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
