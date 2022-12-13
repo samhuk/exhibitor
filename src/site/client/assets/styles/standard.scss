@@ -1,9 +1,6 @@
 // Common
 @import './common/colors.scss';
 
-@import './header.scss';
-@import './home/index.scss';
-
 $fa-font-path: "../fa/webfonts";
 @import '../fa/scss/fontawesome.scss';
 @import '../fa/scss/regular.scss';
@@ -61,3 +58,6 @@ button, select, input {
   box-shadow: 0 0 0 1px $link-color inset;
   outline: none;
 }
+
+@import './header.scss';
+@import './home/index.scss';

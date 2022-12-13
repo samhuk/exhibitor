@@ -63,10 +63,6 @@
           flex-shrink: 0;
         }
   
-        &:hover {
-          background-color: darken($color-background, 7) !important;
-        }
-  
         &.variant-group, &.exhibit-group {
           width: 100%;
           text-align: left;
@@ -101,6 +97,22 @@
             overflow: hidden;
             text-overflow: ellipsis;
           }
+        }
+      }
+
+      &>* {
+        &:hover {
+          background-color: darken($color-background, 7);
+        }
+
+        &:focus, &:focus-visible, &:focus-within {
+          box-shadow: 0 0 0 1px $link-color inset;
+        }
+      }
+
+      .variant {
+        i {
+          color: $link-color;
         }
       }
     }

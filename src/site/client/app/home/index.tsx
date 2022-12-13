@@ -1,11 +1,11 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import VerticalNavBar from './verticalNavBar'
+import NavigatorSideBar from './navigatorSideBar'
 import BottomBar from './bottomBar'
 
 export const render = () => (
   <div className="exh-home">
-    <VerticalNavBar />
+    <NavigatorSideBar />
     <div className="right">
       <Outlet />
       <BottomBar />
