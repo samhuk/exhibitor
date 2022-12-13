@@ -1,4 +1,9 @@
 {
+  "$schema": "../../src/cli/config.schema.json",
   "include": ["./**/*.exh.ts"],
-  "rootStyle": "./styles.scss"
+  "rootStyle": "./styles.scss",
+  "site": {
+    "host": "localhost",
+    "port": 4001
+  }
 }

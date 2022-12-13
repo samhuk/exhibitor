@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/samhuk/exhibitor/blob/master/src/cli/config.schema.json",
+  "title": "Exhibitor Config",
+  "description": "Config for the Exhibitor CLI",
+  "type": "object",
+  "properties": {
+    "include": {
+      "description": "Optional list of glob patterns to select component exhibit files. This is relative to where the config file is. If defined, this must contain at least one entry.",
+      "type": "array",
+      "minItems": 1,
+      "default": ["./**/*.exh.ts"]
+    },
+    "watch": {
+      "description": "Optional list of glob patterns to select files/dirs to watch for changes in order to live-reload the exhibitor site. This is relative to where the config file is. If defined, this must contain at least one entry.",
+      "type": "array",
+      "minItems": 1,
+      "default": ["./**/*"]
+    },
+    "site": {
+      "description": "Optional configuration of the exhibitor site.",
+      "type": "object",
+      "properties": {
+        "host": {
+          "description": "The host the site will be binded to.",
+          "type": "string",
+          "default": "localhost"
+        },
+        "port": {
+          "description": "The port the site will be binded to.",
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 65535,
+          "default": 4001
+        }
+      }
+    },
+    "rootStyle": {
+      "description": "Optional path to a CSS or SCSS stylesheet to include as a root style. This is useful for defining styles shared by all components, i.e. icon/style libraries like font-awesome, muicons, bootstrap, or your own.",
+      "type": "string"
+    }
+  }
+}

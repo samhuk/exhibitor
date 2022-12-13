@@ -25,7 +25,7 @@ export const getConfig = (
 ) => {
   const configFromFile = fs.existsSync(configFilePath) ? readAndParseConfig(configFilePath) : null
   return configFromFile != null ? merge(DEFAULT_CONFIG, configFromFile, {
-    arrayMerge: (t, s) => ((s != null && s.length > 0) ? s : t),
+    arrayMerge: (t, s) => ((s != null && s.length > 0) ? s : t), // Take the 2nd array if exists, else the 1st one
   }) : DEFAULT_CONFIG
 }
 
