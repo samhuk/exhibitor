@@ -10,7 +10,6 @@ export const DEFAULT_HEIGHT_PX = 400
  */
 export const createTopLevelElResizableEffect = (
   elRef: MutableRefObject<HTMLDivElement>,
-  initialHeightPx: number,
   onResizeFinish: (newHeightPx: number) => void,
 ): EffectCallback => () => {
   if (elRef.current == null)

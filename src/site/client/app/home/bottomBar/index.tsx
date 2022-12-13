@@ -106,10 +106,15 @@ export const render = () => {
   if (elRef.current != null)
     elRef.current.style.height = isCollapsed ? '' : `${heightPxRef.current}px`
 
-  useEffect(createTopLevelElResizableEffect(elRef, heightPxRef.current, onResizeFinish), [elRef.current])
+  useEffect(createTopLevelElResizableEffect(elRef, onResizeFinish), [elRef.current])
 
   const onToggleCollapseButtonClick = () => {
-    setIsCollapsed(!isCollapsed)
+    const newIsCollapsed = !isCollapsed
+    setIsCollapsed(newIsCollapsed)
+    saveState({
+      heightPx: heightPxRef.current,
+      isCollapsed: newIsCollapsed,
+    })
   }
 
   return (
