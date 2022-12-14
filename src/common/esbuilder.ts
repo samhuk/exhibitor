@@ -60,9 +60,9 @@ export const printBuildResult = (result: BuildResult, startTime: number, verbose
   }
   // Metrics
   console.log('  Metrics:')
+  console.log(`    dt: ${(Date.now() - startTime)} ms`)
   if (verbose)
     console.log(`    Compression ratio: ${(totalInputFileSizeBytes / totalOutputFileSizeBytes).toFixed(2)}`)
-  console.log(`    dt: ${(Date.now() - startTime)} ms`)
 }
 
 export const createBuilder = (
@@ -79,7 +79,6 @@ export const createBuilder = (
       return result
     })
     .catch(err => {
-      console.log(err)
       throw err
     })
 }

@@ -145,6 +145,7 @@ _build-all:
 		build-cli-rel
 
 build-all:
+	npm install
 	@$(MAKE) --no-print-directory \
 		build-site-rel \
 		build-api \

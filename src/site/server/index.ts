@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import * as fs from 'fs'
 import path from 'path'
+import colors from 'colors/safe'
 
 import { BUILD_OUTPUT_ROOT_DIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import api from './api'
@@ -50,7 +51,7 @@ app
 
 const server = app.listen(env.port, env.host, () => {
   const url = `http://${env.host}:${env.port}`
-  console.log(`Exhibitor active. Access via ${url}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
+  console.log(`${(colors.green as any).bold('Exhibitor active')}. Access via ${(colors.cyan as any).underline(url)}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
 })
 
 server.keepAliveTimeout = 10000 * 1000

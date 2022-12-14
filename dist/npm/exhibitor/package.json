@@ -22,6 +22,7 @@
     "deepmerge": "^4.2.2",
     "esbuild-sass-plugin": "^2.4.1",
     "globsie": "^0.0.12",
-    "livereload": "^0.9.3"
+    "livereload": "^0.9.3",
+    "colors": "^1.4.0"
   }
 }
