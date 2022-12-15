@@ -4,13 +4,13 @@ import { Socket } from 'net'
 import path from 'path'
 
 import { exit } from 'process'
-import { NPM_PACKAGE_NAME } from '../common/name'
-import { SITE_SERVER_OUTFILE } from '../common/paths'
-import { watchComponentLibrary } from './componentLibrary/watch'
-import { ResolvedConfig } from './config/types'
-import { CliError, printError } from './commandResult'
-import { BaseCliArgumentsOptions, CliString } from './types'
-import { getConfigForCommand } from './config'
+import { NPM_PACKAGE_NAME } from '../../common/name'
+import { SITE_SERVER_OUTFILE } from '../../common/paths'
+import { watchComponentLibrary } from '../componentLibrary/watch'
+import { ResolvedConfig } from '../config/types'
+import { CliError, printError } from '../commandResult'
+import { BaseCliArgumentsOptions, CliString } from '../types'
+import { getConfigForCommand } from '../config'
 
 type StartCliArgumentsOptions = BaseCliArgumentsOptions & {
   port?: string

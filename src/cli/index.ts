@@ -2,8 +2,8 @@
 import { Command } from 'commander'
 
 import { NPM_PACKAGE_NAME } from '../common/name'
-import { init } from './init'
-import { start } from './start'
+import { init } from './commands/init'
+import { start } from './commands/start'
 
 const program = new Command()
 

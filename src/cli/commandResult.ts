@@ -48,3 +48,7 @@ export const printError = (
   if (error.causedBy != null)
     console.log('\n  Caused by:', normalizeCliString(error.causedBy))
 }
+
+export const printCliString = (s: CliString) => (
+  console.log(normalizeCliString(s))
+)

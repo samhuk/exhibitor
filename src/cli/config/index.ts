@@ -106,14 +106,32 @@ export const getConfigForCommand = <
     cliArgumentsOptions: TCliArgumentsOptions,
     applyCliArgumentsOptionsToConfig?: (resolvedConfig: ResolvedConfig, cliArgumentsOptions: TCliArgumentsOptions) => CliError | null,
   ): GetConfigResult => {
-  const configFilePath = cliArgumentsOptions.config ?? path.join('./', DEFAULT_CONFIG_FILE_NAME)
-  const config = fs.existsSync(configFilePath)
-    ? readAndParseConfig(configFilePath)
-    : null
+  // Determine what path to use for config file
+  let configFilePath: string
+  if (cliArgumentsOptions.config != null) {
+    if (fs.existsSync(cliArgumentsOptions.config)) {
+      configFilePath = cliArgumentsOptions.config
+    }
+    else {
+      return {
+        success: false,
+        error: {
+          message: 'Invalid CLI command argument(s)',
+          causedBy: c => `config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}`,
+        },
+      }
+    }
+  }
+  else if (fs.existsSync(path.join('./', DEFAULT_CONFIG_FILE_NAME))) {
+    configFilePath = path.join('./', DEFAULT_CONFIG_FILE_NAME)
+  }
+  const config = configFilePath != null ? readAndParseConfig(configFilePath) : null
   const resolvedConfig = resolveConfig(configFilePath, config)
-  const applyStartOptionsError = applyCliArgumentsOptionsToConfig(resolvedConfig, cliArgumentsOptions)
-  if (applyStartOptionsError != null)
-    return { success: false, error: applyStartOptionsError }
+
+  // Modify resolved config, if modifier fn is defined.
+  const modifiedResolvedConfigError = applyCliArgumentsOptionsToConfig(resolvedConfig, cliArgumentsOptions)
+  if (modifiedResolvedConfigError != null)
+    return { success: false, error: modifiedResolvedConfigError }
 
   // Validate resolved config
   const validateConfigError = validateConfig(resolvedConfig)

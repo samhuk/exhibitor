@@ -31,7 +31,7 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "type": "pwa-node"
+      "type": "node"
     },
     {
       "name": "Start Server",
@@ -41,7 +41,18 @@
         "<node_internals>/**"
       ],
       "preLaunchTask": "buildServerDev",
-      "type": "pwa-node"
-    }
+      "type": "node"
+    },
+    {
+      "name": "Watch Test Component Libary Dev",
+      "type": "node",
+      "request": "launch",
+      "program": "./build/component-library-bin/cli/componentLibrary/bin/watch.js",
+      "args": [
+          "--runInBand",
+          "--no-cache"
+      ],
+      // "preLaunchTask": "unitTestsDebugPreLaunchTask"
+    },
   ]
 }

@@ -7,7 +7,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": false,
-    "sourceMap": false,
+    "sourceMap": true,
     "noEmit": false,
     "skipLibCheck": true,
     "outDir": "../../../../build/component-library-bin"

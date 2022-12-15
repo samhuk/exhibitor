@@ -1,10 +1,10 @@
-import { exec, ExecException } from 'child_process'
+import { exec, ExecException, spawn } from 'child_process'
 import * as fs from 'fs'
 import readline from 'readline'
 import { exit } from 'process'
-import { CliError, printError } from './commandResult'
-import { CliString } from './types'
-import { Config } from './config/types'
+import { CliError, printCliString, printError } from '../commandResult'
+import { CliString } from '../types'
+import { Config } from '../config/types'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -56,11 +56,11 @@ const tryGetInput = (options: {
 
     if (options.validators != null) {
       const errMsg = options.validators.find(validator => !validator.op(val))?.errMsg
-      if (errMsg != null) {
+      if (errMsg == null) {
         options.onComplete(val)
       }
       else {
-        console.log(printError({ message: errMsg }))
+        printError({ message: errMsg })
         tryGetInput(options)
       }
     }
@@ -103,21 +103,14 @@ const createInstallDependenciesError = (causedBy: CliString): CliError => ({
   causedBy,
 })
 
-export const init = async () => {
-  const doesPackageJsonFileExists = fs.existsSync('./package.json')
-  if (!doesPackageJsonFileExists) {
-    printError(createInitPackageJsonError(c => `${c.cyan('./package.json')} file does not exist. Run ${c.bold('npm init')}' first.`))
-    exit(1)
-  }
-
+const modifyPackageJsonFile = async (): Promise<CliError | null> => {
   const packageJson = fs.readFileSync('./package.json', { encoding: 'utf8' })
   let packageJsonObj: any
   try {
     packageJsonObj = JSON.parse(packageJson)
   }
   catch (e) {
-    printError(createInitPackageJsonError(c => `${c.cyan('./package.json')} is invalid JSON. Error: ${e}`))
-    exit(1)
+    return createInitPackageJsonError(c => `${c.cyan('./package.json')} is invalid JSON. Error: ${e}`)
   }
 
   if (packageJsonObj.scripts == null)
@@ -133,13 +126,58 @@ export const init = async () => {
     packageJsonObj.scripts.exh = 'exhibitor start -c ./exh.config.json'
 
   try {
-    fs.writeFileSync('./package.json', JSON.stringify(packageJsonObj))
+    fs.writeFileSync('./package.json', JSON.stringify(packageJsonObj, null, 2))
   }
   catch (e) {
-    printError(createInitPackageJsonError(`Could not write new package.json content to file. Error: ${e}`))
+    return createInitPackageJsonError(`Could not write new package.json content to file. Error: ${e}`)
+  }
+
+  return null
+}
+
+const createExhConfigFile = async (): Promise<CliError | null> => {
+  const doesExhConfigFileExist = fs.existsSync('./exh.config.json')
+
+  let shouldWriteExhConfigFile: boolean = true
+
+  if (doesExhConfigFileExist)
+    shouldWriteExhConfigFile = await askBooleanQuestion('./exh.config.json file already exists. Should we overwrite it?', false)
+
+  if (!shouldWriteExhConfigFile)
+    return null
+
+  const config = {
+    $schema: 'https://raw.githubusercontent.com/samhuk/exhibitor/master/src/cli/config/schema.json',
+  }
+  try {
+    fs.writeFileSync('./exh.config.json', JSON.stringify(config, null, 2))
+  }
+  catch (e) {
+    return createInitPackageJsonError(`Could not create exh.config.json file. Error: ${e}`)
+  }
+
+  return null
+}
+
+export const init = async () => {
+  printCliString(c => `${c.yellow('Warn: \'init\' command is currently in alpha')}`)
+  // Ensure that package.json exists
+  const doesPackageJsonFileExists = fs.existsSync('./package.json')
+  if (!doesPackageJsonFileExists) {
+    printError(createInitPackageJsonError(c => `${c.cyan('./package.json')} file does not exist. Run ${c.bold('npm init')}' first.`))
     exit(1)
   }
 
+  printCliString(c => `${c.blue('⬤')} Modifying package.json file...`)
+  // Modify package.json file, e.g. add "exh" npm script
+  const modifyPackageJsonFileError = await modifyPackageJsonFile()
+  if (modifyPackageJsonFileError != null) {
+    printError(modifyPackageJsonFileError)
+    exit(1)
+  }
+
+  printCliString(c => `${c.blue('⬤')} Installing typescript...`)
+  // Install typescript, if not already
   const installTypescriptExecError = await npmInstallPackage('typescript')
   if (installTypescriptExecError != null) {
     printError(createInstallDependenciesError(`Could not npm install typescript - ${installTypescriptExecError.execError.message}`))
@@ -148,6 +186,8 @@ export const init = async () => {
       exit(1)
   }
 
+  printCliString(c => `${c.blue('⬤')} Installing react...`)
+  // Install react, if not already
   const installReactExecError = await npmInstallPackage('react')
   if (installReactExecError != null) {
     printError(createInstallDependenciesError(`Could not npm install react - ${installTypescriptExecError.execError.message}`))
@@ -156,23 +196,28 @@ export const init = async () => {
       exit(1)
   }
 
-  const doesExhConfigFileExist = fs.existsSync('./exh.config.json')
+  printCliString(c => `${c.blue('⬤')} Creating Exhibitor config file...`)
+  // Create exh.config.json file
+  const createExhConfigFileError = await createExhConfigFile()
+  if (createExhConfigFileError != null) {
+    printError(createExhConfigFileError)
+    exit(1)
+  }
 
-  let shouldWriteExhConfigFile: boolean = true
+  printCliString(c => (c.bold as any).green('Done!'))
+  const shouldStartExhibitor = await askBooleanQuestion('Would you like us to run the \'exh\' npm script?', true)
+  if (shouldStartExhibitor) {
+    const exhProcess = spawn('npm run exh')
+    exhProcess.stdout.on('data', data => {
+      console.log(data.toString())
+    })
 
-  if (doesExhConfigFileExist)
-    shouldWriteExhConfigFile = await askBooleanQuestion('./exh.config.json file already exists. Should we overwrite it?')
+    exhProcess.stderr.on('data', data => {
+      console.log(data.toString())
+    })
 
-  if (shouldWriteExhConfigFile) {
-    const config = {
-      $schema: 'https://raw.githubusercontent.com/samhuk/exhibitor/master/src/cli/config/schema.json',
-    }
-    try {
-      fs.writeFileSync('./exh.config.json', JSON.stringify(config))
-    }
-    catch (e) {
-      printError(createInitPackageJsonError(`Could not create exh.config.json file. Error: ${e}`))
-      exit(1)
-    }
+    exhProcess.on('exit', code => {
+      console.log('child process exited with code ', code.toString())
+    })
   }
 }
