@@ -222,7 +222,7 @@ $border-radius: 5px;
     color: #fff;
   }
   
-  &.color: blue {
+  &.color-blue {
     background-color: blue;
     color: #fff;
   }
