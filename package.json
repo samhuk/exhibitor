@@ -8,7 +8,8 @@
     "build-watch-component-library": "tsc -p ./src/cli/componentLibrary/bin/tsconfig.json",
     "watch-component-library": "env-cmd -e dev node ./build/component-library-bin/cli/componentLibrary/bin/watch.js",
     "start": "npm run build-site-build && npm run build-watch-component-library && concurrently -n \"testcomp,site-ui ,site-api\" -c \"red,green,blue\" \"npm run watch-component-library\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\"",
-    "cli-dev": "env-cmd -e dev node ./build/cli/cli/index.js start"
+    "cli-dev": "env-cmd -e dev node ./build/cli/cli/index.js start",
+    "cli-dev-w-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json"
   },
   "dependencies": {
     "@babel/core": "^7.20.2",
@@ -34,7 +35,7 @@
     "chokidar": "^3.5.3",
     "chokidar-debounced": "^1.0.4",
     "clone-deep": "^4.0.1",
-    "colors": "^1.4.0",
+    "colors": "1.4.0",
     "commander": "^9.4.1",
     "concurrently": "^7.6.0",
     "connect-livereload": "^0.6.1",

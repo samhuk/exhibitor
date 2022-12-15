@@ -7,7 +7,7 @@ import { MetaData } from '../../common/metadata'
 import { META_DATA_FILE } from '../../common/paths'
 import { CustomBuildResult } from '../../common/types'
 import { makePathRelativeToConfigDir, makePathsRelativeToConfigDir } from '../config'
-import { Config } from '../types'
+import { ResolvedConfig } from '../config/types'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
 
 const createMetaDataFile = (
@@ -53,28 +53,23 @@ const rebuildIteration = async (
 
 let initialBuildWatcher: FSWatcher = null
 export const watchComponentLibrary = async (
-  config: Config,
-  configDir: string,
-  onFirstSuccessfulBuild: () => void,
+  config: ResolvedConfig,
+  onFirstSuccessfulBuild?: () => void,
 ) => {
-  const includeGlobPatterns = makePathsRelativeToConfigDir(config.include, configDir)
-  const watchGlobPatterns = makePathsRelativeToConfigDir(config.watch, configDir)
-  const rootStylePath = config.rootStyle != null ? makePathRelativeToConfigDir(config.rootStyle, configDir) : null
-
   try {
-    await _createIndexExhTsFile(includeGlobPatterns, rootStylePath)
+    await _createIndexExhTsFile(config.include, config.rootStyle)
     const buildResult = await buildIndexExhTsFile()
-    onFirstSuccessfulBuild()
+    onFirstSuccessfulBuild?.()
     initialBuildWatcher?.close()
-    const rebuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
-    watch(() => rebuildIteration(buildResult, includeGlobPatterns, rootStylePath), rebuildWatcher, 150, () => console.log('Watching for changes...'))
+    const rebuildWatcher = chokidar.watch(config.watch, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
+    watch(() => rebuildIteration(buildResult, config.include, config.rootStyle), rebuildWatcher, 150, () => console.log('Watching for changes...'))
   }
   catch {
     if (initialBuildWatcher != null)
       return
-    initialBuildWatcher = chokidar.watch(watchGlobPatterns, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
+    initialBuildWatcher = chokidar.watch(config.watch, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
     watch(
-      () => watchComponentLibrary(config, configDir, onFirstSuccessfulBuild),
+      () => watchComponentLibrary(config, onFirstSuccessfulBuild),
       initialBuildWatcher,
       150,
       () => console.log('Watching for changes...'),

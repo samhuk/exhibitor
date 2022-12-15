@@ -145,7 +145,6 @@ _build-all:
 		build-cli-rel
 
 build-all:
-	npm install
 	@$(MAKE) --no-print-directory \
 		build-site-rel \
 		build-api \
@@ -168,6 +167,7 @@ populate-dist:
 	cp -r build/cli/cli/ dist/npm/exhibitor/lib
 
 prepublish:
+	npm install
 	@$(MAKE) --no-print-directory \
 		lint-errors-only \
 		ts-unit-tests \
