@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "Snappy and delightful React component workshop",
   "main": "./lib/api/index.js",
   "types": "./lib/api/index.d.ts",
