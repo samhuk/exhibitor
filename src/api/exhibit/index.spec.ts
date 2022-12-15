@@ -18,6 +18,7 @@ import { ExhibitNodes, PathTree } from './types'
 const expectedPathTree: PathTree = {
   GA: {
     'GA/IconButton': {
+      'GA/IconButton/Default': true,
       'GA/IconButton/paper-plane': true,
     },
     'GA/TypedIcon': {
@@ -30,6 +31,7 @@ const expectedPathTree: PathTree = {
   'Design%20Phase': {
     'Design%20Phase/LoadingSpinner': true,
     'Design%20Phase/Toast': {
+      'Design%20Phase/Toast/Default': true,
       'Design%20Phase/Toast/W%2F%20close%20button': true,
       'Design%20Phase/Toast/W%2Fo%20close%20button': {
         'Design%20Phase/Toast/W%2Fo%20close%20button/Success': true,
@@ -44,6 +46,7 @@ const expectedPathTree: PathTree = {
     },
   },
   Button: {
+    'Button/Default': true,
     'Button/green': true,
     'Button/yellow': true,
     'Button/red': true,
@@ -52,10 +55,11 @@ const expectedPathTree: PathTree = {
     'Button/with%20icon': true,
   },
   ButtonWithGeneric: {
-    'ButtonWithGeneric/green': true,
+    'ButtonWithGeneric/Default': true,
     'ButtonWithGeneric/yellow': true,
     'ButtonWithGeneric/red': true,
     'ButtonWithGeneric/blue': true,
+    'ButtonWithGeneric/green': true,
     'ButtonWithGeneric/large': true,
     'ButtonWithGeneric/with%20icon': true,
   },
@@ -67,7 +71,10 @@ describe('exhibit', () => {
 
     test('basic test', () => {
       const onCloseButtonClick = (): any => undefined
-      const result = fn(Toast, 'Toast', { group: 'Design Phase' })
+      const result = fn(Toast, 'Toast')
+        .options({
+          group: 'Design Phase',
+        })
         .defaults({
           text: '',
           type: ToastType.INFO,
@@ -96,12 +103,10 @@ describe('exhibit', () => {
             type: ToastType.INFO,
           })
           .variant('Short text', {
-            // eslint-disable-next-line max-len
             text: 'No.',
             type: ToastType.INFO,
           }))
         .variant('W/ close button', {
-          // eslint-disable-next-line max-len
           text: 'You can do this a better way',
           showCloseButton: true,
           onCloseButtonClick,
@@ -119,6 +124,7 @@ describe('exhibit', () => {
         hasProps: true,
         name: 'Toast',
         renderFn: Toast,
+        showDefaultVariant: true,
         variantGroups: {
           'Variable Text Lengths': {
             name: 'Variable Text Lengths',
@@ -216,6 +222,7 @@ describe('exhibit', () => {
       'Button/blue',
       'Button/large',
       'Button/with%20icon',
+      'Button/Default',
       'ButtonWithGeneric',
       'ButtonWithGeneric/green',
       'ButtonWithGeneric/yellow',
@@ -223,8 +230,10 @@ describe('exhibit', () => {
       'ButtonWithGeneric/blue',
       'ButtonWithGeneric/large',
       'ButtonWithGeneric/with%20icon',
+      'ButtonWithGeneric/Default',
       'GA/IconButton',
       'GA/IconButton/paper-plane',
+      'GA/IconButton/Default',
       'GA/TypedIcon',
       'GA/TypedIcon/Success',
       'GA/TypedIcon/Warn',
@@ -241,6 +250,7 @@ describe('exhibit', () => {
       'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss',
       'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Long%20text',
       'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Short%20text',
+      'Design%20Phase/Toast/Default',
     ])
   })
 })

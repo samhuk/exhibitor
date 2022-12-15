@@ -1,7 +1,6 @@
 import {
   ComponentExhibit,
   ComponentExhibitBuilder,
-  ComponentExhibitOptions,
   ComponentExhibits,
   ExhibitNodes,
   ExhibitNodeType,
@@ -87,10 +86,12 @@ const traverse = (
       const childPathTree = traverseGroup(e, e, basePathComponents, variantGroupFn, variantFn)
       Object.entries(childPathTree).forEach(([k, v]) => pathTreeToPopulate[k] = v)
       // If show default variant, then we add on another "virtual" variant with the default props of the exhibit
-      if (e.showDefaultVariant) {
-        const childPathTreeKey = Object.keys(childPathTree)[0];
-        (pathTreeToPopulate[childPathTreeKey] as PathTree).Default = true
-        variantFn({ name: 'Default', props: e.defaultProps }, basePathComponents.concat([e.name, 'Default']), e)
+      if (e.defaultProps != null && e.showDefaultVariant) {
+        const childPathTreeKey = Object.keys(childPathTree)[0]
+        const defaultVariantPathComponents = basePathComponents.concat([e.name, 'Default'])
+        const defaultVariantPath = defaultVariantPathComponents.map(p => encodeURIComponent(p)).join('/');
+        (pathTreeToPopulate[childPathTreeKey] as PathTree)[defaultVariantPath] = true
+        variantFn({ name: 'Default', props: e.defaultProps }, defaultVariantPathComponents, e)
       }
     }
     // Special case where component has no props, then the exhibit becomes the variant
@@ -109,7 +110,7 @@ const nonRootExhibit = (
   variantGroup: VariantGroup,
 ) => {
   let _defaultProps: any = defaultProps
-  const _nonRootExhibit: NonRootComponentExhibitBuilder<ReactComponentWithProps, boolean, boolean, any> = {
+  const _nonRootExhibit: NonRootComponentExhibitBuilder<ReactComponentWithProps, boolean, boolean, boolean, any> = {
     defaults: __defaultProps => {
       _defaultProps = typeof __defaultProps === 'function' ? (__defaultProps as Function)(_defaultProps) : __defaultProps
       delete (nonRootExhibit as any).defaults
@@ -176,17 +177,22 @@ export const exhibit = <
 >(
     renderFn: TReactComponent,
     name: string,
-    options?: ComponentExhibitOptions,
-  ): ComponentExhibitBuilder<TReactComponent, false, false, undefined> => {
+  ): ComponentExhibitBuilder<TReactComponent, false, false, false, undefined> => {
   let eventProps: any = null
   let defaultProps: any = null
+  let options: any = null
   const variants: { [variantName: string]: Variant } = {}
 
   const hasProps = renderFn.length > 0
 
   const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
-  const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, undefined> = {
+  const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, false, undefined> = {
+    options: _options => {
+      options = _options
+      delete (componentExhibitBuilder as any).options
+      return componentExhibitBuilder
+    },
     events: hasProps ? (_eventProps => {
       eventProps = _eventProps
       delete (componentExhibitBuilder as any).events
@@ -211,6 +217,7 @@ export const exhibit = <
       const componentExhibit: ComponentExhibit = {
         name,
         groupName: options?.group,
+        showDefaultVariant: options?.showDefaultVariant ?? true,
         hasProps,
         renderFn,
         defaultProps,

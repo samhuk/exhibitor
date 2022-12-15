@@ -3,7 +3,10 @@ import './typedIcon.scss'
 import exhibit from '../../../src/api'
 import TypedIcon, { IconType } from './typedIcon'
 
-export const typedIconExhibit = exhibit(TypedIcon, 'TypedIcon', { group: 'GA' })
+export const typedIconExhibit = exhibit(TypedIcon, 'TypedIcon')
+  .options({
+    group: 'GA',
+  })
   .variant('Success', {
     type: IconType.SUCCESS,
   })

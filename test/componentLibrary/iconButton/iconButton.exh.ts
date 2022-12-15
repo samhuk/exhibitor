@@ -2,7 +2,10 @@ import exhibit from '../../../src/api'
 import { ButtonColor } from '../button/button'
 import IconButton from './iconButton'
 
-export const iconButtonExhibit = exhibit(IconButton, 'IconButton', { group: 'GA' })
+export const iconButtonExhibit = exhibit(IconButton, 'IconButton')
+  .options({
+    group: 'GA',
+  })
   .defaults({
     onClick: () => undefined,
     iconName: 'user',

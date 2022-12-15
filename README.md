@@ -57,20 +57,22 @@ Declare exhibitions of your components with the Exhibitor Javascript API:
 import exhibit from 'exhibitor'
 import Button from './button'
 
-exhibit(Button, 'Button', { group: 'Final Review' })
-  // Define which props correspond to events of the component
-  .events({
-    onClick: true,
-  })
+exhibit(Button, 'Button')
   // Define any default values for props
   .defaults({
     onClick: () => undefined,
     color: 'default',
     ...
   })
+  // Define which props correspond to events of the component
+  .events({
+    onClick: true,
+  })
+  // Define miscellaneous options
+  .options({ group: 'Final Review' })
   // Define variants with varying prop values
-  .variant('Green', p => ({
-    ...p,
+  .variant('Green', defaultProps => ({
+    ...defaultProps,
     color: 'green',
   }))
   ...

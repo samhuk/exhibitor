@@ -33,18 +33,29 @@ type _ComponentExhibitBuilder<
   THasProps extends boolean = boolean,
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
+  THasDefinedOptions extends boolean = boolean,
   TDefaultProps extends TProps = TProps,
   TIsGroup extends boolean = false,
 > =
-  IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedEvents, {
+  IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedOptions, {
+    options: (
+      options: {
+        group?: string
+      }
+      & IncludeIfTrue<THasProps, IncludeIfTrue<THasDefinedDefaultProps, {
+        showDefaultVariant?: boolean
+      }>>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, true, TDefaultProps, TIsGroup>
+  }>>
+  & IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedEvents, {
     events: (
       eventProps: EventsOptions<TProps>
-    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, THasDefinedOptions, TDefaultProps, TIsGroup>
   }>>>
   & IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedDefaultProps, {
     defaults: <TNewDefaultProps extends TProps>(
       defaultProps: THasDefinedDefaultProps extends true ? (TNewDefaultProps | ((defaults: TDefaultProps) => TNewDefaultProps)) : TNewDefaultProps,
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, TNewDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, THasDefinedOptions, TNewDefaultProps, TIsGroup>
   }>>
   & IncludeIfTrue<THasProps, {
     variant: (
@@ -59,11 +70,11 @@ type _ComponentExhibitBuilder<
        * that takes the default props and returns the props of the variant.
        */
       props: THasDefinedDefaultProps extends true ? (TProps | ((defaults: TDefaultProps) => TProps)) : TProps,
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, TDefaultProps, TIsGroup>
   }>
   & IncludeIfTrue<THasProps, {
     // eslint-disable-next-line max-len
-    group: (name: string, fn: (ex: _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, false, TDefaultProps, true>) => void) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, TDefaultProps, TIsGroup>
+    group: (name: string, fn: (ex: _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, false, THasDefinedOptions, TDefaultProps, true>) => void) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, TDefaultProps, TIsGroup>
   }>
   & IncludeIfFalse<TIsGroup, {
     build: () => ComponentExhibit<THasProps, TProps, TDefaultProps>
@@ -77,12 +88,14 @@ export type NonRootComponentExhibitBuilder<
   TReactComponent extends ReactComponent = ReactComponent,
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
+  THasDefinedOptions extends boolean = boolean,
   TDefaultProps extends undefined = undefined,
 > = _ComponentExhibitBuilder<
   PropsOfReactComponent<TReactComponent>,
   DoesReactComponentHavePropsArg<TReactComponent>,
   THasDefinedEvents,
   THasDefinedDefaultProps,
+  THasDefinedOptions,
   TDefaultProps,
   true
 >
@@ -91,12 +104,14 @@ export type ComponentExhibitBuilder<
   TReactComponent extends ReactComponent = ReactComponent,
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
+  THasDefinedOptions extends boolean = boolean,
   TDefaultProps extends undefined = undefined,
 > = _ComponentExhibitBuilder<
   PropsOfReactComponent<TReactComponent>,
   DoesReactComponentHavePropsArg<TReactComponent>,
   THasDefinedEvents,
   THasDefinedDefaultProps,
+  THasDefinedOptions,
   TDefaultProps
 >
 
