@@ -19,13 +19,13 @@ Exhibitor is an extremely snappy and delightful React component workshop.
 
 ## Usage Overview
 
-Exhibitor can be added to an existing React codebase that contains components, or be used to bootstrap one from scratch.
+Exhibitor can be added to an existing React codebase that contains components, or be used to bootstrap one from scratch. Ensure you have [Node.js version >14.x](https://nodejs.org/en/) installed.
 
 **From scratch:**
 
 In the parent directory that you want to create the component library in:
 
-```
+```bash
 mkdir my-component-library &&\
   cd my-component-library &&\
   npm init -y &&\
