@@ -204,20 +204,22 @@ export const init = async () => {
     exit(1)
   }
 
-  printCliString(c => (c.bold as any).green('Done!'))
-  const shouldStartExhibitor = await askBooleanQuestion('Would you like us to run the \'exh\' npm script?', true)
-  if (shouldStartExhibitor) {
-    const exhProcess = spawn('npm run exh')
-    exhProcess.stdout.on('data', data => {
-      console.log(data.toString())
-    })
+  printCliString(c => `${(c.bold as any).green('Done!')} - Run ${(c.bold as any).white('npm run exh')}`)
 
-    exhProcess.stderr.on('data', data => {
-      console.log(data.toString())
-    })
+  exit(0)
+  // const shouldStartExhibitor = await askBooleanQuestion('Would you like us to run the \'exh\' npm script?', true)
+  // if (shouldStartExhibitor) {
+  //   const exhProcess = spawn('npm run exh')
+  //   exhProcess.stdout.on('data', data => {
+  //     console.log(data.toString())
+  //   })
 
-    exhProcess.on('exit', code => {
-      console.log('child process exited with code ', code.toString())
-    })
-  }
+  //   exhProcess.stderr.on('data', data => {
+  //     console.log(data.toString())
+  //   })
+
+  //   exhProcess.on('exit', code => {
+  //     console.log('child process exited with code ', code.toString())
+  //   })
+  // }
 }
