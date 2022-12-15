@@ -1,5 +1,3 @@
-import './buttonWithGeneric.scss'
-
 import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './buttonWithGeneric'
 

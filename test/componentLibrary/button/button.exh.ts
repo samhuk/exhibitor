@@ -1,5 +1,3 @@
-import './button.scss'
-
 import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './button'
 

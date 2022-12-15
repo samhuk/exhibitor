@@ -31,8 +31,8 @@ const npmInstall = () => new Promise<void>((res, rej) => {
   })
 })
 
-const npmInstallPackage = (packageName: string) => new Promise<{ execError: ExecException } | null>((res, rej) => {
-  exec(`npm i -S ${packageName}`, err => {
+const npmInstallPackage = (packageName: string, isDevDep: boolean = false) => new Promise<{ execError: ExecException } | null>((res, rej) => {
+  exec(`npm i ${isDevDep ? '--save-dev' : '--save'} ${packageName}`, err => {
     if (err != null)
       console.log({ execError: err })
     else
@@ -159,6 +159,88 @@ const createExhConfigFile = async (): Promise<CliError | null> => {
   return null
 }
 
+const createExampleComponentCode = () => {
+  if (!fs.existsSync('./src'))
+    fs.mkdirSync('./src')
+  if (!fs.existsSync('./src/button'))
+    fs.mkdirSync('./src/button')
+  const buttonComponentCode = `import React from 'react'
+import './index.scss'
+
+export const render = (props: {
+  text: string
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  color?: 'default' | 'red' | 'yellow' | 'green' | 'blue'
+}) => {
+  const color = props.color ?? 'default'
+
+  const onClick: React.MouseEventHandler<HTMLButtonElement> = e => {
+    props.onClick(e)
+  }
+
+  return (
+    <button
+      className={\`cl-button color-\${color}\`}
+      type="button"
+      onClick={onClick}
+    >
+      {props.text}
+    </button>
+  )
+}
+
+export default render`
+  fs.writeFileSync('./src/button/index.tsx', buttonComponentCode)
+
+  const buttonComponentScssCode = `$background-color: #fff;
+$border: 1px solid #ccc;
+$border-radius: 1px solid #ccc;
+
+.cl-button {
+  background-color: $background-color;
+  border: $border;
+  border-radius: $border-radius;
+  cursor: pointer;
+  padding: 5px 10px;
+
+  &:hover {
+    background-color: darken($background-color, 10)
+  }
+}`
+  fs.writeFileSync('./src/button/index.scss', buttonComponentScssCode)
+
+  const buttonComponentExhibitCode = `import exhibit from 'exhibitor'
+import Button from '.'
+
+exhibit(Button, 'Button')
+  .events({
+    onClick: true,
+  })
+  .defaults({
+    onClick: () => undefined,
+    text: 'Button Text',
+    color: 'default',
+  })
+  .variant('green', p => ({
+    ...p,
+    color: 'green',
+  }))
+  .variant('yellow', p => ({
+    ...p,
+    color: 'yellow',
+  }))
+  .variant('red', p => ({
+    ...p,
+    color: 'red',
+  }))
+  .variant('blue', p => ({
+    ...p,
+    color: 'blue',
+  }))
+  .build()`
+  fs.writeFileSync('./src/button/index.exh.ts', buttonComponentExhibitCode)
+}
+
 export const init = async () => {
   printCliString(c => `${c.yellow('Warn: \'init\' command is currently in alpha')}`)
   // Ensure that package.json exists
@@ -196,6 +278,16 @@ export const init = async () => {
       exit(1)
   }
 
+  printCliString(c => `${c.blue('⬤')} Installing @types/react...`)
+  // Install react, if not already
+  const installReactTypesExecError = await npmInstallPackage('@types/react', true)
+  if (installReactTypesExecError != null) {
+    printError(createInstallDependenciesError(`Could not npm install @types/react - ${installTypescriptExecError.execError.message}`))
+    const shouldContinue = await askShouldContinue()
+    if (!shouldContinue)
+      exit(1)
+  }
+
   printCliString(c => `${c.blue('⬤')} Creating Exhibitor config file...`)
   // Create exh.config.json file
   const createExhConfigFileError = await createExhConfigFile()
@@ -203,6 +295,9 @@ export const init = async () => {
     printError(createExhConfigFileError)
     exit(1)
   }
+
+  printCliString(c => `${c.blue('⬤')} Creating example component code...`)
+  createExampleComponentCode()
 
   printCliString(c => `${(c.bold as any).green('Done!')} - Run ${(c.bold as any).white('npm run exh')}`)
 
