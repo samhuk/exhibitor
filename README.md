@@ -15,17 +15,31 @@
 
 ## Overview
 
-exhibitor is an extremely fast React component workshop with an easy-to-use Javascript API and Website.
+Exhibitor is an extremely snappy and delightful React component workshop.
 
 ## Usage Overview
 
-Install:
+Exhibitor can be added to an existing React codebase that contains components, or be used to bootstrap one from scratch.
+
+**From scratch:**
+
+In the parent directory that you want to create the component library in:
+
+```
+mkdir my-component-library &&\
+  cd my-component-library &&\
+  npm init -y &&\
+  npm i -S exhibitor &&\
+  npx exhibitor init
+```
+
+**Existing codebase:**
 
 ```
 npm i -S exhibitor
 ```
 
-Have a standard React component:
+For a standard component, for example:
 
 ```tsx
 // src/button.tsx
@@ -36,7 +50,7 @@ export const render = (props: { onClick: ..., color: ... }) => (
 export default render
 ```
 
-Declare exhibitions of your components with the Javascript API:
+Declare exhibitions of your components with the Exhibitor Javascript API:
 
 ```typescript
 // src/button.exh.ts
@@ -44,18 +58,34 @@ import exhibit from 'exhibitor'
 import Button from './button'
 
 exhibit(Button, 'Button', { group: 'Final Review' })
+  // Define which props correspond to events of the component
   .events({
     onClick: true,
   })
+  // Define any default values for props
   .defaults({
-    onClick: () => console.log('click!!'),
+    onClick: () => undefined,
     color: 'default',
     ...
   })
-  .variant('green', p => ({
+  // Define variants with varying prop values
+  .variant('Green', p => ({
     ...p,
     color: 'green',
   }))
+  ...
+  // Group variants together
+  .group('Large', ex => ex
+    .defaults(p => {
+      ...p,
+      size: 'large'
+    })
+    .variant('Green', p => {
+      ...p,
+
+    })
+    ...
+  ...
   .build()
 ```
 
@@ -65,23 +95,18 @@ Start exhibitor:
 npx exhibitor start
 ```
 
-Navigate to http://localhost:4001 to see your component exhibitions.
-
-Optionally define a configuration file for the `start` command:
+Optionally define a configuration file for the Exhibitor CLI:
 
 ```jsonc
 // exh.config.json
 {
+  "$schema": "https://raw.githubusercontent.com/samhuk/exhibitor/master/src/cli/config/schema.json", 
   "include": ["./src/**/*.exh.ts"],
   "watch": ["./src/**/*"],
-  "rootStyle": "./src/styles/index.scss",
   ...
 }
 ```
 
-```
-npx exhibitor start -c ./exh.config.json
-```
 ## Major Features
 
 * Extremely fast
@@ -93,8 +118,8 @@ npx exhibitor start -c ./exh.config.json
 
 ## Development
 
-See [./contributing/development.md](./contributing/development.md)
+Want to join and contibute to Exhibitor? See [./contributing/development.md](./contributing/development.md).
 
 ---
 
-If you would like to support my work, feel free to [buy me a coffee](https://www.buymeacoffee.com/samhuk) or sponsor me on GH ✨
+If you would like to support my work, feel free to [buy me a coffee](https://www.buymeacoffee.com/samhuk) or sponsor me on GitHub ✨
