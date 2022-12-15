@@ -194,7 +194,7 @@ export default render`
 
   const buttonComponentScssCode = `$background-color: #fff;
 $border: 1px solid #ccc;
-$border-radius: 1px solid #ccc;
+$border-radius: 5px;
 
 .cl-button {
   background-color: $background-color;
@@ -205,6 +205,26 @@ $border-radius: 1px solid #ccc;
 
   &:hover {
     background-color: darken($background-color, 10)
+  }
+
+  &.color-green {
+    background-color: green;
+    color: #fff;
+  }
+
+  &.color-yellow {
+    background-color: yellow;
+    color: #fff;
+  }
+
+  &.color-red {
+    background-color: red;
+    color: #fff;
+  }
+  
+  &.color: blue {
+    background-color: blue;
+    color: #fff;
   }
 }`
   fs.writeFileSync('./src/button/index.scss', buttonComponentScssCode)
