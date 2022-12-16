@@ -1,16 +1,12 @@
-import { exec, ExecException, spawn } from 'child_process'
+import { exec, ExecException } from 'child_process'
 import * as fs from 'fs'
 import readline from 'readline'
 import { exit } from 'process'
 import { CliError, printCliString, printError } from '../commandResult'
 import { CliString } from '../types'
-import { Config } from '../config/types'
+import { baseCommand } from './common'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
-
-const capitalize = (s: string): string => `${s.charAt(0).toUpperCase()}${s.slice(1)}`
-
-const dashCaseToCamelCase = (s: string): string => s.replace(/-([a-z0-9])/g, (_, m) => `${m.toUpperCase()}`)
 
 type Validator<TValue extends any = any> = {
   op: (s: TValue) => boolean
@@ -21,15 +17,6 @@ const VALIDATORS = {
   isNonEmptyString: { op: (s: string) => s != null && s.length > 0, errMsg: 'Cannot be empty' },
   hasNoSpaces: { op: (s: string) => s.indexOf(' ') === -1, errMsg: 'Cannot have whitespace' },
 } as const
-
-const npmInstall = () => new Promise<void>((res, rej) => {
-  exec('npm i', err => {
-    if (err != null)
-      console.log(err)
-    else
-      res()
-  })
-})
 
 const npmInstallPackage = (packageName: string, isDevDep: boolean = false) => new Promise<{ execError: ExecException } | null>((res, rej) => {
   exec(`npm i ${isDevDep ? '--save-dev' : '--save'} ${packageName}`, err => {
@@ -261,7 +248,51 @@ exhibit(Button, 'Button')
   fs.writeFileSync('./src/button/index.exh.ts', buttonComponentExhibitCode)
 }
 
-export const init = async () => {
+const createAddGitIgnoreEntryError = (causedBy: CliString): CliError => ({
+  message: 'Could not add git ignore entry',
+  causedBy,
+})
+
+const addGitIgnoreEntry = (): CliError | null => {
+  const gitIgnorePath = './.gitignore'
+  const gitIgnoreEntries: string[] = [
+    '/node_modules',
+    '/.exh',
+  ]
+  let alreadyExists: boolean
+  try {
+    alreadyExists = fs.existsSync(gitIgnorePath)
+  }
+  catch (e: any) {
+    return createAddGitIgnoreEntryError(c => `Could not determine if git ignore file already exists (${c.cyan(gitIgnorePath)}) - ${e.message}`)
+  }
+
+  let newGitIgnoreContent: string
+  if (alreadyExists) {
+    let gitIgnoreContent: string
+    try {
+      gitIgnoreContent = fs.readFileSync(gitIgnorePath, { encoding: 'utf8' })
+    }
+    catch (e: any) {
+      return createAddGitIgnoreEntryError(c => `Could not read in existing git ignore file content (${c.cyan(gitIgnorePath)}) - ${e.message}`)
+    }
+    const missingGitIgnoreEntries = gitIgnoreEntries.filter(entry => !gitIgnoreContent.split('\n').some(line => line.trim() === entry))
+    newGitIgnoreContent = gitIgnoreContent.concat(missingGitIgnoreEntries.join('\n'))
+  }
+  else {
+    newGitIgnoreContent = gitIgnoreEntries.join('\n')
+  }
+
+  try {
+    fs.writeFileSync(gitIgnorePath, newGitIgnoreContent)
+  }
+  catch (e: any) {
+    return createAddGitIgnoreEntryError(c => `Could not create new git ignore file (${c.cyan(gitIgnorePath)}) - ${e.message}`)
+  }
+  return null
+}
+
+export const init = baseCommand(async () => {
   printCliString(c => `${c.yellow('Warn: \'init\' command is currently in alpha')}`)
   // Ensure that package.json exists
   const doesPackageJsonFileExists = fs.existsSync('./package.json')
@@ -319,22 +350,14 @@ export const init = async () => {
   printCliString(c => `${c.blue('⬤')} Creating example component code...`)
   createExampleComponentCode()
 
-  printCliString(c => `${(c.bold as any).green('Done!')} - Run ${(c.bold as any).white('npm run exh')}`)
+  printCliString(c => `${c.blue('⬤')} Adding gitignore entries...`)
+  const gitIgnoreEntryError = addGitIgnoreEntry()
+  if (gitIgnoreEntryError != null) {
+    printError(createExhConfigFileError)
+    exit(1)
+  }
+
+  printCliString(c => `${(c.bold as any).green('Done!')} - Run ${c.bold('npm run exh')}`)
 
   exit(0)
-  // const shouldStartExhibitor = await askBooleanQuestion('Would you like us to run the \'exh\' npm script?', true)
-  // if (shouldStartExhibitor) {
-  //   const exhProcess = spawn('npm run exh')
-  //   exhProcess.stdout.on('data', data => {
-  //     console.log(data.toString())
-  //   })
-
-  //   exhProcess.stderr.on('data', data => {
-  //     console.log(data.toString())
-  //   })
-
-  //   exhProcess.on('exit', code => {
-  //     console.log('child process exited with code ', code.toString())
-  //   })
-  // }
-}
+}, 'init')

@@ -11,6 +11,7 @@ import { ResolvedConfig } from '../config/types'
 import { CliError, printError } from '../commandResult'
 import { BaseCliArgumentsOptions, CliString } from '../types'
 import { getConfigForCommand } from '../config'
+import { baseCommand } from './common'
 
 type StartCliArgumentsOptions = BaseCliArgumentsOptions & {
   port?: string
@@ -114,7 +115,7 @@ const applyStartOptionsToConfig = (
   return null
 }
 
-export const start = async (startOptions: StartCliArgumentsOptions) => {
+export const start = baseCommand(async (startOptions: StartCliArgumentsOptions) => {
   // -- Config
   const result = getConfigForCommand(startOptions, applyStartOptionsToConfig)
   if (result.success === false) {
@@ -133,4 +134,4 @@ export const start = async (startOptions: StartCliArgumentsOptions) => {
     printError(startServerError)
     exit(1)
   }
-}
+}, 'start')
