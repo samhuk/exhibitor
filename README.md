@@ -25,12 +25,20 @@ Exhibitor can be added to an existing React codebase that contains components, o
 
 In the parent directory that you want to create the component library in:
 
+For MacOS and Linux (and WSL):
+
 ```bash
 mkdir my-component-library &&\
   cd my-component-library &&\
   npm init -y &&\
   npm i -S exhibitor &&\
   npx exhibitor init
+```
+
+For Windows:
+
+```batch
+mkdir my-component-library && cd my-component-library && npm init -y && npm i -S exhibitor && npx exhibitor init
 ```
 
 **Existing codebase:**
