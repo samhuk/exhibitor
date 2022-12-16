@@ -19,7 +19,7 @@ Exhibitor is an extremely snappy and delightful React component workshop.
 
 ## Usage Overview
 
-Exhibitor can be added to an existing React codebase that contains components, or be used to bootstrap one from scratch. Ensure you have [Node.js version >14.x](https://nodejs.org/en/) installed.
+Exhibitor can be added to an existing React codebase that contains components, or be used to bootstrap one from scratch. Ensure you have [Node.js version >14.x](https://nodejs.org/en/) installed (latest/current version will suffice).
 
 **From scratch:**
 
