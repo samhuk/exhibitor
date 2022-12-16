@@ -1,8 +1,9 @@
 import cors from 'cors'
 import { json, Router } from 'express'
+import * as fs from 'fs'
 
 import { getMetadata, MetaData } from '../../../common/metadata'
-import { BUILD_OUTPUT_ROOT_DIR, META_DATA_FILE_NAME } from '../../../common/paths'
+import { BUILD_OUTPUT_ROOT_DIR, META_DATA_FILE, META_DATA_FILE_NAME } from '../../../common/paths'
 import { HealthcheckStatus } from '../../common/responses'
 import { sendSuccessResponse } from './responses'
 
@@ -23,7 +24,9 @@ const router = Router()
     }
     sendSuccessResponse(req, res, status)
   })
-  .get('/metadata', (req, res) => res.sendFile(META_DATA_FILE_NAME, { root: BUILD_OUTPUT_ROOT_DIR }))
+  .get('/metadata', (req, res) => {
+    sendSuccessResponse(req, res, JSON.parse(fs.readFileSync(META_DATA_FILE, { encoding: 'utf8' })))
+  })
   .get('/exhibitCode', (req, res) => {
     if (metaData == null)
       metaData = getMetadata()

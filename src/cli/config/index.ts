@@ -13,6 +13,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   site: {
     host: 'localhost',
     port: 4001,
+    title: 'Exhibitor',
   },
   verbose: false,
   configDir: undefined,
@@ -45,6 +46,7 @@ export const resolveConfig = (configFilePath: string, config?: Config): Resolved
     site: {
       host: config?.site?.host != null ? config.site.host : DEFAULT_CONFIG.site.host,
       port: config?.site?.port != null ? config.site.port : DEFAULT_CONFIG.site.port,
+      title: config?.site?.title != null ? config.site.title : DEFAULT_CONFIG.site.title,
     },
     verbose: config?.verbose ?? DEFAULT_CONFIG.verbose,
   }

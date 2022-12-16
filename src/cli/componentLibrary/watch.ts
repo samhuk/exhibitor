@@ -1,43 +1,32 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
-import * as fs from 'fs'
 
 import { printBuildResult } from '../../common/esbuilder'
-import { MetaData } from '../../common/metadata'
-import { META_DATA_FILE } from '../../common/paths'
+import { setMetadata } from '../../common/metadata'
 import { CustomBuildResult } from '../../common/types'
-import { makePathRelativeToConfigDir, makePathsRelativeToConfigDir } from '../config'
 import { ResolvedConfig } from '../config/types'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
 
-const createMetaDataFile = (
-  includedFilePaths: string[],
-) => {
-  const metaData: MetaData = {
-    includedFilePaths,
-  }
-  fs.writeFileSync(META_DATA_FILE, JSON.stringify(metaData, null, 2))
-}
-
 const _createIndexExhTsFile = async (
-  includeGlobPatterns: string[],
-  rootStylePath?: string,
+  config: ResolvedConfig,
 ) => {
-  const { includedFilePaths } = await createIndexExhTsFile(includeGlobPatterns, rootStylePath)
-  createMetaDataFile(includedFilePaths)
+  const { includedFilePaths } = await createIndexExhTsFile(config.include, config.rootStyle)
+  setMetadata({
+    includedFilePaths,
+    siteTitle: config.site.title,
+  })
 }
 
 const rebuildIteration = async (
   buildResult: CustomBuildResult,
-  includeGlobPatterns: string[],
-  rootStylePath?: string,
+  config: ResolvedConfig,
 ) => {
   console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
 
   const options = { verbose: false } // TODO: add to config
   try {
     const startTime = Date.now()
-    await _createIndexExhTsFile(includeGlobPatterns, rootStylePath)
+    await _createIndexExhTsFile(config)
     const rebuildResult = await buildResult.buildResult.rebuild()
     console.log(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
     // If verbose, print build info on every rebuild
@@ -57,12 +46,12 @@ export const watchComponentLibrary = async (
   onFirstSuccessfulBuild?: () => void,
 ) => {
   try {
-    await _createIndexExhTsFile(config.include, config.rootStyle)
+    await _createIndexExhTsFile(config)
     const buildResult = await buildIndexExhTsFile()
     onFirstSuccessfulBuild?.()
     initialBuildWatcher?.close()
     const rebuildWatcher = chokidar.watch(config.watch, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
-    watch(() => rebuildIteration(buildResult, config.include, config.rootStyle), rebuildWatcher, 150, () => console.log('Watching for changes...'))
+    watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => console.log('Watching for changes...'))
   }
   catch {
     if (initialBuildWatcher != null)

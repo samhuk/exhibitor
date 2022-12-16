@@ -33,6 +33,12 @@ export type Config = {
      * @default 'localhost'
      */
     host?: string
+    /**
+     * Optional title for the browser page of the site.
+     *
+     * @default 'Exhibitor'
+     */
+    title?: string
   }
   verbose?: boolean
   /**
@@ -50,6 +56,7 @@ export type ResolvedConfig = {
   site: {
     host: string
     port: number
+    title: string
   }
   verbose: boolean
   rootStyle: string | undefined | null

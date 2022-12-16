@@ -1,4 +1,5 @@
 import { componentExhibitsReady } from './componentExhibits/actions'
+import { fetchMetaDataThunk } from './metadata/reducer'
 import { AppDispatch } from './types'
 
 const areComponentExhibitsLoaded = () => {
@@ -30,4 +31,5 @@ const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise((re
 export const init = async (dispatch: AppDispatch) => {
   await waitUntilComponentExhibitsAreLoaded()
   dispatch(componentExhibitsReady(null))
+  dispatch(fetchMetaDataThunk())
 }

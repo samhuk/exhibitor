@@ -21,6 +21,11 @@
       "description": "Optional configuration of the exhibitor site.",
       "type": "object",
       "properties": {
+        "title": {
+          "description": "Optional title for the browser page of the site.",
+          "type": "string",
+          "default": "Exhibitor"
+        },
         "host": {
           "description": "The host the site will be binded to.",
           "type": "string",
