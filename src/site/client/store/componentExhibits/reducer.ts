@@ -4,6 +4,8 @@ import {
   ADD_EVENT,
   BottomBarType,
   CHANGE_HAS_UNSEEN_EVENTS,
+  CHANGE_VIEWPORT,
+  CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED,
   ComponentExhibitsActions,
   ComponentExhibitsState,
   READY,
@@ -19,6 +21,8 @@ const initialState: ComponentExhibitsState = {
   selectedBottomBarType: BottomBarType.Props,
   events: [],
   hasUnseenEvents: false,
+  viewportRectSizePx: null,
+  viewportSizeChangeEnabled: false,
 }
 
 export const componentExhibitsReducer = (
@@ -30,23 +34,17 @@ export const componentExhibitsReducer = (
     case READY:
       eventLogService.clear()
       return {
+        ...state,
         error: action.error,
-        selectedVariantPath: state.selectedVariantPath,
         loadingState: action.error == null ? LoadingState.IDLE : LoadingState.FAILED,
         ready: true,
-        selectedBottomBarType: state.selectedBottomBarType,
-        hasUnseenEvents: state.hasUnseenEvents,
         events: [],
       }
     case SELECT_VARIANT:
       eventLogService.clear()
       return {
-        error: state.error,
-        loadingState: state.loadingState,
-        ready: state.ready,
+        ...state,
         selectedVariantPath: action.variantNodePath,
-        selectedBottomBarType: state.selectedBottomBarType,
-        hasUnseenEvents: state.hasUnseenEvents,
         events: [],
       }
     case SELECT_BOTTOM_BAR:
@@ -65,6 +63,16 @@ export const componentExhibitsReducer = (
       return {
         ...state,
         hasUnseenEvents: action.hasUnseenEvents,
+      }
+    case CHANGE_VIEWPORT:
+      return {
+        ...state,
+        viewportRectSizePx: action.viewportRectSizePx,
+      }
+    case CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED:
+      return {
+        ...state,
+        viewportSizeChangeEnabled: action.enabled,
       }
     default:
       return state

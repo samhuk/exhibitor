@@ -1,4 +1,4 @@
-import { DEFAULT_HEIGHT_PX } from './resizableEffect'
+export const DEFAULT_HEIGHT_PX = 400
 
 export type State = {
   heightPx: number

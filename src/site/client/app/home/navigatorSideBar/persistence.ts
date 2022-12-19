@@ -1,9 +1,9 @@
-import { DEFAULT_WIDTH_PX } from './resizableEffect'
-
 export type NavBarState = {
   widthPx: number
   expandedPaths: { [path: string]: boolean }
 }
+
+export const DEFAULT_WIDTH_PX = 300
 
 export const saveNavBarState = (state: NavBarState) => {
   const date = new Date().setFullYear(new Date().getFullYear() + 1)

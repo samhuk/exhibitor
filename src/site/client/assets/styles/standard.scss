@@ -1,5 +1,6 @@
 // Common
 @import './common/colors.scss';
+@import './common/components/resizer.scss';
 
 $fa-font-path: "../fa/webfonts";
 @import '../fa/scss/fontawesome.scss';
@@ -45,6 +46,7 @@ button, select, input {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
   }  
 }
 

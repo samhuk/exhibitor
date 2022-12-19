@@ -4,13 +4,13 @@ import { useSearchParams } from 'react-router-dom'
 
 import { ComponentExhibit, ExhibitNode, ExhibitNodeType } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
-import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
+import { BottomBarType, changeViewportSizeChangeEnabled, selectBottomBar } from '../../../store/componentExhibits/actions'
 import EventLogComponent from './eventLog'
 import { DEFAULT_STATE, restoreState, saveState, State } from './persistence'
 import PropsComponent from './props'
-import { createTopLevelElResizableEffect } from './resizableEffect'
 import Nav from './nav'
 import RhsButtons from './rhsButtons'
+import { createResizer, ResizerLocation } from '../../../common/resizer'
 
 const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.Props]: 'Props',
@@ -38,6 +38,7 @@ export const render = () => {
 
   const heightPxRef = useRef(initialState?.heightPx ?? DEFAULT_STATE.heightPx)
   const [isCollapsed, setIsCollapsed] = useState(initialState?.isCollapsed ?? DEFAULT_STATE.isCollapsed)
+  const viewportSizeChangeEnabled = useAppSelector(s => s.componentExhibits.viewportSizeChangeEnabled)
 
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
@@ -106,7 +107,16 @@ export const render = () => {
   if (elRef.current != null)
     elRef.current.style.height = isCollapsed ? '' : `${heightPxRef.current}px`
 
-  useEffect(createTopLevelElResizableEffect(elRef, onResizeFinish), [elRef.current])
+  const resizer = useMemo(() => createResizer({
+    el: elRef.current,
+    side: ResizerLocation.TOP,
+    initialSizePx: heightPxRef.current,
+    onResizeFinish,
+    sizeChangeScale: 1,
+    minSizePx: 100,
+  }), [elRef.current])
+
+  useEffect(resizer, [elRef.current])
 
   const onToggleCollapseButtonClick = () => {
     const newIsCollapsed = !isCollapsed
@@ -117,6 +127,10 @@ export const render = () => {
     })
   }
 
+  const onUnlockViewportCheckboxChange: React.ChangeEventHandler<HTMLInputElement> = e => {
+    dispatch(changeViewportSizeChangeEnabled(e.target.checked))
+  }
+
   return (
     <div className={`bottom-bar${isCollapsed ? ' collapsed' : ''}`} ref={elRef}>
       <div className="header">
@@ -124,6 +138,8 @@ export const render = () => {
           <Nav />
         </div>
         <div className="right">
+          Unlock Viewport
+          <input type="checkbox" onChange={onUnlockViewportCheckboxChange} checked={viewportSizeChangeEnabled} />
           <RhsButtons isCollapsed={isCollapsed} onCollapseButtonClick={onToggleCollapseButtonClick} />
         </div>
       </div>

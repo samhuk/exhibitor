@@ -15,6 +15,10 @@ export const ADD_EVENT = 'componentExhibits/addEvent'
 
 export const CHANGE_HAS_UNSEEN_EVENTS = 'componentExhibits/changeHasUnseenEvents'
 
+export const CHANGE_VIEWPORT = 'componentExhibits/changeViewport'
+
+export const CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED = 'componentExhibits/changeViewportSizeChangeEnabled'
+
 export type ComponentExhibitsState = {
   ready: boolean
   selectedVariantPath: string
@@ -23,6 +27,8 @@ export type ComponentExhibitsState = {
   selectedBottomBarType: BottomBarType
   events: number[]
   hasUnseenEvents: boolean
+  viewportSizeChangeEnabled: boolean
+  viewportRectSizePx: { width: number, height: number }
 }
 
 type ReadyAction = {
@@ -45,12 +51,28 @@ type AddEventAction = {
   id: number
 }
 
-type ChangeHasUnseenEvents = {
+type ChangeHasUnseenEventsAction = {
   type: typeof CHANGE_HAS_UNSEEN_EVENTS
   hasUnseenEvents: boolean
 }
 
-export type ComponentExhibitsActions = ReadyAction | SelectVariantAction | SelectBottomBarAction | AddEventAction | ChangeHasUnseenEvents
+type ChangeViewportAction = {
+  type: typeof CHANGE_VIEWPORT
+  viewportRectSizePx: { width: number, height: number }
+}
+
+type ChangeViewportSizeChangeEnabledAction = {
+  type: typeof CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED
+  enabled: boolean
+}
+
+export type ComponentExhibitsActions = ReadyAction
+  | SelectVariantAction
+  | SelectBottomBarAction
+  | AddEventAction
+  | ChangeHasUnseenEventsAction
+  | ChangeViewportAction
+  | ChangeViewportSizeChangeEnabledAction
 
 export const componentExhibitsReady = (error: any): ComponentExhibitsActions => ({
   type: READY,
@@ -75,4 +97,14 @@ export const addEvent = (id: number): ComponentExhibitsActions => ({
 export const changeHasUnseenEvents = (hasUnseenEvents: boolean): ComponentExhibitsActions => ({
   type: CHANGE_HAS_UNSEEN_EVENTS,
   hasUnseenEvents,
+})
+
+export const changeViewport = (viewportRectSizePx: { width: number, height: number }): ComponentExhibitsActions => ({
+  type: CHANGE_VIEWPORT,
+  viewportRectSizePx,
+})
+
+export const changeViewportSizeChangeEnabled = (enabled: boolean): ComponentExhibitsActions => ({
+  type: CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED,
+  enabled,
 })

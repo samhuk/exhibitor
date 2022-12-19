@@ -10,6 +10,7 @@
     flex-direction: column;
     position: relative;
     min-height: 120px;
+    flex-shrink: 0;
 
     .exh-resizer {
       position: absolute;

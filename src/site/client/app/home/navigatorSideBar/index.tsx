@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { ExhibitNode, ExhibitNodeType, PathTree } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
 import { LoadingState } from '../../../store/types'
 import ExhibitGroupEl from './exhibitGroup'
 import VariantGroupEl from './variantGroup'
 import VariantEl from './variant'
-import { createTopLevelElResizableEffect, DEFAULT_WIDTH_PX } from './resizableEffect'
 import { createTopLevelElFocusEffect } from './topLevelElFocusEffect'
-import { NavBarState, restoreNavBarState, saveNavBarState } from './persistence'
+import { DEFAULT_WIDTH_PX, NavBarState, restoreNavBarState, saveNavBarState } from './persistence'
+import { createResizer, ResizerLocation } from '../../../common/resizer'
+import { createTopLevelElResizableEffect } from './resizableEffect'
 
 const NodeEl = (props: {
   node: ExhibitNode
@@ -61,7 +62,7 @@ const Render = () => {
   const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState?.expandedPaths)
   const widthPxRef = useRef(initialState?.widthPx ?? DEFAULT_WIDTH_PX)
 
-  const el = useRef<HTMLDivElement>()
+  const [el, setEl] = useState<HTMLElement>(null)
   const isElFocus = useRef(false)
 
   const onResizeFinish = (newWidthPx: number) => {
@@ -72,9 +73,18 @@ const Render = () => {
     })
   }
 
-  useEffect(createTopLevelElFocusEffect(el, isElFocus), [expandedPaths])
+  useEffect(createTopLevelElFocusEffect(el, isElFocus), [el, expandedPaths])
 
-  useEffect(createTopLevelElResizableEffect(el, widthPxRef.current, onResizeFinish), [])
+  const resizer = useMemo(() => createResizer({
+    el,
+    side: ResizerLocation.RIGHT,
+    initialSizePx: widthPxRef.current,
+    onResizeFinish,
+    sizeChangeScale: 1,
+    minSizePx: 100,
+  }), [el])
+
+  useEffect(resizer, [el])
 
   const onGroupDirExpansionChange = (node: ExhibitNode, newIsExpanded: boolean) => {
     const newExpandedPaths = { ...expandedPaths }
@@ -112,7 +122,7 @@ const Render = () => {
   }
 
   return (
-    <div className="navigator-side-bar" ref={el}>
+    <div className="navigator-side-bar" ref={setEl}>
       <div className="button-bar-1">
         <button
           type="button"

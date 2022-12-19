@@ -1,0 +1,43 @@
+.exh-resizer {
+  position: absolute;
+  z-index: 1000;
+  
+  &.left, &.right {
+    width: 10px;
+    cursor: col-resize;
+  }
+
+  &.top, &.bottom {
+    height: 10px;
+    cursor: row-resize;
+  }
+
+  &.top {
+    top: -5px;
+    left: 0;
+    right: 0;
+  }
+
+  &.bottom {
+    bottom: -5px;
+    left: 0;
+    right: 0;
+  }
+
+  &.left {
+    bottom: 0;
+    left: -5px;
+    top: 0;
+  }
+
+  &.right {
+    bottom: 0;
+    right: -5px;
+    top: 0;
+  }
+  
+  &:hover {
+    background-color: #ccc;
+    opacity: 0.6;
+  }
+}

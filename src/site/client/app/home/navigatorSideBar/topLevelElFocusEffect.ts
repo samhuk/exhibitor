@@ -5,10 +5,13 @@ import { MutableRefObject, EffectCallback } from 'react'
  * behaviour.
  */
 export const createTopLevelElFocusEffect = (
-  elRef: MutableRefObject<HTMLDivElement>,
+  el: HTMLElement,
   isElFocusRef: MutableRefObject<boolean>,
 ): EffectCallback => () => {
-  const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(elRef.current.querySelectorAll('a, button'))
+  if (el == null)
+    return () => undefined
+
+  const focusableElements: (HTMLAnchorElement | HTMLButtonElement)[] = Array.from(el.querySelectorAll('a, button'))
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Tab') {
@@ -16,7 +19,7 @@ export const createTopLevelElFocusEffect = (
         focusableElements[0]?.focus()
         e.preventDefault()
       }
-      elRef.current.classList.remove('focused')
+      el.classList.remove('focused')
       isElFocusRef.current = false
       return
     }
@@ -26,7 +29,7 @@ export const createTopLevelElFocusEffect = (
     if (!isUp && !isDown)
       return
 
-    if (!(isElFocusRef.current || elRef.current.contains(document.activeElement)))
+    if (!(isElFocusRef.current || el.contains(document.activeElement)))
       return
 
     let focusedElementIndex = 0
@@ -46,9 +49,9 @@ export const createTopLevelElFocusEffect = (
   }
 
   const onClick = (e: MouseEvent) => {
-    const isEl = e.target === elRef.current
+    const isEl = e.target === el
     isElFocusRef.current = isEl
-    elRef.current.classList.toggle('focused', isEl)
+    el.classList.toggle('focused', isEl)
   }
 
   document.addEventListener('click', onClick)
