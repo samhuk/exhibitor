@@ -9,9 +9,13 @@
   </a>
 </p>
 
-**exhibitor is in beta.**
+<p align="center">
+  <b>exhibitor is in beta.</b>
+</p>
 
-![](./img/img1.png)
+<div align="center">
+  <img src="./img/img1.png" style="border-radius: 5px; border: 1px solid #ccc" />
+</div>
 
 ## Overview
 
