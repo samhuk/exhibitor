@@ -31,6 +31,7 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      align-items: stretch;
 
       .left {
         // TODO: Actually will need a component lib for ourselves, as well, yknow, right?
@@ -64,16 +65,28 @@
       }
 
       .right {
-        button {
-          margin-left: 5px;
-          padding: 5px;
+        display: flex;
+        align-items: center;
+
+        input {
           cursor: pointer;
-          background-color: $color-background;
-          border: none;
-          border-radius: 5px;
-    
-          &:hover {
-            background-color: darken($color-background, 7);
+        }
+
+        .header-buttons {
+          align-self: stretch;
+
+          button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: $color-background;
+            border: none;
+            border-radius: 5px;
+            height: 100%;
+      
+            &:hover {
+              background-color: darken($color-background, 7);
+            }
           }
         }
       }

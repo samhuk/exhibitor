@@ -131,6 +131,7 @@ export const createResizer = (options: Options): EffectCallback => () => {
     state.initialUserSelectStyleValue = options.el.style.userSelect
     options.el.style.userSelect = 'none'
     options.onResizeStart?.()
+    resizerEl.classList.add('resizing')
     const iframeEls = document.getElementsByTagName('iframe')
     for (let i = 0; i < iframeEls.length; i += 1)
       iframeEls[i].style.pointerEvents = 'none'
@@ -147,6 +148,7 @@ export const createResizer = (options: Options): EffectCallback => () => {
     document.removeEventListener('mouseup', state.mouseUpHandler)
     document.removeEventListener('mousemove', state.mouseMoveHandler)
     options.onResizeFinish(newSizePx)
+    resizerEl.classList.remove('resizing')
 
     const iframeEls = document.getElementsByTagName('iframe')
     for (let i = 0; i < iframeEls.length; i += 1)
