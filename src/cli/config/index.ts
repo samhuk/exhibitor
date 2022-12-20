@@ -35,8 +35,8 @@ export const makePathRelativeToConfigDir = (p: string, configDir: string): strin
 export const makePathsRelativeToConfigDir = (paths: string[], configDir: string): string[] => paths
   .map(p => makePathRelativeToConfigDir(p, configDir))
 
-export const resolveConfig = (configFilePath: string, config?: Config): ResolvedConfig => {
-  const configDir = path.dirname(configFilePath)
+export const resolveConfig = (config?: Config, configFilePath?: string): ResolvedConfig => {
+  const configDir = configFilePath != null ? path.dirname(configFilePath) : './'
 
   return {
     configDir,
@@ -102,6 +102,22 @@ type GetConfigResult<
   false: { error: CliError }
 }, TSuccess, 'success'>
 
+const getConfigFilePath = (cliArgumentsOptions: BaseCliArgumentsOptions): CliError | string | null => {
+  if (cliArgumentsOptions.config == null) {
+    const defaultPath = path.join('./', DEFAULT_CONFIG_FILE_NAME)
+    return fs.existsSync(defaultPath) ? defaultPath : null
+  }
+
+  if (!fs.existsSync(cliArgumentsOptions.config)) {
+    return {
+      message: 'Invalid CLI command argument(s)',
+      causedBy: c => `config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}`,
+    }
+  }
+
+  return cliArgumentsOptions.config
+}
+
 export const getConfigForCommand = <
   TCliArgumentsOptions extends BaseCliArgumentsOptions
   >(
@@ -109,26 +125,17 @@ export const getConfigForCommand = <
     applyCliArgumentsOptionsToConfig?: (resolvedConfig: ResolvedConfig, cliArgumentsOptions: TCliArgumentsOptions) => CliError | null,
   ): GetConfigResult => {
   // Determine what path to use for config file
-  let configFilePath: string
-  if (cliArgumentsOptions.config != null) {
-    if (fs.existsSync(cliArgumentsOptions.config)) {
-      configFilePath = cliArgumentsOptions.config
-    }
-    else {
-      return {
-        success: false,
-        error: {
-          message: 'Invalid CLI command argument(s)',
-          causedBy: c => `config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}`,
-        },
-      }
+  const configFilePathResult = getConfigFilePath(cliArgumentsOptions)
+  if (configFilePathResult != null && typeof configFilePathResult === 'object') {
+    return {
+      success: false,
+      error: configFilePathResult,
     }
   }
-  else if (fs.existsSync(path.join('./', DEFAULT_CONFIG_FILE_NAME))) {
-    configFilePath = path.join('./', DEFAULT_CONFIG_FILE_NAME)
-  }
-  const config = configFilePath != null ? readAndParseConfig(configFilePath) : null
-  const resolvedConfig = resolveConfig(configFilePath, config)
+  const _configFilePathResult = configFilePathResult as string | null
+
+  const config = _configFilePathResult != null ? readAndParseConfig(_configFilePathResult) : null
+  const resolvedConfig = resolveConfig(config, _configFilePathResult)
 
   // Modify resolved config, if modifier fn is defined.
   const modifiedResolvedConfigError = applyCliArgumentsOptionsToConfig(resolvedConfig, cliArgumentsOptions)

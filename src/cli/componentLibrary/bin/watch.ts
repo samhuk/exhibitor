@@ -6,7 +6,7 @@ const TEST_COMPONENT_LIBRARY_EXH_CONFIG_FILE = `${TEST_COMPONENT_LIBRARY_ROOT_DI
 
 const getWatchComponentLibaryDevConfig = () => {
   const config = readAndParseConfig(TEST_COMPONENT_LIBRARY_EXH_CONFIG_FILE)
-  return resolveConfig(TEST_COMPONENT_LIBRARY_EXH_CONFIG_FILE, config)
+  return resolveConfig(config, TEST_COMPONENT_LIBRARY_EXH_CONFIG_FILE)
 }
 
 watchComponentLibrary(getWatchComponentLibaryDevConfig())

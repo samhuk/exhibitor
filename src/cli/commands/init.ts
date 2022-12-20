@@ -293,7 +293,8 @@ const addGitIgnoreEntry = (): CliError | null => {
 }
 
 export const init = baseCommand(async () => {
-  printCliString(c => `${c.yellow('Warn: \'init\' command is currently in alpha')}`)
+  printCliString(c => `${c.yellow('Warn: \'init\' command is currently in beta')}`)
+
   // Ensure that package.json exists
   const doesPackageJsonFileExists = fs.existsSync('./package.json')
   if (!doesPackageJsonFileExists) {

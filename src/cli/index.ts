@@ -4,6 +4,7 @@ import { Command } from 'commander'
 import { NPM_PACKAGE_NAME } from '../common/name'
 import { init } from './commands/init'
 import { start } from './commands/start'
+import { start as start2 } from './commands/start2'
 
 const program = new Command()
 
@@ -28,5 +29,16 @@ program
   // eslint-disable-next-line max-len
   .option('--root-style <path>', 'Optional path to a CSS or SCSS stylesheet to include as a root style. This is useful for defining styles shared by all components, i.e. icon/style libraries like font-awesome, muicons, bootstrap, or your own.')
   .action(options => start(options))
+
+// -- Start command
+program
+  .command('start2')
+  .description('Starts the exhibitor site.')
+  .option('-c, --config <path>', 'path to config file to use')
+  .option('--port <port>', 'port to bind the site to.')
+  .option('--host <host>', 'host to bind the site to.')
+  // eslint-disable-next-line max-len
+  .option('--root-style <path>', 'Optional path to a CSS or SCSS stylesheet to include as a root style. This is useful for defining styles shared by all components, i.e. icon/style libraries like font-awesome, muicons, bootstrap, or your own.')
+  .action(options => start2(options))
 
 program.parse()

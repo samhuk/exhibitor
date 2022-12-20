@@ -19,6 +19,16 @@
         "revealProblems": "onProblem",
         "close": true
       }
-    }
+    },
+    {
+      "label": "buildCliRel",
+      "type": "shell",
+      "command": "make build-cli-rel",
+      "presentation": {
+        "reveal": "silent",
+        "revealProblems": "onProblem",
+        "close": true
+      }
+    },
   ]
 }

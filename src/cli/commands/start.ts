@@ -13,7 +13,7 @@ import { BaseCliArgumentsOptions, CliString } from '../types'
 import { getConfigForCommand } from '../config'
 import { baseCommand } from './common'
 
-type StartCliArgumentsOptions = BaseCliArgumentsOptions & {
+export type StartCliArgumentsOptions = BaseCliArgumentsOptions & {
   port?: string
   host?: string
 }
@@ -93,7 +93,7 @@ const startServer = async (
   return null
 }
 
-const applyStartOptionsToConfig = (
+export const applyStartOptionsToConfig = (
   config: ResolvedConfig,
   options: StartCliArgumentsOptions,
 ): CliError | null => {
