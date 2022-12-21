@@ -10,7 +10,7 @@ import { eventLogService } from '../../../services/eventLogService'
 import { useAppSelector } from '../../../store'
 import { addEvent, changeViewport, selectVariant } from '../../../store/componentExhibits/actions'
 import { deepSetAllPropsOnMatch } from '../bottomBar/eventLog'
-import Iframe from './iframe'
+import Iframe from './iframe2'
 
 const VariantEl = (props: { exhibit: ComponentExhibit, variant: Variant }) => {
   const dispatch = useDispatch()
@@ -178,14 +178,9 @@ export const render = () => {
         <Iframe
           height="100%"
           width="100%"
-          stylesheethrefs={['/index.exh.css']}
-          inlinestyle="body { margin: 0 } html { display: flex; justify-content: center; align-items: center; width: 100%; height: 100% }"
-        >
-          <VariantEl
-            exhibit={selectedVariantNode.exhibit}
-            variant={selectedVariantNode.variant}
-          />
-        </Iframe>
+          title="comp-site"
+          src="/comp-site"
+        />
       </div>
     </div>
   )

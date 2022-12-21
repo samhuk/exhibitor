@@ -57,21 +57,20 @@ export const render = forwardRef((props: BaseProps & {
         iframeElRef.current = el
         if (ref == null)
           return
-        // Mimick React's ref internal ref assignment behavior
+        // Mimick React's internal ref assignment behavior
         if (typeof ref === 'function')
           ref(el)
         else
           ref.current = el
       }}
       style={{ visibility: 'hidden' }}
-      srcDoc="<!DOCTYPE html>"
       onLoad={onLoad}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...createSrcProp(props.stylesheethrefs, props.inlinestyle)}
     >
-      {iframeBodyEl != null
+      {iframeBodyEl != null && props.children != null
         ? createPortal(props.children, iframeBodyEl)
         : null}
     </iframe>
