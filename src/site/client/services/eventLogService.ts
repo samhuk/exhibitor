@@ -1,4 +1,6 @@
 import { OmitTyped } from '@samhuk/type-helpers'
+import store from '../store'
+import { addEvent } from '../store/componentExhibits/actions'
 
 export type EventLogItem = {
   id: number
@@ -34,6 +36,7 @@ export const eventLogService: EventLogService = {
       path: itemOptions.path,
     }
     eventLogService.items[item.id] = item
+    store.dispatch(addEvent(item.id))
     return item
   },
   clear: () => {
@@ -41,4 +44,7 @@ export const eventLogService: EventLogService = {
     resetId()
   },
   remove: id => delete eventLogService.items[id],
-}
+};
+
+// Make available on window object so that child comp-site iframe can access it
+(window as any).eventLogService = eventLogService
