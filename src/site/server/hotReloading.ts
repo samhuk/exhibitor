@@ -20,5 +20,10 @@ export const enableHotReloading = (app: Express): void => {
     // Watch for changes to the components build output directory
     BUILD_OUTPUT_ROOT_DIR,
   ].filter(v => v != null))
-  app.use(connectLivereload())
+  app.use(connectLivereload({
+    /* Exclude the component site routes from hot-reloading as the whole site
+     * needs to reload, which contains the comp-site in an iframe.
+     */
+    excludeList: ['/comp-site/**/*'],
+  }))
 }
