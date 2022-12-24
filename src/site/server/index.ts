@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import path from 'path'
 import colors from 'colors/safe'
 
-import { BUILD_OUTPUT_ROOT_DIR, COMPONENT_SITE_CLIENT_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
+import { BUILD_OUTPUT_ROOT_DIR, COMP_SITE_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import api from './api'
 import { notFound } from './api/errorVariants'
 import { sendErrorResponse } from './api/responses'
@@ -28,19 +28,18 @@ const clientDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_
 
 app
   .get('*', (req, res) => {
-    console.log(req.path)
     if (req.path === '/') {
       res.sendFile('/', { root: clientDir })
       return
     }
 
     if (req.path === '/comp-site') {
-      res.sendFile('index.html', { root: COMPONENT_SITE_CLIENT_OUTDIR })
+      res.sendFile('index.html', { root: COMP_SITE_OUTDIR })
       return
     }
 
     if (req.path === '/comp-site/index.js') {
-      res.sendFile('index.js', { root: COMPONENT_SITE_CLIENT_OUTDIR })
+      res.sendFile('index.js', { root: COMP_SITE_OUTDIR })
       return
     }
 

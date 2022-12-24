@@ -22,7 +22,7 @@ export const enableHotReloading = (app: Express): void => {
   ].filter(v => v != null))
   app.use(connectLivereload({
     /* Exclude the component site routes from hot-reloading as the whole site
-     * needs to reload, which contains the comp-site in an iframe.
+     * needs to reload anyway, which contains the comp-site in an iframe.
      */
     excludeList: ['/comp-site/**/*'],
   }))

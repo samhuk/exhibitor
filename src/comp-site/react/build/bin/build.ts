@@ -1,5 +1,5 @@
 import { exit } from 'process'
-import { COMPONENT_SITE_CLIENT_OUTDIR } from '../../../common/paths'
+import { COMP_SITE_OUTDIR } from '../../../../common/paths'
 
 import { build } from '../build'
 
@@ -11,5 +11,5 @@ build({
   gzip: isRelease,
   incremental: !isRelease,
   minify: isRelease,
-  outDir: COMPONENT_SITE_CLIENT_OUTDIR,
+  outDir: COMP_SITE_OUTDIR,
 }).then(() => exit(0)).catch(() => exit(1))

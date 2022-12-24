@@ -1,8 +1,8 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch as _watch } from 'chokidar-debounced'
 
-import { printBuildResult } from '../../common/esbuilder'
-import { COMPONENT_SITE_CLIENT_DIR, COMPONENT_SITE_CLIENT_OUTDIR } from '../../common/paths'
+import { printBuildResult } from '../../../common/esbuilder'
+import { COMP_SITE_REACT_DIR, COMP_SITE_OUTDIR } from '../../../common/paths'
 import { build } from './build'
 import { CustomBuildResult, WatchClientOptions } from './types'
 
@@ -51,7 +51,7 @@ export const createWatchOptions = (): WatchClientOptions => {
     gzip: !isDev,
     incremental: isDev,
     minify: !isDev,
-    outDir: COMPONENT_SITE_CLIENT_OUTDIR,
-    watchedDirPatterns: [COMPONENT_SITE_CLIENT_DIR],
+    outDir: COMP_SITE_OUTDIR,
+    watchedDirPatterns: [COMP_SITE_REACT_DIR],
   }
 }

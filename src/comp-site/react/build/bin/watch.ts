@@ -1,4 +1,4 @@
-import { COMPONENT_SITE_CLIENT_OUTDIR, COMPONENT_SITE_CLIENT_DIR } from '../../../common/paths'
+import { COMP_SITE_OUTDIR, COMP_SITE_REACT_DIR } from '../../../../common/paths'
 import { watch } from '../watch'
 
 const isRelease = process.env.EXH_RELEASE === '1'
@@ -9,6 +9,6 @@ watch({
   gzip: isRelease,
   incremental: !isRelease,
   minify: isRelease,
-  outDir: COMPONENT_SITE_CLIENT_OUTDIR,
-  watchedDirPatterns: [COMPONENT_SITE_CLIENT_DIR],
+  outDir: COMP_SITE_OUTDIR,
+  watchedDirPatterns: [COMP_SITE_REACT_DIR],
 })

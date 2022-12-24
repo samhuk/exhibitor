@@ -25,11 +25,13 @@ export const SITE_SERVER_OUTFILE = `${SITE_SERVER_OUTDIR}/index.js` as const
 
 export const SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH = '../client' as const
 
-// -- Component Site
-export const COMPONENT_SITE_CLIENT_DIR = './src/comp-site/react' as const
-export const COMPONENT_SITE_CLIENT_ENTRYPOINT = `${COMPONENT_SITE_CLIENT_DIR}/main.tsx` as const
-export const COMPONENT_SITE_CLIENT_HTML_PATH = `${COMPONENT_SITE_CLIENT_DIR}/index.html` as const
-export const COMPONENT_SITE_CLIENT_OUTDIR = `${BUILD_OUTPUT_ROOT_DIR}/comp-site` as const
+// -- Component Site (React)
+export const COMP_SITE_REACT_DIR = './src/comp-site/react' as const
+export const COMP_SITE_REACT_ENTRYPOINT = `${COMP_SITE_REACT_DIR}/main.tsx` as const
+export const COMP_SITE_REACT_HTML_PATH = `${COMP_SITE_REACT_DIR}/index.html` as const
+
+// -- Component Site (All)
+export const COMP_SITE_OUTDIR = `${BUILD_OUTPUT_ROOT_DIR}/comp-site` as const
 
 // -- Metadata file
 export const META_DATA_FILE_NAME = 'metadata.json' as const
