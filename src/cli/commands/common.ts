@@ -1,12 +1,20 @@
 import { exit } from 'process'
-import { printError } from '../commandResult'
+import { CliError, handleError, printError } from '../commandResult'
 
-export const baseCommand = <TFn extends (...args: any[]) => any>(
+export const endSuccessfulCommand = () => {
+  exit(0) // TODO: Remove once ready
+}
+
+export const baseCommand = <TFn extends (...args: any[]) => Promise<CliError | null>>(
   fn: TFn,
   commandName: string,
 ) => async (...args: Parameters<TFn>) => {
     try {
-      await fn(...args)
+      const commandError = await fn(...args)
+      if (commandError != null)
+        handleError(commandError)
+      else
+        endSuccessfulCommand()
     }
     catch (e: any) {
       printError({

@@ -2,9 +2,9 @@ import { exec, ExecException } from 'child_process'
 import * as fs from 'fs'
 import readline from 'readline'
 import { exit } from 'process'
-import { CliError, printCliString, printError } from '../commandResult'
+import { CliError, handleError, printCliString, printError } from '../commandResult'
 import { CliString } from '../types'
-import { baseCommand } from './common'
+import { baseCommand, endSuccessfulCommand } from './common'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -292,25 +292,29 @@ const addGitIgnoreEntry = (): CliError | null => {
   return null
 }
 
+const printWarn = (msg : string): void => {
+  printCliString(c => c.yellow(`Warn: ${msg}...`))
+}
+
+const printStep = (msg : string): void => {
+  printCliString(c => `${c.blue('*')} ${msg}...`)
+}
+
 export const init = baseCommand(async () => {
-  printCliString(c => `${c.yellow('Warn: \'init\' command is currently in beta')}`)
+  printWarn('\'init\' command is currently in beta')
 
   // Ensure that package.json exists
   const doesPackageJsonFileExists = fs.existsSync('./package.json')
-  if (!doesPackageJsonFileExists) {
-    printError(createInitPackageJsonError(c => `${c.cyan('./package.json')} file does not exist. Run ${c.bold('npm init')}' first.`))
-    exit(1)
-  }
+  if (!doesPackageJsonFileExists)
+    return createInitPackageJsonError(c => `${c.cyan('./package.json')} file does not exist. Run ${c.bold('npm init -y')}' first.`)
 
-  printCliString(c => `${c.blue('⬤')} Modifying package.json file...`)
+  printStep('Modifying package.json file')
   // Modify package.json file, e.g. add "exh" npm script
   const modifyPackageJsonFileError = await modifyPackageJsonFile()
-  if (modifyPackageJsonFileError != null) {
-    printError(modifyPackageJsonFileError)
-    exit(1)
-  }
+  if (modifyPackageJsonFileError != null)
+    return modifyPackageJsonFileError
 
-  printCliString(c => `${c.blue('⬤')} Installing typescript...`)
+  printStep('Installing typescript')
   // Install typescript, if not already
   const installTypescriptExecError = await npmInstallPackage('typescript')
   if (installTypescriptExecError != null) {
@@ -320,7 +324,7 @@ export const init = baseCommand(async () => {
       exit(1)
   }
 
-  printCliString(c => `${c.blue('⬤')} Installing react...`)
+  printStep('Installing react')
   // Install react, if not already
   const installReactExecError = await npmInstallPackage('react')
   if (installReactExecError != null) {
@@ -330,7 +334,7 @@ export const init = baseCommand(async () => {
       exit(1)
   }
 
-  printCliString(c => `${c.blue('⬤')} Installing @types/react...`)
+  printStep('Installing @types/react')
   // Install react, if not already
   const installReactTypesExecError = await npmInstallPackage('@types/react', true)
   if (installReactTypesExecError != null) {
@@ -340,25 +344,21 @@ export const init = baseCommand(async () => {
       exit(1)
   }
 
-  printCliString(c => `${c.blue('⬤')} Creating Exhibitor config file...`)
+  printStep('Creating Exhibitor config file')
   // Create exh.config.json file
   const createExhConfigFileError = await createExhConfigFile()
-  if (createExhConfigFileError != null) {
-    printError(createExhConfigFileError)
-    exit(1)
-  }
+  if (createExhConfigFileError != null)
+    return createExhConfigFileError
 
-  printCliString(c => `${c.blue('⬤')} Creating example component code...`)
+  printStep('Creating example component code')
   createExampleComponentCode()
 
-  printCliString(c => `${c.blue('⬤')} Adding gitignore entries...`)
+  printStep('Adding gitignore entries')
   const gitIgnoreEntryError = addGitIgnoreEntry()
-  if (gitIgnoreEntryError != null) {
-    printError(createExhConfigFileError)
-    exit(1)
-  }
+  if (gitIgnoreEntryError != null)
+    return createExhConfigFileError
 
   printCliString(c => `${(c.bold as any).green('Done!')} - Run ${c.bold('npm run exh')}`)
 
-  exit(0)
+  return null
 }, 'init')

@@ -1,5 +1,6 @@
 import { BoolDependant } from '@samhuk/type-helpers'
 import colors from 'colors/safe'
+import { exit } from 'process'
 import { CliString } from './types'
 
 export type CliError = {
@@ -33,20 +34,17 @@ const normalizeCliString = (s: CliString): string => (
     : s
 )
 
-export const printErrorResult = (
-  result: CommandResult<false>,
-): void => {
-  console.log(colors.red('Error:'), normalizeCliString(result.error.message))
-  if (result.error.causedBy != null)
-    console.log('\n  Caused by:', normalizeCliString(result.error.causedBy))
-}
-
 export const printError = (
   error: CliError,
 ): void => {
   console.log(colors.red('Error:'), normalizeCliString(error.message))
   if (error.causedBy != null)
     console.log('\n  Caused by:', normalizeCliString(error.causedBy))
+}
+
+export const handleError = (error: CliError) => {
+  printError(error)
+  exit(1)
 }
 
 export const printCliString = (s: CliString) => (

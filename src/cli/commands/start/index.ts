@@ -1,7 +1,7 @@
 import { exit } from 'process'
 import { watchComponentLibrary } from '../../componentLibrary/watch'
 import { ResolvedConfig } from '../../config/types'
-import { printError } from '../../commandResult'
+import { handleError } from '../../commandResult'
 import { getConfigForCommand } from '../../config'
 import { baseCommand } from '../common'
 import { startServer } from './startServer'
@@ -17,20 +17,16 @@ const _watchComponentLibrary = async (
 export const start = baseCommand(async (startOptions: StartCliArgumentsOptions) => {
   // -- Config
   const result = getConfigForCommand(startOptions, applyStartOptionsToConfig)
-  if (result.success === false) {
-    printError(result.error)
-    exit(1)
-  }
+  if (result.success === false)
+    return result.error
 
   // -- Logic
   // Wait for component library to get its first successful build
   await _watchComponentLibrary(result.config)
 
   const startServerError = await startServer(result.config)
+  if (startServerError != null)
+    return startServerError
 
-  // If command returned
-  if (startServerError != null) {
-    printError(startServerError)
-    exit(1)
-  }
+  return null
 }, 'start')
