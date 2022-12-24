@@ -1,10 +1,9 @@
 /* eslint react/jsx-filename-extension: 0 */
-import cloneDeep from 'clone-deep'
 import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ExhibitNode, ExhibitNodeType } from '../../api/exhibit/types'
+import { VariantExhibitNode } from '../../api/exhibit/types'
 import { getSelectedVariantNodePath, waitUntilComponentExhibitsAreLoaded } from '../../common/exhibit'
-import { deepSetAllPropsOnMatch } from '../../common/obj'
+import { attachEventLoggingToProps } from '../common'
 
 const container = document.getElementById('exh-root')
 
@@ -28,19 +27,15 @@ const App = () => {
       setSelectedVariantPath(getSelectedVariantNodePath())
       setReady(true)
     })
-    return <div className="component-exhibit not-ready">LOADING</div>
+    return <div className="component-exhibit not-ready">Loading...</div>
   }
 
   if (selectedVariantPath == null)
     return <div className="component-exhibit not-found">NOT SELECTED</div>
 
-  const selectedVariantNode = exh.nodes[selectedVariantPath] as ExhibitNode<ExhibitNodeType.VARIANT>
+  const selectedVariantNode = exh.nodes[selectedVariantPath] as VariantExhibitNode
 
-  const variantProps = selectedVariantNode.exhibit.hasProps && selectedVariantNode.exhibit.eventProps != null
-    ? deepSetAllPropsOnMatch(selectedVariantNode.exhibit.eventProps, cloneDeep(selectedVariantNode.variant.props), (args, path) => {
-      (parent as any).eventLogService.add({ args, path })
-    })
-    : selectedVariantNode.variant.props
+  const variantProps = attachEventLoggingToProps(selectedVariantNode)
 
   return selectedVariantNode.exhibit.renderFn(variantProps)
 }

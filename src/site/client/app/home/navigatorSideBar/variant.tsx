@@ -1,10 +1,10 @@
 import React from 'react'
-import { ExhibitNode, ExhibitNodeType } from '../../../../../api/exhibit/types'
+import { VariantExhibitNode } from '../../../../../api/exhibit/types'
 import { NavLinkKeeyQuery } from '../../../common/navLinkKeepQuery'
 import { calcNodePaddingLeft } from './common'
 
 export const render = (props: {
-  node: ExhibitNode<ExhibitNodeType.VARIANT>
+  node: VariantExhibitNode
 }) => (
   <NavLinkKeeyQuery
     to={props.node.path}

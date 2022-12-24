@@ -4,7 +4,7 @@ import { Command } from 'commander'
 import { NPM_PACKAGE_NAME } from '../common/name'
 import { init } from './commands/init'
 import { start } from './commands/start'
-import { start as start2 } from './commands/start2'
+import { start as start2 } from './commands/start/start2'
 
 const program = new Command()
 
@@ -17,7 +17,7 @@ program
 program
   .command('init')
   .description('Initializes the current directory for using exhibitor')
-  .action(() => init())
+  .action(init)
 
 // -- Start command
 program
@@ -28,7 +28,7 @@ program
   .option('--host <host>', 'host to bind the site to.')
   // eslint-disable-next-line max-len
   .option('--root-style <path>', 'Optional path to a CSS or SCSS stylesheet to include as a root style. This is useful for defining styles shared by all components, i.e. icon/style libraries like font-awesome, muicons, bootstrap, or your own.')
-  .action(options => start(options))
+  .action(start)
 
 // -- Start command
 program
@@ -39,6 +39,6 @@ program
   .option('--host <host>', 'host to bind the site to.')
   // eslint-disable-next-line max-len
   .option('--root-style <path>', 'Optional path to a CSS or SCSS stylesheet to include as a root style. This is useful for defining styles shared by all components, i.e. icon/style libraries like font-awesome, muicons, bootstrap, or your own.')
-  .action(options => start2(options))
+  .action(start2)
 
 program.parse()

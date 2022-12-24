@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 
-import { ComponentExhibit, ExhibitNode, ExhibitNodeType } from '../../../../../api/exhibit/types'
+import { ComponentExhibit, ExhibitNodeType, VariantExhibitNode } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
 import { BottomBarType, changeViewportSizeChangeEnabled, selectBottomBar } from '../../../store/componentExhibits/actions'
 import EventLogComponent from './eventLog'
@@ -43,7 +43,7 @@ export const render = () => {
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
   const shownBarTypes: BottomBarType[] = []
-  const variantNode: ExhibitNode<ExhibitNodeType.VARIANT> = useMemo(
+  const variantNode = useMemo<VariantExhibitNode>(
     () => {
       const selectedNode = exh.nodes[selectedVariantPath]
       return selectedNode != null && selectedNode.type === ExhibitNodeType.VARIANT

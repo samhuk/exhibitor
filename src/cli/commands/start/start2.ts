@@ -1,8 +1,9 @@
 import { exit } from 'process'
-import { printCliString, printError } from '../commandResult'
-import { getConfigForCommand } from '../config'
-import { baseCommand } from './common'
-import { applyStartOptionsToConfig, StartCliArgumentsOptions } from './start'
+import { printCliString, printError } from '../../commandResult'
+import { getConfigForCommand } from '../../config'
+import { baseCommand } from '../common'
+import { applyStartOptionsToConfig } from './config'
+import { StartCliArgumentsOptions } from './types'
 
 export const start = baseCommand(async (startOptions: StartCliArgumentsOptions) => {
   // -- Config
