@@ -1,6 +1,6 @@
 import { BuildResult } from 'esbuild'
 
-export type BuildClientOptions = {
+export type BuildOptions = {
   minify: boolean
   sourceMap: boolean
   incremental: boolean
@@ -9,21 +9,7 @@ export type BuildClientOptions = {
   verbose: boolean
 }
 
-export type BuildServerOptions = {
-  minify: boolean
-  sourceMap: boolean
-  incremental: boolean
-  outfile: string
-  verbose: boolean
-}
-
-export type WatchClientOptions = BuildClientOptions & {
-  watchedDirPatterns: string[]
-}
-
-export type WatchServerOptions = BuildServerOptions & {
-  serverHost: string
-  serverPort: number
+export type WatchClientOptions = BuildOptions & {
   watchedDirPatterns: string[]
 }
 

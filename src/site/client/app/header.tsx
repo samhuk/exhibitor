@@ -5,6 +5,11 @@ export const render = () => (
     <div className="title">
       Exhibitor
     </div>
+    <div className="right">
+      <div className="about">
+        React: v{React.version}
+      </div>
+    </div>
   </div>
 )
 

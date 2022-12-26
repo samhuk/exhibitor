@@ -6,6 +6,7 @@
   "compilerOptions": {
     "target": "es6",
     "moduleResolution": "node",
+    "module": "ES6",
     "allowJs": false,
     "strictNullChecks": false,
 		"strict": true,
@@ -13,11 +14,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "module": "commonjs",
     "declaration": false,
     "sourceMap": false,
     "noEmit": false,
     "skipLibCheck": true,
-    "outDir": "../../../../build/comp-site/react/build"
+    "outDir": "../../../../build/comp-site/react/site-prebuild",
+    "jsx": "react"
   }
 }

@@ -1,13 +1,15 @@
 /* eslint react/jsx-filename-extension: 0 */
 import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { VariantExhibitNode } from '../../api/exhibit/types'
-import { getSelectedVariantNodePath, waitUntilComponentExhibitsAreLoaded } from '../../common/exhibit'
-import { attachEventLoggingToProps } from '../common'
+import { VariantExhibitNode } from '../../../api/exhibit/types'
+import { getSelectedVariantNodePath, waitUntilComponentExhibitsAreLoaded } from '../../../common/exhibit'
+import { attachEventLoggingToProps } from '../../common'
 
 const container = document.getElementById('exh-root')
 
 const root = createRoot(container)
+
+console.log('This is comp-site from iframe over here. My React vesion is:', React.version)
 
 const App = () => {
   const [ready, setReady] = useState(false)

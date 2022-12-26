@@ -6,7 +6,7 @@ import path from 'path'
 import { createBuilder } from '../../common/esbuilder'
 import { SITE_CLIENT_ENTRYPOINT, SITE_CLIENT_FAVICON_PATH, SITE_CLIENT_HTML_PATH } from '../../common/paths'
 import { createIndexHtmlFileText } from './esbuildHtmlFilePlugin'
-import { gzipLargeFiles } from './gzip'
+import { gzipLargeFiles } from '../../common/gzip'
 import { BuildClientOptions } from './types'
 
 const createClientBuilder = (options: BuildClientOptions) => {

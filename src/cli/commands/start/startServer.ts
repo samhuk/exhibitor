@@ -1,4 +1,4 @@
-import { fork } from 'child_process'
+import { ChildProcess, fork } from 'child_process'
 import path from 'path'
 import * as fs from 'fs'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
@@ -17,9 +17,10 @@ const createStartServerError = (causedBy: CliString): CliError => ({
 
 export const startServer = async (
   config: ResolvedConfig,
-): Promise<CliError | null> => {
-  const npmDir = isDev ? './' : `./node_modules/${NPM_PACKAGE_NAME}`
-  const serverJsPath = path.join(npmDir, isDev ? SITE_SERVER_OUTFILE : './lib/site/server/index.js').replace(/\\/g, '/')
+): Promise<CliError | ChildProcess> => {
+  const serverJsPath = isDev
+    ? SITE_SERVER_OUTFILE
+    : path.join(`./node_modules/${NPM_PACKAGE_NAME}`, './lib/site/server/index.js').replace(/\\/g, '/')
 
   if (!fs.existsSync(serverJsPath))
     return createStartServerError(c => `Could not find the ${NPM_PACKAGE_NAME} server javascript to execute at ${c.cyan(serverJsPath)}`)
@@ -45,7 +46,5 @@ export const startServer = async (
     return createStartServerError(c => `Port ${(c.cyan as any).bold(portStr)} is not available (attempted url: ${c.cyan(`${config.site.host}:${portStr}`)}).`)
 
   // Execute the built site server js script that's in the user's local node_modules lib dir
-  fork(serverJsPath, { env })
-
-  return null
+  return fork(serverJsPath, { env })
 }

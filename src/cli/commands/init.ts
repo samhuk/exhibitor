@@ -300,7 +300,7 @@ const printStep = (msg : string): void => {
   printCliString(c => `${c.blue('*')} ${msg}...`)
 }
 
-export const init = baseCommand(async () => {
+export const init = baseCommand('init', async () => {
   printWarn('\'init\' command is currently in beta')
 
   // Ensure that package.json exists
@@ -361,4 +361,4 @@ export const init = baseCommand(async () => {
   printCliString(c => `${(c.bold as any).green('Done!')} - Run ${c.bold('npm run exh')}`)
 
   return null
-}, 'init')
+})

@@ -1,34 +1,32 @@
-import { build as _build, Plugin } from 'esbuild'
-import sassPlugin from 'esbuild-sass-plugin'
+import { build as _build } from 'esbuild'
 import * as fs from 'fs'
 import path from 'path'
 
 import { createBuilder } from '../../../common/esbuilder'
-import { COMP_SITE_REACT_ENTRYPOINT, COMP_SITE_REACT_HTML_PATH } from '../../../common/paths'
 import { gzipLargeFiles } from '../../../common/gzip'
-import { BuildClientOptions } from './types'
+import { BuildOptions } from './types'
+import { NPM_PACKAGE_NAME } from '../../../common/name'
 
-const createClientBuilder = (options: BuildClientOptions) => {
+const isDev = process.env.EXH_DEV === 'true'
+
+const createClientBuilder = (options: BuildOptions) => {
   const outputJsFilePath = path.resolve(options.outDir, 'index.js')
   const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'index.html'))
 
+  const entrypoint = isDev ? './build/comp-site/react/site-prebuild/comp-site/react/site/main.js' : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/comp-site/react/site/main.js`
+  const htmlFilePath = isDev ? './build/comp-site/react/site-prebuild/index.html' : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/index.html`
+
   return () => _build({
-    entryPoints: [COMP_SITE_REACT_ENTRYPOINT],
+    entryPoints: [entrypoint],
     outfile: outputJsFilePath,
     bundle: true,
-    minify: options.minify,
-    sourcemap: options.sourceMap,
+    minify: true,
+    sourcemap: false,
     metafile: true,
     incremental: options.incremental,
-    plugins: [sassPlugin() as unknown as Plugin],
-    loader: {
-      '.ttf': 'file',
-      '.woff': 'file',
-      '.woff2': 'file',
-    },
   }).then(result => {
     // Copy over additional related files to build dir
-    fs.copyFileSync(COMP_SITE_REACT_HTML_PATH, indexHtmlFileOutputPath)
+    fs.copyFileSync(htmlFilePath, indexHtmlFileOutputPath)
 
     if (options.gzip)
       gzipLargeFiles(options.outDir)
@@ -36,10 +34,10 @@ const createClientBuilder = (options: BuildClientOptions) => {
     return {
       buildResult: result,
       additionalOutputs: [
-        { path: indexHtmlFileOutputPath, sizeBytes: Buffer.from(fs.readFileSync(COMP_SITE_REACT_HTML_PATH, { encoding: 'utf8' })).length },
+        { path: indexHtmlFileOutputPath, sizeBytes: Buffer.from(fs.readFileSync(htmlFilePath, { encoding: 'utf8' })).length },
       ],
     }
   })
 }
 
-export const build = (options: BuildClientOptions) => createBuilder('comp-site-react', options.verbose, createClientBuilder(options))()
+export const build = (options: BuildOptions) => createBuilder('comp-site-react', options.verbose, createClientBuilder(options))()

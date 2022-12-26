@@ -23,15 +23,14 @@ const rebuildIteration = async (
 ) => {
   console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
 
-  const options = { verbose: false } // TODO: add to config
   try {
     const startTime = Date.now()
     await _createIndexExhTsFile(config)
     const rebuildResult = await buildResult.buildResult.rebuild()
-    console.log(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
+    console.log(`(${Date.now() - startTime} ms) Done.${!config.verbose ? ' Watching for changes...' : ''}`)
     // If verbose, print build info on every rebuild
-    if (options.verbose) {
-      printBuildResult(rebuildResult, startTime, options.verbose)
+    if (config.verbose) {
+      printBuildResult(rebuildResult, startTime, config.verbose)
       console.log('Watching for changes...')
     }
   }
@@ -48,10 +47,12 @@ export const watchComponentLibrary = async (
   try {
     await _createIndexExhTsFile(config)
     const buildResult = await buildIndexExhTsFile()
-    onFirstSuccessfulBuild?.()
     initialBuildWatcher?.close()
     const rebuildWatcher = chokidar.watch(config.watch, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
-    watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => console.log('Watching for changes...'))
+    watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => {
+      console.log('Watching for changes...')
+      onFirstSuccessfulBuild?.()
+    })
   }
   catch {
     if (initialBuildWatcher != null)

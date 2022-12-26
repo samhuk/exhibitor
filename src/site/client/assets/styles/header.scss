@@ -5,6 +5,9 @@
   padding: 5px;
   border-bottom: $border;
   height: 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .title {
     font-size: 22px;
