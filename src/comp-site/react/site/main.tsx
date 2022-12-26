@@ -9,8 +9,6 @@ const container = document.getElementById('exh-root')
 
 const root = createRoot(container)
 
-console.log('This is comp-site from iframe over here. My React vesion is:', React.version)
-
 const App = () => {
   const [ready, setReady] = useState(false)
   const [selectedVariantPath, setSelectedVariantPath] = useState(getSelectedVariantNodePath())

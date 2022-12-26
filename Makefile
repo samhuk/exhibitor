@@ -232,6 +232,9 @@ npm-publish-dry:
 npm-publish:
 	npm publish dist/npm/exhibitor
 
+npm-publish-beta:
+	npm publish dist/npm/exhibitor --tag beta
+
 # -- Test component library watch [dev only] TODO: concurrently needs to be used here.
 
 build-watch-component-library:
