@@ -1,5 +1,6 @@
 import { exit } from 'process'
-import { CliError, handleError } from '../commandResult'
+import { handleError } from '../error'
+import { CliError } from '../types'
 
 export const endSuccessfulCommand = () => {
   exit(0) // TODO: Remove once ready

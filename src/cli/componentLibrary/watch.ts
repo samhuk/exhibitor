@@ -7,6 +7,8 @@ import { CustomBuildResult } from '../../common/types'
 import { ResolvedConfig } from '../config/types'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
 
+const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
+
 const _createIndexExhTsFile = async (
   config: ResolvedConfig,
 ) => {
@@ -30,7 +32,7 @@ const rebuildIteration = async (
     console.log(`(${Date.now() - startTime} ms) Done.${!config.verbose ? ' Watching for changes...' : ''}`)
     // If verbose, print build info on every rebuild
     if (config.verbose) {
-      printBuildResult(rebuildResult, startTime, config.verbose)
+      printBuildResult(rebuildResult, startTime)
       console.log('Watching for changes...')
     }
   }
@@ -46,9 +48,9 @@ export const watchComponentLibrary = async (
 ) => {
   try {
     await _createIndexExhTsFile(config)
-    const buildResult = await buildIndexExhTsFile()
+    const buildResult = await buildIndexExhTsFile(config.verbose)()
     initialBuildWatcher?.close()
-    const rebuildWatcher = chokidar.watch(config.watch, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
+    const rebuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
     watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => {
       console.log('Watching for changes...')
       onFirstSuccessfulBuild?.()
@@ -57,7 +59,7 @@ export const watchComponentLibrary = async (
   catch {
     if (initialBuildWatcher != null)
       return
-    initialBuildWatcher = chokidar.watch(config.watch, { ignored: ['**/.exh/**/*', '**/node_modules/**/*'] })
+    initialBuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
     watch(
       () => watchComponentLibrary(config, onFirstSuccessfulBuild),
       initialBuildWatcher,

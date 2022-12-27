@@ -43,6 +43,10 @@
     "rootStyle": {
       "description": "Optional path to a CSS or SCSS stylesheet to include as a root style. This is useful for defining styles shared by all components, i.e. icon/style libraries like font-awesome, muicons, bootstrap, or your own.",
       "type": "string"
+    },
+    "verbose": {
+      "description": "Enables/disables verbose output for Exhibitor CLI",
+      "type": "boolean"
     }
   }
 }

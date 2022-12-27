@@ -15,7 +15,7 @@ fs.mkdirSync(BUILD_OUTPUT_ROOT_DIR, { recursive: true })
 const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
 const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
-export const buildIndexExhTsFile = createBuilder('component library', true, () => esbuild.build({
+export const buildIndexExhTsFile = (verbose: boolean) => createBuilder('component library', verbose, () => esbuild.build({
   entryPoints: [bundleInputFilePath],
   outfile: bundleOutputFilePath,
   platform: 'browser',

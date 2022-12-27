@@ -2,9 +2,9 @@ import { exec, ExecException } from 'child_process'
 import * as fs from 'fs'
 import readline from 'readline'
 import { exit } from 'process'
-import { CliError, handleError, printCliString, printError } from '../commandResult'
-import { CliString } from '../types'
-import { baseCommand, endSuccessfulCommand } from './common'
+import { CliError, CliString } from '../types'
+import { baseCommand } from './common'
+import { log, logError, logStep, logWarn } from '../logging'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -47,7 +47,7 @@ const tryGetInput = (options: {
         options.onComplete(val)
       }
       else {
-        printError({ message: errMsg })
+        logError({ message: errMsg })
         tryGetInput(options)
       }
     }
@@ -146,11 +146,22 @@ const createExhConfigFile = async (): Promise<CliError | null> => {
   return null
 }
 
-const createExampleComponentCode = () => {
-  if (!fs.existsSync('./src'))
-    fs.mkdirSync('./src')
-  if (!fs.existsSync('./src/button'))
-    fs.mkdirSync('./src/button')
+const createCreateExampleComponentCodeError = (causedBy: CliString): CliError => ({
+  message: 'Could not create example component',
+  causedBy,
+})
+
+const createExampleComponentCode = (): CliError | null => {
+  try {
+    if (!fs.existsSync('./src/button'))
+      fs.mkdirSync('./src/button', { recursive: true })
+  }
+  catch (e: any) {
+    return createCreateExampleComponentCodeError(
+      c => `Could not create ${c.cyan('./src/button')} directory.\n${e.message}`,
+    )
+  }
+
   const buttonComponentCode = `import React from 'react'
 import './index.scss'
 
@@ -177,7 +188,14 @@ export const render = (props: {
 }
 
 export default render`
-  fs.writeFileSync('./src/button/index.tsx', buttonComponentCode)
+  try {
+    fs.writeFileSync('./src/button/index.tsx', buttonComponentCode)
+  }
+  catch (e: any) {
+    return createCreateExampleComponentCodeError(
+      c => `Could not create ${c.cyan('./src/button/index.tsx')} file.\n${e.message}`,
+    )
+  }
 
   const buttonComponentScssCode = `$background-color: #fff;
 $border: 1px solid #ccc;
@@ -214,7 +232,14 @@ $border-radius: 5px;
     color: #fff;
   }
 }`
-  fs.writeFileSync('./src/button/index.scss', buttonComponentScssCode)
+  try {
+    fs.writeFileSync('./src/button/index.scss', buttonComponentScssCode)
+  }
+  catch (e: any) {
+    return createCreateExampleComponentCodeError(
+      c => `Could not create ${c.cyan('./src/button/index.scss')} file.\n${e.message}`,
+    )
+  }
 
   const buttonComponentExhibitCode = `import exhibit from 'exhibitor'
 import Button from '.'
@@ -245,7 +270,16 @@ exhibit(Button, 'Button')
     color: 'blue',
   }))
   .build()`
-  fs.writeFileSync('./src/button/index.exh.ts', buttonComponentExhibitCode)
+  try {
+    fs.writeFileSync('./src/button/index.exh.ts', buttonComponentExhibitCode)
+  }
+  catch (e: any) {
+    return createCreateExampleComponentCodeError(
+      c => `Could not create ${c.cyan('./src/button/index.exh.ts')} file.\n${e.message}`,
+    )
+  }
+
+  return null
 }
 
 const createAddGitIgnoreEntryError = (causedBy: CliString): CliError => ({
@@ -292,73 +326,67 @@ const addGitIgnoreEntry = (): CliError | null => {
   return null
 }
 
-const printWarn = (msg : string): void => {
-  printCliString(c => c.yellow(`Warn: ${msg}...`))
-}
-
-const printStep = (msg : string): void => {
-  printCliString(c => `${c.blue('*')} ${msg}...`)
-}
-
 export const init = baseCommand('init', async () => {
-  printWarn('\'init\' command is currently in beta')
+  logWarn('\'init\' command is currently in beta')
 
   // Ensure that package.json exists
   const doesPackageJsonFileExists = fs.existsSync('./package.json')
   if (!doesPackageJsonFileExists)
     return createInitPackageJsonError(c => `${c.cyan('./package.json')} file does not exist. Run ${c.bold('npm init -y')}' first.`)
 
-  printStep('Modifying package.json file')
+  logStep('Modifying package.json file')
   // Modify package.json file, e.g. add "exh" npm script
   const modifyPackageJsonFileError = await modifyPackageJsonFile()
   if (modifyPackageJsonFileError != null)
     return modifyPackageJsonFileError
 
-  printStep('Installing typescript')
+  logStep('Installing typescript')
   // Install typescript, if not already
   const installTypescriptExecError = await npmInstallPackage('typescript')
   if (installTypescriptExecError != null) {
-    printError(createInstallDependenciesError(`Could not npm install typescript - ${installTypescriptExecError.execError.message}`))
+    logError(createInstallDependenciesError(`Could not npm install typescript - ${installTypescriptExecError.execError.message}`))
     const shouldContinue = await askShouldContinue()
     if (!shouldContinue)
       exit(1)
   }
 
-  printStep('Installing react')
+  logStep('Installing react')
   // Install react, if not already
   const installReactExecError = await npmInstallPackage('react')
   if (installReactExecError != null) {
-    printError(createInstallDependenciesError(`Could not npm install react - ${installTypescriptExecError.execError.message}`))
+    logError(createInstallDependenciesError(`Could not npm install react - ${installTypescriptExecError.execError.message}`))
     const shouldContinue = await askShouldContinue()
     if (!shouldContinue)
       exit(1)
   }
 
-  printStep('Installing @types/react')
+  logStep('Installing @types/react')
   // Install react, if not already
   const installReactTypesExecError = await npmInstallPackage('@types/react', true)
   if (installReactTypesExecError != null) {
-    printError(createInstallDependenciesError(`Could not npm install @types/react - ${installTypescriptExecError.execError.message}`))
+    logError(createInstallDependenciesError(`Could not npm install @types/react - ${installTypescriptExecError.execError.message}`))
     const shouldContinue = await askShouldContinue()
     if (!shouldContinue)
       exit(1)
   }
 
-  printStep('Creating Exhibitor config file')
+  logStep('Creating Exhibitor config file')
   // Create exh.config.json file
   const createExhConfigFileError = await createExhConfigFile()
   if (createExhConfigFileError != null)
     return createExhConfigFileError
 
-  printStep('Creating example component code')
-  createExampleComponentCode()
+  logStep('Creating example component code')
+  const createExampleComponentCodeError = createExampleComponentCode()
+  if (createExampleComponentCodeError != null)
+    return createExampleComponentCodeError
 
-  printStep('Adding gitignore entries')
+  logStep('Adding gitignore entries')
   const gitIgnoreEntryError = addGitIgnoreEntry()
   if (gitIgnoreEntryError != null)
     return createExhConfigFileError
 
-  printCliString(c => `${(c.bold as any).green('Done!')} - Run ${c.bold('npm run exh')}`)
+  log(c => `${(c.bold as any).green('Done!')} - Run ${c.bold('npm run exh')}`)
 
   return null
 })

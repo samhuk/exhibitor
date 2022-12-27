@@ -1,9 +1,8 @@
 import colors from 'colors/safe'
-import { CliError } from './commandResult'
 import state from './state'
-import { CliString } from './types'
+import { CliError, CliString } from './types'
 
-const normalizeCliString = (s: CliString): string => (
+export const normalizeCliString = (s: CliString): string => (
   typeof s === 'function'
     ? s(colors)
     : s
@@ -48,4 +47,24 @@ export const logStep = (
 
   const normalizedMessage = normalizeCliString(msg)
   console.log(`${colors.blue('*')} ${normalizedMessage}`)
+}
+
+export const logWarn = (
+  msg: CliString,
+  verbose: boolean = false,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (verbose && !state.verbose)
+    return
+
+  const normalizedMessage = normalizeCliString(msg)
+  console.log(`${colors.yellow('Warn:')} ${normalizedMessage}`)
+}
+
+export const logError = (
+  error: CliError,
+): void => {
+  console.log(colors.red('Error:'), normalizeCliString(error.message))
+  if (error.causedBy != null)
+    console.log('\n  Caused by:', normalizeCliString(error.causedBy))
 }

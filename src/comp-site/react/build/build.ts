@@ -6,35 +6,54 @@ import { createBuilder } from '../../../common/esbuilder'
 import { gzipLargeFiles } from '../../../common/gzip'
 import { BuildOptions } from './types'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
+import { COMP_SITE_OUTDIR } from '../../../common/paths'
 
 const isDev = process.env.EXH_DEV === 'true'
 
-const createClientBuilder = (options: BuildOptions) => {
-  const outputJsFilePath = path.resolve(options.outDir, 'index.js')
-  const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'index.html'))
+const getPaths = (options: BuildOptions) => {
+  if (options.skipPrebuild) {
+    return {
+      entrypoint: './src/comp-site/react/site/main.tsx',
+      htmlFilePath: './src/comp-site/react/site/index.html',
+    }
+  }
 
-  const entrypoint = isDev ? './build/comp-site/react/site-prebuild/comp-site/react/site/main.js' : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/comp-site/react/site/main.js`
-  const htmlFilePath = isDev ? './build/comp-site/react/site-prebuild/index.html' : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/index.html`
+  const COMP_SITE_REACT_SITE_PREBUILD_OUTDIR = './build/comp-site/react/site-prebuild'
+  return {
+    entrypoint: isDev
+      ? `${COMP_SITE_REACT_SITE_PREBUILD_OUTDIR}/comp-site/react/site/main.js`
+      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/comp-site/react/site/main.js`,
+    htmlFilePath: isDev
+      ? `${COMP_SITE_REACT_SITE_PREBUILD_OUTDIR}/index.html`
+      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/index.html`,
+  }
+}
+
+const createClientBuilder = (options: BuildOptions) => {
+  const outputJsFilePath = path.resolve(COMP_SITE_OUTDIR, 'index.js')
+  const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(COMP_SITE_OUTDIR, 'index.html'))
+
+  const paths = getPaths(options)
 
   return () => _build({
-    entryPoints: [entrypoint],
+    entryPoints: [paths.entrypoint],
     outfile: outputJsFilePath,
     bundle: true,
     minify: true,
-    sourcemap: false,
+    sourcemap: options.sourceMap,
     metafile: true,
     incremental: options.incremental,
   }).then(result => {
     // Copy over additional related files to build dir
-    fs.copyFileSync(htmlFilePath, indexHtmlFileOutputPath)
+    fs.copyFileSync(paths.htmlFilePath, indexHtmlFileOutputPath)
 
     if (options.gzip)
-      gzipLargeFiles(options.outDir)
+      gzipLargeFiles(COMP_SITE_OUTDIR)
 
     return {
       buildResult: result,
       additionalOutputs: [
-        { path: indexHtmlFileOutputPath, sizeBytes: Buffer.from(fs.readFileSync(htmlFilePath, { encoding: 'utf8' })).length },
+        { path: indexHtmlFileOutputPath, sizeBytes: Buffer.from(fs.readFileSync(paths.htmlFilePath, { encoding: 'utf8' })).length },
       ],
     }
   })

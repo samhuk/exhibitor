@@ -2,8 +2,7 @@ import { BoolDependant } from '@samhuk/type-helpers'
 import * as fs from 'fs'
 import path from 'path'
 import { DEFAULT_CONFIG_FILE_NAME } from '../../common/paths'
-import { CliError } from '../commandResult'
-import { BaseCliArgumentsOptions, CliString } from '../types'
+import { BaseCliArgumentsOptions, CliError, CliString } from '../types'
 
 import { Config, ResolvedConfig } from './types'
 

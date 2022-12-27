@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "Snappy and delightful React component workshop",
   "main": "./lib/api/index.js",
   "types": "./lib/api/index.d.ts",

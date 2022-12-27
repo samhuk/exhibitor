@@ -3,10 +3,9 @@ import path from 'path'
 import * as fs from 'fs'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
 import { SITE_SERVER_OUTFILE } from '../../../common/paths'
-import { CliError } from '../../commandResult'
 import { determineIfPortFree } from '../../common/isPortFree'
 import { ResolvedConfig } from '../../config/types'
-import { CliString } from '../../types'
+import { CliError, CliString } from '../../types'
 
 const isDev = process.env.EXH_DEV === 'true'
 

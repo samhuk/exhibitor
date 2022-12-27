@@ -1,16 +1,11 @@
 import { BuildResult } from 'esbuild'
 
 export type BuildOptions = {
-  minify: boolean
   sourceMap: boolean
   incremental: boolean
-  outDir: string
   gzip: boolean
   verbose: boolean
-}
-
-export type WatchClientOptions = BuildOptions & {
-  watchedDirPatterns: string[]
+  skipPrebuild: boolean
 }
 
 export type BuildOutput = {

@@ -6,10 +6,11 @@ import { baseCommand } from '../common'
 import { startServer } from './startServer'
 import { applyStartOptionsToConfig } from './config'
 import { StartCliArgumentsOptions } from './types'
-import { createWatchOptions } from '../../../comp-site/react/build/watch'
 import { build as buildCompSiteReact } from '../../../comp-site/react/build/build'
 import state from '../../state'
 import { logStep } from '../../logging'
+
+const isDev = process.env.EXH_DEV === 'true'
 
 const _watchComponentLibrary = async (
   config: ResolvedConfig,
@@ -29,11 +30,9 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
 
   // -- Logic
   // Build component site (React)
-  logStep('Building component site (React)')
-  await buildCompSiteReact({ ...createWatchOptions(), verbose: config.verbose })
+  await buildCompSiteReact({ gzip: !isDev, incremental: false, sourceMap: isDev, verbose: config.verbose })
 
   // Wait for component library to get its first successful build
-  logStep('Building component library')
   await _watchComponentLibrary(config)
 
   // Start the site server
