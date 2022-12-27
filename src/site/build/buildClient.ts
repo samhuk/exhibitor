@@ -28,6 +28,7 @@ const createClientBuilder = (options: BuildClientOptions) => {
       '.woff': 'file',
       '.woff2': 'file',
     },
+    external: ['@textea/dev-kit/utils'],
   }).then(result => {
     // Create index.html file, referencing build outputs
     const indexHtmlFileText = createIndexHtmlFileText(result, faviconFileOutputPath, SITE_CLIENT_HTML_PATH, options.outDir)
