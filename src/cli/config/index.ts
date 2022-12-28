@@ -1,6 +1,7 @@
 import { BoolDependant } from '@samhuk/type-helpers'
 import * as fs from 'fs'
 import path from 'path'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import { DEFAULT_CONFIG_FILE_NAME } from '../../common/paths'
 import { BaseCliArgumentsOptions, CliError, CliString } from '../types'
 
@@ -12,7 +13,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   site: {
     host: 'localhost',
     port: 4001,
-    title: 'Exhibitor',
+    title: NPM_PACKAGE_CAPITALIZED_NAME,
   },
   verbose: false,
   configDir: undefined,

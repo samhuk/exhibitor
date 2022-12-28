@@ -59,4 +59,4 @@ const createClientBuilder = (options: BuildOptions) => {
   })
 }
 
-export const build = (options: BuildOptions) => createBuilder('comp-site-react', options.verbose, createClientBuilder(options))()
+export const build = (options: BuildOptions) => createBuilder('comp-site (React)', options.verbose, createClientBuilder(options))()
