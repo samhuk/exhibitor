@@ -46,7 +46,19 @@ export const logStep = (
     return
 
   const normalizedMessage = normalizeCliString(msg)
-  console.log(`${colors.blue('*')} ${normalizedMessage}`)
+  console.log(`${colors.blue('⏺')} ${normalizedMessage}`)
+}
+
+export const logSuccess = (
+  msg: CliString,
+  verbose: boolean = false,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (verbose && !state.verbose)
+    return
+
+  const normalizedMessage = normalizeCliString(msg)
+  console.log(`${colors.green('✓')} ${normalizedMessage}`)
 }
 
 export const logWarn = (

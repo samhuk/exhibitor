@@ -82,6 +82,10 @@ const checkPackages = (packages: string[]): CliError | null => {
 }
 
 export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<CliError> => {
+  // If verbose is specified in CLI arguments, then we can globally set it earlier
+  if (startOptions.verbose)
+    state.verbose = true
+
   // -- Config
   const result = getConfigForCommand(startOptions, applyStartOptionsToConfig)
   if (result.success === false)
