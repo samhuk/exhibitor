@@ -17,9 +17,13 @@ const createCliBuilder = () => () => build({
     nativeNodeModulesPlugin,
     nodeExternalsPlugin({
       packagePath: './dist/npm/exhibitor/package.json',
+      /* pako package breaks the CLI when kept as external. If it is, it's import
+       * statement gets converted into "require(...pako.esm.mjs)", which then
+       * causes an ERR_REQUIRE_ESM error.
+       */
+      allowList: ['pako'],
     }),
   ],
-  external: ['./node_modules/*'],
 }).then(result => ({ buildResult: result }))
 
 export const buildCli = () => createBuilder('cli', true, createCliBuilder())()

@@ -1,18 +1,27 @@
 import { exit } from 'process'
-import { printError } from '../commandResult'
+import { handleError } from '../error'
+import { CliError } from '../types'
 
-export const baseCommand = <TFn extends (...args: any[]) => any>(
-  fn: TFn,
+export const endSuccessfulCommand = () => {
+  exit(0) // TODO: Remove once ready
+}
+
+export const baseCommand = <TFn extends (...args: any[]) => Promise<CliError | null>>(
   commandName: string,
+  fn: TFn,
+  options?: { exitWhenReturns?: boolean },
 ) => async (...args: Parameters<TFn>) => {
     try {
-      await fn(...args)
+      const commandError = await fn(...args)
+      if (commandError != null)
+        handleError(commandError)
+      else if (options?.exitWhenReturns ?? true)
+        endSuccessfulCommand()
     }
     catch (e: any) {
-      printError({
+      handleError({
         message: c => `An unexpected error occured for the '${c.bold(commandName)}' command.`,
         causedBy: e,
       })
-      exit(1)
     }
   }

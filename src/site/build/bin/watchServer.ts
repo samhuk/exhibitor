@@ -1,13 +1,13 @@
 import { SITE_COMMON_DIR, SITE_SERVER_DIR, SITE_SERVER_OUTFILE } from '../../../common/paths'
 import { watchServer } from '../watchServer'
 
-const isRelease = process.env.EXH_RELEASE === '1'
+const isDev = process.env.EXH_DEV === 'true'
 
 watchServer({
-  verbose: isRelease,
-  sourceMap: true,
-  incremental: !isRelease,
-  minify: isRelease,
+  verbose: isDev,
+  sourceMap: isDev,
+  incremental: isDev,
+  minify: !isDev,
   outfile: SITE_SERVER_OUTFILE,
   watchedDirPatterns: [SITE_SERVER_DIR, SITE_COMMON_DIR],
   serverHost: process.env.SITE_SERVER_HOST ?? 'localhost',

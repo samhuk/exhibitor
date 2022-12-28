@@ -42,6 +42,7 @@ export const componentExhibitsReducer = (
       }
     case SELECT_VARIANT:
       eventLogService.clear()
+      document.getElementsByTagName('iframe')[0]?.contentWindow.dispatchEvent(new CustomEvent('selected-variant-change'))
       return {
         ...state,
         selectedVariantPath: action.variantNodePath,

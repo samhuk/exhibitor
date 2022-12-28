@@ -1,14 +1,14 @@
 import { SITE_CLIENT_DIR, SITE_CLIENT_OUTDIR, SITE_COMMON_DIR } from '../../../common/paths'
 import { watchClient } from '../watchClient'
 
-const isRelease = process.env.EXH_RELEASE === '1'
+const isDev = process.env.EXH_DEV === 'true'
 
 watchClient({
-  verbose: isRelease,
-  sourceMap: true,
-  gzip: isRelease,
-  incremental: !isRelease,
-  minify: isRelease,
+  verbose: isDev,
+  sourceMap: isDev,
+  gzip: !isDev,
+  incremental: isDev,
+  minify: !isDev,
   outDir: SITE_CLIENT_OUTDIR,
   watchedDirPatterns: [SITE_CLIENT_DIR, SITE_COMMON_DIR],
 })

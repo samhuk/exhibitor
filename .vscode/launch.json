@@ -54,5 +54,17 @@
       ],
       // "preLaunchTask": "unitTestsDebugPreLaunchTask"
     },
+    {
+      "name": "CLI Start Command",
+      "type": "node",
+      "request": "launch",
+      "program": "./build/cli/cli/index.js",
+      "args": [
+          "start",
+          "--runInBand",
+          "--no-cache"
+      ],
+      // "preLaunchTask": "unitTestsDebugPreLaunchTask"
+    },
   ]
 }

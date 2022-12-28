@@ -186,6 +186,8 @@ export type ExhibitNode<
   pathComponents: string[]
 }
 
+export type VariantExhibitNode = ExhibitNode<ExhibitNodeType.VARIANT>
+
 export type PathTree = {
   [path: string]: PathTree | boolean
 }

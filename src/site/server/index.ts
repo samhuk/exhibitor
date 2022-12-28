@@ -4,7 +4,8 @@ import * as fs from 'fs'
 import path from 'path'
 import colors from 'colors/safe'
 
-import { BUILD_OUTPUT_ROOT_DIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
+import { BUILD_OUTPUT_ROOT_DIR, COMP_SITE_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import api from './api'
 import { notFound } from './api/errorVariants'
 import { sendErrorResponse } from './api/responses'
@@ -33,6 +34,16 @@ app
       return
     }
 
+    if (req.path === '/comp-site' || req.path === '/comp-site/index.html') {
+      res.sendFile('index.html', { root: COMP_SITE_OUTDIR })
+      return
+    }
+
+    if (req.path === '/comp-site/index.js') {
+      res.sendFile('index.js', { root: COMP_SITE_OUTDIR })
+      return
+    }
+
     // If file exists in build output dir, then serve it
     if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`))) {
       res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
@@ -51,7 +62,7 @@ app
 
 const server = app.listen(env.port, env.host, () => {
   const url = `http://${env.host}:${env.port}`
-  console.log(`${(colors.green as any).bold('Exhibitor active')}. Access via ${(colors.cyan as any).underline(url)}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
+  console.log(`${(colors.green as any).bold(`${NPM_PACKAGE_CAPITALIZED_NAME} active`)}. Access via ${(colors.cyan as any).underline(url)}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
 })
 
 server.keepAliveTimeout = 10000 * 1000

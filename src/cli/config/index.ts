@@ -1,9 +1,10 @@
 import { BoolDependant } from '@samhuk/type-helpers'
 import * as fs from 'fs'
 import path from 'path'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import { DEFAULT_CONFIG_FILE_NAME } from '../../common/paths'
-import { CliError } from '../commandResult'
-import { BaseCliArgumentsOptions, CliString } from '../types'
+import { logStep, logSuccess } from '../logging'
+import { BaseCliArgumentsOptions, CliError, CliString } from '../types'
 
 import { Config, ResolvedConfig } from './types'
 
@@ -13,7 +14,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   site: {
     host: 'localhost',
     port: 4001,
-    title: 'Exhibitor',
+    title: NPM_PACKAGE_CAPITALIZED_NAME,
   },
   verbose: false,
   configDir: undefined,
@@ -35,8 +36,8 @@ export const makePathRelativeToConfigDir = (p: string, configDir: string): strin
 export const makePathsRelativeToConfigDir = (paths: string[], configDir: string): string[] => paths
   .map(p => makePathRelativeToConfigDir(p, configDir))
 
-export const resolveConfig = (configFilePath: string, config?: Config): ResolvedConfig => {
-  const configDir = path.dirname(configFilePath)
+export const resolveConfig = (config?: Config, configFilePath?: string): ResolvedConfig => {
+  const configDir = configFilePath != null ? path.dirname(configFilePath) : './'
 
   return {
     configDir,
@@ -102,6 +103,25 @@ type GetConfigResult<
   false: { error: CliError }
 }, TSuccess, 'success'>
 
+const getConfigFilePath = (cliArgumentsOptions: BaseCliArgumentsOptions): CliError | string | null => {
+  if (cliArgumentsOptions.config == null) {
+    const defaultPath = path.join('./', DEFAULT_CONFIG_FILE_NAME)
+    logStep(c => `'${c.underline('config')}' CLI argument not provided. Checking whether config file at default path exists (${c.cyan(defaultPath)}).`, true)
+    return fs.existsSync(defaultPath) ? defaultPath : null
+  }
+
+  logStep(c => `'${c.underline('config')}' CLI argument provided (${c.cyan(cliArgumentsOptions.config)}). Checking whether exists (${c.cyan(path.resolve(cliArgumentsOptions.config))}).`, true)
+  if (!fs.existsSync(cliArgumentsOptions.config)) {
+    return {
+      message: 'Invalid CLI command argument(s)',
+      causedBy: c => `Config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}`,
+    }
+  }
+
+  logSuccess('Configuration file found.', true)
+  return cliArgumentsOptions.config
+}
+
 export const getConfigForCommand = <
   TCliArgumentsOptions extends BaseCliArgumentsOptions
   >(
@@ -109,36 +129,31 @@ export const getConfigForCommand = <
     applyCliArgumentsOptionsToConfig?: (resolvedConfig: ResolvedConfig, cliArgumentsOptions: TCliArgumentsOptions) => CliError | null,
   ): GetConfigResult => {
   // Determine what path to use for config file
-  let configFilePath: string
-  if (cliArgumentsOptions.config != null) {
-    if (fs.existsSync(cliArgumentsOptions.config)) {
-      configFilePath = cliArgumentsOptions.config
-    }
-    else {
-      return {
-        success: false,
-        error: {
-          message: 'Invalid CLI command argument(s)',
-          causedBy: c => `config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}`,
-        },
-      }
+  const configFilePathResult = getConfigFilePath(cliArgumentsOptions)
+  if (configFilePathResult != null && typeof configFilePathResult === 'object') {
+    return {
+      success: false,
+      error: configFilePathResult,
     }
   }
-  else if (fs.existsSync(path.join('./', DEFAULT_CONFIG_FILE_NAME))) {
-    configFilePath = path.join('./', DEFAULT_CONFIG_FILE_NAME)
-  }
-  const config = configFilePath != null ? readAndParseConfig(configFilePath) : null
-  const resolvedConfig = resolveConfig(configFilePath, config)
+  const _configFilePathResult = configFilePathResult as string | null
+  if (_configFilePathResult == null)
+    logStep('No configuration file provided. Using default configuration with any CLI arguments provided as overrides.', true)
+  const config = _configFilePathResult != null ? readAndParseConfig(_configFilePathResult) : null
+  const resolvedConfig = resolveConfig(config, _configFilePathResult)
 
   // Modify resolved config, if modifier fn is defined.
+  logStep('Overriding config from specific file (or default config) with any CLI arguments.', true)
   const modifiedResolvedConfigError = applyCliArgumentsOptionsToConfig(resolvedConfig, cliArgumentsOptions)
   if (modifiedResolvedConfigError != null)
     return { success: false, error: modifiedResolvedConfigError }
 
   // Validate resolved config
+  logStep('Validating configuration.', true)
   const validateConfigError = validateConfig(resolvedConfig)
   if (validateConfigError != null)
     return { success: false, error: validateConfigError }
+  logSuccess('Configuration valid.', true)
 
   return { success: true, config: resolvedConfig }
 }

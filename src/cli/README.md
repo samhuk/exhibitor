@@ -1,1 +1,1 @@
-This directory contains the CLI that starts up the site server, client, and component library build watch.
+This directory contains the Exhibitor CLI. The main command is `start`, which builds the comp-site (current just the React one), watches the user's component library, and then starts up the site server and client.

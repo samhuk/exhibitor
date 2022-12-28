@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Snappy and delightful React component workshop",
   "main": "./lib/api/index.js",
   "types": "./lib/api/index.d.ts",
@@ -23,6 +23,7 @@
     "esbuild-sass-plugin": "^2.4.1",
     "globsie": "^0.0.12",
     "livereload": "^0.9.3",
-    "colors": "1.4.0"
+    "colors": "1.4.0",
+    "clone-deep": "^4.0.1"
   }
 }

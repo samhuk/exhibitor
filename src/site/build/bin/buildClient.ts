@@ -3,13 +3,13 @@ import { exit } from 'process'
 import { SITE_CLIENT_OUTDIR } from '../../../common/paths'
 import { buildClient } from '../buildClient'
 
-const isRelease = process.env.EXH_RELEASE === '1'
+const isDev = process.env.EXH_DEV === 'true'
 
 buildClient({
-  verbose: isRelease,
-  sourceMap: true,
-  gzip: isRelease,
-  incremental: !isRelease,
-  minify: isRelease,
+  verbose: isDev,
+  sourceMap: isDev,
+  gzip: !isDev,
+  incremental: isDev,
+  minify: !isDev,
   outDir: SITE_CLIENT_OUTDIR,
 }).then(() => exit(0)).catch(() => exit(1))

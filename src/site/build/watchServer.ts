@@ -35,7 +35,7 @@ const startRebuildWatch = (options: WatchServerOptions, buildResult: CustomBuild
       console.log(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
       // If verbose, print build info on every rebuild
       if (options.verbose) {
-        printBuildResult(_result, startTime, options.verbose)
+        printBuildResult(_result, startTime)
         console.log('Watching for changes...')
       }
       // Start server again
