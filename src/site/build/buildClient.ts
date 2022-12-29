@@ -14,6 +14,21 @@ const createClientBuilder = (options: BuildClientOptions) => {
   const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'index.html'))
   const faviconFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'favicon.ico'))
 
+  // Temporary workaround for https://github.com/TexteaInc/json-viewer/issues/133
+  let content = fs.readFileSync('./node_modules/@textea/json-viewer/dist/index.mjs', { encoding: 'utf8' })
+  let newContent = content
+    .replace('import { DevelopmentError } from \'@textea/dev-kit/utils\';', '')
+    .replace('DevelopmentError', 'Error')
+  fs.writeFileSync('./node_modules/@textea/json-viewer/dist/index.mjs', newContent, { encoding: 'utf8' })
+
+  content = fs.readFileSync('./node_modules/@textea/json-viewer/dist/index.js', { encoding: 'utf8' })
+  newContent = content
+    .replace(' require(\'@textea/dev-kit/utils\'),', '')
+    .replace(' \'@textea/dev-kit/utils\',', '')
+    .replace(' global["@textea/dev-kit/utils"],', '')
+    .replace('DevelopmentError', 'Error')
+  fs.writeFileSync('./node_modules/@textea/json-viewer/dist/index.js', newContent, { encoding: 'utf8' })
+
   return () => build({
     entryPoints: [SITE_CLIENT_ENTRYPOINT],
     outfile: outputJsFilePath,
@@ -28,7 +43,6 @@ const createClientBuilder = (options: BuildClientOptions) => {
       '.woff': 'file',
       '.woff2': 'file',
     },
-    external: [],
   }).then(result => {
     // Create index.html file, referencing build outputs
     const indexHtmlFileText = createIndexHtmlFileText(result, faviconFileOutputPath, SITE_CLIENT_HTML_PATH, options.outDir)

@@ -24,7 +24,6 @@
     "@reduxjs/toolkit": "^1.9.1",
     "@samhuk/type-helpers": "^1.0.3",
     "@testing-library/dom": "^8.19.1",
-    "@textea/dev-kit": "^1.1.0",
     "@textea/json-viewer": "^2.12.3",
     "@types/clone-deep": "^4.0.1",
     "@types/connect-livereload": "^0.6.0",
