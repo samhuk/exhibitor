@@ -4,7 +4,7 @@ import readline from 'readline'
 import { exit } from 'process'
 import { CliError, CliString } from '../types'
 import { baseCommand } from './common'
-import { log, logError, logStep, logWarn } from '../logging'
+import { log, logError, logStep, logSuccess, logWarn } from '../logging'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -326,67 +326,63 @@ const addGitIgnoreEntry = (): CliError | null => {
   return null
 }
 
+const npmInstallPackages = async (packages: (string | { name: string, isDev?: boolean })[]) => {
+  for (let i = 0; i < packages.length; i += 1) {
+    const packageInfo = packages[i]
+    const packageName = typeof packageInfo === 'string' ? packageInfo : packageInfo.name
+    const isDev = typeof packageInfo === 'string' ? false : (packageInfo.isDev ?? false)
+    logStep(`Installing ${packageName}`)
+    // Install package, if not already
+    // eslint-disable-next-line no-await-in-loop
+    const error = await npmInstallPackage(packageName, isDev)
+    if (error != null) {
+      logError(createInstallDependenciesError(`Could not npm install ${packageName} - ${error.execError.message}`))
+      // eslint-disable-next-line no-await-in-loop
+      const shouldContinue = await askShouldContinue()
+      if (!shouldContinue)
+        exit(1)
+    }
+  }
+}
+
 export const init = baseCommand('init', async () => {
   logWarn('\'init\' command is currently in beta')
 
   // Ensure that package.json exists
   const doesPackageJsonFileExists = fs.existsSync('./package.json')
   if (!doesPackageJsonFileExists)
-    return createInitPackageJsonError(c => `${c.cyan('./package.json')} file does not exist. Run ${c.bold('npm init -y')}' first.`)
+    return createInitPackageJsonError(c => `${c.cyan('./package.json')} file does not exist. Run ${c.cyan('npm init -y')}' first.`)
 
   logStep('Modifying package.json file')
   // Modify package.json file, e.g. add "exh" npm script
-  const modifyPackageJsonFileError = await modifyPackageJsonFile()
-  if (modifyPackageJsonFileError != null)
-    return modifyPackageJsonFileError
+  let err = await modifyPackageJsonFile()
+  if (err != null)
+    return err
 
-  logStep('Installing typescript')
-  // Install typescript, if not already
-  const installTypescriptExecError = await npmInstallPackage('typescript')
-  if (installTypescriptExecError != null) {
-    logError(createInstallDependenciesError(`Could not npm install typescript - ${installTypescriptExecError.execError.message}`))
-    const shouldContinue = await askShouldContinue()
-    if (!shouldContinue)
-      exit(1)
-  }
-
-  logStep('Installing react')
-  // Install react, if not already
-  const installReactExecError = await npmInstallPackage('react')
-  if (installReactExecError != null) {
-    logError(createInstallDependenciesError(`Could not npm install react - ${installTypescriptExecError.execError.message}`))
-    const shouldContinue = await askShouldContinue()
-    if (!shouldContinue)
-      exit(1)
-  }
-
-  logStep('Installing @types/react')
-  // Install react, if not already
-  const installReactTypesExecError = await npmInstallPackage('@types/react', true)
-  if (installReactTypesExecError != null) {
-    logError(createInstallDependenciesError(`Could not npm install @types/react - ${installTypescriptExecError.execError.message}`))
-    const shouldContinue = await askShouldContinue()
-    if (!shouldContinue)
-      exit(1)
-  }
+  await npmInstallPackages([
+    'react',
+    'react-dom',
+    'typescript',
+    { name: '@types/react', isDev: true },
+  ])
 
   logStep('Creating Exhibitor config file')
   // Create exh.config.json file
-  const createExhConfigFileError = await createExhConfigFile()
-  if (createExhConfigFileError != null)
-    return createExhConfigFileError
+  err = await createExhConfigFile()
+  if (err != null)
+    return err
 
   logStep('Creating example component code')
-  const createExampleComponentCodeError = createExampleComponentCode()
-  if (createExampleComponentCodeError != null)
-    return createExampleComponentCodeError
+  err = createExampleComponentCode()
+  if (err != null)
+    return err
 
   logStep('Adding gitignore entries')
-  const gitIgnoreEntryError = addGitIgnoreEntry()
-  if (gitIgnoreEntryError != null)
-    return createExhConfigFileError
+  err = addGitIgnoreEntry()
+  if (err != null)
+    return err
 
-  log(c => `${(c.bold as any).green('Done!')} - Run ${c.bold('npm run exh')}`)
+  logSuccess(c => `${(c.bold as any).green('Done!')} - Run ${c.cyan('npm run exh')}`)
 
   return null
 })
