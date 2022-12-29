@@ -5,6 +5,7 @@ import { printBuildResult } from '../../common/esbuilder'
 import { setMetadata } from '../../common/metadata'
 import { CustomBuildResult } from '../../common/types'
 import { ResolvedConfig } from '../config/types'
+import { logStep, logSuccess } from '../logging'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
 
 const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
@@ -13,6 +14,7 @@ const _createIndexExhTsFile = async (
   config: ResolvedConfig,
 ) => {
   const { includedFilePaths } = await createIndexExhTsFile(config.include, config.rootStyle)
+  logStep('Creating metadata.json file')
   setMetadata({
     includedFilePaths,
     siteTitle: config.site.title,
@@ -23,17 +25,17 @@ const rebuildIteration = async (
   buildResult: CustomBuildResult,
   config: ResolvedConfig,
 ) => {
-  console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
+  logStep(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
 
   try {
     const startTime = Date.now()
     await _createIndexExhTsFile(config)
     const rebuildResult = await buildResult.buildResult.rebuild()
-    console.log(`(${Date.now() - startTime} ms) Done.${!config.verbose ? ' Watching for changes...' : ''}`)
+    logSuccess(`(${Date.now() - startTime} ms) Done.${!config.verbose ? ' Watching for changes...' : ''}`)
     // If verbose, print build info on every rebuild
     if (config.verbose) {
       printBuildResult(rebuildResult, startTime)
-      console.log('Watching for changes...')
+      logStep('Watching for changes...')
     }
   }
   catch {

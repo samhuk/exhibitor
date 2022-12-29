@@ -7,6 +7,7 @@ import path from 'path'
 import { createBuilder } from '../../common/esbuilder'
 import { NPM_PACKAGE_NAME } from '../../common/name'
 import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../../common/paths'
+import { logStep, logWarn } from '../logging'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -38,7 +39,13 @@ export const createIndexExhTsFile = async (
   configInclude: string[],
   rootStylePath?: string,
 ) => {
+  logStep('Creating index.exh.ts file content.')
+  logStep(c => `Determining included exhibit files. (included paths: ${c.cyan(JSON.stringify(configInclude))}).`)
   const includedFilePaths = await glob(configInclude)
+  if (includedFilePaths.length > 0)
+    logStep(c => `Found ${c.cyan(includedFilePaths.length.toString())} exhibit files.`)
+  else
+    logWarn(c => `Did not find any exhibit files with the defined include (using ${c.cyan(JSON.stringify(configInclude))}).`)
 
   // Path from '.exh' dir to the path '../exhibit' relative to this file,
   const exhibitApiFunctionPath = isDev
