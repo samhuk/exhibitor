@@ -1,6 +1,6 @@
 import { BuildResult, Plugin } from 'esbuild'
 import path from 'path'
-import { logStep } from '../cli/logging'
+import { logStep, logSuccess } from '../cli/logging'
 
 import prettyBytes from './prettyBytes'
 import { BuildOutput, CustomBuildResult } from './types'
@@ -72,9 +72,10 @@ export const createBuilder = (
   const startTime = Date.now()
   return builder()
     .then(result => {
-      console.log('Done.')
-      if (verbose)
+      if (verbose) {
+        logSuccess('Done. Results:')
         printBuildResult(result.buildResult, startTime, result.additionalOutputs)
+      }
       return result
     })
     .catch(err => {
