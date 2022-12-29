@@ -39,8 +39,8 @@ export const createIndexExhTsFile = async (
   configInclude: string[],
   rootStylePath?: string,
 ) => {
-  logStep('Creating index.exh.ts file content.')
-  logStep(c => `Determining included exhibit files. (included paths: ${c.cyan(JSON.stringify(configInclude))}).`)
+  logStep('Creating index.exh.ts file content.', true)
+  logStep(c => `Determining included exhibit files. (included paths: ${c.cyan(JSON.stringify(configInclude))}).`, true)
   const includedFilePaths = await glob(configInclude)
   if (includedFilePaths.length > 0)
     logStep(c => `Found ${c.cyan(includedFilePaths.length.toString())} exhibit files.`)

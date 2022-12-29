@@ -14,7 +14,7 @@ const _createIndexExhTsFile = async (
   config: ResolvedConfig,
 ) => {
   const { includedFilePaths } = await createIndexExhTsFile(config.include, config.rootStyle)
-  logStep('Creating metadata.json file')
+  logStep('Creating metadata.json file', true)
   setMetadata({
     includedFilePaths,
     siteTitle: config.site.title,
