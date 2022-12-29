@@ -28,12 +28,7 @@ const createClientBuilder = (options: BuildClientOptions) => {
       '.woff': 'file',
       '.woff2': 'file',
     },
-    /* For some reason, the github remote build fails because a require(...)
-     * statement for this path is present in the site client bundle, even though
-     * locally it isn't. So doing this to make sure that there aren't any refs to
-     * it.
-     */
-    external: ['@textea/dev-kit/utils'],
+    external: [],
   }).then(result => {
     // Create index.html file, referencing build outputs
     const indexHtmlFileText = createIndexHtmlFileText(result, faviconFileOutputPath, SITE_CLIENT_HTML_PATH, options.outDir)

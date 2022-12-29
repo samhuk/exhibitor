@@ -48,7 +48,7 @@ export const startServer = async (
   if (!isPortFree)
     return createStartServerError(c => `Port ${(c.cyan as any).bold(portStr)} is not available (attempted url: ${c.cyan(`${config.site.host}:${portStr}`)}).`)
 
-  logSuccess('Port is available to use.')
+  logSuccess('Port is available to use.', true)
 
   // Execute the built site server js script that's in the user's local node_modules lib dir
   logStep(c => `Starting the Exhibitor server process (${c.cyan(serverJsPath)})`, true)
