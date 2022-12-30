@@ -8,7 +8,6 @@ import VariantEl from './variant'
 import { createTopLevelElFocusEffect } from './topLevelElFocusEffect'
 import { DEFAULT_WIDTH_PX, NavBarState, restoreNavBarState, saveNavBarState } from './persistence'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
-import { createTopLevelElResizableEffect } from './resizableEffect'
 
 const NodeEl = (props: {
   node: ExhibitNode
