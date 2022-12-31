@@ -1,6 +1,6 @@
 import { BuildResult, Plugin } from 'esbuild'
 import path from 'path'
-import { logStep, logSuccess } from '../cli/logging'
+import { log, logStep, logSuccess } from '../cli/logging'
 
 import prettyBytes from './prettyBytes'
 import { BuildOutput, CustomBuildResult } from './types'
@@ -49,17 +49,18 @@ export const printBuildResult = (result: BuildResult, startTime: number, additio
   const totalInputFileSizeBytes = Object.values(result.metafile.inputs).reduce((acc, input) => acc + input.bytes, 0)
   const totalOutputFileSizeBytes = Object.values(result.metafile.outputs).reduce((acc, output) => acc + output.bytes, 0)
   const outputFileCount = Object.keys(result.metafile.outputs).length
+  const dtMs = Date.now() - startTime
   // Print input data
-  console.log('  Inputs:')
-  console.log(`    Input file count: ${inputFileCount} [${prettyBytes(totalInputFileSizeBytes)}]`)
+  log(c => `  ${c.underline('Inputs:')}`)
+  log(c => `    Count: ${c.bold(inputFileCount.toString())}  ${(c.yellow as any).bold(prettyBytes(totalInputFileSizeBytes))}`)
   // Print output data
-  console.log('  Outputs:')
-  console.log(`    Output file count: ${outputFileCount} [${prettyBytes(totalOutputFileSizeBytes)}]`)
-  Object.entries(result.metafile.outputs).forEach(([filename, output]) => console.log(`    ${filename} [${prettyBytes(output.bytes)}]`))
-  additionalOutputs?.forEach(o => console.log(`    ${path.relative(path.resolve('./'), o.path)} [${prettyBytes(o.sizeBytes)}]`))
+  log(c => `  ${c.underline('Outputs:')}`)
+  log(c => `    Count: ${c.bold(outputFileCount.toString())}  ${(c.yellow as any).bold(prettyBytes(totalOutputFileSizeBytes))}`)
+  Object.entries(result.metafile.outputs).forEach(([filename, o]) => log(c => `    ${c.cyan(filename)}  ${c.yellow(prettyBytes(o.bytes))}`))
+  additionalOutputs?.forEach(o => log(c => `    ${c.cyan(path.relative(path.resolve('./'), o.path))}  ${c.yellow(prettyBytes(o.sizeBytes))}`))
   // Metrics
-  console.log('  Metrics:')
-  console.log(`    dt: ${(Date.now() - startTime)} ms`)
+  log(c => `  ${c.underline('Metrics:')}`)
+  log(c => `    dt: ${c.bold(`${dtMs} ms`)}`)
   console.log(`    Compression ratio: ${(totalInputFileSizeBytes / totalOutputFileSizeBytes).toFixed(2)}`)
 }
 
