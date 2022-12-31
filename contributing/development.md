@@ -26,7 +26,7 @@ This starts a hot-reloading build of the site client, server, and test component
 
 This section details the basic structure of the repository.
 
-This repository is split into three main parts - the **API**, the **CLI**, and the **Site**.
+Exhibitor is split into four main parts - **api**, **cli**, **site**, and **comp-site**.
 
 ### API
 
@@ -64,7 +64,13 @@ The server uses express.js.
 
 #### Common
 
-The common directory holds all of the Typescript code that is shared by the client and server. This is particularly useful for sharing types between client and server.
+The common directory holds all of the Typescript code that is shared by the site client and server. This is particularly useful for sharing response types, DTOs, etc.
+
+### Comp-site
+
+The Typescript for the Component Site is at `/src/comp-site`.
+
+The Component Site exists to enable the user to render their components with a React version of their chosing. Currently, it is a very small and simple React app that renders the user's components. It is rendered inside an iframe element inside exhibitor, essentially being a "child site". The Component Site exists in this repository as Typescript. For distribution, it is prebuilt (not bundled) into Javascript code with tsc. On the user's side, the CLI `start` command completes the build with esbuild, bundling in *their* version of `react` and `react-dom`.
 
 ## Linting
 
@@ -78,13 +84,15 @@ To build all three parts of the package, run `make build-all`. This will output 
 
 From the repo root dir:
 
+Run `make patch` to patch the package version. `make minor` and `make major` are also available, but these should be very rarely used.
+
 Run `make prepublish`
 
 `/dist/npm/exhibitor/lib` will now be populated and is ready for puiblishing to npm.
 
-Run `make npm-publish-dry` for a dry-run test of the npm publish.
+Run `make npm-publish-dry`
 
-Run `make npm-publish` to publish to npm. Be sure the increment the version.
+Run `make npm-publish`
 
 ## Debugging
 

@@ -226,6 +226,24 @@ prepublish:
 		build-all \
 		populate-dist
 
+# -- Version incrementers
+patch:
+	@echo ${VERSION}
+	@cd dist/npm/exhibitor && npm version patch > ../../../version.txt
+	@cat version.txt
+
+# -- Version incrementers
+minor:
+	@echo ${VERSION}
+	@cd dist/npm/exhibitor && npm version minor > ../../../version.txt
+	@cat version.txt
+
+# -- Version incrementers
+major:
+	@echo ${VERSION}
+	@cd dist/npm/exhibitor && npm version major > ../../../version.txt
+	@cat version.txt
+
 npm-publish-dry:
 	npm publish dist/npm/exhibitor --dry-run
 
