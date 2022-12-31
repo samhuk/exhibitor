@@ -1,6 +1,6 @@
-@use './navigator-side-bar.scss';
-@use './component-exhibit.scss';
-@use './bottom-bar.scss';
+@import './navigator-side-bar.scss';
+@import './component-exhibit.scss';
+@import './bottom-bar.scss';
 
 .exh-home {
   width: 100%;
@@ -8,7 +8,7 @@
   display: flex;
   height: calc(100vh - 38px); // Screen minus header
 
-  @include navigator-side-bar.navigator-side-bar;
+  @include navigator-side-bar;
 
   &>.right {
     display: flex;
@@ -16,7 +16,7 @@
     justify-content: space-between;
     min-width: 0;
 
-    @include component-exhibit.component-exhibit;
-    @include bottom-bar.bottom-bar;
+    @include component-exhibit;
+    @include bottom-bar;
   }
 }

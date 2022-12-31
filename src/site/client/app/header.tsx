@@ -10,6 +10,12 @@ export const render = () => (
       <div className="about">
         React: v{React.version}
       </div>
+      <button type="button" onClick={() => {
+        const el = document.querySelector('#styles-link') as any
+        el.href = el.getAttribute('href') === '/light.css' ? '/dark.css' : '/light.css'
+      }}
+      >TOGGLE DARK MODE! :D
+      </button>
     </div>
   </div>
 )

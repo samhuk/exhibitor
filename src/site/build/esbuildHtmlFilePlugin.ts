@@ -26,6 +26,10 @@ const includeIcoFile = (document: Document, href: string) => {
 }
 
 const includeFile = (document: Document, outputDir: string, outputPath: string) => {
+  // These are dynamically included
+  if (outputPath.endsWith('dark.css') || outputPath.endsWith('light.css'))
+    return
+
   const relativizedPath = path.relative(outputDir, outputPath)
   const href = `/${relativizedPath}`
   if (outputPath.endsWith('.js'))

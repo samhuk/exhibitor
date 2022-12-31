@@ -10,7 +10,6 @@ import { gzipLargeFiles } from '../../common/gzip'
 import { BuildClientOptions } from './types'
 
 const createClientBuilder = (options: BuildClientOptions) => {
-  const outputJsFilePath = path.resolve(options.outDir, 'index.js')
   const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'index.html'))
   const faviconFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'favicon.ico'))
 
@@ -30,8 +29,13 @@ const createClientBuilder = (options: BuildClientOptions) => {
   fs.writeFileSync('./node_modules/@textea/json-viewer/dist/index.js', newContent, { encoding: 'utf8' })
 
   return () => build({
-    entryPoints: [SITE_CLIENT_ENTRYPOINT],
-    outfile: outputJsFilePath,
+    entryPoints: {
+      index: SITE_CLIENT_ENTRYPOINT,
+      fa: './src/site/client/assets/styles/fa.scss',
+      light: './src/site/client/assets/styles/index-light.scss',
+      dark: './src/site/client/assets/styles/index-dark.scss',
+    },
+    outdir: options.outDir,
     bundle: true,
     minify: options.minify,
     sourcemap: options.sourceMap,
