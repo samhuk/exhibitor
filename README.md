@@ -48,13 +48,14 @@ mkdir my-component-library && cd my-component-library && npm init -y && npm i -S
 **Existing codebase:**
 
 ```
-npm i -S exhibitor
+npm i -S exhibitor react react-dom
 ```
 
 For a standard component, for example:
 
 ```tsx
 // src/button.tsx
+import React from 'react'
 import './button.scss'
 export const render = (props: { onClick: ..., color: ... }) => (
   <button>...</button>
@@ -128,6 +129,7 @@ Optionally define a configuration file for the Exhibitor CLI:
 * Sane defaults
 * Delightful Javascript API with Typescript-centric design for zero guesswork.
 * esbuild
+* Gives you the choice of React version to use
 * e2e testing integration **[Planned]**
 
 ## Development
