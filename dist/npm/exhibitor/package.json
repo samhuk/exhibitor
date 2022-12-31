@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Snappy and delightful React component workshop",
   "main": "./lib/api/index.js",
   "types": "./lib/api/index.d.ts",
@@ -10,8 +10,8 @@
   "license": "MIT",
   "author": {
     "name": "Sam Hughes",
-		"email": "samhughes1701@hotmail.co.uk",
-		"url": "http://samhuk.com/about"
+    "email": "samhughes1701@hotmail.co.uk",
+    "url": "http://samhuk.com/about"
   },
   "repository": "https://github.com/samhuk/exhibitor",
   "dependencies": {
