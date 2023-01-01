@@ -1,8 +1,9 @@
 import { prettyDOM } from '@testing-library/dom'
-import { createDataType, JsonViewer } from '@textea/json-viewer'
+import { createDataType } from '@textea/json-viewer'
 import React from 'react'
 
 import { ComponentExhibit, Variant } from '../../../../../api/exhibit/types'
+import JsonViewer from '../../../common/jsonViewer'
 import { EventLogItem, eventLogService } from '../../../services/eventLogService'
 import { useAppSelector } from '../../../store'
 
