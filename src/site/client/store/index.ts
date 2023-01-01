@@ -6,6 +6,7 @@ import { componentExhibitsReducer } from './componentExhibits/reducer'
 import { healthcheckArtifacts } from './healthcheck'
 import { init } from './init'
 import { metaDataReducer } from './metadata/reducer'
+import { themeReducer } from './theme/reducer'
 import { AppDispatch, RootState } from './types'
 
 // Set the root reducer. This defines the root state (see ./types.ts).
@@ -13,6 +14,7 @@ export const rootReducer = combineReducers({
   componentExhibits: componentExhibitsReducer,
   healthcheck: healthcheckArtifacts.reducer,
   metaData: metaDataReducer,
+  theme: themeReducer,
 })
 
 export const store = configureStore({

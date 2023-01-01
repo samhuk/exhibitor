@@ -1,23 +1,31 @@
 import React from 'react'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
+import { useAppDispatch, useAppSelector } from '../store'
+import { incrementTheme } from '../store/theme/actions'
 
-export const render = () => (
-  <div className="exh-header">
-    <div className="title">
-      {NPM_PACKAGE_CAPITALIZED_NAME}
-    </div>
-    <div className="right">
-      <div className="about">
-        React: v{React.version}
+export const render = () => {
+  const dispatch = useAppDispatch()
+  const theme = useAppSelector(s => s.theme.theme)
+
+  const onThemeButtonClick = () => {
+    dispatch(incrementTheme())
+  }
+
+  return (
+    <div className="exh-header">
+      <div className="title">
+        {NPM_PACKAGE_CAPITALIZED_NAME}
       </div>
-      <button type="button" onClick={() => {
-        const el = document.querySelector('#styles-link') as any
-        el.href = el.getAttribute('href') === '/light.css' ? '/dark.css' : '/light.css'
-      }}
-      >TOGGLE DARK MODE! :D
-      </button>
+      <div className="right">
+        <div className="about">
+          React: v{React.version}
+        </div>
+        <button type="button" onClick={onThemeButtonClick}>
+          <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`} />
+        </button>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default render

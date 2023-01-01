@@ -197,19 +197,19 @@ export default render`
     )
   }
 
-  const buttonComponentScssCode = `$background-color: #fff;
+  const buttonComponentScssCode = `$bg-color: #fff;
 $border: 1px solid #ccc;
 $border-radius: 5px;
 
 .cl-button {
-  background-color: $background-color;
+  background-color: $bg-color;
   border: $border;
   border-radius: $border-radius;
   cursor: pointer;
   padding: 5px 10px;
 
   &:hover {
-    background-color: darken($background-color, 10)
+    background-color: darken($bg-color, 10)
   }
 
   &.color-green {

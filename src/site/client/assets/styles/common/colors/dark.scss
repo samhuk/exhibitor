@@ -1,5 +1,12 @@
 @import './common.scss';
 
-$color-background: #222;
-$color-text: #fff;
-$color-border: #ccc;
+$bg-color: #222;
+$text-color: #efefef;
+$border-color: #444;
+$link-color: lighten(#1F8ACC, 20);
+
+$bg-color_m7: lighten($bg-color, 7);
+$bg-color_m10: lighten($bg-color, 10);
+$bg-color-m12: lighten($bg-color, 12);
+$bg-color_m15: lighten($bg-color, 15);
+$bg-color_m20: lighten($bg-color, 20);

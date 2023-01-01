@@ -13,7 +13,7 @@
 
     &.found {
       background-size: 5px 5px;
-      background-image: radial-gradient(circle, lighten($color-text, 40) 1px, $color-background 1px);
+      background-image: radial-gradient(circle, $bg-color-m20, 1px, $bg-color-m7 1px);
     }
 
     &.no-path, &.not-found {
@@ -28,7 +28,7 @@
       iframe {
         border: $border;
         flex-grow: 0;
-        background-color: $color-background;
+        background-color: $bg-color;
         max-height: 100%;
       }
   

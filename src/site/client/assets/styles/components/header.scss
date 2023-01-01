@@ -12,4 +12,17 @@
   .title {
     font-size: 22px;
   }
+
+  .right {
+    display: flex;
+    align-items: center;
+
+    .about {
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 4px 8px;
+    }
+  }
 }

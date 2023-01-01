@@ -6,8 +6,9 @@ import ExhibitGroupEl from './exhibitGroup'
 import VariantGroupEl from './variantGroup'
 import VariantEl from './variant'
 import { createTopLevelElFocusEffect } from './topLevelElFocusEffect'
-import { DEFAULT_WIDTH_PX, NavBarState, restoreNavBarState, saveNavBarState } from './persistence'
+import { DEFAULT_WIDTH_PX, restoreNavBarState, saveNavBarState } from './persistence'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
+import { NavBarState } from './types'
 
 const NodeEl = (props: {
   node: ExhibitNode

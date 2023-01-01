@@ -37,7 +37,7 @@
   }
   
   &:hover, &.resizing {
-    background-color: #ccc;
+    background-color: $bg-color-m12;
     opacity: 0.6;
   }
 }
