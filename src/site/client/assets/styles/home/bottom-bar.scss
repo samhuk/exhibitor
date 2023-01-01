@@ -1,6 +1,3 @@
-@import '../common/colors.scss';
-@import '../common/borders.scss';
-
 @mixin bottom-bar {
   flex-grow: 1;
 
@@ -11,19 +8,6 @@
     position: relative;
     min-height: 120px;
     flex-shrink: 0;
-
-    .exh-resizer {
-      position: absolute;
-      width: 100%;
-      top: -5px;
-      height: 9px;
-      
-      &:hover {
-        background-color: #ccc;
-        opacity: 0.6;
-        cursor: row-resize;
-      }
-    }
 
     .header {
       padding: 5px;
@@ -37,7 +21,7 @@
         // TODO: Actually will need a component lib for ourselves, as well, yknow, right?
         button {
           margin-right: 5px;
-          background-color: $color-background;
+          background-color: $bg-color;
           border: $border;
           border-radius: $border-radius;
           padding: 3px 7px;
@@ -45,7 +29,7 @@
           position: relative;
           
           &:hover {
-            background-color: darken($color-background, 7);
+            background-color: $bg-color-m7;
           }
 
           &.active {
@@ -79,13 +63,13 @@
             margin-left: 5px;
             padding: 5px 10px;
             cursor: pointer;
-            background-color: $color-background;
+            background-color: $bg-color;
             border: none;
             border-radius: 5px;
             height: 100%;
       
             &:hover {
-              background-color: darken($color-background, 7);
+              background-color: $bg-color-m7;
             }
           }
         }

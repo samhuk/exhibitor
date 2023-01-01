@@ -1,8 +1,9 @@
 import { prettyDOM } from '@testing-library/dom'
-import { createDataType, JsonViewer } from '@textea/json-viewer'
+import { createDataType } from '@textea/json-viewer'
 import React from 'react'
 
 import { ComponentExhibit, Variant } from '../../../../../api/exhibit/types'
+import JsonViewer from '../../../common/jsonViewer'
 
 export const getCircularReplacer = () => {
   const seen = new WeakSet()
@@ -44,7 +45,7 @@ const PropsValueEl = (props: {
           createDataType(
             v => typeof v === 'function',
             // eslint-disable-next-line react/no-unstable-nested-components
-            p => '[Function]' as any,
+            () => '[Function]' as any,
           ),
         ]}
       />

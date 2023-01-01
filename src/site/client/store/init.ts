@@ -1,5 +1,7 @@
+import { getTheme } from '../connectors/theme'
 import { componentExhibitsReady } from './componentExhibits/actions'
 import { fetchMetaDataThunk } from './metadata/reducer'
+import { setTheme } from './theme/actions'
 import { AppDispatch } from './types'
 
 const areComponentExhibitsLoaded = () => {
@@ -14,6 +16,11 @@ const areComponentExhibitsLoaded = () => {
 }
 
 const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise((res, rej) => {
+  if (areComponentExhibitsLoaded()) {
+    res()
+    return
+  }
+
   let i = 0
   const interval = setInterval(() => {
     i += 1
@@ -30,6 +37,11 @@ const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise((re
 })
 
 export const init = async (dispatch: AppDispatch) => {
+  // Restore saved theme
+  const savedTheme = getTheme()
+  if (savedTheme != null)
+    dispatch(setTheme(savedTheme))
+
   await waitUntilComponentExhibitsAreLoaded()
   dispatch(componentExhibitsReady(null))
   dispatch(fetchMetaDataThunk())

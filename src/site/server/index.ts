@@ -11,6 +11,7 @@ import { notFound } from './api/errorVariants'
 import { sendErrorResponse } from './api/responses'
 import { env } from './env'
 import { enableHotReloading } from './hotReloading'
+import { DEFAULT_THEME } from '../../common/theme'
 
 const app = express()
 
@@ -31,6 +32,19 @@ app
   .get('*', (req, res) => {
     if (req.path === '/') {
       res.sendFile('/', { root: clientDir })
+      return
+    }
+
+    // -- Theme
+    if (req.path === '/styles.css') {
+      const theme = req.cookies.theme ?? DEFAULT_THEME
+
+      if (fs.existsSync(path.join(clientDir, `./${theme}.css`))) {
+        res.sendFile(`/${theme}.css`, { root: clientDir })
+        return
+      }
+
+      sendErrorResponse(req, res, notFound('Styles do not exist'))
       return
     }
 

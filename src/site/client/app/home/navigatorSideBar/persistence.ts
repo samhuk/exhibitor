@@ -1,26 +1,24 @@
-export type NavBarState = {
-  widthPx: number
-  expandedPaths: { [path: string]: boolean }
-}
+import { getCookieValue, setCookieValue } from '../../../connectors/cookie'
+import { NavBarState } from './types'
 
 export const DEFAULT_WIDTH_PX = 300
 
+const COOKIE_NAME = 'navbar'
+
+const DEFAULT_STATE: NavBarState = { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
+
 export const saveNavBarState = (state: NavBarState) => {
-  const date = new Date().setFullYear(new Date().getFullYear() + 1)
-  document.cookie = `navbar=${JSON.stringify(state)}; expires=${date}; path=/; SameSite=Lax`
+  setCookieValue(COOKIE_NAME, JSON.stringify(state))
 }
 
 export const restoreNavBarState = (): NavBarState => {
-  const rawValue = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('navbar='))
-    ?.split('=')[1]
+  const rawValue = getCookieValue(COOKIE_NAME)
   if (rawValue == null)
-    return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
+    return DEFAULT_STATE
   try {
     const parsed = JSON.parse(rawValue) as NavBarState
     if (parsed == null || typeof parsed !== 'object')
-      return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
+      return DEFAULT_STATE
 
     return {
       expandedPaths: parsed.expandedPaths ?? {},
@@ -28,6 +26,6 @@ export const restoreNavBarState = (): NavBarState => {
     }
   }
   catch {
-    return { expandedPaths: {}, widthPx: DEFAULT_WIDTH_PX }
+    return DEFAULT_STATE
   }
 }

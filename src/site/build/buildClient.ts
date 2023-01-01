@@ -3,6 +3,7 @@ import sassPlugin from 'esbuild-sass-plugin'
 import * as fs from 'fs'
 import path from 'path'
 
+import { THEMES } from '../../common/theme'
 import { createBuilder } from '../../common/esbuilder'
 import { SITE_CLIENT_ENTRYPOINT, SITE_CLIENT_FAVICON_PATH, SITE_CLIENT_HTML_PATH } from '../../common/paths'
 import { createIndexHtmlFileText } from './esbuildHtmlFilePlugin'
@@ -10,7 +11,6 @@ import { gzipLargeFiles } from '../../common/gzip'
 import { BuildClientOptions } from './types'
 
 const createClientBuilder = (options: BuildClientOptions) => {
-  const outputJsFilePath = path.resolve(options.outDir, 'index.js')
   const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'index.html'))
   const faviconFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'favicon.ico'))
 
@@ -29,9 +29,17 @@ const createClientBuilder = (options: BuildClientOptions) => {
     .replace('DevelopmentError', 'Error')
   fs.writeFileSync('./node_modules/@textea/json-viewer/dist/index.js', newContent, { encoding: 'utf8' })
 
+  // Define base entrypoints
+  const entryPoints: { [name: string]: string } = {
+    index: SITE_CLIENT_ENTRYPOINT,
+    fa: './src/site/client/assets/styles/fa.scss',
+  }
+  // Add themes
+  THEMES.forEach(t => entryPoints[t] = `./src/site/client/assets/styles/index-${t}.scss`)
+
   return () => build({
-    entryPoints: [SITE_CLIENT_ENTRYPOINT],
-    outfile: outputJsFilePath,
+    entryPoints,
+    outdir: options.outDir,
     bundle: true,
     minify: options.minify,
     sourcemap: options.sourceMap,

@@ -1,6 +1,3 @@
-@import '../common/colors.scss';
-@import '../common/borders.scss';
-
 @mixin navigator-side-bar {
   .navigator-side-bar {
     border-right: $border;
@@ -23,15 +20,6 @@
   
       button {
         margin-left: 5px;
-        padding: 5px;
-        cursor: pointer;
-        background-color: $color-background;
-        border: none;
-        border-radius: 5px;
-  
-        &:hover {
-          background-color: darken($color-background, 7);
-        }
       }
     }
 
@@ -67,7 +55,8 @@
           width: 100%;
           text-align: left;
           border: none;
-          background-color: $color-background;
+          background-color: $bg-color;
+          border-radius: 0px;
   
           .text {
             white-space: nowrap;
@@ -87,7 +76,7 @@
           text-decoration: none;
 
           &.active {
-            background-color: darken($color-background, 15) !important;
+            background-color: $bg-color-m12 !important;
           }
   
           .name {
@@ -101,7 +90,7 @@
 
       &>* {
         &:hover {
-          background-color: darken($color-background, 7);
+          background-color: $bg-color-m7;
         }
 
         &:focus, &:focus-visible, &:focus-within {
@@ -113,19 +102,6 @@
         i {
           color: $link-color;
         }
-      }
-    }
-
-    .exh-resizer {
-      position: absolute;
-      height: 100%;
-      right: -5px;
-      width: 9px;
-      
-      &:hover {
-        background-color: #ccc;
-        opacity: 0.6;
-        cursor: col-resize;
       }
     }
   }
