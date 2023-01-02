@@ -4,13 +4,14 @@ import { useSearchParams } from 'react-router-dom'
 
 import { ComponentExhibit, ExhibitNodeType, VariantExhibitNode } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
-import { BottomBarType, changeViewportSizeChangeEnabled, selectBottomBar } from '../../../store/componentExhibits/actions'
+import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
 import EventLogComponent from './eventLog'
 import { DEFAULT_STATE, restoreState, saveState, State } from './persistence'
 import PropsComponent from './props'
 import Nav from './nav'
-import RhsButtons from './rhsButtons'
+import HeaderRhs from './headerRhs'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
+import ViewportInfoBar from './viewportInfoBar'
 
 const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.Props]: 'Props',
@@ -27,9 +28,11 @@ const DEFAULT_BAR_TYPE = BottomBarType.Props
 
 export const render = () => {
   // Restore state from cookies once. I think we can just do this in the redux store code instead.
-  const hasRestoredNavBarState = useRef(false)
-  const initialState: State = !hasRestoredNavBarState.current ? restoreState() : null
-  hasRestoredNavBarState.current = true
+  const hasRestoredState = useRef(false)
+  const initialState: State = !hasRestoredState.current ? restoreState() : null
+  hasRestoredState.current = true
+
+  const viewportSizeChangeEnabled = useAppSelector(s => s.componentExhibits.viewportSizeChangeEnabled)
 
   const dispatch = useDispatch()
   const selectedBarType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
@@ -38,7 +41,6 @@ export const render = () => {
 
   const heightPxRef = useRef(initialState?.heightPx ?? DEFAULT_STATE.heightPx)
   const [isCollapsed, setIsCollapsed] = useState(initialState?.isCollapsed ?? DEFAULT_STATE.isCollapsed)
-  const viewportSizeChangeEnabled = useAppSelector(s => s.componentExhibits.viewportSizeChangeEnabled)
 
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
@@ -127,20 +129,17 @@ export const render = () => {
     })
   }
 
-  const onUnlockViewportCheckboxChange: React.ChangeEventHandler<HTMLInputElement> = e => {
-    dispatch(changeViewportSizeChangeEnabled(e.target.checked))
-  }
-
   return (
     <div className={`bottom-bar${isCollapsed ? ' collapsed' : ''}`} ref={elRef}>
       <div className="header">
         <div className="left">
-          <Nav />
+          {isCollapsed ? null : <Nav />}
+        </div>
+        <div className="middle">
+          {viewportSizeChangeEnabled ? <ViewportInfoBar /> : null}
         </div>
         <div className="right">
-          Unlock Viewport
-          <input type="checkbox" onChange={onUnlockViewportCheckboxChange} checked={viewportSizeChangeEnabled} />
-          <RhsButtons isCollapsed={isCollapsed} onCollapseButtonClick={onToggleCollapseButtonClick} />
+          <HeaderRhs isCollapsed={isCollapsed} onCollapseButtonClick={onToggleCollapseButtonClick} />
         </div>
       </div>
       {variantNode == null || isCollapsed ? null : (() => {
