@@ -60,17 +60,19 @@
           align-self: stretch;
 
           button {
-            margin-left: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            background-color: $bg-color;
-            border: none;
-            border-radius: 5px;
             height: 100%;
-      
-            &:hover {
-              background-color: $bg-color-m7;
+          }
+
+          .unlock-viewport-button {
+            padding: 5px 8px;
+
+            &.active {
+              color: $link-color;
             }
+          }
+
+          .toggle-collapse-button {
+            padding: 5px 10px;
           }
         }
       }

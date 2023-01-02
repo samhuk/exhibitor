@@ -17,7 +17,7 @@ export const CHANGE_HAS_UNSEEN_EVENTS = 'componentExhibits/changeHasUnseenEvents
 
 export const CHANGE_VIEWPORT = 'componentExhibits/changeViewport'
 
-export const CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED = 'componentExhibits/changeViewportSizeChangeEnabled'
+export const TOGGLE_VIEWPORT_SIZE_CHANGE_ENABLED = 'componentExhibits/toggleViewportSizeChangeEnabled'
 
 export type ComponentExhibitsState = {
   ready: boolean
@@ -61,9 +61,9 @@ type ChangeViewportAction = {
   viewportRectSizePx: { width: number, height: number }
 }
 
-type ChangeViewportSizeChangeEnabledAction = {
-  type: typeof CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED
-  enabled: boolean
+type ToggleViewportSizeChangeEnabledAction = {
+  type: typeof TOGGLE_VIEWPORT_SIZE_CHANGE_ENABLED
+  enabled?: boolean
 }
 
 export type ComponentExhibitsActions = ReadyAction
@@ -72,7 +72,7 @@ export type ComponentExhibitsActions = ReadyAction
   | AddEventAction
   | ChangeHasUnseenEventsAction
   | ChangeViewportAction
-  | ChangeViewportSizeChangeEnabledAction
+  | ToggleViewportSizeChangeEnabledAction
 
 export const componentExhibitsReady = (error: any): ComponentExhibitsActions => ({
   type: READY,
@@ -104,7 +104,6 @@ export const changeViewport = (viewportRectSizePx: { width: number, height: numb
   viewportRectSizePx,
 })
 
-export const changeViewportSizeChangeEnabled = (enabled: boolean): ComponentExhibitsActions => ({
-  type: CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED,
-  enabled,
+export const toggleViewportSizeChangeEnabled = (): ComponentExhibitsActions => ({
+  type: TOGGLE_VIEWPORT_SIZE_CHANGE_ENABLED,
 })

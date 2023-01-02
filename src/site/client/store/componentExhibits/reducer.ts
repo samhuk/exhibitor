@@ -5,7 +5,7 @@ import {
   BottomBarType,
   CHANGE_HAS_UNSEEN_EVENTS,
   CHANGE_VIEWPORT,
-  CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED,
+  TOGGLE_VIEWPORT_SIZE_CHANGE_ENABLED,
   ComponentExhibitsActions,
   ComponentExhibitsState,
   READY,
@@ -70,10 +70,10 @@ export const componentExhibitsReducer = (
         ...state,
         viewportRectSizePx: action.viewportRectSizePx,
       }
-    case CHANGE_VIEWPORT_SIZE_CHANGE_ENABLED:
+    case TOGGLE_VIEWPORT_SIZE_CHANGE_ENABLED:
       return {
         ...state,
-        viewportSizeChangeEnabled: action.enabled,
+        viewportSizeChangeEnabled: !state.viewportSizeChangeEnabled,
       }
     default:
       return state
