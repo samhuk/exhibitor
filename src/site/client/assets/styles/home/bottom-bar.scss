@@ -49,6 +49,38 @@
         }
       }
 
+      .middle {
+        align-self: center;
+
+        .viewport-info-bar {
+          align-self: center;
+          display: flex;
+
+          .dimensions-seperator {
+            margin-left: 5px;
+            margin-right: 5px;
+            display: flex;
+            align-items: center;
+          }
+
+          input {
+            background-color: $bg-color;
+            border: $border;
+            border-radius: 0px;
+            width: 50px;
+            color: $text-color;
+            padding: 2px 5px;
+
+            -moz-appearance: textfield;
+
+            &::-webkit-outer-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+          }
+        }
+      }
+
       .right {
         display: flex;
         align-items: center;

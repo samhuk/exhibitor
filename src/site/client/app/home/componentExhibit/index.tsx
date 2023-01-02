@@ -8,7 +8,7 @@ import { ComponentExhibit, ExhibitNodeType, Variant } from '../../../../../api/e
 import { createResizer, ResizerLocation } from '../../../common/resizer'
 import { eventLogService } from '../../../services/eventLogService'
 import { useAppSelector } from '../../../store'
-import { addEvent, changeViewport, selectVariant } from '../../../store/componentExhibits/actions'
+import { addEvent, updateViewportSize, selectVariant } from '../../../store/componentExhibits/actions'
 import { deepSetAllPropsOnMatch } from '../bottomBar/eventLog'
 import Iframe from './iframe2'
 
@@ -90,22 +90,28 @@ export const render = () => {
 
   const onXResizeFinish = (newWidthPx: number) => {
     (iframeContainerEl.firstElementChild as HTMLElement).style.pointerEvents = ''
-    dispatch(changeViewport({
+    dispatch(updateViewportSize({
       height: parseInt(iframeContainerEl.style.height.replace('px', '')),
       width: newWidthPx,
     }))
   }
   const onYResizeFinish = (newHeightPx: number) => {
     (iframeContainerEl.firstElementChild as HTMLElement).style.pointerEvents = ''
-    dispatch(changeViewport({
+    dispatch(updateViewportSize({
       height: newHeightPx,
       width: parseInt(iframeContainerEl.style.width.replace('px', '')),
     }))
   }
 
-  if (!viewportSizeChangeEnabled && iframeContainerEl != null) {
-    iframeContainerEl.style.height = '100%'
-    iframeContainerEl.style.width = '100%'
+  if (iframeContainerEl != null) {
+    if (viewportSizeChangeEnabled) {
+      iframeContainerEl.style.height = `${height}px`
+      iframeContainerEl.style.width = `${width}px`
+    }
+    else {
+      iframeContainerEl.style.height = '100%'
+      iframeContainerEl.style.width = '100%'
+    }
   }
 
   const leftResizer = useMemo(() => (viewportSizeChangeEnabled ? createResizer({

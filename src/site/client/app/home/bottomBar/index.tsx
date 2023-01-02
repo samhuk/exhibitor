@@ -11,6 +11,7 @@ import PropsComponent from './props'
 import Nav from './nav'
 import HeaderRhs from './headerRhs'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
+import ViewportInfoBar from './viewportInfoBar'
 
 const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.Props]: 'Props',
@@ -30,6 +31,8 @@ export const render = () => {
   const hasRestoredState = useRef(false)
   const initialState: State = !hasRestoredState.current ? restoreState() : null
   hasRestoredState.current = true
+
+  const viewportSizeChangeEnabled = useAppSelector(s => s.componentExhibits.viewportSizeChangeEnabled)
 
   const dispatch = useDispatch()
   const selectedBarType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
@@ -131,6 +134,9 @@ export const render = () => {
       <div className="header">
         <div className="left">
           {isCollapsed ? null : <Nav />}
+        </div>
+        <div className="middle">
+          {viewportSizeChangeEnabled ? <ViewportInfoBar /> : null}
         </div>
         <div className="right">
           <HeaderRhs isCollapsed={isCollapsed} onCollapseButtonClick={onToggleCollapseButtonClick} />

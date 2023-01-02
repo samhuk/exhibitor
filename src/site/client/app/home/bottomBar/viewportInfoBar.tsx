@@ -1,28 +1,53 @@
-import React from 'react'
+import React, { KeyboardEvent } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../store'
-import { changeViewport } from '../../../store/componentExhibits/actions'
+import { applyWorkingViewportSize, updateWorkingViewportSize } from '../../../store/componentExhibits/actions'
 
 export const render = () => {
   const dispatch = useAppDispatch()
-  const state = useAppSelector(s => s.componentExhibits.viewportRectSizePx)
-  const onWidthChange = (newWidthPx: number) => {
-    dispatch(changeViewport({
-      height: state.height,
-      width: newWidthPx,
+  const workingSize = useAppSelector(s => s.componentExhibits.workingViewportRectSizePx)
+
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Enter')
+      return
+
+    dispatch(applyWorkingViewportSize())
+  }
+
+  const onBlur = () => {
+    dispatch(applyWorkingViewportSize())
+  }
+
+  const onWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(updateWorkingViewportSize({
+      height: workingSize.height,
+      width: parseInt(e.target.value),
     }))
   }
-  const onHeightChange = (newHeightPx: number) => {
-    dispatch(changeViewport({
-      height: newHeightPx,
-      width: state.width,
+
+  const onHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(updateWorkingViewportSize({
+      height: parseInt(e.target.value),
+      width: workingSize.width,
     }))
   }
 
   return (
     <div className="viewport-info-bar">
-      <input type="number" onChange={e => onWidthChange(parseInt(e.target.value))} />
-      <div className="dimensions-seperator">x</div>
-      <input type="number" onChange={e => onHeightChange(parseInt(e.target.value))} />
+      <input
+        type="number"
+        onChange={onWidthChange}
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
+        value={workingSize.width}
+      />
+      <div className="dimensions-seperator"><i className="fas fa-xmark" /></div>
+      <input
+        type="number"
+        onChange={onHeightChange}
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
+        value={workingSize.height}
+      />
     </div>
   )
 }
