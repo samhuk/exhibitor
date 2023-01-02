@@ -27,9 +27,9 @@ const DEFAULT_BAR_TYPE = BottomBarType.Props
 
 export const render = () => {
   // Restore state from cookies once. I think we can just do this in the redux store code instead.
-  const hasRestoredNavBarState = useRef(false)
-  const initialState: State = !hasRestoredNavBarState.current ? restoreState() : null
-  hasRestoredNavBarState.current = true
+  const hasRestoredState = useRef(false)
+  const initialState: State = !hasRestoredState.current ? restoreState() : null
+  hasRestoredState.current = true
 
   const dispatch = useDispatch()
   const selectedBarType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
@@ -130,9 +130,7 @@ export const render = () => {
     <div className={`bottom-bar${isCollapsed ? ' collapsed' : ''}`} ref={elRef}>
       <div className="header">
         <div className="left">
-          {!isCollapsed
-            ? <Nav />
-            : null}
+          {isCollapsed ? null : <Nav />}
         </div>
         <div className="right">
           <HeaderRhs isCollapsed={isCollapsed} onCollapseButtonClick={onToggleCollapseButtonClick} />

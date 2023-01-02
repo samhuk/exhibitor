@@ -16,6 +16,7 @@
       flex-direction: row;
       justify-content: space-between;
       align-items: stretch;
+      min-height: 39px; // Empirically measured when nav is present
 
       .left {
         // TODO: Actually will need a component lib for ourselves, as well, yknow, right?

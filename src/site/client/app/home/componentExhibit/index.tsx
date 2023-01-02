@@ -65,9 +65,9 @@ export type GetSelectedVariantResult<
 >
 
 export const render = () => {
+  const dispatch = useDispatch()
   const readyState = useAppSelector(s => s.componentExhibits.ready)
   const viewportSizePx = useAppSelector(s => s.componentExhibits.viewportRectSizePx)
-  const dispatch = useDispatch()
   /* Workaround because react-router-dom's useParams auto-decodes URI components,
    * which means the "/" character in variant or variant group names would conflict
    * URI syntax.
@@ -85,23 +85,23 @@ export const render = () => {
     (iframeContainerEl.firstElementChild as HTMLElement).style.pointerEvents = 'none'
   }
 
-  const onXResizeFinish = (newSizePx: number) => {
-    (iframeContainerEl.firstElementChild as HTMLElement).style.pointerEvents = ''
-    dispatch(changeViewport({
-      height: newSizePx,
-      width: parseInt(iframeContainerEl.style.width.replace('px', '')),
-    }))
-  }
-  const onYResizeFinish = (newSizePx: number) => {
+  const height = viewportSizePx?.height != null ? viewportSizePx.height : 300
+  const width = viewportSizePx?.width != null ? viewportSizePx.width : 300
+
+  const onXResizeFinish = (newWidthPx: number) => {
     (iframeContainerEl.firstElementChild as HTMLElement).style.pointerEvents = ''
     dispatch(changeViewport({
       height: parseInt(iframeContainerEl.style.height.replace('px', '')),
-      width: newSizePx,
+      width: newWidthPx,
     }))
   }
-
-  const height = viewportSizePx?.height ?? 300
-  const width = viewportSizePx?.width ?? 300
+  const onYResizeFinish = (newHeightPx: number) => {
+    (iframeContainerEl.firstElementChild as HTMLElement).style.pointerEvents = ''
+    dispatch(changeViewport({
+      height: newHeightPx,
+      width: parseInt(iframeContainerEl.style.width.replace('px', '')),
+    }))
+  }
 
   if (!viewportSizeChangeEnabled && iframeContainerEl != null) {
     iframeContainerEl.style.height = '100%'
