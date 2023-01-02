@@ -38,7 +38,6 @@ export const render = () => {
 
   const heightPxRef = useRef(initialState?.heightPx ?? DEFAULT_STATE.heightPx)
   const [isCollapsed, setIsCollapsed] = useState(initialState?.isCollapsed ?? DEFAULT_STATE.isCollapsed)
-  const viewportSizeChangeEnabled = useAppSelector(s => s.componentExhibits.viewportSizeChangeEnabled)
 
   const barNameFromQuery = searchParams.get(SEARCH_PARAM_NAME)
   const barTypeFromQuery = barNameToType[barNameFromQuery]
@@ -131,7 +130,9 @@ export const render = () => {
     <div className={`bottom-bar${isCollapsed ? ' collapsed' : ''}`} ref={elRef}>
       <div className="header">
         <div className="left">
-          <Nav />
+          {!isCollapsed
+            ? <Nav />
+            : null}
         </div>
         <div className="right">
           <HeaderRhs isCollapsed={isCollapsed} onCollapseButtonClick={onToggleCollapseButtonClick} />

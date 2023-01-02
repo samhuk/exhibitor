@@ -13,13 +13,15 @@ export const render = (props: {
     dispatch(toggleViewportSizeChangeEnabled())
   }
 
+  const toggleViewportButtonLabel = isViewportUnlocked ? 'Lock viewport' : 'Unlock viewport'
+
   return (
     <div className="header-buttons">
       <button
         type="button"
         className={`unlock-viewport-button fas fa-tablet-screen-button${isViewportUnlocked ? ' active' : ''}`}
-        aria-label="Unlock viewport"
-        title="Unlock viewport"
+        aria-label={toggleViewportButtonLabel}
+        title={toggleViewportButtonLabel}
         onClick={onUnlockViewportCheckboxChange}
       />
       <button
