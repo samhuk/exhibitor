@@ -20,7 +20,7 @@ export const render = () => {
         <div className="about">
           React: v{React.version}
         </div>
-        <button type="button" onClick={onThemeButtonClick}>
+        <button type="button" onClick={onThemeButtonClick} title={theme === 'dark' ? 'Enable light theme' : 'Enable dark theme'}>
           <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`} />
         </button>
       </div>
