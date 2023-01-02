@@ -14,7 +14,7 @@
 </p>
 
 <div align="center">
-  <img src="./img/img1.png" style="border-radius: 5px; border: 1px solid #ccc" />
+  <img src="./img/img1.png" />
 </div>
 
 ## Overview
