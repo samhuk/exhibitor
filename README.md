@@ -9,10 +9,6 @@
   </a>
 </p>
 
-<p align="center">
-  <b>exhibitor is in beta.</b>
-</p>
-
 <div align="center">
   <img src="./img/img1.png" />
 </div>
