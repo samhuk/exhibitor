@@ -15,15 +15,13 @@
 
 ## Overview
 
-Exhibitor is an extremely snappy and delightful React component workshop.
+Exhibitor is a React component workshop. It allows you to see your individual React UI components in a hot-reloading website whilst you create them.
 
 ## Usage Overview
 
-Exhibitor can be added to an existing React codebase that contains components, or be used to bootstrap one from scratch. Ensure you have [Node.js version >14.x](https://nodejs.org/en/) installed (latest/current version will suffice).
+Exhibitor can be added to an existing React codebase that contains components or be used to bootstrap one from scratch. Ensure you have [Node.js version >14.x](https://nodejs.org/en/) installed.
 
-**From scratch:**
-
-In the parent directory that you want to create the component library in:
+### From scratch
 
 For MacOS and Linux (and WSL):
 
@@ -35,19 +33,23 @@ mkdir my-component-library &&\
   npx exhibitor init
 ```
 
+This will create a new directory called "my-component-library" and initialize a basic React component library with Exhibitor integration.
+
 For Windows:
 
 ```batch
 mkdir my-component-library && cd my-component-library && npm init -y && npm i -S exhibitor && npx exhibitor init
 ```
 
-**Existing codebase:**
+### Existing codebase
+
+Ensure your existing React codebase has `react` and `react-dom` installed, i.e. `npm i -S react react-dom`.
 
 ```
-npm i -S exhibitor react react-dom
+npm i -S exhibitor
 ```
 
-For a standard component, for example:
+For a functional React component:
 
 ```tsx
 // src/button.tsx
@@ -59,7 +61,7 @@ export const render = (props: { onClick: ..., color: ... }) => (
 export default render
 ```
 
-Declare exhibitions of your components with the Exhibitor Javascript API:
+Declare exhibitions with the Exhibitor Javascript API:
 
 ```typescript
 // src/button.exh.ts
@@ -130,7 +132,7 @@ Optionally define a configuration file for the Exhibitor CLI:
 
 ## Development
 
-Want to join and contibute to Exhibitor? See [./contributing/development.md](./contributing/development.md).
+Want to join in and contibute to Exhibitor? See [./contributing/development.md](./contributing/development.md).
 
 ---
 
