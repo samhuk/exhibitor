@@ -1,7 +1,8 @@
 import React from 'react'
-import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
-import { useAppDispatch, useAppSelector } from '../store'
-import { incrementTheme } from '../store/theme/actions'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../../common/name'
+import { useAppDispatch, useAppSelector } from '../../store'
+import { incrementTheme } from '../../store/theme/actions'
+import About from './about'
 
 export const render = () => {
   const dispatch = useAppDispatch()
@@ -17,9 +18,7 @@ export const render = () => {
         {NPM_PACKAGE_CAPITALIZED_NAME}
       </div>
       <div className="right">
-        <div className="about">
-          React: v{React.version}
-        </div>
+        <About />
         <button type="button" onClick={onThemeButtonClick} title={theme === 'dark' ? 'Enable light theme' : 'Enable dark theme'}>
           <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`} />
         </button>

@@ -18,7 +18,24 @@
     align-items: center;
 
     .about {
-      margin-right: 10px;
+      .info-button {
+        &.active {
+          color: $link-color;
+        }
+      }
+
+      .tooltip {
+        z-index: 1000;
+        background-color: $bg-color;
+        border: $border;
+        border-radius: $border-radius;
+        padding: 5px;
+      }
+
+      .arrow {
+        background-color: red;
+        z-index: 1001;
+      }
     }
 
     button {
