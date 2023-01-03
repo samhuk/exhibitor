@@ -7,6 +7,7 @@ import path from 'path'
 import { createBuilder } from '../../common/esbuilder'
 import { NPM_PACKAGE_NAME } from '../../common/name'
 import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../../common/paths'
+import { ResolvedConfig } from '../config/types'
 import { logStep, logWarn } from '../logging'
 
 const isDev = process.env.EXH_DEV === 'true'
@@ -16,7 +17,7 @@ fs.mkdirSync(BUILD_OUTPUT_ROOT_DIR, { recursive: true })
 const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
 const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
-export const buildIndexExhTsFile = (verbose: boolean) => createBuilder('component library', verbose, () => esbuild.build({
+export const buildIndexExhTsFile = (config: ResolvedConfig) => createBuilder('component library', config.verbose, () => esbuild.build({
   entryPoints: [bundleInputFilePath],
   outfile: bundleOutputFilePath,
   platform: 'browser',
@@ -33,6 +34,7 @@ export const buildIndexExhTsFile = (verbose: boolean) => createBuilder('componen
     '.woff': 'file',
     '.woff2': 'file',
   },
+  ...config.esbuildConfig,
 }).then(result => ({ buildResult: result })))
 
 export const createIndexExhTsFile = async (
@@ -40,14 +42,13 @@ export const createIndexExhTsFile = async (
   rootStylePath?: string,
 ) => {
   logStep('Creating index.exh.ts file content.', true)
-  logStep(c => `Determining included exhibit files. (included paths: ${c.cyan(JSON.stringify(configInclude))}).`, true)
+  logStep(c => `Determining included exhibit files. (using ${c.cyan(JSON.stringify(configInclude))}).`, true)
   const includedFilePaths = await glob(configInclude)
   if (includedFilePaths.length > 0)
     logStep(c => `Found ${c.cyan(includedFilePaths.length.toString())} exhibit files.`)
   else
-    logWarn(c => `Did not find any exhibit files with the defined include (using ${c.cyan(JSON.stringify(configInclude))}).`)
+    logWarn(c => `Did not find any exhibit files with the defined include (${c.cyan(JSON.stringify(configInclude))}).`)
 
-  // Path from '.exh' dir to the path '../exhibit' relative to this file,
   const exhibitApiFunctionPath = isDev
     // E.g. ../src/componentsBuild/exhibit
     ? path.relative(BUILD_OUTPUT_ROOT_DIR, './src/api/exhibit').replace(/\\/g, '/')

@@ -50,7 +50,7 @@ export const watchComponentLibrary = async (
 ) => {
   try {
     await _createIndexExhTsFile(config)
-    const buildResult = await buildIndexExhTsFile(config.verbose)()
+    const buildResult = await buildIndexExhTsFile(config)()
     initialBuildWatcher?.close()
     const rebuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
     watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => {

@@ -24,8 +24,15 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
 export const readAndParseConfig = (
   configFilePath: string = './',
 ): Config => {
-  const configString = fs.readFileSync(configFilePath, { encoding: 'utf8' })
-  return JSON.parse(configString) as Config
+  // TODO: Do it as Jest does it here: https://github.com/facebook/jest/blob/4fd1cb3926f93974a1f10d995ed73368784bc6b9/packages/jest-config/src/readConfigFileAndSetRootDir.ts#L26
+  if (configFilePath.endsWith('.json')) {
+    const configString = fs.readFileSync(configFilePath, { encoding: 'utf8' })
+    return JSON.parse(configString) as Config
+  }
+
+  if (configFilePath.endsWith('.js')) {
+    
+  }
 }
 
 export const makePathRelativeToConfigDir = (p: string, configDir: string): string => (
@@ -50,6 +57,7 @@ export const resolveConfig = (config?: Config, configFilePath?: string): Resolve
       title: config?.site?.title != null ? config.site.title : DEFAULT_CONFIG.site.title,
     },
     verbose: config?.verbose ?? DEFAULT_CONFIG.verbose,
+    esbuildConfig: config?.esbuildConfig,
   }
 }
 

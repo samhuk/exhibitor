@@ -21,7 +21,7 @@ export const render = () => {
   return (
     <div className="about">
       <button className={`info-button${show ? ' active' : ''}`} type="button" ref={setReferenceElement} onClick={() => setShow(!show)}>
-        <i className="fas fa-info" />
+        <i className="fas fa-circle-info" />
       </button>
 
       {show

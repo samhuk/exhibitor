@@ -67,6 +67,7 @@
     "jsdom": "^20.0.3",
     "livereload": "^0.9.3",
     "pako": "^2.1.0",
+    "parse-json": "^6.0.2",
     "pretty-format": "^29.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
