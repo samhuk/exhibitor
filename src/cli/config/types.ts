@@ -1,4 +1,19 @@
-import { BoolDependant } from '@samhuk/type-helpers'
+import { OmitTyped } from '@samhuk/type-helpers'
+import { BuildOptions } from 'esbuild'
+
+export type CustomEsbuildBuildOptions = OmitTyped<
+  BuildOptions,
+  'entryPoints'
+  | 'outfile'
+  | 'platform'
+  | 'format'
+  | 'globalName'
+  | 'bundle'
+  | 'minify'
+  | 'sourcemap'
+  | 'metafile'
+  | 'incremental'
+>
 
 export type Config = {
   /**
@@ -47,6 +62,14 @@ export type Config = {
    * icon/style libraries like font-awesome, muicons, bootstrap, or your own.
    */
   rootStyle?: string
+  /**
+   * Custom options to supply to esbuild for building your component library.
+   *
+   * This is useful if your component library requires esbuild plugins or loaders to be built.
+   *
+   * Note that some options are excluded such as `format`, since these must be set internally by Exhibitor
+   */
+  esbuildConfig?: CustomEsbuildBuildOptions
 }
 
 export type ResolvedConfig = {
@@ -60,11 +83,5 @@ export type ResolvedConfig = {
   }
   verbose: boolean
   rootStyle: string | undefined | null
+  esbuildConfig?: CustomEsbuildBuildOptions
 }
-
-export type ValidateConfigResult<TSuccess extends boolean = boolean> = BoolDependant<{
-  true: {},
-  false: {
-    reason: string
-  }
-}, TSuccess>

@@ -18,7 +18,7 @@ const isDev = process.env.EXH_DEV === 'true'
 
 const _watchComponentLibrary = async (
   config: ResolvedConfig,
-): Promise<void> => new Promise<void>((res, rej) => {
+): Promise<void> => new Promise<void>(res => {
   watchComponentLibrary(config, res)
 })
 
@@ -87,7 +87,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     state.verbose = true
 
   // -- Config
-  const result = getConfigForCommand(startOptions, applyStartOptionsToConfig)
+  const result = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
   if (result.success === false)
     return result.error
 

@@ -1,9 +1,9 @@
 {
   "name": "exhibitor",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Snappy and delightful React component workshop",
-  "main": "./lib/api/index.js",
-  "types": "./lib/api/index.d.ts",
+  "main": "./lib/api/api/index.js",
+  "types": "./lib/api/api/index.d.ts",
   "bin": {
     "exhibitor": "./lib/cli/index.js"
   },
@@ -24,6 +24,7 @@
     "globsie": "^0.0.12",
     "livereload": "^0.9.3",
     "colors": "1.4.0",
-    "clone-deep": "^4.0.1"
+    "clone-deep": "^4.0.1",
+    "ts-node": "^10.9.1"
   }
 }

@@ -3,8 +3,9 @@ import * as fs from 'fs'
 import path from 'path'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import { DEFAULT_CONFIG_FILE_NAME } from '../../common/paths'
-import { logStep, logSuccess } from '../logging'
+import { logStep, logSuccess, logWarn } from '../logging'
 import { BaseCliArgumentsOptions, CliError, CliString } from '../types'
+import { readAndParseConfig } from './read'
 
 import { Config, ResolvedConfig } from './types'
 
@@ -19,13 +20,6 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   verbose: false,
   configDir: undefined,
   rootStyle: undefined,
-}
-
-export const readAndParseConfig = (
-  configFilePath: string = './',
-): Config => {
-  const configString = fs.readFileSync(configFilePath, { encoding: 'utf8' })
-  return JSON.parse(configString) as Config
 }
 
 export const makePathRelativeToConfigDir = (p: string, configDir: string): string => (
@@ -50,6 +44,7 @@ export const resolveConfig = (config?: Config, configFilePath?: string): Resolve
       title: config?.site?.title != null ? config.site.title : DEFAULT_CONFIG.site.title,
     },
     verbose: config?.verbose ?? DEFAULT_CONFIG.verbose,
+    esbuildConfig: config?.esbuildConfig,
   }
 }
 
@@ -122,12 +117,12 @@ const getConfigFilePath = (cliArgumentsOptions: BaseCliArgumentsOptions): CliErr
   return cliArgumentsOptions.config
 }
 
-export const getConfigForCommand = <
+export const getConfigForCommand = async <
   TCliArgumentsOptions extends BaseCliArgumentsOptions
-  >(
-    cliArgumentsOptions: TCliArgumentsOptions,
-    applyCliArgumentsOptionsToConfig?: (resolvedConfig: ResolvedConfig, cliArgumentsOptions: TCliArgumentsOptions) => CliError | null,
-  ): GetConfigResult => {
+>(
+  cliArgumentsOptions: TCliArgumentsOptions,
+  applyCliArgumentsOptionsToConfig?: (resolvedConfig: ResolvedConfig, cliArgumentsOptions: TCliArgumentsOptions) => CliError | null,
+): Promise<GetConfigResult> => {
   // Determine what path to use for config file
   const configFilePathResult = getConfigFilePath(cliArgumentsOptions)
   if (configFilePathResult != null && typeof configFilePathResult === 'object') {
@@ -138,8 +133,8 @@ export const getConfigForCommand = <
   }
   const _configFilePathResult = configFilePathResult as string | null
   if (_configFilePathResult == null)
-    logStep('No configuration file provided. Using default configuration with any CLI arguments provided as overrides.', true)
-  const config = _configFilePathResult != null ? readAndParseConfig(_configFilePathResult) : null
+    logWarn('No configuration file provided. Using default configuration with any CLI arguments provided as overrides.', true)
+  const config = _configFilePathResult != null ? await readAndParseConfig(_configFilePathResult) : null
   const resolvedConfig = resolveConfig(config, _configFilePathResult)
 
   // Modify resolved config, if modifier fn is defined.
