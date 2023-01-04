@@ -3,5 +3,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/babelrc.json",
   "sourceMap": "inline",
-  "retainLines": true
+  "retainLines": true,
+  "presets": ["@babel/preset-env"]
 }

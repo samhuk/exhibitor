@@ -17,10 +17,13 @@
     "_start": "concurrently -m 4 -n \"comp-lib ,site-ui  ,site-api ,comp-site\" -c \"red,green,blue,magenta\" \"npm run watch-component-library\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\" \"npm run watch-comp-site-react-dev\"",
     "start": "npm run build-start && npm run _start",
     "cli-dev": "env-cmd -e dev node ./build/cli/cli/index.js start --verbose",
-    "cli-dev-w-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json --verbose"
+    "cli-dev-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json --verbose",
+    "cli-dev-config-js": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.js --verbose",
+    "cli-dev-config-ts": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.ts --verbose"
   },
   "dependencies": {
     "@babel/core": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
     "@reduxjs/toolkit": "^1.9.1",
     "@samhuk/type-helpers": "^1.0.3",
     "@testing-library/dom": "^8.19.1",
@@ -77,6 +80,7 @@
     "redux-thunk": "^2.4.2",
     "rimraf": "^3.0.2",
     "rxjs": "^7.8.0",
+    "strip-json-comments": "^5.0.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4",

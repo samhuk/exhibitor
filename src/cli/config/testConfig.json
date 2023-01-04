@@ -1,0 +1,9 @@
+{
+  "$schema": "./schema.json",
+  "rootStyle": "./styles.scss",
+  "site": {
+    "port": 4002,
+    "title": "Test Component Library"
+  },
+  "verbose": true
+}
