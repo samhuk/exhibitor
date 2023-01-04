@@ -53,14 +53,14 @@ export const createIndexExhTsFile = async (
     // E.g. ../src/componentsBuild/exhibit
     ? path.relative(BUILD_OUTPUT_ROOT_DIR, './src/api/exhibit').replace(/\\/g, '/')
     // E.g. exhibitor/lib/api/exhibit
-    : `${NPM_PACKAGE_NAME}/lib/api/exhibit`
+    : `${NPM_PACKAGE_NAME}/lib/api/api/exhibit`
 
   const _rootStylePath = rootStylePath != null
     ? path.relative(BUILD_OUTPUT_ROOT_DIR, rootStylePath).replace(/\\/g, '/')
     : null
 
   const text = [
-    // E.g. import { exhibit } from '../../../node_modules/exhibitor' (in release)
+    // import { resolve, __exhibits } from 'exhibitor/lib/api/api/exhibit' (in release)
     `import { resolve, __exhibits } from '${exhibitApiFunctionPath}'`,
     // E.g. import '../myComponentLibraryDir/styles.scss'
     _rootStylePath != null ? `import '${_rootStylePath}'` : null,

@@ -9,4 +9,6 @@
  */
 import { exhibit } from './exhibit'
 
+export * from './types'
+
 export default exhibit
