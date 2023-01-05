@@ -2,8 +2,8 @@ import * as fs from 'fs'
 import path, { isAbsolute } from 'path'
 import { pathToFileURL } from 'url'
 import type { Service as TsNodeService } from 'ts-node'
-import parseJson from 'parse-json'
-import stripJsonComments from 'strip-json-comments'
+import parseJson from '@samhuk/parse-json'
+import stripJsonComments from '@samhuk/strip-json-comments'
 import { Config } from './types'
 import { logStep } from '../logging'
 
@@ -120,7 +120,7 @@ const readJsonConfig = (
   configFilePath: string,
 ) => {
   const configJson = fs.readFileSync(configFilePath, { encoding: 'utf8' })
-  return parseJson(stripJsonComments(configJson), configFilePath)
+  return parseJson(stripJsonComments(configJson), { fileName: configFilePath })
 }
 
 const getConfigObj = (
