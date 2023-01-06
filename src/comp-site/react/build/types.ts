@@ -6,6 +6,7 @@ export type BuildOptions = {
   gzip: boolean
   verbose: boolean
   skipPrebuild: boolean
+  reactMajorVersion: number
 }
 
 export type BuildOutput = {

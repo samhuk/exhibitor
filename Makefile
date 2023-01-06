@@ -179,6 +179,18 @@ prebuild-comp-site-react:
 		_prebuild-comp-site-react
 	cp ./src/comp-site/react/site/index.html ./build/comp-site/react/site-prebuild/index.html
 
+clean-prebuild-comp-site-react-sub18:
+	rm -rf ./build/comp-site/react/site-sub18-prebuild
+
+_prebuild-comp-site-react-sub18:
+	npx tsc -p ./src/comp-site/react/siteSub18/tsconfig.json
+
+prebuild-comp-site-react-sub18:
+	@$(MAKE) --no-print-directory \
+		clean-prebuild-comp-site-react-sub18 \
+		_prebuild-comp-site-react-sub18
+	cp ./src/comp-site/react/siteSub18/index.html ./build/comp-site/react/site-sub18-prebuild/index.html
+
 build-comp-site-react-dev:
 	npx env-cmd -e dev node ./build/comp-site/react/build/index.js
 
@@ -192,6 +204,7 @@ build-all:
 		build-api \
 		build-cli-rel \
 		prebuild-comp-site-react \
+		prebuild-comp-site-react-sub18 \
 		build-comp-site-react-build-build \
 		build-comp-site-react-build
 
@@ -215,7 +228,9 @@ populate-dist:
 	cp -r build/comp-site/react/build/ dist/npm/exhibitor/lib/comp-site/react/build
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-prebuild
-	cp -r build/comp-site/react/site-prebuild/ dist/npm/exhibitor/lib/comp-site/react/site-prebuild
+
+	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-sub18-prebuild
+	cp -r build/comp-site/react/site-sub18-prebuild/ dist/npm/exhibitor/lib/comp-site/react/site-sub18-prebuild/
 
 prepublish:
 	npm install

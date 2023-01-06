@@ -19,13 +19,16 @@ const getPaths = (options: BuildOptions) => {
   }
 
   const COMP_SITE_REACT_SITE_PREBUILD_OUTDIR = './build/comp-site/react/site-prebuild'
+
+  const compSiteSuffix = options.reactMajorVersion < 18 ? '-sub18' : ''
+  const compSiteSuffix2 = options.reactMajorVersion < 18 ? 'sub18' : ''
   return {
     entrypoint: isDev
       ? `${COMP_SITE_REACT_SITE_PREBUILD_OUTDIR}/comp-site/react/site/main.js`
-      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/comp-site/react/site/main.js`,
+      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site${compSiteSuffix}-prebuild/comp-site/react/site${compSiteSuffix2}/main.js`,
     htmlFilePath: isDev
       ? `${COMP_SITE_REACT_SITE_PREBUILD_OUTDIR}/index.html`
-      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site-prebuild/index.html`,
+      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site${compSiteSuffix}-prebuild/index.html`,
   }
 }
 
