@@ -228,6 +228,7 @@ populate-dist:
 	cp -r build/comp-site/react/build/ dist/npm/exhibitor/lib/comp-site/react/build
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-prebuild
+	cp -r build/comp-site/react/site-prebuild/ dist/npm/exhibitor/lib/comp-site/react/site-prebuild/
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-sub18-prebuild
 	cp -r build/comp-site/react/site-sub18-prebuild/ dist/npm/exhibitor/lib/comp-site/react/site-sub18-prebuild/
