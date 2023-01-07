@@ -139,6 +139,10 @@
     }
 
     .code {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
       .path {
         margin-left: 10px;
         padding-bottom: 5px;
@@ -149,10 +153,13 @@
       }
 
       pre {
-        margin-top: 0;
+        margin: 0;
         background-color: $bg-color !important;
         padding: 0px !important;
         padding-left: 5px !important;
+        min-height: 0;
+        min-width: 0;
+        overflow: auto;
       }
     }
 
