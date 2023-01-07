@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { ComponentExhibit, ExhibitNodeType } from '../../../../../api/exhibit/types'
 import { useAppDispatch, useAppSelector } from '../../../store'
 import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
@@ -17,8 +17,10 @@ export const render = () => {
     },
     [selectedVariantPath],
   )
+  const [exhSrcPath, setExhSrcPath] = useState('')
   const showProps = selectedVariant != null && selectedVariant.exhibit.hasProps
   const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<true>).eventProps
+  const showTests = true // TODO
 
   return (
     <div className="nav">
@@ -32,6 +34,12 @@ export const render = () => {
           Event Log {hasUnseenEvents ? <div className="has-unseen-indicator" /> : null}
         </button>
       ) : null}
+      {showTests ? (
+        <button type="button" onClick={() => setExhSrcPath(selectedVariant.exhibit.getSrcPath())} className={`${selectedType === BottomBarType.EventLog ? 'active' : ''}`}>
+          E2E Tests
+        </button>
+      ) : null}
+      .exh source code path: {exhSrcPath}
     </div>
   )
 }

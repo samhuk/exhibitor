@@ -48,13 +48,10 @@ app
       return
     }
 
-    if (req.path === '/comp-site' || req.path === '/comp-site/index.html') {
-      res.sendFile('index.html', { root: COMP_SITE_OUTDIR })
-      return
-    }
-
-    if (req.path === '/comp-site/index.js') {
-      res.sendFile('index.js', { root: COMP_SITE_OUTDIR })
+    if (req.path.startsWith('/comp-site')) {
+      const _path = req.path.substring('/comp-site'.length)
+      const __path = _path.length === 0 ? '/index.html' : _path
+      res.sendFile(__path, { root: COMP_SITE_OUTDIR })
       return
     }
 

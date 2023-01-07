@@ -65,6 +65,9 @@ export const createIndexExhTsFile = async (
     // E.g. import '../myComponentLibraryDir/styles.scss'
     _rootStylePath != null ? `import '${_rootStylePath}'` : null,
     // E.g. list of "export {} from '../myComponentLibraryDir/button.exh.ts'"
+    `(window as any).exhSrcPaths = [
+${includedFilePaths.map(_path => `  '${_path}'\n`)}
+]`,
     includedFilePaths
       .map(_path => `export {} from '${path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')}'`)
       .join('\n'),
