@@ -2,6 +2,7 @@ import exhibit from '../../../src/api'
 import Button, { ButtonColor, ButtonSize, IconPosition } from './button'
 
 export const buttonExhibit = exhibit(Button, 'Button')
+  .tests('./button.spec.ts')
   .events({
     onClick: true,
   })

@@ -1,7 +1,7 @@
 import { Config } from 'jest'
 
 const config: Config = {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom', // TODO: We need to create two jest commands, one with node and one with jsdom.
   moduleNameMapper: {
     '^.+\\.(css|less|scss)$': 'babel-jest',
   },

@@ -34,6 +34,7 @@ export const watch = () => {
      * the comp-site bundle.
      */
     skipPrebuild: true,
+    reactMajorVersion: 18,
   })
     // If initial build successful, start rebuild watch
     .then(result => {

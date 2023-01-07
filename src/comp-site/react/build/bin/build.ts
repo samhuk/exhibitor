@@ -10,4 +10,5 @@ build({
   gzip: !isDev,
   incremental: false,
   skipPrebuild: false,
+  reactMajorVersion: 18,
 }).then(() => exit(0)).catch(() => exit(1))

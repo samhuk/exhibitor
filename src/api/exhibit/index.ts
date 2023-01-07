@@ -177,7 +177,7 @@ export const exhibit = <
 >(
     renderFn: TReactComponent,
     name: string,
-  ): ComponentExhibitBuilder<TReactComponent, false, false, false, undefined> => {
+  ): ComponentExhibitBuilder<TReactComponent, false, false, false, false, undefined> => {
   let eventProps: any = null
   let defaultProps: any = null
   let options: any = null
@@ -187,7 +187,11 @@ export const exhibit = <
 
   const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
-  const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, false, undefined> = {
+  const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, false, false, undefined> = {
+    tests: testFilePath => {
+      delete (componentExhibitBuilder as any).tests
+      return componentExhibitBuilder
+    },
     options: _options => {
       options = _options
       delete (componentExhibitBuilder as any).options
@@ -224,6 +228,7 @@ export const exhibit = <
         eventProps,
         variants,
         variantGroups,
+        srcPath: (window as any).exhibitSrcPath,
       }
 
       __exhibits[componentExhibit.name] = componentExhibit

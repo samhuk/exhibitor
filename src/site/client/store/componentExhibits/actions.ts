@@ -3,6 +3,7 @@ import { LoadingState } from '../types'
 export enum BottomBarType {
   Props,
   EventLog,
+  Code
 }
 
 export const READY = 'componentExhibits/ready'
@@ -34,6 +35,7 @@ export type ComponentExhibitsState = {
   viewportSizeChangeEnabled: boolean
   viewportRectSizePx: { width: number, height: number }
   workingViewportRectSizePx: { width: number, height: number }
+  exhibitCode: string
 }
 
 type ReadyAction = {

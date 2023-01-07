@@ -34,49 +34,87 @@ type _ComponentExhibitBuilder<
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
   THasDefinedOptions extends boolean = boolean,
+  THasDefinedTests extends boolean = boolean,
   TDefaultProps extends TProps = TProps,
   TIsGroup extends boolean = false,
 > =
-  IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedOptions, {
+  IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedTests, {
+    tests: (
+      testFilePath: string
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, true, TDefaultProps, TIsGroup>
+  }>>
+  & IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedOptions, {
+    /**
+     * Miscellaneous options for the exhibit.
+     */
     options: (
       options: {
+        /**
+         * Optional name of the group the exhibit belongs to.
+         *
+         * If not defined, this will be appear as an ungrouped exhibit.
+         */
         group?: string
       }
       & IncludeIfTrue<THasProps, IncludeIfTrue<THasDefinedDefaultProps, {
         showDefaultVariant?: boolean
       }>>
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, true, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, true, THasDefinedTests, TDefaultProps, TIsGroup>
   }>>
   & IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedEvents, {
+    /**
+     * Specify what props of the component correspond to event handlers. For example,
+     * this will most likely be functions like "onClick", "onKeyPress", "onValueChange", etc.
+     *
+     * When these events occur while the component is being interacted with, the calls to
+     * these event handler functions will be logged in the Event Log bottom-bar page in the
+     * Exhibitor site.
+     */
     events: (
       eventProps: EventsOptions<TProps>
-    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, THasDefinedOptions, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, TDefaultProps, TIsGroup>
   }>>>
   & IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedDefaultProps, {
+    /**
+     * Specify the default props for any variants in this exhibit group.
+     */
     defaults: <TNewDefaultProps extends TProps>(
       defaultProps: THasDefinedDefaultProps extends true ? (TNewDefaultProps | ((defaults: TDefaultProps) => TNewDefaultProps)) : TNewDefaultProps,
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, THasDefinedOptions, TNewDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, THasDefinedOptions, THasDefinedTests, TNewDefaultProps, TIsGroup>
   }>>
   & IncludeIfTrue<THasProps, {
+    /**
+     * Specify a variant of the component. This enables you to show the component
+     * with different props.
+     */
     variant: (
       /**
        * The name of the variant.
        */
       name: string,
       /**
-       * The component props to use for the variant.
+       * The props to use for the variant.
        *
        * If default props have been defined then this can optionally be a function
        * that takes the default props and returns the props of the variant.
        */
       props: THasDefinedDefaultProps extends true ? (TProps | ((defaults: TDefaultProps) => TProps)) : TProps,
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, TDefaultProps, TIsGroup>
+    // eslint-disable-next-line max-len
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, TDefaultProps, TIsGroup>
   }>
   & IncludeIfTrue<THasProps, {
+    /**
+     * Specify a group of variants. This is useful for grouping variant together
+     * with related props. For example, if your component has a "darkMode" prop,
+     * a "dark" and "light" variant group can be defined.
+     */
     // eslint-disable-next-line max-len
-    group: (name: string, fn: (ex: _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, false, THasDefinedOptions, TDefaultProps, true>) => void) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, TDefaultProps, TIsGroup>
+    group: (name: string, fn: (ex: _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, false, THasDefinedOptions, THasDefinedTests, TDefaultProps, true>) => void) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, TDefaultProps, TIsGroup>
   }>
   & IncludeIfFalse<TIsGroup, {
+    /**
+     * Builds the component exhibit, stating that the exhibit building is completed.
+     */
     build: () => ComponentExhibit<THasProps, TProps, TDefaultProps>
   }>
 
@@ -96,6 +134,7 @@ export type NonRootComponentExhibitBuilder<
   THasDefinedEvents,
   THasDefinedDefaultProps,
   THasDefinedOptions,
+  false,
   TDefaultProps,
   true
 >
@@ -105,6 +144,7 @@ export type ComponentExhibitBuilder<
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
   THasDefinedOptions extends boolean = boolean,
+  THasDefinedTests extends boolean = boolean,
   TDefaultProps extends undefined = undefined,
 > = _ComponentExhibitBuilder<
   PropsOfReactComponent<TReactComponent>,
@@ -112,6 +152,7 @@ export type ComponentExhibitBuilder<
   THasDefinedEvents,
   THasDefinedDefaultProps,
   THasDefinedOptions,
+  THasDefinedTests,
   TDefaultProps
 >
 
@@ -132,6 +173,7 @@ export type ComponentExhibit<
   TDefaultProps extends TProps = TProps,
 > = {
   name: string
+  srcPath: string
   groupName?: string
   renderFn: ReactComponent<TProps>
 } & BoolDependant<
