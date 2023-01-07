@@ -141,6 +141,7 @@ export type ComponentExhibit<
   TDefaultProps extends TProps = TProps,
 > = {
   name: string
+  srcPath: string
   groupName?: string
   renderFn: ReactComponent<TProps>
 } & BoolDependant<

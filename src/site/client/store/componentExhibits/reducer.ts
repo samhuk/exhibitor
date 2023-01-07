@@ -26,6 +26,7 @@ const initialState: ComponentExhibitsState = {
   viewportRectSizePx: { height: 300, width: 300 },
   workingViewportRectSizePx: { height: 300, width: 300 },
   viewportSizeChangeEnabled: false,
+  exhibitCode: null,
 }
 
 export const componentExhibitsReducer = (

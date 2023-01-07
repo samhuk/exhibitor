@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { ComponentExhibit, ExhibitNodeType } from '../../../../../api/exhibit/types'
 import { useAppDispatch, useAppSelector } from '../../../store'
 import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
@@ -17,29 +17,33 @@ export const render = () => {
     },
     [selectedVariantPath],
   )
-  const [exhSrcPath, setExhSrcPath] = useState('')
   const showProps = selectedVariant != null && selectedVariant.exhibit.hasProps
   const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<true>).eventProps
   const showTests = true // TODO
+  const showCode = true // TODO
 
   return (
     <div className="nav">
       {showProps ? (
-        <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.Props))} className={`${selectedType === BottomBarType.Props ? 'active' : ''}`}>
+        <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.Props))} className={`${selectedType === BottomBarType.Props ? 'active' : ''}`} title="View variant props">
           Props
         </button>
       ) : null}
       {showEventLog ? (
-        <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.EventLog))} className={`${selectedType === BottomBarType.EventLog ? 'active' : ''}`}>
+        <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.EventLog))} className={`${selectedType === BottomBarType.EventLog ? 'active' : ''}`} title="View event log">
           Event Log {hasUnseenEvents ? <div className="has-unseen-indicator" /> : null}
         </button>
       ) : null}
-      {showTests ? (
-        <button type="button" onClick={() => setExhSrcPath(selectedVariant.exhibit.getSrcPath())} className={`${selectedType === BottomBarType.EventLog ? 'active' : ''}`}>
-          E2E Tests
+      {/* {showTests ? (
+        <button type="button" onClick={() => undefined} className={`${selectedType === BottomBarType.EventLog ? 'active' : ''}`}>
+          Tests
+        </button>
+      ) : null} */}
+      {showCode ? (
+        <button type="button" onClick={() => dispatch(selectBottomBar(BottomBarType.Code))} className={`${selectedType === BottomBarType.Code ? 'active' : ''}`} title="View exhibit code">
+          <i className="fas fa-code" />
         </button>
       ) : null}
-      .exh source code path: {exhSrcPath}
     </div>
   )
 }

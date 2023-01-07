@@ -111,7 +111,7 @@
       }
     }
 
-    .props, .event-log {
+    .props, .event-log, .code {
       overflow: auto;
     }
 
@@ -135,6 +135,24 @@
         .id {
           width: 50px;
         }
+      }
+    }
+
+    .code {
+      .path {
+        margin-left: 10px;
+        padding-bottom: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        display: inline-block;
+        border-bottom: $border;
+      }
+
+      pre {
+        margin-top: 0;
+        background-color: $bg-color !important;
+        padding: 0px !important;
+        padding-left: 5px !important;
       }
     }
 

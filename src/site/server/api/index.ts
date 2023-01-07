@@ -2,14 +2,13 @@ import cors from 'cors'
 import { json, Router } from 'express'
 import * as fs from 'fs'
 
-import { getMetadata, MetaData } from '../../../common/metadata'
-import { BUILD_OUTPUT_ROOT_DIR, META_DATA_FILE, META_DATA_FILE_NAME } from '../../../common/paths'
+import { META_DATA_FILE } from '../../../common/paths'
 import { HealthcheckStatus } from '../../common/responses'
-import { sendSuccessResponse } from './responses'
+import { serverError } from './errorVariants'
+import { sendErrorResponse, sendSuccessResponse } from './responses'
 
 const startTime = new Date()
 const startTimeUnixOffset = startTime.getTime()
-let metaData: MetaData
 
 const router = Router()
   .use(cors())
@@ -28,10 +27,16 @@ const router = Router()
     sendSuccessResponse(req, res, JSON.parse(fs.readFileSync(META_DATA_FILE, { encoding: 'utf8' })))
   })
   .get('/exhibitCode', (req, res) => {
-    if (metaData == null)
-      metaData = getMetadata()
-
-    // TODO: Figure out how to do this. Not sure yet how to link an exhibit name to the file path to it's code.
+    const exhibitSrcPath = req.query.exhibitSrcPath as string
+    let exhibitCode: string
+    try {
+      exhibitCode = fs.readFileSync(exhibitSrcPath, { encoding: 'utf8' })
+    }
+    catch (e: any) {
+      sendErrorResponse(req, res, serverError(`Could not read the file '${exhibitSrcPath}'.\n\nError: ${e}`))
+      return
+    }
+    sendSuccessResponse(req, res, exhibitCode)
   })
 
 export default router

@@ -228,12 +228,7 @@ export const exhibit = <
         eventProps,
         variants,
         variantGroups,
-        getSrcPath: () => {
-          const exhibitNames = Object.keys(window.exh.default)
-          const thisExhibitIndex = exhibitNames.indexOf(name)
-          const thisSrcPath = (window as any).exhSrcPaths[thisExhibitIndex]
-          return thisSrcPath
-        },
+        srcPath: (window as any).exhibitSrcPath,
       }
 
       __exhibits[componentExhibit.name] = componentExhibit

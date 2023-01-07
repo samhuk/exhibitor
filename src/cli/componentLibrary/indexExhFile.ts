@@ -3,6 +3,7 @@ import sassPlugin from 'esbuild-sass-plugin'
 import * as fs from 'fs'
 import glob from 'globsie'
 import path from 'path'
+import { pathToRegexp } from 'path-to-regexp'
 
 import { createBuilder } from '../../common/esbuilder'
 import { NPM_PACKAGE_NAME } from '../../common/name'
@@ -17,25 +18,39 @@ fs.mkdirSync(BUILD_OUTPUT_ROOT_DIR, { recursive: true })
 const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
 const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
-export const buildIndexExhTsFile = (config: ResolvedConfig) => createBuilder('component library', config.verbose, () => esbuild.build({
-  entryPoints: [bundleInputFilePath],
-  outfile: bundleOutputFilePath,
-  platform: 'browser',
-  format: 'iife',
-  globalName: 'exh',
-  bundle: true,
-  minify: !isDev,
-  sourcemap: isDev,
-  metafile: true,
-  incremental: true,
-  plugins: [sassPlugin() as unknown as esbuild.Plugin],
-  loader: {
-    '.ttf': 'file',
-    '.woff': 'file',
-    '.woff2': 'file',
-  },
-  ...config.esbuildConfig,
-}).then(result => ({ buildResult: result })))
+export const buildIndexExhTsFile = (config: ResolvedConfig, includedFilePaths: string[]) => {
+  const exhFilesRegExp = new RegExp(includedFilePaths.map(p => pathToRegexp(p)).map(r => r.source).join('|'))
+  return createBuilder('component library', config.verbose, () => esbuild.build({
+    entryPoints: [bundleInputFilePath],
+    outfile: bundleOutputFilePath,
+    platform: 'browser',
+    format: 'iife',
+    globalName: 'exh',
+    bundle: true,
+    minify: !isDev,
+    sourcemap: isDev,
+    metafile: true,
+    incremental: true,
+    plugins: [
+      sassPlugin() as unknown as esbuild.Plugin,
+      {
+        name: 'exhibitor',
+        setup: build => {
+          build.onResolve({ filter: exhFilesRegExp }, args => ({ path: args.path, namespace: 'exhibitor' }))
+          build.onLoad({ filter: /.*/, namespace: 'exhibitor' }, args => ({
+            contents: `window.exhibitSrcPath = '${args.path}'`,
+          }))
+        },
+      },
+    ],
+    loader: {
+      '.ttf': 'file',
+      '.woff': 'file',
+      '.woff2': 'file',
+    },
+    ...config.esbuildConfig,
+  }).then(result => ({ buildResult: result })))
+}
 
 export const createIndexExhTsFile = async (
   configInclude: string[],
@@ -65,11 +80,12 @@ export const createIndexExhTsFile = async (
     // E.g. import '../myComponentLibraryDir/styles.scss'
     _rootStylePath != null ? `import '${_rootStylePath}'` : null,
     // E.g. list of "export {} from '../myComponentLibraryDir/button.exh.ts'"
-    `(window as any).exhSrcPaths = [
-${includedFilePaths.map(_path => `  '${_path}'\n`)}
-]`,
     includedFilePaths
-      .map(_path => `export {} from '${path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')}'`)
+      .map(_path => {
+        const relativeImportPath = path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')
+
+        return `export * from '${_path}'\nexport {} from '${relativeImportPath}'`
+      })
       .join('\n'),
     'export const { nodes, pathTree } = resolve(__exhibits)',
     'export default __exhibits',

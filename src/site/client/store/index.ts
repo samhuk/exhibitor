@@ -1,6 +1,7 @@
 import { applyMiddleware, combineReducers, configureStore } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import thunkMiddleware from 'redux-thunk'
+import { exhibitCodeReducer } from './componentExhibits/exhibitCode/reducer'
 
 import { componentExhibitsReducer } from './componentExhibits/reducer'
 import { healthcheckArtifacts } from './healthcheck'
@@ -15,6 +16,7 @@ export const rootReducer = combineReducers({
   healthcheck: healthcheckArtifacts.reducer,
   metaData: metaDataReducer,
   theme: themeReducer,
+  exhibitCode: exhibitCodeReducer,
 })
 
 export const store = configureStore({

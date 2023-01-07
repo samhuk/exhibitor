@@ -8,6 +8,7 @@ import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits
 import EventLogComponent from './eventLog'
 import { DEFAULT_STATE, restoreState, saveState, State } from './persistence'
 import PropsComponent from './props'
+import CodeComponent from './code'
 import Nav from './nav'
 import HeaderRhs from './headerRhs'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
@@ -16,11 +17,13 @@ import ViewportInfoBar from './viewportInfoBar'
 const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.Props]: 'Props',
   [BottomBarType.EventLog]: 'Event Log',
+  [BottomBarType.Code]: 'Code',
 }
 
 const barNameToType: Record<string, BottomBarType> = {
   Props: BottomBarType.Props,
   'Event Log': BottomBarType.EventLog,
+  Code: BottomBarType.Code,
 }
 
 const SEARCH_PARAM_NAME = 'bar'
@@ -56,10 +59,13 @@ export const render = () => {
   )
   const showProps = variantNode != null && variantNode.exhibit.hasProps
   const showEventLog = showProps && (variantNode.exhibit as ComponentExhibit<true>).eventProps
+  const showCode = true // TODO
   if (showProps)
     shownBarTypes.push(BottomBarType.Props)
   if (showEventLog)
     shownBarTypes.push(BottomBarType.EventLog)
+  if (showCode)
+    shownBarTypes.push(BottomBarType.Code)
 
   const elRef = useRef<HTMLDivElement>()
 
@@ -148,6 +154,8 @@ export const render = () => {
             return <PropsComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
           case BottomBarType.EventLog:
             return <EventLogComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
+          case BottomBarType.Code:
+            return <CodeComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
           default:
             return null
         }

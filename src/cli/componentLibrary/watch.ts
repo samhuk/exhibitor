@@ -19,6 +19,7 @@ const _createIndexExhTsFile = async (
     includedFilePaths,
     siteTitle: config.site.title,
   })
+  return { includedFilePaths }
 }
 
 const rebuildIteration = async (
@@ -49,8 +50,8 @@ export const watchComponentLibrary = async (
   onFirstSuccessfulBuild?: () => void,
 ) => {
   try {
-    await _createIndexExhTsFile(config)
-    const buildResult = await buildIndexExhTsFile(config)()
+    const { includedFilePaths } = await _createIndexExhTsFile(config)
+    const buildResult = await buildIndexExhTsFile(config, includedFilePaths)()
     initialBuildWatcher?.close()
     const rebuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
     watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => {
