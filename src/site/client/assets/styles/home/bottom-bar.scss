@@ -17,24 +17,15 @@
       justify-content: space-between;
       align-items: stretch;
       min-height: 39px; // Empirically measured when nav is present
+      flex-shrink: 0;
 
       .left {
-        // TODO: Actually will need a component lib for ourselves, as well, yknow, right?
         button {
-          margin-right: 5px;
-          background-color: $bg-color;
-          border: $border;
-          border-radius: $border-radius;
-          padding: 3px 7px;
-          cursor: pointer;
-          position: relative;
-          
-          &:hover {
-            background-color: $bg-color-m7;
-          }
+          border-radius: 0;
+          padding: 0;
 
-          &.active {
-            border-color: $link-color;
+          &:hover {
+            background-color: $bg-color;
           }
 
           .has-unseen-indicator {
@@ -148,7 +139,7 @@
         padding-bottom: 5px;
         margin-top: 5px;
         margin-bottom: 5px;
-        display: inline-block;
+        align-self: start;
         border-bottom: $border;
       }
 
