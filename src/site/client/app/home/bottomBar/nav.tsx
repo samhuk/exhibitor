@@ -22,7 +22,7 @@ export const render = () => {
   const showProps = selectedVariant != null && selectedVariant.exhibit.hasProps
   const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<true>).eventProps
   const showTests = true // TODO
-  const showCode = true // TODO
+  const showCode = selectedVariant != null // TODO
 
   const navItemOptionsList: NavItemOptions[] = []
 
