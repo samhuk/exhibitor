@@ -102,7 +102,7 @@
       }
     }
 
-    .props, .event-log, .code {
+    .props, .event-log {
       overflow: auto;
     }
 
@@ -148,6 +148,218 @@
         background-color: $bg-color !important;
         padding: 0px !important;
         padding-left: 5px !important;
+        min-height: 0;
+        min-width: 0;
+        overflow: auto;
+      }
+    }
+
+    .axe {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      &>* {
+        margin-left: 12px; // Inline with run button
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: none;
+        margin-left: 0;
+
+        .left {
+          display: flex;
+          justify-content: start;
+
+          .run-button {
+            padding: 5px 10px;
+            color: $green-color;
+            margin-right: 5px;
+          }
+        }
+
+        .right {
+          display: flex;
+          justify-content: start;
+
+          .tester-link {
+            display: flex;
+            align-items: center;
+
+            span {
+              margin-right: 5px;
+            }
+
+            a {
+              color: $link-color;
+              text-decoration: none;
+              margin-right: 5px;
+
+              &:visited {
+                color: $link-color;
+              }
+            }
+
+            i {
+              color: $text-color-m20;
+            }
+          }
+        }
+      }
+
+      .total-num-tests-summary {
+        display: flex;
+        margin-bottom: 10px;
+
+        >div {
+          padding: 2px 5px;
+          color: black;
+          font-weight: bold;
+        }
+
+        .passes {
+          margin-right: 10px;
+          background-color: $green-color;
+        }
+
+        .failures {
+          background-color: $red-color;
+        }
+      }
+
+      .no-violations {
+        span {
+          margin-right: 10px;
+        }
+
+        i {
+          color: $green-color;
+        }
+      }
+
+      .violation-list {
+        min-height: 0;
+        min-width: 0;
+        overflow: auto;
+        padding-left: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 0;
+
+        .item {
+          display: flex;
+
+          .error-icon {
+            margin-top: 3px;
+            margin-right: 10px;
+            align-self: start;
+            color: $red-color;
+          }
+
+          .text-and-details {
+            .text {
+              .node-count {
+                margin-left: 5px;
+                margin-right: 5px;
+                border-radius: $border-radius;
+                padding: 1px 5px;
+                background-color: $bg-color-m10;
+              }
+            }
+
+            .details {
+              margin-top: 10px;
+
+              .label {
+                margin-right: 5px;
+                font-weight: bold;
+                width: 120px;
+              }
+
+              .row {
+                display: flex;
+
+                &.impact {
+                  .value {
+                    display: flex;
+                    align-items: center;
+                  }
+
+                  .severity-indicator {
+                    margin-left: 10px;
+                    font-size: 10px;
+                    position: relative;
+                    width: 80px;
+                    height: 15px;
+
+                    .circle-icon {
+                      position: absolute;
+                      width: 10px;
+                      height: 10px;
+                      border-radius: 50%;
+                      top: 3px;
+                    }
+                  }
+
+                  &.minor .circle-icon {
+                    background-color: $yellow-color;
+                  }
+                  &.moderate .circle-icon {
+                    background-color: orange;
+                  }
+                  &.serious .circle-icon {
+                    background-color: $red-color;
+                  }
+                  &.critical .circle-icon {
+                    background-color: $red-color;
+                  }
+                }
+
+                &.documentation-link {
+                  display: flex;
+                  align-items: center;
+
+                  a {
+                    color: $link-color;
+                    text-decoration: none;
+                    width: 130px;
+
+                    &:visited {
+                      color: $link-color;
+                    }
+                  }
+
+                  i {
+                    margin-left: 5px;
+                    color: $text-color-m20;
+                  }
+                }
+              }
+
+              .nodes {
+                >.label {
+                  text-decoration: underline;
+                }
+              }
+            }
+          }
+
+          .toggle-show-details-button {
+            padding: 1px 7px;
+            align-self: start;
+
+            &.active {
+              color: $link-color;
+            }
+          }
+        }
+      }
+
+      pre {
+        margin: 0;
         min-height: 0;
         min-width: 0;
         overflow: auto;

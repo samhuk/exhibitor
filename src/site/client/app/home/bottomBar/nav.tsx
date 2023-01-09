@@ -8,6 +8,7 @@ import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits
 export const render = () => {
   const selectedVariantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)
   const selectedType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
+  const isAxeEnabled = useAppSelector(s => s.metaData.metaData?.isAxeEnabled)
   const hasUnseenEvents = useAppSelector(s => s.componentExhibits.hasUnseenEvents)
   const dispatch = useAppDispatch()
   const selectedVariant = useMemo(
@@ -23,12 +24,13 @@ export const render = () => {
   const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<true>).eventProps
   const showTests = true // TODO
   const showCode = selectedVariant != null // TODO
+  const showAxe = selectedVariant != null && isAxeEnabled
 
   const navItemOptionsList: NavItemOptions[] = []
 
   if (showProps) {
     navItemOptionsList.push({
-      text: 'Props',
+      title: 'Props',
       iconName: 'sliders',
       onClick: () => dispatch(selectBottomBar(BottomBarType.Props)),
       active: selectedType === BottomBarType.Props,
@@ -37,7 +39,7 @@ export const render = () => {
 
   if (showEventLog) {
     navItemOptionsList.push({
-      text: 'Event Log',
+      title: 'Event Log',
       iconName: 'phone',
       onClick: () => dispatch(selectBottomBar(BottomBarType.EventLog)),
       active: selectedType === BottomBarType.EventLog,
@@ -46,10 +48,19 @@ export const render = () => {
 
   if (showCode) {
     navItemOptionsList.push({
-      text: 'Code',
+      title: 'Exhibit Code',
       iconName: 'code',
       onClick: () => dispatch(selectBottomBar(BottomBarType.Code)),
       active: selectedType === BottomBarType.Code,
+    })
+  }
+
+  if (showAxe) {
+    navItemOptionsList.push({
+      title: 'Accessibility',
+      iconName: 'universal-access',
+      onClick: () => dispatch(selectBottomBar(BottomBarType.axe)),
+      active: selectedType === BottomBarType.axe,
     })
   }
 

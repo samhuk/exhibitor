@@ -5,6 +5,7 @@ import { META_DATA_FILE } from './paths'
 export type MetaData = {
   includedFilePaths: string[]
   siteTitle: string
+  isAxeEnabled: boolean
 }
 
 export const setMetadata = (
