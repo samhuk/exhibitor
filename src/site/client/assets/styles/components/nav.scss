@@ -19,14 +19,6 @@
       margin-right: 6px;
     }
 
-    &.active {
-      border-bottom-color: $link-color;
-
-      .text {
-        font-weight: bold;
-      }
-    }
-
     .wrapper {
       margin-bottom: 3px;
       border-radius: $border-radius;
@@ -35,6 +27,12 @@
       i {
         margin-right: 6px;
         color: $text-color-m20;
+      }
+
+      &.no-text {
+        i {
+          margin-right: 0;
+        } 
       }
   
       .text {
@@ -58,6 +56,18 @@
             display: none;
           }
         }
+      }
+    }
+
+    &.active {
+      border-bottom-color: $link-color;
+
+      .text {
+        font-weight: bold;
+      }
+
+      i {
+        color: $link-color;
       }
     }
   }

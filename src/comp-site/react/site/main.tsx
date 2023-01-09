@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { VariantExhibitNode } from '../../../api/exhibit/types'
-import { getSelectedVariantNodePath, waitUntilComponentExhibitsAreLoaded } from '../../../common/exhibit'
+import { getSelectedVariantNodePath, runAxe, waitUntilComponentExhibitsAreLoaded } from '../../../common/exhibit'
 import { attachEventLoggingToProps } from '../../common'
 
 const container = document.getElementById('exh-root')
@@ -17,8 +17,13 @@ const App = () => {
   useEffect(() => {
     const handler = () => setSelectedVariantPath(getSelectedVariantNodePath())
     window.addEventListener('selected-variant-change', handler)
+    const axeTestHandler = () => {
+      runAxe()
+    }
+    window.addEventListener('axe-test', axeTestHandler)
     return () => {
       window.removeEventListener('selected-variant-change', handler)
+      window.removeEventListener('axe-test', axeTestHandler)
     }
   }, [])
 

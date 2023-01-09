@@ -1,3 +1,4 @@
+import { AxeResults } from 'axe-core'
 import { ExhibitNodeType } from '../api/exhibit/types'
 
 export const areComponentExhibitsLoaded = () => {
@@ -11,7 +12,7 @@ export const areComponentExhibitsLoaded = () => {
   }
 }
 
-export const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise((res, rej) => {
+export const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise(res => {
   let i = 0
   const interval = setInterval(() => {
     i += 1
@@ -25,6 +26,50 @@ export const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Prom
     }
   }, 50)
 })
+
+export const isAxeLoaded = () => {
+  try {
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _test = axe
+    return true
+  }
+  catch {
+    return false
+  }
+}
+
+export const waitUntilAxeIsLoaded = (): Promise<any> => new Promise((res, rej) => {
+  if (isAxeLoaded()) {
+    // @ts-ignore
+    res(axe)
+    return
+  }
+
+  let i = 0
+  const interval = setInterval(() => {
+    i += 1
+    if (i > 100) {
+      console.error('component exhibits didnt load :(')
+      clearTimeout(interval)
+    }
+    if (waitUntilAxeIsLoaded()) {
+      clearTimeout(interval)
+      // @ts-ignore
+      res(axe)
+    }
+  }, 50)
+})
+
+export const runAxe = (): Promise<AxeResults> => waitUntilAxeIsLoaded().then(axe => axe.run(document.getElementById('exh-root'))
+  .then((results: AxeResults) => {
+    window.dispatchEvent(new CustomEvent('axe-test-completed', {
+      detail: results,
+    }))
+  })
+  .catch((error: any) => {
+    console.error('axe failed:', error)
+  }))
 
 export const getSelectedVariantNodePath = (): string | null => {
   if (!areComponentExhibitsLoaded())

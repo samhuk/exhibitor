@@ -35,6 +35,19 @@ app
       return
     }
 
+    // -- axe
+    if (req.path === '/axe.js') {
+      const pathPart = 'node_modules/axe-core/axe.min.js'
+      const relPath = `./${pathPart}`
+      if (fs.existsSync(relPath)) {
+        res.sendFile(`/${pathPart}`, { root: './' })
+        return
+      }
+
+      sendErrorResponse(req, res, notFound(`Cannot find axe script at ${relPath}'`))
+      return
+    }
+
     // -- Theme
     if (req.path === '/styles.css') {
       const theme = req.cookies.theme ?? DEFAULT_THEME
@@ -44,10 +57,11 @@ app
         return
       }
 
-      sendErrorResponse(req, res, notFound('Styles do not exist'))
+      sendErrorResponse(req, res, notFound(`Styles do not exist for theme '${theme}'`))
       return
     }
 
+    // -- comp-site
     if (req.path.startsWith('/comp-site')) {
       const _path = req.path.substring('/comp-site'.length)
       const __path = _path.length === 0 ? '/index.html' : _path
@@ -55,19 +69,19 @@ app
       return
     }
 
-    // If file exists in build output dir, then serve it
+    // -- ./.exh (build output root dir)
     if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`))) {
       res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
       return
     }
 
-    // If the site client file exists, then serve it
+    // -- site client
     if (fs.existsSync(path.resolve(clientDir, `.${req.path}`))) {
       res.sendFile(req.path, { root: clientDir })
       return
     }
 
-    // Else send index.html
+    // -- site client index.html (SPA behavior)
     res.sendFile('/', { root: clientDir })
   })
 

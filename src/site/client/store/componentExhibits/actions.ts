@@ -3,7 +3,8 @@ import { LoadingState } from '../types'
 export enum BottomBarType {
   Props,
   EventLog,
-  Code
+  Code,
+  axe,
 }
 
 export const READY = 'componentExhibits/ready'

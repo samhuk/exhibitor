@@ -23,7 +23,6 @@ export const render = () => {
       <button className={`info-button${show ? ' active' : ''}`} type="button" ref={setReferenceElement} onClick={() => setShow(!show)}>
         <i className="fas fa-circle-info" />
       </button>
-
       {show
         ? (
           // eslint-disable-next-line react/jsx-props-no-spreading
@@ -32,7 +31,6 @@ export const render = () => {
             <div className="arrow" ref={setArrowElement} style={styles.arrow} />
           </div>
         ) : null}
-
     </div>
   )
 }

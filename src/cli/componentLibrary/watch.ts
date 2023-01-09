@@ -10,6 +10,11 @@ import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
 
 const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
 
+const checkWhetherAxeIsInstalled = () => {
+  const _path = require.resolve('axe-core')
+  return _path != null
+}
+
 const _createIndexExhTsFile = async (
   config: ResolvedConfig,
 ) => {
@@ -18,6 +23,7 @@ const _createIndexExhTsFile = async (
   setMetadata({
     includedFilePaths,
     siteTitle: config.site.title,
+    isAxeEnabled: checkWhetherAxeIsInstalled(),
   })
   return { includedFilePaths }
 }

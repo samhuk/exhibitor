@@ -12,4 +12,5 @@ declare interface ComponentExhibitGlobals {
 
 declare global {
   const exh: ComponentExhibitGlobals
+  const axe: any
 }
