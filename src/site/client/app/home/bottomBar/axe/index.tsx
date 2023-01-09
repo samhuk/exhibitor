@@ -1,13 +1,36 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
-import axe, { AxeResults, ImpactValue, Result } from 'axe-core'
-import { ComponentExhibit, ExhibitNodeType, Variant, VariantExhibitNode } from '../../../../../../api/exhibit/types'
+import { AxeResults, ImpactValue, Result } from 'axe-core'
+import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../../store'
+import { AXE_TEST_COMPLETED_EVENT_NAME, START_AXE_TEST_EVENT_NAME } from '../../../../../../common/exhibit'
+
+const addOneTimeCustomEventListener = <
+  TEl extends EventTarget,
+  TEvent extends CustomEvent,
+>(el: TEl, eventName: string, handler: (e: TEvent) => void) => {
+  const _handler = (e: TEvent) => {
+    handler(e)
+    el.removeEventListener(eventName, _handler as any)
+  }
+  el.addEventListener(eventName, _handler as any)
+}
+
+const dispatchCustomEvent = <
+  TEl extends EventTarget,
+>(el: TEl, eventName: string, data?: any) => {
+  el.dispatchEvent(new CustomEvent(eventName, {
+    detail: data,
+  }))
+}
 
 const doesCompSiteHaveAxeLoaded = (iframeEl: HTMLIFrameElement) => (iframeEl.contentWindow as any).axe == null
 
-const ensureCompSiteHasAxeLoaded = (): HTMLIFrameElement => {
+const ensureCompSiteHasAxeLoaded = (): HTMLIFrameElement | null => {
   const iframeEl = document.getElementsByTagName('iframe')[0]
+  if (iframeEl == null)
+    return null
+
   if (doesCompSiteHaveAxeLoaded(iframeEl)) {
     const scriptEl = document.createElement('script')
     scriptEl.async = true
@@ -19,18 +42,23 @@ const ensureCompSiteHasAxeLoaded = (): HTMLIFrameElement => {
 
 const runAxe = (): Promise<AxeResults> => new Promise((res, rej) => {
   const iframeEl = ensureCompSiteHasAxeLoaded()
-  const axeTestCompletedHandler = (e: { detail: AxeResults}) => {
-    res(e.detail)
-    // @ts-ignore
-    iframeEl.contentWindow.removeEventListener('axe-test-completed', axeTestCompletedHandler)
+  if (iframeEl == null) {
+    rej(new Error('comp-site iframe element does not exist.'))
+    return
   }
-  // @ts-ignore
-  iframeEl.contentWindow.addEventListener('axe-test-completed', axeTestCompletedHandler)
-  iframeEl.contentWindow.dispatchEvent(new CustomEvent('axe-test'))
+
+  addOneTimeCustomEventListener(iframeEl.contentWindow, AXE_TEST_COMPLETED_EVENT_NAME, (e: { detail: AxeResults}) => {
+    res(e.detail)
+  })
+  dispatchCustomEvent(iframeEl.contentWindow, START_AXE_TEST_EVENT_NAME)
 })
 
 const LoadingEl = () => (
   <div className="loading">Running...</div>
+)
+
+const WaitingForComponentRenderEl = () => (
+  <div className="loading">Waiting for component to render...</div>
 )
 
 const RunButtonEl = (props: {
@@ -159,6 +187,7 @@ export const render = (props: {
   variant: Variant
 }) => {
   const variantPathLastRanFor = useRef(null)
+  const [isWaitingForComponentRender, setIsWaitingForComponentRender] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [results, setResults] = useState<AxeResults>(null)
 
@@ -173,11 +202,24 @@ export const render = (props: {
     })
   }
 
-  /* If isn't loading, there is a selected variant path, and either the variant path last ran for is null
-   * or the variant path last ran for isn't the currently selected one.
+  /* If isn't loading, isn't waiting for component to render, there is a selected variant path, and either
+   * there is no variant path last ran for or the variant path last ran for isn't the currently selected one.
    */
-  if (!isLoading && selectedVariantPath != null && (variantPathLastRanFor.current == null || variantPathLastRanFor.current !== selectedVariantPath))
-    run()
+  const shouldDoRun = !isLoading
+    && !isWaitingForComponentRender
+    && selectedVariantPath != null
+    && (variantPathLastRanFor.current == null || variantPathLastRanFor.current !== selectedVariantPath)
+
+  if (shouldDoRun) {
+    setIsWaitingForComponentRender(true)
+    /* TODO: We need to find a way to listen for when the user's component inside the comp site
+     * has finished rendering. Probably using useEffect, useRef, customEvent, etc.
+     */
+    setTimeout(() => {
+      setIsWaitingForComponentRender(false)
+      run()
+    }, 500)
+  }
 
   const hasResults = results != null
   const hasViolations = hasResults && results.violations.length > 0
@@ -187,6 +229,7 @@ export const render = (props: {
       <div className="header">
         <div className="left">
           <RunButtonEl onClick={run} />
+          {isWaitingForComponentRender ? <WaitingForComponentRenderEl /> : null}
           {isLoading ? <LoadingEl /> : null}
         </div>
         <div className="right">

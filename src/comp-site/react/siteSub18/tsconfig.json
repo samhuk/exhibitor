@@ -1,24 +1,10 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "../tsconfig.json",
   "include": [
     "./**/*"
   ],
   "compilerOptions": {
-    "target": "es6",
-    "moduleResolution": "node",
-    "module": "ES6",
-    "allowJs": false,
-    "strictNullChecks": false,
-		"strict": true,
-		"isolatedModules": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "declaration": false,
-    "sourceMap": false,
-    "noEmit": false,
-    "skipLibCheck": true,
-    "outDir": "../../../../build/comp-site/react/site-sub18-prebuild",
-    "jsx": "react"
+    "outDir": "../../../../build/comp-site/react/site-sub18-prebuild"
   }
 }
