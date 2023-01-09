@@ -1,8 +1,14 @@
 import { AxeResults } from 'axe-core'
 import { ExhibitNodeType } from '../api/exhibit/types'
 
+export const SELECT_VARIANT_CHANGE_EVENT_NAME = 'selected-variant-change'
+
+export const START_AXE_TEST_EVENT_NAME = 'axe-test'
+export const AXE_TEST_COMPLETED_EVENT_NAME = 'axe-test-completed'
+
 export const areComponentExhibitsLoaded = () => {
   try {
+    // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _test = exh
     return true
@@ -17,7 +23,7 @@ export const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Prom
   const interval = setInterval(() => {
     i += 1
     if (i > 100) {
-      console.error('component exhibits didnt load :(')
+      console.error('component exhibits didnt load.')
       clearTimeout(interval)
     }
     if (areComponentExhibitsLoaded()) {
@@ -53,7 +59,7 @@ export const waitUntilAxeIsLoaded = (): Promise<any> => new Promise((res, rej) =
       console.error('component exhibits didnt load :(')
       clearTimeout(interval)
     }
-    if (waitUntilAxeIsLoaded()) {
+    if (isAxeLoaded()) {
       clearTimeout(interval)
       // @ts-ignore
       res(axe)
@@ -63,7 +69,7 @@ export const waitUntilAxeIsLoaded = (): Promise<any> => new Promise((res, rej) =
 
 export const runAxe = (): Promise<AxeResults> => waitUntilAxeIsLoaded().then(axe => axe.run(document.getElementById('exh-root'))
   .then((results: AxeResults) => {
-    window.dispatchEvent(new CustomEvent('axe-test-completed', {
+    window.dispatchEvent(new CustomEvent(AXE_TEST_COMPLETED_EVENT_NAME, {
       detail: results,
     }))
   })
@@ -81,6 +87,7 @@ export const getSelectedVariantNodePath = (): string | null => {
     return null
 
   const _locationPath = parentLocationPath.startsWith('/') ? parentLocationPath.slice(1) : parentLocationPath
+  // @ts-ignore
   const selectedNode = exh.nodes[_locationPath]
   return selectedNode != null && selectedNode.type === ExhibitNodeType.VARIANT
     ? selectedNode.path

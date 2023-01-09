@@ -9,7 +9,7 @@
     min-height: 120px;
     flex-shrink: 0;
 
-    .header {
+    >.header {
       padding: 5px;
       border-bottom: $border;
       display: flex;
@@ -167,16 +167,19 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: none;
-        margin-left: 0;
+        margin-left: 0px;
+        margin-bottom: 10px;
 
         .left {
           display: flex;
           justify-content: start;
+          align-items: center;
+          margin-top: 5px;
 
           .run-button {
             padding: 5px 10px;
             color: $green-color;
+            margin-left: 5px;
             margin-right: 5px;
           }
         }
