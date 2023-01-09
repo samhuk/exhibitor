@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "2.0.11",
+  "version": "2.0.12-beta.0",
   "description": "Snappy and delightful React component workshop",
   "main": "./lib/api/api/index.js",
   "types": "./lib/api/api/index.d.ts",
@@ -25,6 +25,7 @@
     "livereload": "^0.9.3",
     "colors": "1.4.0",
     "clone-deep": "^4.0.1",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "axe-core": "^4.6.2"
   }
 }

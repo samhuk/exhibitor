@@ -29,6 +29,7 @@ export const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Prom
 
 export const isAxeLoaded = () => {
   try {
+    // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _test = axe
     return true
@@ -38,7 +39,13 @@ export const isAxeLoaded = () => {
   }
 }
 
-export const waitUntilAxeIsLoaded = (): Promise<void> => new Promise((res, rej) => {
+export const waitUntilAxeIsLoaded = (): Promise<any> => new Promise((res, rej) => {
+  if (isAxeLoaded()) {
+    // @ts-ignore
+    res(axe)
+    return
+  }
+
   let i = 0
   const interval = setInterval(() => {
     i += 1
@@ -48,12 +55,13 @@ export const waitUntilAxeIsLoaded = (): Promise<void> => new Promise((res, rej) 
     }
     if (waitUntilAxeIsLoaded()) {
       clearTimeout(interval)
-      res()
+      // @ts-ignore
+      res(axe)
     }
   }, 50)
 })
 
-export const runAxe = (): Promise<AxeResults> => waitUntilAxeIsLoaded().then(() => axe.run(document.getElementById('exh-root'))
+export const runAxe = (): Promise<AxeResults> => waitUntilAxeIsLoaded().then(axe => axe.run(document.getElementById('exh-root'))
   .then((results: AxeResults) => {
     window.dispatchEvent(new CustomEvent('axe-test-completed', {
       detail: results,

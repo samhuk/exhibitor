@@ -21,9 +21,10 @@ const runAxe = (): Promise<AxeResults> => new Promise((res, rej) => {
   const iframeEl = ensureCompSiteHasAxeLoaded()
   const axeTestCompletedHandler = (e: { detail: AxeResults}) => {
     res(e.detail)
-    console.log(e.detail)
+    // @ts-ignore
     iframeEl.contentWindow.removeEventListener('axe-test-completed', axeTestCompletedHandler)
   }
+  // @ts-ignore
   iframeEl.contentWindow.addEventListener('axe-test-completed', axeTestCompletedHandler)
   iframeEl.contentWindow.dispatchEvent(new CustomEvent('axe-test'))
 })
@@ -132,9 +133,7 @@ const ViolationListEl = (props: {
   </ol>
 )
 
-const NoViolationsEl = (props: {
-  results: AxeResults
-}) => (
+const NoViolationsEl = () => (
   <div className="no-violations">
     <span>No accessibility violations</span>
     <i className="fas fa-check-circle" />
@@ -203,7 +202,7 @@ export const render = (props: {
       {hasResults
         ? hasViolations
           ? <ViolationListEl violationList={results.violations} />
-          : <NoViolationsEl results={results} />
+          : <NoViolationsEl />
         : null}
     </div>
   )
