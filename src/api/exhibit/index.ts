@@ -181,6 +181,7 @@ export const exhibit = <
   let eventProps: any = null
   let defaultProps: any = null
   let options: any = null
+  let testSrcPath: string = null
   const variants: { [variantName: string]: Variant } = {}
 
   const hasProps = renderFn.length > 0
@@ -188,7 +189,8 @@ export const exhibit = <
   const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
   const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, false, false, undefined> = {
-    tests: testFilePath => {
+    tests: _testSrcPath => {
+      testSrcPath = _testSrcPath
       delete (componentExhibitBuilder as any).tests
       return componentExhibitBuilder
     },
@@ -229,6 +231,7 @@ export const exhibit = <
         variants,
         variantGroups,
         srcPath: (window as any).exhibitSrcPath,
+        testSrcPath,
       }
 
       __exhibits[componentExhibit.name] = componentExhibit

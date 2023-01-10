@@ -1,6 +1,7 @@
 import { applyMiddleware, combineReducers, configureStore } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import thunkMiddleware from 'redux-thunk'
+import { e2eTestingReducer } from './componentExhibits/e2eTesting/reducer'
 import { exhibitCodeReducer } from './componentExhibits/exhibitCode/reducer'
 
 import { componentExhibitsReducer } from './componentExhibits/reducer'
@@ -17,6 +18,7 @@ export const rootReducer = combineReducers({
   metaData: metaDataReducer,
   theme: themeReducer,
   exhibitCode: exhibitCodeReducer,
+  e2eTesting: e2eTestingReducer,
 })
 
 export const store = configureStore({

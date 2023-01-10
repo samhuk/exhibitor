@@ -9,18 +9,23 @@ import {
 } from '../../common/exhibit'
 import { attachEventLoggingToProps } from '../common'
 
+const addCustomEventListener = <TEvent extends CustomEvent>(el: EventTarget, eventName: string, handler: (e: TEvent) => void) => {
+  el.addEventListener(eventName, handler as any)
+  return () => el.removeEventListener(eventName, handler as any)
+}
+
 export const useCompSiteEffect = (
   setSelectedVariantPathFn: (newPath: string) => any,
 ) => {
-  // Add a listener for the custom event for when a selected variant changes.
   useEffect(() => {
-    const onSelectedVariantChangeHandler = () => setSelectedVariantPathFn(getSelectedVariantNodePath())
-    window.addEventListener(SELECT_VARIANT_CHANGE_EVENT_NAME, onSelectedVariantChangeHandler)
-    const onStartAxeTestHandler = () => runAxe()
-    window.addEventListener(START_AXE_TEST_EVENT_NAME, onStartAxeTestHandler)
+    // Listen for the call to tell us that the selected variant changed
+    const remove1 = addCustomEventListener(window, SELECT_VARIANT_CHANGE_EVENT_NAME, () => setSelectedVariantPathFn(getSelectedVariantNodePath()))
+    // Listen for the call to run an accessibility test on the currently selected variant
+    const remove2 = addCustomEventListener(window, START_AXE_TEST_EVENT_NAME, () => runAxe())
+
     return () => {
-      window.removeEventListener(SELECT_VARIANT_CHANGE_EVENT_NAME, onSelectedVariantChangeHandler)
-      window.removeEventListener(START_AXE_TEST_EVENT_NAME, onStartAxeTestHandler)
+      remove1()
+      remove2()
     }
   }, [])
 }

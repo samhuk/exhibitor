@@ -77,18 +77,33 @@ export const runAxe = (): Promise<AxeResults> => waitUntilAxeIsLoaded().then(axe
     console.error('axe failed:', error)
   }))
 
+const getVariantPathFromLocation = () => {
+  // eslint-disable-next-line no-restricted-globals
+  if (parent !== window) {
+    // eslint-disable-next-line no-restricted-globals
+    const locationPath = parent.location.pathname
+    if (locationPath == null || locationPath.length < 2)
+      return null
+
+    return locationPath.startsWith('/') ? locationPath.slice(1) : locationPath
+  }
+
+  // eslint-disable-next-line no-restricted-globals
+  const pathFromSearch = new URLSearchParams(location.search).get('path')
+  if (pathFromSearch == null || pathFromSearch.length < 2)
+    return null
+
+  return pathFromSearch
+}
+
 export const getSelectedVariantNodePath = (): string | null => {
   if (!areComponentExhibitsLoaded())
     return null
 
-  // eslint-disable-next-line no-restricted-globals
-  const parentLocationPath = parent.location.pathname
-  if (parentLocationPath.length < 2)
-    return null
+  const variantPath = getVariantPathFromLocation()
 
-  const _locationPath = parentLocationPath.startsWith('/') ? parentLocationPath.slice(1) : parentLocationPath
   // @ts-ignore
-  const selectedNode = exh.nodes[_locationPath]
+  const selectedNode = exh.nodes[variantPath]
   return selectedNode != null && selectedNode.type === ExhibitNodeType.VARIANT
     ? selectedNode.path
     : null

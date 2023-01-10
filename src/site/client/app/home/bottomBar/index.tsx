@@ -10,6 +10,7 @@ import { DEFAULT_STATE, restoreState, saveState, State } from './persistence'
 import PropsComponent from './props'
 import CodeComponent from './code'
 import AxeComponent from './axe'
+import TestingComponent from './testing'
 import Nav from './nav'
 import HeaderRhs from './headerRhs'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
@@ -20,6 +21,7 @@ const barTypeToName: Record<BottomBarType, string> = {
   [BottomBarType.EventLog]: 'Event Log',
   [BottomBarType.Code]: 'Code',
   [BottomBarType.axe]: 'axe',
+  [BottomBarType.Testing]: 'E2E Tests',
 }
 
 const barNameToType: Record<string, BottomBarType> = {
@@ -27,6 +29,7 @@ const barNameToType: Record<string, BottomBarType> = {
   'Event Log': BottomBarType.EventLog,
   Code: BottomBarType.Code,
   axe: BottomBarType.axe,
+  'E2E Tests': BottomBarType.Testing,
 }
 
 const SEARCH_PARAM_NAME = 'bar'
@@ -64,6 +67,7 @@ export const render = () => {
   const showEventLog = showProps && (variantNode.exhibit as ComponentExhibit<true>).eventProps
   const showCode = variantNode != null // TODO
   const showAxe = variantNode != null // TODO
+  const showTesting = variantNode != null // TODO
   if (showProps)
     shownBarTypes.push(BottomBarType.Props)
   if (showEventLog)
@@ -72,6 +76,8 @@ export const render = () => {
     shownBarTypes.push(BottomBarType.Code)
   if (showAxe)
     shownBarTypes.push(BottomBarType.axe)
+  if (showTesting)
+    shownBarTypes.push(BottomBarType.Testing)
 
   const elRef = useRef<HTMLDivElement>()
 
@@ -164,6 +170,8 @@ export const render = () => {
             return <CodeComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
           case BottomBarType.axe:
             return <AxeComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
+          case BottomBarType.Testing:
+            return <TestingComponent variantNode={variantNode} />
           default:
             return null
         }

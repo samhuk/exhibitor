@@ -128,6 +128,7 @@ Optionally define a configuration file for the Exhibitor CLI:
 * Delightful Javascript API with Typescript-centric design for zero guesswork.
 * esbuild
 * Gives you the choice of React version to use
+* Accessibility testing
 * e2e testing integration **[Planned]**
 
 ## Development

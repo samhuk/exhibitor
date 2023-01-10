@@ -22,9 +22,9 @@ export const render = () => {
   )
   const showProps = selectedVariant != null && selectedVariant.exhibit.hasProps
   const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<true>).eventProps
-  const showTests = true // TODO
   const showCode = selectedVariant != null // TODO
   const showAxe = selectedVariant != null && isAxeEnabled
+  const showTesting = selectedVariant != null && selectedVariant.exhibit.testSrcPath != null
 
   const navItemOptionsList: NavItemOptions[] = []
 
@@ -61,6 +61,15 @@ export const render = () => {
       iconName: 'universal-access',
       onClick: () => dispatch(selectBottomBar(BottomBarType.axe)),
       active: selectedType === BottomBarType.axe,
+    })
+  }
+
+  if (showTesting) {
+    navItemOptionsList.push({
+      title: 'Testing',
+      iconName: 'flask',
+      onClick: () => dispatch(selectBottomBar(BottomBarType.Testing)),
+      active: selectedType === BottomBarType.Testing,
     })
   }
 
