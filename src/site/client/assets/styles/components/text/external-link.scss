@@ -1,0 +1,17 @@
+.cl-external-link {
+  display: block;
+
+  :not(i) {
+    color: $link-color;
+  }
+
+  i {
+    margin-left: 7px;
+    color: $text-color-m20;
+    display: inline-block;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

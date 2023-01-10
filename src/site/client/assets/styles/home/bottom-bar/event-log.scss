@@ -1,0 +1,20 @@
+@mixin event-log {
+  .event-log {
+    overflow: auto;
+    padding: 5px;
+    flex-grow: 1;
+
+    .no-events {
+      font-style: italic;
+      color: #999;
+    }
+
+    .item {
+      display: flex;
+
+      .id {
+        width: 50px;
+      }
+    }
+  }
+}

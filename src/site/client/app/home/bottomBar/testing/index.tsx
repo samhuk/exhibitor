@@ -2,6 +2,7 @@ import React from 'react'
 
 import { VariantExhibitNode } from '../../../../../../api/exhibit/types'
 import { RunE2eTestOptions } from '../../../../../common/e2eTesting'
+import RunButton from '../../../../common/buttons/runButton'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { runE2eTestThunk } from '../../../../store/componentExhibits/e2eTesting/reducer'
 import { LoadingState } from '../../../../store/types'
@@ -20,11 +21,7 @@ const RunButtonEl = (props: {
     }
     dispatch(runE2eTestThunk(options))
   }
-  return (
-    <button className="run-button" title="Run E2E Tests" type="button" onClick={onClick}>
-      <i className="fas fa-play" />
-    </button>
-  )
+  return <RunButton onClick={onClick} title="Run Tests" />
 }
 
 const ResultsEl = (props: {
