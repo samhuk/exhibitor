@@ -6,20 +6,29 @@ import { PlaywrightTestResults, RunE2eTestOptions } from '../../common/e2eTestin
 import { JSON_REPORTER_FILE } from '../../../common/paths'
 import { config } from '../config'
 import { Tester } from '../../../cli/config/types'
+import { tryResolve } from '../../../common/npm'
+import { logError, logStep } from '../../../cli/logging'
 
 const runPlaywrightTests = (
   options: RunE2eTestOptions,
 ) => new Promise<PlaywrightTestResults>((res, rej) => {
-  console.log('Server got this config:', config.testers)
+  // Determine where the playwright CLI js file is
+  const playwrightCliJsResolveResult = tryResolve('playwright-core/cli')
+  if (playwrightCliJsResolveResult.success === false) {
+    logError({
+      message: 'Could not execute Playwright tests.',
+      causedBy: c => `Could not resolve ${c.underline('playwright-core/cli')}. Try ${c.bold('npm i --save-dev playwright-core')}`,
+    })
+    return
+  }
+
+  const playwrightCliJsPath = playwrightCliJsResolveResult.path
+
+  logStep(c => `Server got this config:\n${c.cyan(JSON.stringify(config.testers, null, 2))}`, true)
 
   const absTestFilePath = path.join(path.dirname(options.exhibitSrcFilePath), options.testFilePath).replace(/\\/g, '/')
 
-  console.log('Executing playwright test:', absTestFilePath)
-
-  // Determine where the playwright CLI js file is
-  // TODO: Check that playwright is installed. If not, then the use has done something bad:
-  // They have added the "playwright tester" to exhibitor config, but not actually got the package installed.
-  const playwrightCliJsPath = require.resolve('playwright-core/cli')
+  logStep(c => `Executing playwright test: ${c.cyan(absTestFilePath)}`, true)
 
   // Tell playwright where to write the results JSON file
   process.env.PLAYWRIGHT_JSON_OUTPUT_NAME = JSON_REPORTER_FILE
