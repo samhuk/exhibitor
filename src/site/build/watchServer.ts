@@ -20,7 +20,7 @@ const startServer = (options: WatchServerOptions) => {
     execArgv: [`--inspect=127.0.0.1:${DEBUG_SERVER_PORT}`],
   }
 
-  // Start server process with a custom debug port of 5003. This must be kept in-sync with /.vscode/launch.json
+  // Start server process with a custom debug port of 5004. This must be kept in-sync with /.vscode/launch.json
   serverProc = fork(options.outfile, forkOptions)
 }
 

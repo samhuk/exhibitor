@@ -1,3 +1,5 @@
+import { JSONReport } from '@playwright/test/types/testReporter'
+
 export type RunE2eTestOptions = {
   /**
    * @example './button.spec.ts'
@@ -13,3 +15,5 @@ export type RunE2eTestOptions = {
   variantPath: string
   headed: boolean
 }
+
+export type PlaywrightTestResults = JSONReport

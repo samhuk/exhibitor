@@ -1,3 +1,4 @@
+import { PlaywrightTestResults } from '../../../../common/e2eTesting'
 import { LoadingState } from '../../types'
 
 export const RUN = 'e2eTesting/run'
@@ -7,7 +8,7 @@ export const RUN_COMPLETE = 'e2eTesting/runComplete'
 export type State = {
   // doFetch: boolean
   loadingState: LoadingState
-  results: any
+  results: PlaywrightTestResults
   error: any
 }
 
@@ -17,7 +18,7 @@ type RunAction = {
 
 type RunCompleteAction = {
   type: typeof RUN_COMPLETE
-  results: any
+  results: PlaywrightTestResults
   error: any
 }
 
@@ -27,7 +28,7 @@ export const Run = (): Actions => ({
   type: RUN,
 })
 
-export const RunComplete = (results: any, error: any): Actions => ({
+export const RunComplete = (results: PlaywrightTestResults, error: any): Actions => ({
   type: RUN_COMPLETE,
   results,
   error,

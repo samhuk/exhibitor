@@ -4,6 +4,7 @@ import { json, Router } from 'express'
 import * as fs from 'fs'
 import path from 'path'
 
+import { VARIANT_PATH_ENV_VAR_NAME } from '../../../common/testing'
 import { META_DATA_FILE } from '../../../common/paths'
 import { RunE2eTestOptions } from '../../common/e2eTesting'
 import { HealthcheckStatus } from '../../common/responses'
@@ -57,6 +58,7 @@ const router = Router()
 
     // Tell playwright where to write the results JSON file
     process.env.PLAYWRIGHT_JSON_OUTPUT_NAME = JSON_REPORTER_FILE
+    process.env[VARIANT_PATH_ENV_VAR_NAME] = options.variantPath
 
     // Build playwright test options
     const args = ['test', absTestFilePath, '--reporter=json']

@@ -1,5 +1,42 @@
 @mixin testing {
   .testing {
-    
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &>* {
+      margin-left: 12px; // Inline with run button
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-left: 0px;
+      padding-top: 5px;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin-bottom: 10px;
+
+      .left {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+      }
+
+      .right {
+        display: flex;
+        justify-content: start;
+
+        .tester-link {
+          display: flex;
+          align-items: center;
+
+          span {
+            margin-right: 5px;
+          }
+        }
+      }
+    }
   }
 }
