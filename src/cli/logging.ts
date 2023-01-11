@@ -46,7 +46,7 @@ export const logStep = (
     return
 
   const normalizedMessage = normalizeCliString(msg)
-  console.log(`${colors.blue('⏺')} ${normalizedMessage}`)
+  console.log(`${colors.blue('⚫')}  ${normalizedMessage}`)
 }
 
 export const logSuccess = (
@@ -58,7 +58,7 @@ export const logSuccess = (
     return
 
   const normalizedMessage = normalizeCliString(msg)
-  console.log(`${colors.green('✓')} ${normalizedMessage}`)
+  console.log(`${colors.green('✔')}  ${normalizedMessage}`)
 }
 
 export const logWarn = (

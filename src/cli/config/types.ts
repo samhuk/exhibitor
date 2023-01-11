@@ -92,7 +92,7 @@ export type Config = {
    *
    * This is useful if your component library requires esbuild plugins or loaders to be built.
    *
-   * Note that some options are excluded such as `format`, since these must be set internally by Exhibitor
+   * Note that some options are excluded such as `format`, since these must be set internally by Exhibitor.
    */
   esbuildConfig?: CustomEsbuildBuildOptions
 }
