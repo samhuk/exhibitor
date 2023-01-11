@@ -1,10 +1,10 @@
-import { exec, ExecException } from 'child_process'
 import * as fs from 'fs'
 import readline from 'readline'
 import { exit } from 'process'
 import { CliError, CliString } from '../types'
 import { baseCommand } from './common'
-import { log, logError, logStep, logSuccess, logWarn } from '../logging'
+import { logError, logStep, logSuccess, logWarn } from '../logging'
+import { npmInstallPackage } from '../../common/npm'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -17,15 +17,6 @@ const VALIDATORS = {
   isNonEmptyString: { op: (s: string) => s != null && s.length > 0, errMsg: 'Cannot be empty' },
   hasNoSpaces: { op: (s: string) => s.indexOf(' ') === -1, errMsg: 'Cannot have whitespace' },
 } as const
-
-const npmInstallPackage = (packageName: string, isDevDep: boolean = false) => new Promise<{ execError: ExecException } | null>((res, rej) => {
-  exec(`npm i ${isDevDep ? '--save-dev' : '--save'} ${packageName}`, err => {
-    if (err != null)
-      console.log({ execError: err })
-    else
-      res(null)
-  })
-})
 
 const tryGetInput = (options: {
   question: string

@@ -1,0 +1,26 @@
+@mixin code {
+  .code {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .path {
+      margin-left: 10px;
+      padding-bottom: 5px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      align-self: start;
+      border-bottom: $border;
+    }
+
+    pre {
+      margin: 0;
+      background-color: $bg-color !important;
+      padding: 0px !important;
+      padding-left: 5px !important;
+      min-height: 0;
+      min-width: 0;
+      overflow: auto;
+    }
+  }
+}

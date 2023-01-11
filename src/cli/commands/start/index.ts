@@ -13,6 +13,7 @@ import state from '../../state'
 import { logStep, logWarn } from '../../logging'
 import { CliError, CliString } from '../../types'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
+import { tryResolve } from '../../../common/npm'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -21,15 +22,6 @@ const _watchComponentLibrary = async (
 ): Promise<void> => new Promise<void>(res => {
   watchComponentLibrary(config, res)
 })
-
-const resolvePackagePath = (packageName: string): string | Error => {
-  try {
-    return require.resolve(packageName)
-  }
-  catch (e: any) {
-    return e
-  }
-}
 
 const createCheckPackagesError = (causedBy: CliString, packageName: string): CliError => ({
   message: c => `Failed to start Exhibitor. Package check failed for ${c.underline(packageName)}.`,
@@ -45,15 +37,17 @@ const isCliError = (value: any): value is CliError => (
  * resolved (if verbose mode is enabled).
  */
 const checkPackage = (packageName: string): { version: string, packagePath: string } | CliError => {
-  const packagePath = resolvePackagePath(packageName)
-  if (typeof packagePath !== 'string') {
+  const resolveResult = tryResolve(packageName)
+  if (resolveResult.success === false) {
     return createCheckPackagesError(c => `Package ${c.underline(packageName)} could not be resolved. Is it installed (if not, try ${c.bold(`npm i -S ${packageName}`)})?. Else, this could be an issue with the package.json file of the package.
     
-    Specific details: ${packagePath}`, packageName)
+    Specific details: ${resolveResult.error}`, packageName)
   }
 
+  const resolvedPath = resolveResult.path
+
   const packageJsonFilePath = path.join(
-    path.dirname(packagePath),
+    path.dirname(resolvedPath),
     'package.json',
   )
 
@@ -65,9 +59,9 @@ const checkPackage = (packageName: string): { version: string, packagePath: stri
     const packageJsonObj = JSON.parse(packageJsonString)
     const version = packageJsonObj.version
 
-    logStep(c => `Using ${c.underline(packageName)} (v${version}) from ${c.cyan(packagePath)}`, true)
+    logStep(c => `Using ${c.underline(packageName)} (v${version}) from ${c.cyan(resolvedPath)}`, true)
 
-    return { version, packagePath }
+    return { version, packagePath: resolvedPath }
   }
   catch (e) {
     logWarn(c => `Could not determine the version of ${c.underline(packageName)} being used because the package.json file could not be read or parsed (${c.cyan(packageJsonFilePath)}).
@@ -135,6 +129,9 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
 
 If you know what you are doing, then this can be ignored, but this is an indication of a non-standard setup.`)
   }
+
+  if (reactMajorVersionNumber >= 18)
+    logStep(c => `React major version is at or above version 18 (using ${c.cyan(reactMajorVersionNumber.toString())}). Using Component Site for >=18.x React.`, true)
 
   if (reactMajorVersionNumber < 18)
     logStep(c => `React major version is earlier than version 18 (using ${c.cyan(reactMajorVersionNumber.toString())}). Using Component Site for <18.x React.`, true)

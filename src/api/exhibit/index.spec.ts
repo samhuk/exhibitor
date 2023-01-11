@@ -72,6 +72,7 @@ describe('exhibit', () => {
     test('basic test', () => {
       const onCloseButtonClick = (): any => undefined
       const result = fn(Toast, 'Toast')
+        .tests('./test.spec.ts')
         .options({
           group: 'Design Phase',
         })
@@ -125,6 +126,8 @@ describe('exhibit', () => {
         name: 'Toast',
         renderFn: Toast,
         showDefaultVariant: true,
+        srcPath: undefined,
+        testSrcPath: './test.spec.ts',
         variantGroups: {
           'Variable Text Lengths': {
             name: 'Variable Text Lengths',

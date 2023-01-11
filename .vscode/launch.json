@@ -26,7 +26,7 @@
     },
     {
       "name": "Attach Server",
-      "port": 5003,
+      "port": 5004,
       "request": "attach",
       "skipFiles": [
         "<node_internals>/**"

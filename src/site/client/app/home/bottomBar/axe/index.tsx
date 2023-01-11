@@ -4,6 +4,13 @@ import { AxeResults, ImpactValue, Result } from 'axe-core'
 import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../../store'
 import { AXE_TEST_COMPLETED_EVENT_NAME, START_AXE_TEST_EVENT_NAME } from '../../../../../../common/exhibit'
+import TestResultCountSummary from '../../../../common/testReporting/testResultCountSummary'
+import SeverityIndicator, { Severity } from '../../../../common/testReporting/severityIndicator'
+import RunButton from '../../../../common/buttons/runButton'
+import ExternalLink from '../../../../common/text/externalLink'
+import Counter from '../../../../common/text/counter'
+import ErrorIcon from '../../../../common/testReporting/errorIcon'
+import SuccessIcon from '../../../../common/testReporting/successIcon'
 
 const addOneTimeCustomEventListener = <
   TEl extends EventTarget,
@@ -61,31 +68,11 @@ const WaitingForComponentRenderEl = () => (
   <div className="loading">Waiting for component to render...</div>
 )
 
-const RunButtonEl = (props: {
-  onClick: () => void
-}) => (
-  <button className="run-button" title="Rerun Accessibility Test" type="button" onClick={props.onClick}>
-    <i className="fas fa-play" />
-  </button>
-)
-
-const violationToIndex: { [impactValue in ImpactValue]: number } = {
+const violationImpactToSeverity: { [impactValue in ImpactValue]: Severity } = {
   minor: 0,
   moderate: 1,
   serious: 2,
   critical: 3,
-}
-
-const ViolationSeverityIndicatorEl = (props: {
-  severity: ImpactValue
-}) => {
-  const els: any[] = []
-  for (let i = 0; i < violationToIndex[props.severity] + 1; i += 1)
-    els.push(<div className="circle-icon" style={{ left: `${i * 20}px` }} />)
-
-  return (
-    <div className="severity-indicator">{els}</div>
-  )
 }
 
 const ViolationItemDetailsEl = (props: {
@@ -98,17 +85,14 @@ const ViolationItemDetailsEl = (props: {
     </div>
     <div className={`row impact ${props.violation.impact}`}>
       <div className="label">Impact:</div>
-      <div className="value">{props.violation.impact}<ViolationSeverityIndicatorEl severity={props.violation.impact} /></div>
+      <div className="value">{props.violation.impact}<SeverityIndicator severity={violationImpactToSeverity[props.violation.impact]} /></div>
     </div>
     <div className="row description">
       <div className="label">Description:</div>
       <div className="value">{props.violation.description}</div>
     </div>
     <div className="row documentation-link">
-      <a className="label" target="_blank" rel="noreferrer" href={props.violation.helpUrl}>
-        Documentation
-        <i className="fas fa-arrow-up-right-from-square" />
-      </a>
+      <ExternalLink className="label" text="Documentation" href={props.violation.helpUrl} />
     </div>
     <div className="nodes">
       <div className="label">Violating Nodes:</div>
@@ -131,11 +115,11 @@ const ViolationItemEl = (props: {
 
   return (
     <li className="item">
-      <i className="error-icon far fa-circle-xmark" />
+      <ErrorIcon />
       <div className="text-and-details">
         <div className="text">
           {props.violation.help}
-          <span className="node-count">{props.violation.nodes.length}</span>
+          <Counter count={props.violation.nodes.length} />
           <button
             className={`toggle-show-details-button${showDetails ? ' active' : ''}`}
             title={showDetails ? 'Hide Details' : 'Show Details'}
@@ -163,24 +147,10 @@ const ViolationListEl = (props: {
 
 const NoViolationsEl = () => (
   <div className="no-violations">
-    <span>No accessibility violations</span>
-    <i className="fas fa-check-circle" />
+    No accessibility violations
+    <SuccessIcon />
   </div>
 )
-
-const TotalNumTestsSummaryEl = (props: {
-  results: AxeResults
-}) => {
-  const numPass = props.results.passes.length
-  const numFail = props.results.violations.length
-
-  return (
-    <div className="total-num-tests-summary">
-      {numPass > 0 ? <div className="passes">{numPass} PASS</div> : null}
-      {numFail > 0 ? <div className="failures">{numFail} FAIL</div> : null}
-    </div>
-  )
-}
 
 export const render = (props: {
   exhibit: ComponentExhibit<true>
@@ -228,20 +198,18 @@ export const render = (props: {
     <div className="axe">
       <div className="header">
         <div className="left">
-          <RunButtonEl onClick={run} />
+          <RunButton onClick={run} />
           {isWaitingForComponentRender ? <WaitingForComponentRenderEl /> : null}
           {isLoading ? <LoadingEl /> : null}
         </div>
         <div className="right">
           <div className="tester-link">
             <span>Tester:</span>
-            <a className="label" target="_blank" rel="noreferrer" href="https://www.deque.com/axe/">
-              axe <i className="fas fa-arrow-up-right-from-square" />
-            </a>
+            <ExternalLink text="axe" href="https://www.deque.com/axe/" />
           </div>
         </div>
       </div>
-      {hasResults ? <TotalNumTestsSummaryEl results={results} /> : null}
+      {hasResults ? <TestResultCountSummary numPass={results.passes.length} numFail={results.violations.length} /> : null}
       {hasResults
         ? hasViolations
           ? <ViolationListEl violationList={results.violations} />

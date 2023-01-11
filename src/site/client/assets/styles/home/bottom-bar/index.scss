@@ -1,0 +1,38 @@
+@import './axe.scss';
+@import './code.scss';
+@import './event-log.scss';
+@import './props.scss';
+@import './header.scss';
+@import './testing.scss';
+
+@mixin bottom-bar {
+  flex-grow: 1;
+
+  .bottom-bar {
+    border-top: $border;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 120px;
+    flex-shrink: 0;
+
+    @include header;
+    @include props;
+    @include event-log;
+    @include code;
+    @include axe;
+    @include testing;
+
+    &.collapsed {
+      min-height: 0px;
+
+      .exh-resizer {
+        display: none;
+      }
+
+      .header {
+        border-bottom: none;
+      }
+    }
+  }
+}

@@ -1,26 +1,13 @@
 import { BoolDependant } from '@samhuk/type-helpers'
 import * as fs from 'fs'
 import path from 'path'
-import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
+import { DEFAULT_CONFIG } from '../../common/config'
 import { DEFAULT_CONFIG_FILE_NAME } from '../../common/paths'
 import { logStep, logSuccess, logWarn } from '../logging'
 import { BaseCliArgumentsOptions, CliError, CliString } from '../types'
 import { readAndParseConfig } from './read'
 
 import { Config, ResolvedConfig } from './types'
-
-export const DEFAULT_CONFIG: ResolvedConfig = {
-  include: ['./**/*.exh.ts'],
-  watch: ['./**/*'],
-  site: {
-    host: 'localhost',
-    port: 4001,
-    title: NPM_PACKAGE_CAPITALIZED_NAME,
-  },
-  verbose: false,
-  configDir: undefined,
-  rootStyle: undefined,
-}
 
 export const makePathRelativeToConfigDir = (p: string, configDir: string): string => (
   // eslint-disable-next-line prefer-regex-literals
@@ -35,6 +22,7 @@ export const resolveConfig = (config?: Config, configFilePath?: string): Resolve
 
   return {
     configDir,
+    rootConfigFile: configFilePath,
     include: makePathsRelativeToConfigDir(config?.include ?? DEFAULT_CONFIG.include, configDir),
     watch: makePathsRelativeToConfigDir(config?.watch ?? DEFAULT_CONFIG.watch, configDir),
     rootStyle: config?.rootStyle != null ? makePathRelativeToConfigDir(config.rootStyle, configDir) : undefined,
@@ -45,6 +33,7 @@ export const resolveConfig = (config?: Config, configFilePath?: string): Resolve
     },
     verbose: config?.verbose ?? DEFAULT_CONFIG.verbose,
     esbuildConfig: config?.esbuildConfig,
+    testers: config?.testers ?? DEFAULT_CONFIG.testers,
   }
 }
 

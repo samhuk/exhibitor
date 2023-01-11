@@ -2,10 +2,10 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.json",
   "include": [
-    "./index.ts"
+    "./**/*",
+    "../common/**/*"
   ],
   "compilerOptions": {
-    "module": "commonjs",
     "declaration": false,
     "sourceMap": true,
     "noEmit": false,

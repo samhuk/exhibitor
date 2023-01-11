@@ -20,7 +20,6 @@ describe('cli/config/read', () => {
     test('js', async () => {
       const result = await fn('./src/cli/config/testConfig.js')
       expect(result).toEqual({
-        $schema: './schema.json',
         rootStyle: './styles.scss',
         site: {
           port: 4002,

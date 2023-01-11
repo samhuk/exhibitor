@@ -5,6 +5,7 @@ export enum BottomBarType {
   EventLog,
   Code,
   axe,
+  Testing
 }
 
 export const READY = 'componentExhibits/ready'

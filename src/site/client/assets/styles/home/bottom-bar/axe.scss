@@ -1,0 +1,124 @@
+@mixin axe {
+  .axe {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &>* {
+      margin-left: 12px; // Inline with run button
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-left: 0px;
+      padding-top: 5px;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin-bottom: 10px;
+
+      .left {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+      }
+
+      .right {
+        display: flex;
+        justify-content: start;
+
+        .tester-link {
+          display: flex;
+          align-items: center;
+
+          span {
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+
+    .cl-test-result-count-summary {
+      margin-bottom: 10px;
+    }
+
+    .no-violations {
+      .cl-success-icon {
+        margin-left: 10px;
+      }
+    }
+
+    .violation-list {
+      min-height: 0;
+      min-width: 0;
+      overflow: auto;
+      padding-left: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-right: 0;
+
+      .item {
+        display: flex;
+
+        &:not(:last-child) {
+          margin-bottom: 1px;
+        }
+
+        .cl-error-icon {
+          margin-top: 4px;
+          margin-right: 10px;
+          align-self: start;
+        }
+
+        .text-and-details {
+          .details {
+            margin-top: 10px;
+
+            .label {
+              font-weight: bold;
+              width: 90px;
+            }
+
+            .row {
+              display: flex;
+
+              &.impact {
+                .value {
+                  display: flex;
+                  align-items: center;
+                }
+
+                .cl-severity-indicator {
+                  margin-left: 10px;
+                }
+              }
+
+              &.documentation-link {
+                .label {
+                  width: 100%;
+                }
+              }
+            }
+
+            .nodes {
+              >.label {
+                text-decoration: underline;
+                width: 100%;
+              }
+            }
+          }
+        }
+
+        .toggle-show-details-button {
+          padding: 1px 7px;
+          align-self: start;
+
+          &.active {
+            color: $link-color;
+          }
+        }
+      }
+    }
+  }
+}

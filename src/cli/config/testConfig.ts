@@ -1,7 +1,8 @@
+import { Config } from './types'
+
 const port: number = 4002
 
-module.exports = {
-  $schema: './schema.json',
+const config: Config = {
   rootStyle: './styles.scss',
   site: {
     port,
@@ -9,3 +10,5 @@ module.exports = {
   },
   verbose: true,
 }
+
+export default config

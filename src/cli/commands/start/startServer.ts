@@ -1,6 +1,7 @@
 import { ChildProcess, fork } from 'child_process'
 import path from 'path'
 import * as fs from 'fs'
+import { CONFIG_FILE_PATH_ENV_VAR_NAME } from '../../../common/config'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
 import { SITE_SERVER_OUTFILE } from '../../../common/paths'
 import { determineIfPortFree } from '../../common/isPortFree'
@@ -31,6 +32,7 @@ export const startServer = async (
     ...process.env,
     SERVER_PORT: portStr,
     SERVER_HOST: config.site.host,
+    [CONFIG_FILE_PATH_ENV_VAR_NAME]: config.rootConfigFile,
   }
 
   logStep(c => `Determining if port ${c.cyan(config.site.port.toString())} is available to use for the Exhibitor server.`, true)

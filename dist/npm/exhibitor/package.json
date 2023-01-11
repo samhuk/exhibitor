@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "2.0.13",
+  "version": "2.0.14-beta.5",
   "description": "Snappy and delightful React component workshop",
   "main": "./lib/api/api/index.js",
   "types": "./lib/api/api/index.d.ts",
@@ -18,7 +18,9 @@
     "chokidar": "^3.5.3",
     "chokidar-debounced": "^1.0.4",
     "commander": "^9.4.1",
+    "cors": "^2.8.5",
     "esbuild": "^0.15.14",
+    "express": "^4.18.2",
     "deepmerge": "^4.2.2",
     "esbuild-sass-plugin": "^2.4.1",
     "globsie": "^0.0.12",

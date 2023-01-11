@@ -3,17 +3,13 @@ import { watch } from 'chokidar-debounced'
 
 import { printBuildResult } from '../../common/esbuilder'
 import { setMetadata } from '../../common/metadata'
+import { tryResolve } from '../../common/npm'
 import { CustomBuildResult } from '../../common/types'
 import { ResolvedConfig } from '../config/types'
 import { logStep, logSuccess } from '../logging'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
 
 const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
-
-const checkWhetherAxeIsInstalled = () => {
-  const _path = require.resolve('axe-core')
-  return _path != null
-}
 
 const _createIndexExhTsFile = async (
   config: ResolvedConfig,
@@ -23,7 +19,7 @@ const _createIndexExhTsFile = async (
   setMetadata({
     includedFilePaths,
     siteTitle: config.site.title,
-    isAxeEnabled: checkWhetherAxeIsInstalled(),
+    isAxeEnabled: tryResolve('axe-core').success === true,
   })
   return { includedFilePaths }
 }

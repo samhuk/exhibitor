@@ -9,6 +9,8 @@
  */
 import { exhibit } from './exhibit'
 
+export { preparePlaywrightTest } from './test/playwright'
+
 export * from './types'
 
 export default exhibit

@@ -174,6 +174,10 @@ export type ComponentExhibit<
 > = {
   name: string
   srcPath: string
+  /**
+   * Path to test source file, relative to `srcPath`.
+   */
+  testSrcPath: string
   groupName?: string
   renderFn: ReactComponent<TProps>
 } & BoolDependant<
