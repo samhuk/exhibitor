@@ -48,7 +48,7 @@ export const buildIndexExhTsFile = (config: ResolvedConfig, includedFilePaths: s
       '.woff': 'file',
       '.woff2': 'file',
     },
-    ...config.esbuildConfig,
+    ...config.esbuildOptions,
   }).then(result => ({ buildResult: result })))
 }
 

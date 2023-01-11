@@ -32,7 +32,7 @@ export const resolveConfig = (config?: Config, configFilePath?: string): Resolve
       title: config?.site?.title != null ? config.site.title : DEFAULT_CONFIG.site.title,
     },
     verbose: config?.verbose ?? DEFAULT_CONFIG.verbose,
-    esbuildConfig: config?.esbuildConfig,
+    esbuildOptions: config?.esbuildOptions,
     testers: config?.testers ?? DEFAULT_CONFIG.testers,
   }
 }

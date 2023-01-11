@@ -94,7 +94,7 @@ export type Config = {
    *
    * Note that some options are excluded such as `format`, since these must be set internally by Exhibitor.
    */
-  esbuildConfig?: CustomEsbuildBuildOptions
+  esbuildOptions?: CustomEsbuildBuildOptions
 }
 
 export type ResolvedConfig = {
@@ -109,6 +109,6 @@ export type ResolvedConfig = {
   }
   verbose: boolean
   rootStyle: string | undefined | null
-  esbuildConfig?: CustomEsbuildBuildOptions
+  esbuildOptions?: CustomEsbuildBuildOptions
   testers: TesterOptions[]
 }
