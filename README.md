@@ -1,4 +1,4 @@
-<h1 align="center">exhibitor</h1>
+<h1 align="center">Exhibitor</h1>
 <p align="center">
   <em>Snappy and delightful React component workshop</em>
 </p>
@@ -10,8 +10,8 @@
   <a href="https://img.shields.io/badge/License-MIT-green.svg" target="_blank">
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="license" />
   </a>
-  <a href="https://badge.fury.io/js/ts-pg-orm.svg" target="_blank">
-    <img src="https://badge.fury.io/js/ts-pg-orm.svg" alt="npm version" />
+  <a href="https://badge.fury.io/js/exhibitor.svg" target="_blank">
+    <img src="https://badge.fury.io/js/exhibitor.svg" alt="npm version" />
   </a>
 </p>
 
