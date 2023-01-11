@@ -4,8 +4,14 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/samhuk/exhibitor/actions/workflows/build.yaml/badge.svg" target="_blank">
+    <img src="https://github.com/samhuk/exhibitor/actions/workflows/build.yaml/badge.svg" alt="ci status" />
+  </a>
   <a href="https://img.shields.io/badge/License-MIT-green.svg" target="_blank">
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="license" />
+  </a>
+  <a href="https://badge.fury.io/js/ts-pg-orm.svg" target="_blank">
+    <img src="https://badge.fury.io/js/ts-pg-orm.svg" alt="npm version" />
   </a>
 </p>
 
@@ -19,66 +25,29 @@ Exhibitor is a React component workshop. It allows you to see your individual Re
 
 ## Usage Overview
 
-Exhibitor can be added to an existing React codebase that contains components or be used to bootstrap one from scratch. Ensure you have [Node.js version >14.x](https://nodejs.org/en/) installed.
+Exhibitor can be added to an existing React codebase that contains components or be used to bootstrap one from scratch. See the [Exhibitor Wiki](https://github.com/samhuk/exhibitor/wiki) for more information.
 
-### From scratch
-
-For MacOS and Linux (and WSL):
-
-```bash
-mkdir my-component-library &&\
-  cd my-component-library &&\
-  npm init -y &&\
-  npm i -S exhibitor &&\
-  npx exhibitor init
-```
-
-This will create a new directory called "my-component-library" and initialize a basic React component library with Exhibitor integration.
-
-For Windows:
-
-```batch
-mkdir my-component-library && cd my-component-library && npm init -y && npm i -S exhibitor && npx exhibitor init
-```
-
-### Existing codebase
-
-Ensure your existing React codebase has `react` and `react-dom` installed, i.e. `npm i -S react react-dom`.
+If you already have React components, using Exhibitor is as easy as this:
 
 ```
-npm i -S exhibitor
+npm install --save-dev exhibitor
 ```
 
-For a functional React component:
-
-```tsx
-// src/button.tsx
-import React from 'react'
-import './button.scss'
-export const render = (props: { onClick: ..., color: ... }) => (
-  <button>...</button>
-)
-export default render
-```
-
-Declare exhibitions with the Exhibitor Javascript API:
+Declare exhibitions:
 
 ```typescript
-// src/button.exh.ts
+// src/button.exh.ts (or .js, .jsx, .tsx, ...)
 import exhibit from 'exhibitor'
-import Button from './button'
+import Button from './button' // I.e. button.tsx
 
 exhibit(Button, 'Button')
   // Define any default values for props
   .defaults({
     onClick: () => undefined,
     color: 'default',
-    ...
   })
   // Define which props correspond to events of the component
-  .events({
-    onClick: true,
-  })
+  .events({ onClick: true })
   // Define miscellaneous options
   .options({ group: 'Final Review' })
   // Define variants with varying prop values
@@ -86,7 +55,6 @@ exhibit(Button, 'Button')
     ...defaultProps,
     color: 'green',
   }))
-  ...
   // Group variants together
   .group('Large', ex => ex
     .defaults(p => {
@@ -95,10 +63,8 @@ exhibit(Button, 'Button')
     })
     .variant('Green', p => {
       ...p,
-
-    })
-    ...
-  ...
+      color: 'green'
+    }))
   .build()
 ```
 
@@ -106,18 +72,6 @@ Start exhibitor:
 
 ```
 npx exhibitor start
-```
-
-Optionally define a configuration file for the Exhibitor CLI:
-
-```jsonc
-// exh.config.json
-{
-  "$schema": "https://raw.githubusercontent.com/samhuk/exhibitor/master/src/cli/config/schema.json", 
-  "include": ["./src/**/*.exh.ts"],
-  "watch": ["./src/**/*"],
-  ...
-}
 ```
 
 ## Major Features
