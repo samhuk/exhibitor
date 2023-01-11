@@ -1,4 +1,5 @@
 import { build } from 'esbuild'
+import { nodeExternalsPlugin } from 'esbuild-node-externals'
 
 import { createBuilder } from '../../common/esbuilder'
 import { SITE_SERVER_ENTRYPOINT } from '../../common/paths'
@@ -49,8 +50,18 @@ const createServerBuilder = (options: BuildServerOptions) => () => build({
   metafile: true,
   incremental: options.incremental,
   platform: 'node',
-  external: ['livereload-js'],
-  plugins: [nativeNodeModulesPlugin],
+  external: ['livereload-js', 'playwright-core/cli'],
+  plugins: [
+    nativeNodeModulesPlugin,
+    nodeExternalsPlugin({
+      packagePath: './dist/npm/exhibitor/package.json',
+      /* pako package breaks the CLI when kept as external. If it is, it's import
+       * statement gets converted into "require(...pako.esm.mjs)", which then
+       * causes an ERR_REQUIRE_ESM error.
+       */
+      allowList: ['pako'],
+    }),
+  ],
 }).then(result => ({ buildResult: result }))
 
 export const buildServer = (options: BuildServerOptions) => createBuilder('server', options.verbose, createServerBuilder(options))()

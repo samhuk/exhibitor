@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { JSONReport } from '@playwright/test/types/testReporter'
 
 export type RunE2eTestOptions = {

@@ -1,4 +1,4 @@
-import { OmitTyped } from '@samhuk/type-helpers'
+import { OmitTyped, TypeDependantBaseIntersection } from '@samhuk/type-helpers'
 import { BuildOptions } from 'esbuild'
 
 export type CustomEsbuildBuildOptions = OmitTyped<
@@ -13,6 +13,19 @@ export type CustomEsbuildBuildOptions = OmitTyped<
   | 'sourcemap'
   | 'metafile'
   | 'incremental'
+>
+
+export enum Tester {
+  PLAYWRIGHT = 'playwright'
+}
+
+export type TesterOptions<TTester extends Tester = Tester> = TypeDependantBaseIntersection<
+  Tester,
+  {
+    [Tester.PLAYWRIGHT]: {},
+  },
+  TTester,
+  'type'
 >
 
 export type Config = {
@@ -63,6 +76,18 @@ export type Config = {
    */
   rootStyle?: string
   /**
+   * List of testers to enable.
+   *
+   * @example
+   *
+   * {
+   *   "testers": [
+   *     { type: 'playwright' }
+   *   ]
+   * }
+   */
+  testers?: TesterOptions[]
+  /**
    * Custom options to supply to esbuild for building your component library.
    *
    * This is useful if your component library requires esbuild plugins or loaders to be built.
@@ -74,6 +99,7 @@ export type Config = {
 
 export type ResolvedConfig = {
   configDir: string
+  rootConfigFile: string | null | undefined
   include: string[]
   watch: string[]
   site: {
@@ -84,4 +110,5 @@ export type ResolvedConfig = {
   verbose: boolean
   rootStyle: string | undefined | null
   esbuildConfig?: CustomEsbuildBuildOptions
+  testers: TesterOptions[]
 }

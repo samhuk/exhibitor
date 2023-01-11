@@ -172,7 +172,7 @@ export const readAndParseConfig = async (
   let configObj = await getConfigObj(resolvedConfigFilePath)
 
   if (resolvedConfigFilePath.endsWith('package.json')) {
-    logStep('Configuration file path is a package.json file. Looking for \'.exhibitot\' property.', true)
+    logStep('Configuration file path is a package.json file. Looking for \'.exhibitor\' property.', true)
     configObj = (configObj as any).exhibitor
   }
 

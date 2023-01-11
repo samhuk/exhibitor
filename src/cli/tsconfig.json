@@ -5,7 +5,6 @@
     "./index.ts"
   ],
   "compilerOptions": {
-    "module": "commonjs",
     "declaration": false,
     "sourceMap": true,
     "noEmit": false,

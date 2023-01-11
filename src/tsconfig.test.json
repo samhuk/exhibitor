@@ -6,7 +6,6 @@
   ],
   "compilerOptions": {
     "jsx": "react",
-    "module": "CommonJS",
     "declaration": false,
     "sourceMap": true,
     "noEmit": false,

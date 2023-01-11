@@ -2,19 +2,23 @@ import { fork } from 'child_process'
 import path from 'path'
 import * as fs from 'fs'
 import { VARIANT_PATH_ENV_VAR_NAME } from '../../../common/testing'
-import { RunE2eTestOptions } from '../../common/e2eTesting'
+import { PlaywrightTestResults, RunE2eTestOptions } from '../../common/e2eTesting'
 import { JSON_REPORTER_FILE } from '../../../common/paths'
+import { config } from '../config'
+import { Tester } from '../../../cli/config/types'
 
-export const runTests = async (
+const runPlaywrightTests = (
   options: RunE2eTestOptions,
-) => new Promise((res, rej) => {
-  console.log(options)
+) => new Promise<PlaywrightTestResults>((res, rej) => {
+  console.log('Server got this config:', config.testers)
 
   const absTestFilePath = path.join(path.dirname(options.exhibitSrcFilePath), options.testFilePath).replace(/\\/g, '/')
 
   console.log('Executing playwright test:', absTestFilePath)
 
   // Determine where the playwright CLI js file is
+  // TODO: Check that playwright is installed. If not, then the use has done something bad:
+  // They have added the "playwright tester" to exhibitor config, but not actually got the package installed.
   const playwrightCliJsPath = require.resolve('playwright-core/cli')
 
   // Tell playwright where to write the results JSON file
@@ -43,3 +47,12 @@ export const runTests = async (
     res(JSON.parse(fs.readFileSync(JSON_REPORTER_FILE, { encoding: 'utf8' })))
   })
 })
+
+export const runTests = (
+  options: RunE2eTestOptions,
+) => {
+  if (config.testers.findIndex(tester => tester.type === Tester.PLAYWRIGHT) !== -1)
+    return runPlaywrightTests(options)
+
+  return Promise.resolve(null)
+}

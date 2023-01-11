@@ -45,8 +45,15 @@
       "type": "string"
     },
     "verbose": {
-      "description": "Enables/disables verbose output for Exhibitor CLI",
+      "description": "Enables/disables verbose output for Exhibitor CLI.",
       "type": "boolean"
+    },
+    "testers": {
+      "type": "array",
+      "description": "List of the testers to integrate with Exhibitor.",
+      "default":  [
+        { "type": "playwright" }
+      ]
     }
   }
 }

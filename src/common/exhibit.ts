@@ -19,11 +19,16 @@ export const areComponentExhibitsLoaded = () => {
 }
 
 export const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise(res => {
+  if (areComponentExhibitsLoaded()) {
+    res()
+    return
+  }
+
   let i = 0
   const interval = setInterval(() => {
     i += 1
     if (i > 100) {
-      console.error('component exhibits didnt load.')
+      console.error('component exhibits didnt load. Is the index.exh.js file available?')
       clearTimeout(interval)
     }
     if (areComponentExhibitsLoaded()) {
@@ -56,7 +61,7 @@ export const waitUntilAxeIsLoaded = (): Promise<any> => new Promise((res, rej) =
   const interval = setInterval(() => {
     i += 1
     if (i > 100) {
-      console.error('component exhibits didnt load :(')
+      console.error('axe didnt load. Is the axe.min.js file available?')
       clearTimeout(interval)
     }
     if (isAxeLoaded()) {
@@ -97,14 +102,20 @@ const getVariantPathFromLocation = () => {
 }
 
 export const getSelectedVariantNodePath = (): string | null => {
+  // Should never happen
   if (!areComponentExhibitsLoaded())
     return null
 
   const variantPath = getVariantPathFromLocation()
 
+  // No path => nothing selected
+  if (variantPath == null)
+    return null
+
   // @ts-ignore
   const selectedNode = exh.nodes[variantPath]
   return selectedNode != null && selectedNode.type === ExhibitNodeType.VARIANT
     ? selectedNode.path
-    : null
+    // Path defined but variant node not found
+    : undefined
 }
