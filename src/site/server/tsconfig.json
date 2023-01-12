@@ -6,5 +6,7 @@
     "../common/**/*",
     "../../common/**/*"
   ],
-  "compilerOptions": { }
+  "compilerOptions": {
+    "noEmit": true
+  }
 }

@@ -19,7 +19,9 @@ const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_N
 const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
 export const buildIndexExhTsFile = (config: ResolvedConfig, includedFilePaths: string[]) => {
+  // Create an OR-list regex of the included *.exh.ts files
   const exhFilesRegExp = new RegExp(includedFilePaths.map(p => pathToRegexp(p)).map(r => r.source).join('|'))
+
   return createBuilder('component library', config.verbose, () => esbuild.build({
     entryPoints: [bundleInputFilePath],
     outfile: bundleOutputFilePath,
@@ -36,6 +38,13 @@ export const buildIndexExhTsFile = (config: ResolvedConfig, includedFilePaths: s
       {
         name: 'exhibitor',
         setup: build => {
+          /* For anywhere in the index.exh.ts file that looks like "import ... from '{some path}'",
+           * replace that line with "window.exhibitSrcPath = '{some path}'". This allows each
+           * call to the exhibit() function to be "tagged" with where it was called from. The exhibit()
+           * function then references "window.exhibitSrcPath" to carry along that tag to the client,
+           * where it's used very extensively. A component variant in the client knowing where
+           * it was defined in the source code unlocks a huge amount of functionality.
+           */
           build.onResolve({ filter: exhFilesRegExp }, args => ({ path: args.path, namespace: 'exhibitor' }))
           build.onLoad({ filter: /.*/, namespace: 'exhibitor' }, args => ({
             contents: `window.exhibitSrcPath = '${args.path}'`,

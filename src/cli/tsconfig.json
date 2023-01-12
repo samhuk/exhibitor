@@ -6,10 +6,6 @@
     "../common/**/*"
   ],
   "compilerOptions": {
-    "declaration": false,
-    "sourceMap": true,
-    "noEmit": false,
-    "skipLibCheck": true,
     "outDir": "../../build/cli"
   }
 }
