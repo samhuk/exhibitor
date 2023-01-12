@@ -92,7 +92,7 @@ clean-api:
 	rm -rf ./build/api
 
 _build-api:
-	npx tsc -p ./src/api/tsconfig.json
+	npx tsc -p ./src/api/tsconfig-dist.json
 
 build-api:
 	@$(MAKE) --no-print-directory \
@@ -104,7 +104,7 @@ clean-cli-build:
 	rm -rf ./build/cli/build
 
 _build-cli-build:
-	npx tsc -p ./src/cli/build/tsconfig.json
+	npx tsc -p ./src/cli/build/bin/tsconfig-dist.json
 
 build-cli-build:
 	@$(MAKE) --no-print-directory \
@@ -213,25 +213,25 @@ populate-dist:
 	rm -rf ./dist/npm/exhibitor/lib/
 
 	mkdir -p dist/npm/exhibitor/lib/site/server
-	cp -r ./build/site/server/ ./dist/npm/exhibitor/lib/site/server
+	cp -r ./build/site/server/ ./dist/npm/exhibitor/lib/site
 
 	mkdir -p dist/npm/exhibitor/lib/site/client
-	cp -r build/site/client/ dist/npm/exhibitor/lib/site/client
+	cp -r build/site/client/ dist/npm/exhibitor/lib/site
 
 	mkdir -p dist/npm/exhibitor/lib/api
-	cp -r build/api/ dist/npm/exhibitor/lib/api
+	cp -r build/api/ dist/npm/exhibitor/lib
 
 	mkdir -p dist/npm/exhibitor/lib/cli
-	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli
+	cp -r build/cli/cli/ dist/npm/exhibitor/lib
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site/react/build
-	cp -r build/comp-site/react/build/ dist/npm/exhibitor/lib/comp-site/react/build
+	cp -r build/comp-site/react/build/ dist/npm/exhibitor/lib/comp-site/react
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-prebuild
-	cp -r build/comp-site/react/site-prebuild/ dist/npm/exhibitor/lib/comp-site/react/site-prebuild
+	cp -r build/comp-site/react/site-prebuild/ dist/npm/exhibitor/lib/comp-site/react
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-sub18-prebuild
-	cp -r build/comp-site/react/site-sub18-prebuild/ dist/npm/exhibitor/lib/comp-site/react/site-sub18-prebuild
+	cp -r build/comp-site/react/site-sub18-prebuild/ dist/npm/exhibitor/lib/comp-site/react
 
 prepublish:
 	npm install
