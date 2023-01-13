@@ -238,6 +238,7 @@ populate-dist:
 	cp -r build/comp-site/react/site-sub18-prebuild/ dist/npm/exhibitor/lib/comp-site/react
 
 prepublish:
+	@date +%s > _time_$@.txt
 	npm install
 	@$(MAKE) --no-print-directory \
 		check-dist-outer-npm-deps \
@@ -246,6 +247,8 @@ prepublish:
 		build-site-ts \
 		build-all \
 		populate-dist
+	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"
+	@rm _time_$@.txt
 
 # -- Version incrementers
 patch:
