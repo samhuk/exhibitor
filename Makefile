@@ -1,5 +1,9 @@
 VERSION = $(shell cat version.txt)
 
+# -- Dist and outer npm dependency comparison check
+check-dist-outer-npm-deps:
+	npx ts-node ./scripts/checkDistOuterNpmDeps.ts
+
 # -- JS/TS linting
 
 lint:
@@ -236,6 +240,7 @@ populate-dist:
 prepublish:
 	npm install
 	@$(MAKE) --no-print-directory \
+		check-dist-outer-npm-deps \
 		lint-errors-only \
 		ts-unit-tests \
 		build-site-ts \

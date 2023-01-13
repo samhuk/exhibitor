@@ -52,6 +52,7 @@
     }
   },
   "rules": {
+    "default-case": "off",
     "semi": [2, "never"],
     "prefer-destructuring": "off",
     "import/extensions": "off",
