@@ -13,6 +13,10 @@
     "email": "samhughes1701@hotmail.co.uk",
     "url": "http://samhuk.com/about"
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/samhuk"
+  },
   "repository": "https://github.com/samhuk/exhibitor",
   "dependencies": {
     "chokidar": "^3.5.3",
@@ -29,5 +33,15 @@
     "clone-deep": "^4.0.1",
     "ts-node": "^10.9.1",
     "axe-core": "^4.6.2"
+  },
+  "keywords": [
+    "react",
+    "component",
+    "workshop",
+    "storybook",
+    "ladle"
+  ],
+  "engines": {
+    "node": ">=14"
   }
 }
