@@ -1,17 +1,11 @@
-import { BuildResult } from 'esbuild'
+import { Config } from '../../../common/config/types'
 
 export type BuildOptions = {
   sourceMap: boolean
-  incremental: boolean
   gzip: boolean
   verbose: boolean
   skipPrebuild: boolean
   reactMajorVersion: number
+  config: Config
+  onIndexExhTsFileCreate?: (file: { includedFilePaths: string[] }) => void
 }
-
-export type BuildOutput = {
-  path: string
-  sizeBytes: number
-}
-
-export type CustomBuildResult = { buildResult: BuildResult, additionalOutputs?: BuildOutput[] }

@@ -61,7 +61,7 @@ export const printBuildResult = (result: BuildResult, startTime: number, additio
   // Metrics
   log(c => `  ${c.underline('Metrics:')}`)
   log(c => `    dt: ${c.bold(`${dtMs} ms`)}`)
-  console.log(`    Compression ratio: ${(totalInputFileSizeBytes / totalOutputFileSizeBytes).toFixed(2)}`)
+  log(`    Compression ratio: ${(totalInputFileSizeBytes / totalOutputFileSizeBytes).toFixed(2)}`)
 }
 
 export const createBuilder = (
@@ -69,6 +69,26 @@ export const createBuilder = (
   verbose: boolean,
   builder: () => Promise<CustomBuildResult>,
 ): () => Promise<CustomBuildResult> => () => {
+  logStep(`Building ${buildName}`)
+  const startTime = Date.now()
+  return builder()
+    .then(result => {
+      if (verbose) {
+        logSuccess('Done. Results:')
+        printBuildResult(result.buildResult, startTime, result.additionalOutputs)
+      }
+      return result
+    })
+    .catch(err => {
+      throw err
+    })
+}
+
+export const build = (
+  buildName: string,
+  verbose: boolean,
+  builder: () => Promise<CustomBuildResult>,
+): Promise<CustomBuildResult> => {
   logStep(`Building ${buildName}`)
   const startTime = Date.now()
   return builder()

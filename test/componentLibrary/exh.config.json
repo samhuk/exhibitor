@@ -1,5 +1,5 @@
 {
-  "$schema": "../../src/cli/config/schema.json",
+  "$schema": "../../src/common/config/schema.json",
   "rootStyle": "./styles.scss",
   "site": {
     "port": 4002,

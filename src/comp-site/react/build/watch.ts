@@ -1,51 +1,67 @@
 import chokidar, { FSWatcher } from 'chokidar'
-import { watch as _watch } from 'chokidar-debounced'
+import { watch } from 'chokidar-debounced'
 
-import { printBuildResult } from '../../../common/esbuilder'
-import { COMP_SITE_REACT_SITE_DIR } from '../../../common/paths'
-import { build } from './build'
-import { CustomBuildResult } from './types'
+const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
 
-const startRebuildWatch = (buildResult: CustomBuildResult) => {
-  _watch(() => {
-    console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding client...`)
+const _createIndexExhTsFile = async (
+  config: Config,
+) => {
+  const { includedFilePaths } = await createIndexExhTsFile(config.include, config.rootStyle)
+  logStep('Creating metadata.json file', true)
+  setMetadata({
+    includedFilePaths,
+    siteTitle: config.site.title,
+    isAxeEnabled: tryResolve('axe-core').success === true,
+  })
+  return { includedFilePaths }
+}
+
+const rebuildIteration = async (
+  buildResult: CustomBuildResult,
+  config: Config,
+) => {
+  logStep(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
+
+  try {
     const startTime = Date.now()
-    // Rebuild client
-    buildResult.buildResult.rebuild()
-      .then(_result => {
-        console.log(`(${Date.now() - startTime} ms) Done.`)
-        printBuildResult(_result, startTime)
-        console.log('Watching for changes...')
-      })
-      .catch(() => undefined) // Prevent from exiting the process
-  }, [COMP_SITE_REACT_SITE_DIR], 150, () => console.log('Watching for changes...'))
+    await _createIndexExhTsFile(config)
+    const rebuildResult = await buildResult.buildResult.rebuild()
+    logSuccess(`(${Date.now() - startTime} ms) Done.${!config.verbose ? ' Watching for changes...' : ''}`)
+    // If verbose, print build info on every rebuild
+    if (config.verbose) {
+      printBuildResult(rebuildResult, startTime)
+      logStep('Watching for changes...')
+    }
+  }
+  catch {
+    // Silence errors, since esbuild prints them already.
+  }
 }
 
 let initialBuildWatcher: FSWatcher = null
-export const watch = () => {
-  // Try initial build attempt
-  build({
-    gzip: false,
-    incremental: true,
-    sourceMap: true,
-    verbose: true,
-    /* The comp-site build watch functionality is only ever used in dev, so we
-     * can always skip the prebuild when watching and build main.tsx straight to
-     * the comp-site bundle.
-     */
-    skipPrebuild: true,
-    reactMajorVersion: 18,
-  })
-    // If initial build successful, start rebuild watch
-    .then(result => {
-      initialBuildWatcher?.close()
-      startRebuildWatch(result)
+export const watchComponentLibrary = async (
+  config: Config,
+  onFirstSuccessfulBuild?: () => void,
+) => {
+  try {
+    await _createIndexExhTsFile(config)
+    const buildResult = await buildIndexExhTsFile(config)()
+    initialBuildWatcher?.close()
+    const rebuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
+    watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => {
+      console.log('Watching for changes...')
+      onFirstSuccessfulBuild?.()
     })
-    // Else, watch for changes until we get a successful initial build
-    .catch(() => {
-      if (initialBuildWatcher != null)
-        return
-      initialBuildWatcher = chokidar.watch([COMP_SITE_REACT_SITE_DIR])
-      _watch(() => watch(), initialBuildWatcher, 150, () => console.log('Watching for changes...'))
-    })
+  }
+  catch {
+    if (initialBuildWatcher != null)
+      return
+    initialBuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
+    watch(
+      () => watchComponentLibrary(config, onFirstSuccessfulBuild),
+      initialBuildWatcher,
+      150,
+      () => console.log('Watching for changes...'),
+    )
+  }
 }

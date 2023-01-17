@@ -3,19 +3,26 @@
     "clean-site-build": "rimraf ./build/site/build",
     "_build-site-build": "tsc -p ./src/site/build/tsconfig.json",
     "build-site-build": "npm run clean-site-build && npm run _build-site-build",
+
     "watch-site-client-dev": "env-cmd -e dev node ./build/site/build/site/build/bin/watchClient.js",
     "watch-site-server-dev": "env-cmd -e dev node ./build/site/build/site/build/bin/watchServer.js",
+
     "clean-component-library-bin": "rimraf ./build/component-library-bin",
     "_build-component-library-bin": "tsc -p ./src/cli/componentLibrary/bin/tsconfig.json",
     "build-component-library-bin": "npm run clean-component-library-bin && npm run _build-component-library-bin",
     "watch-component-library": "env-cmd -e dev node ./build/component-library-bin/cli/componentLibrary/bin/watch.js",
+
     "clean-comp-site-build": "rimraf ./build/comp-site/build",
+
     "_build-comp-site-react-build": "tsc -p ./src/comp-site/react/build/tsconfig.json",
     "build-comp-site-react-build": "npm run clean-comp-site-build && npm run _build-comp-site-react-build",
+
     "watch-comp-site-react-dev": "env-cmd -e dev node ./build/comp-site/react/build/comp-site/react/build/bin/watch.js",
+
     "build-start": "concurrently -m 3 -n \"bsb,bcl,bcs\" -c \"red,green,blue\" \"npm run build-site-build\" \"npm run build-component-library-bin\" \"npm run build-comp-site-react-build\"",
     "_start": "concurrently -m 4 -n \"comp-lib ,site-ui  ,site-api ,comp-site\" -c \"red,green,blue,magenta\" \"npm run watch-component-library\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\" \"npm run watch-comp-site-react-dev\"",
     "start": "npm run build-start && npm run _start",
+
     "cli-dev": "env-cmd -e dev node ./build/cli/cli/index.js start --verbose",
     "cli-dev-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json --verbose",
     "cli-dev-config-js": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.js --verbose",

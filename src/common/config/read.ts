@@ -4,8 +4,8 @@ import { pathToFileURL } from 'url'
 import type { Service as TsNodeService } from 'ts-node'
 import parseJson from '@samhuk/parse-json'
 import stripJsonComments from '@samhuk/strip-json-comments'
-import { Config } from './types'
-import { logStep } from '../logging'
+import { UnresolvedConfig } from './types'
+import { logStep } from '../../cli/logging'
 
 let registeredCompilerPromise: Promise<TsNodeService>
 
@@ -125,7 +125,7 @@ const readJsonConfig = (
 
 const getConfigObj = (
   configFilePath: string,
-): Promise<Config> => {
+): Promise<UnresolvedConfig> => {
   if (configFilePath.endsWith('.json')) {
     logStep('Configuration file is *.json. Parsing.', true)
     return readJsonConfig(configFilePath)
@@ -166,12 +166,12 @@ const resolveConfigFilePath = (
  */
 export const readAndParseConfig = async (
   configFilePath: string,
-): Promise<Config> => {
-  const resolvedConfigFilePath = resolveConfigFilePath(configFilePath, process.cwd())
+): Promise<UnresolvedConfig> => {
+  const ConfigFilePath = resolveConfigFilePath(configFilePath, process.cwd())
 
-  let configObj = await getConfigObj(resolvedConfigFilePath)
+  let configObj = await getConfigObj(ConfigFilePath)
 
-  if (resolvedConfigFilePath.endsWith('package.json')) {
+  if (ConfigFilePath.endsWith('package.json')) {
     logStep('Configuration file path is a package.json file. Looking for \'.exhibitor\' property.', true)
     configObj = (configObj as any).exhibitor
   }

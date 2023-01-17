@@ -1,19 +1,19 @@
 VERSION = $(shell cat version.txt)
 
-# -- Dist and outer npm dependency comparison check
+#region Dist and outer npm dependency comparison check
 check-dist-outer-npm-deps:
 	npx ts-node ./scripts/checkDistOuterNpmDeps.ts
+#endregion
 
-# -- JS/TS linting
-
+#region JS/TS linting
 lint:
 	npx eslint -c .eslintrc.json ./src --ext .ts,.tsx
 
 lint-errors-only:
 	npx eslint -c .eslintrc.json ./src --ext .ts,.tsx --quiet
+#endregion
 
-# -- JS/TS unit tests
-
+#region JS/TS unit tests
 clean-ts-unit-tests:
 	rm -rf ./build-test
 
@@ -28,8 +28,9 @@ ts-unit-tests:
 		clean-ts-unit-tests \
 		build-ts-unit-tests \
 		run-ts-unit-tests
+#endregion
 
-# -- Site TS build
+#region Site TS Build
 build-site-client-ts:
 	npx tsc -p ./src/site/client/tsconfig.json
 	
@@ -40,9 +41,9 @@ build-site-ts:
 	@$(MAKE) --no-print-directory \
 		build-site-client-ts \
 		build-site-server-ts
+#endregion
 
-# -- Site builder TS build
-
+#region Site Builder TS Build
 clean-site-build:
 	rm -rf ./build/site/build
 
@@ -53,9 +54,9 @@ build-site-build:
 	@$(MAKE) --no-print-directory \
 		clean-site-build \
 		_build-site-build
+#endregion
 
-# -- Site build
-
+#region Site Build
 clean-site:
 	rm -rf ./build/site/client && rm -rf ./build/site/server
 
@@ -90,8 +91,9 @@ build-site-rel:
 		clean-site \
 		_build-site-client-rel \
 		_build-site-server-rel
+#endregion
 
-# -- API TS build
+#region API TS Build
 clean-api:
 	rm -rf ./build/api
 
@@ -102,8 +104,9 @@ build-api:
 	@$(MAKE) --no-print-directory \
 		clean-api \
 		_build-api
+#endregion
 
-# -- CLI builder TS build
+#region CLI Builder TS Build
 clean-cli-build:
 	rm -rf ./build/cli/build
 
@@ -114,8 +117,9 @@ build-cli-build:
 	@$(MAKE) --no-print-directory \
 		clean-cli-build \
 		_build-cli-build
+#endregion
 
-# -- CLI build
+#region CLI build
 
 clean-cli:
 	rm -rf ./build/cli/cli
@@ -137,18 +141,9 @@ build-cli-rel:
 		build-cli-build \
 		clean-cli \
 		_build-cli-rel
+#endregion
 
-# clean-build-comp-site-react-build:
-# 	rm -rf ./build/comp-site/react/build
-
-# _build-comp-site-react-build:
-# 	npx tsc -p ./src/comp-site/react/build/tsconfig.json
-
-# build-comp-site-react-build:
-# 	@$(MAKE) --no-print-directory \
-# 		clean-build-comp-site-react-build \
-# 		_build-comp-site-react-build
-
+#region Comp-Site Build-Build
 clean-build-comp-site-react-build-build:
 	rm -rf ./build/comp-site/react/build-build
 
@@ -159,46 +154,26 @@ build-comp-site-react-build-build:
 	@$(MAKE) --no-print-directory \
 		clean-build-comp-site-react-build-build \
 		_build-comp-site-react-build-build
+#endregion
 
-clean-build-comp-site-react-build:
-	rm -rf ./build/comp-site/react/build
-
-_build-comp-site-react-build:
-	npx env-cmd -e rel node ./build/comp-site/react/build-build/comp-site/react/build-build/bin/build.js
-
-build-comp-site-react-build:
-	@$(MAKE) --no-print-directory \
-		clean-build-comp-site-react-build \
-		_build-comp-site-react-build
-
-clean-prebuild-comp-site-react:
+#region Comp-Sites Prebuild
+clean-prebuild-comp-sites:
 	rm -rf ./build/comp-site/react/site-prebuild
 
-_prebuild-comp-site-react:
-	npx tsc -p ./src/comp-site/react/site/tsconfig.json
+_prebuild-comp-sites:
+	npx tsc -p ./src/comp-site/tsconfig-prebuilds.json
 
-prebuild-comp-site-react:
+prebuild-comp-sites:
 	@$(MAKE) --no-print-directory \
-		clean-prebuild-comp-site-react \
-		_prebuild-comp-site-react
-	cp ./src/comp-site/react/site/index.html ./build/comp-site/react/site-prebuild/index.html
-
-clean-prebuild-comp-site-react-sub18:
-	rm -rf ./build/comp-site/react/site-sub18-prebuild
-
-_prebuild-comp-site-react-sub18:
-	npx tsc -p ./src/comp-site/react/siteSub18/tsconfig.json
-
-prebuild-comp-site-react-sub18:
-	@$(MAKE) --no-print-directory \
-		clean-prebuild-comp-site-react-sub18 \
-		_prebuild-comp-site-react-sub18
-	cp ./src/comp-site/react/siteSub18/index.html ./build/comp-site/react/site-sub18-prebuild/index.html
+		clean-prebuild-comp-sites \
+		_prebuild-comp-sites
+	cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
 
 build-comp-site-react-dev:
 	npx env-cmd -e dev node ./build/comp-site/react/build/index.js
+#endregion
 
-# -- Complete build
+#region Complete build
 clean-all:
 	rm -rf ./.exh && rm -rf ./build && rm -rf ./build-test
 
@@ -211,8 +186,9 @@ build-all:
 		prebuild-comp-site-react-sub18 \
 		build-comp-site-react-build-build \
 		build-comp-site-react-build
+#endregion
 
-# -- Distribution
+#region Distribution
 populate-dist:
 	rm -rf ./dist/npm/exhibitor/lib/
 
@@ -249,25 +225,26 @@ prepublish:
 		populate-dist
 	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"
 	@rm _time_$@.txt
+#endregion
 
-# -- Version incrementers
+#region Version incrementers
 patch:
 	@echo ${VERSION}
 	@cd dist/npm/exhibitor && npm version patch > ../../../version.txt
 	@cat version.txt
 
-# -- Version incrementers
 minor:
 	@echo ${VERSION}
 	@cd dist/npm/exhibitor && npm version minor > ../../../version.txt
 	@cat version.txt
 
-# -- Version incrementers
 major:
 	@echo ${VERSION}
 	@cd dist/npm/exhibitor && npm version major > ../../../version.txt
 	@cat version.txt
+#endregion
 
+#region NPM Publishing
 npm-publish-dry:
 	npm publish dist/npm/exhibitor --dry-run
 
@@ -276,23 +253,23 @@ npm-publish:
 
 npm-publish-beta:
 	npm publish dist/npm/exhibitor --tag beta
+#endregion
 
 # -- Test component library watch [dev only] TODO: concurrently needs to be used here.
+# build-watch-component-library:
+# 	npx tsc -p ./src/cli/componentLibrary/bin/tsconfig.json
 
-build-watch-component-library:
-	npx tsc -p ./src/cli/componentLibrary/bin/tsconfig.json
+# complib:
+# 	npx env-cmd -e dev node ./build/component-library-bin/cli/componentLibrary/bin/watch.js
 
-complib:
-	npx env-cmd -e dev node ./build/component-library-bin/cli/componentLibrary/bin/watch.js
+# client:
+# 	npx env-cmd -e dev node ./build/site/build/site/build/bin/watchClient.js
 
-client:
-	npx env-cmd -e dev node ./build/site/build/site/build/bin/watchClient.js
+# server:
+# 	npx env-cmd -e dev node ./build/site/build/site/build/bin/watchServer.js
 
-server:
-	npx env-cmd -e dev node ./build/site/build/site/build/bin/watchServer.js
-
-start-dev:
-	@$(MAKE) --no-print-directory \
-		build-site-build \
-		build-watch-component-library
-	npx concurrently 
+# start-dev:
+# 	@$(MAKE) --no-print-directory \
+# 		build-site-build \
+# 		build-watch-component-library
+# 	npx concurrently 

@@ -5,9 +5,9 @@ import { VARIANT_PATH_ENV_VAR_NAME } from '../../../common/testing'
 import { PlaywrightTestResults, RunE2eTestOptions } from '../../common/e2eTesting'
 import { JSON_REPORTER_FILE } from '../../../common/paths'
 import { config } from '../config'
-import { Tester } from '../../../cli/config/types'
-import { tryResolve } from '../../../common/npm'
 import { logError, logStep } from '../../../cli/logging'
+import { tryResolve } from '../../../common/npm/resolve'
+import { Tester } from '../../../common/config/types'
 
 const runPlaywrightTests = (
   options: RunE2eTestOptions,

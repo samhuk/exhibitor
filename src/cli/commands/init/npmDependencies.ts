@@ -1,4 +1,4 @@
-import { npmInstallPackage } from '../../../common/npm'
+import { npmInstallPackage } from '../../../common/npm/install'
 import { askShouldContinueIfNotExit } from '../../common/input'
 import { logStep, logError } from '../../logging'
 import { CliString, CliError } from '../../types'

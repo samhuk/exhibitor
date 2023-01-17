@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { VariantExhibitNode } from '../../api/exhibit/types'
+import { VariantExhibitNode } from '../../../api/exhibit/types'
 import {
   getSelectedVariantNodePath,
   runAxe,
   SELECT_VARIANT_CHANGE_EVENT_NAME,
   START_AXE_TEST_EVENT_NAME,
   waitUntilComponentExhibitsAreLoaded,
-} from '../../common/exhibit'
-import { attachEventLoggingToProps } from '../common'
+} from '../../../common/exhibit'
+import { attachEventLoggingToProps } from '../../common'
 
 const addCustomEventListener = <TEvent extends CustomEvent>(el: EventTarget, eventName: string, handler: (e: TEvent) => void) => {
   el.addEventListener(eventName, handler as any)
@@ -44,7 +44,7 @@ export const ReactCompSiteWithHooks = () => {
     return <div className="component-exhibit not-ready">Loading...</div>
   }
 
-  if (selectedVariantPath == null)
+  if (selectedVariantPath === null)
     return <div className="component-exhibit not-found">No component variant selected.</div>
 
   if (selectedVariantPath === undefined)

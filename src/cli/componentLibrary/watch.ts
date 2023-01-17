@@ -1,18 +1,18 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
+import { Config } from '../../common/config/types'
 
 import { printBuildResult } from '../../common/esbuilder'
 import { setMetadata } from '../../common/metadata'
-import { tryResolve } from '../../common/npm'
+import { tryResolve } from '../../common/npm/resolve'
 import { CustomBuildResult } from '../../common/types'
-import { ResolvedConfig } from '../config/types'
 import { logStep, logSuccess } from '../logging'
 import { buildIndexExhTsFile, createIndexExhTsFile } from './indexExhFile'
 
 const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
 
 const _createIndexExhTsFile = async (
-  config: ResolvedConfig,
+  config: Config,
 ) => {
   const { includedFilePaths } = await createIndexExhTsFile(config.include, config.rootStyle)
   logStep('Creating metadata.json file', true)
@@ -26,7 +26,7 @@ const _createIndexExhTsFile = async (
 
 const rebuildIteration = async (
   buildResult: CustomBuildResult,
-  config: ResolvedConfig,
+  config: Config,
 ) => {
   logStep(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
 
@@ -48,12 +48,12 @@ const rebuildIteration = async (
 
 let initialBuildWatcher: FSWatcher = null
 export const watchComponentLibrary = async (
-  config: ResolvedConfig,
+  config: Config,
   onFirstSuccessfulBuild?: () => void,
 ) => {
   try {
-    const { includedFilePaths } = await _createIndexExhTsFile(config)
-    const buildResult = await buildIndexExhTsFile(config, includedFilePaths)()
+    await _createIndexExhTsFile(config)
+    const buildResult = await buildIndexExhTsFile(config)()
     initialBuildWatcher?.close()
     const rebuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
     watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => {

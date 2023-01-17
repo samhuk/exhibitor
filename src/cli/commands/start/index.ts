@@ -1,164 +1,103 @@
 import { ChildProcess } from 'child_process'
-import path from 'path'
-import * as fs from 'fs'
 import { watchComponentLibrary } from '../../componentLibrary/watch'
-import { ResolvedConfig } from '../../config/types'
 import { getConfigForCommand } from '../../config'
 import { baseCommand } from '../common'
 import { startServer } from './startServer'
 import { applyStartOptionsToConfig } from './config'
 import { StartCliArgumentsOptions } from './types'
 import { build as buildCompSiteReact } from '../../../comp-site/react/build/build'
-import state from '../../state'
+import { updateProcessVerbosity } from '../../state'
 import { logStep, logWarn } from '../../logging'
-import { CliError, CliString } from '../../types'
+import { CliError } from '../../types'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
-import { tryResolve } from '../../../common/npm'
+import { checkPackages, createCheckPackagesError, StartCommandCheckPackagesResult } from './checkPackages'
+import { CheckPackageResultType } from '../../../common/npm/checkPackages'
+import { Config } from '../../../common/config/types'
+import { setMetadata } from '../../../common/metadata'
+import { tryResolve } from '../../../common/npm/resolve'
 
 const isDev = process.env.EXH_DEV === 'true'
 
 const _watchComponentLibrary = async (
-  config: ResolvedConfig,
+  config: Config,
 ): Promise<void> => new Promise<void>(res => {
   watchComponentLibrary(config, res)
 })
 
-const createCheckPackagesError = (causedBy: CliString, packageName: string): CliError => ({
-  message: c => `Failed to start Exhibitor. Package check failed for ${c.underline(packageName)}.`,
-  causedBy,
-})
+const extractReactMajorVersionNumber = (results: StartCommandCheckPackagesResult): number | null => {
+  const result = results.results.react
+  if (result == null)
+    return null
 
-const isCliError = (value: any): value is CliError => (
-  value?.message != null
-)
+  if (result.type !== CheckPackageResultType.SUCCESS)
+    return null
 
-/**
- * Checks that the given package is resolvable, and logs it's version if successfully
- * resolved (if verbose mode is enabled).
- */
-const checkPackage = (packageName: string): { version: string, packagePath: string } | CliError => {
-  const resolveResult = tryResolve(packageName)
-  if (resolveResult.success === false) {
-    return createCheckPackagesError(c => `Package ${c.underline(packageName)} could not be resolved. Is it installed (if not, try ${c.bold(`npm i -S ${packageName}`)})?. Else, this could be an issue with the package.json file of the package.
-    
-    Specific details: ${resolveResult.error}`, packageName)
-  }
+  logStep(c => `Determining the major version number of the installed React (from ${c.cyan(`'${result.version}'`)}).`, true)
 
-  const resolvedPath = resolveResult.path
-
-  const packageJsonFilePath = path.join(
-    path.dirname(resolvedPath),
-    'package.json',
-  )
-
-  if (!fs.existsSync(packageJsonFilePath))
-    logWarn(c => `Could not determine the version of ${c.underline(packageName)} being used because the package.json file for it does not exist at: ${c.cyan(packageJsonFilePath)}. If you know what you are doing, then this can be ignored, but this is an indication of a non-standard setup.`)
-
-  try {
-    const packageJsonString = fs.readFileSync(packageJsonFilePath, { encoding: 'utf8' })
-    const packageJsonObj = JSON.parse(packageJsonString)
-    const version = packageJsonObj.version
-
-    logStep(c => `Using ${c.underline(packageName)} (v${version}) from ${c.cyan(resolvedPath)}`, true)
-
-    return { version, packagePath: resolvedPath }
-  }
-  catch (e) {
-    logWarn(c => `Could not determine the version of ${c.underline(packageName)} being used because the package.json file could not be read or parsed (${c.cyan(packageJsonFilePath)}).
-
-If you know what you are doing, then this can be ignored, but this is an indication of a non-standard setup. Specific error:\n${e}`)
-  }
-
-  return null
+  return result.semVer.major
 }
 
-const checkPackages = (packages: string[]): { version: string, packagePath: string }[] | CliError => {
-  const results: { version: string, packagePath: string }[] = []
-  for (let i = 0; i < packages.length; i += 1) {
-    const result = checkPackage(packages[i])
-    if (isCliError(result))
-      return result
-
-    results.push(result)
+const logMajorReactVersion = (reactMajorVersion: number | null) => {
+  if (reactMajorVersion == null || Number.isNaN(reactMajorVersion)) {
+    // eslint-disable-next-line max-len
+    logWarn('Could not determine the React major version number. Will use Component Site for React versions >=18.\n\nIf you know what you are doing, then this can be ignored, but this is an indication of a non-standard setup.')
   }
-  return results
-}
-
-const extractReactMajorVersionNumber = (results: { version: string, packagePath: string }[]): number | null => {
-  const reactVersion = results?.[0]?.version
-  if (reactVersion == null)
-    return null
-
-  const reactMajorVersionString = reactVersion.substring(0, reactVersion.indexOf('.'))
-
-  if (reactMajorVersionString.length === 0)
-    return null
-
-  const reactMajorVersionNumber = parseInt(reactMajorVersionString)
-  if (Number.isNaN(reactMajorVersionNumber))
-    return null
-
-  return reactMajorVersionNumber
+  else if (reactMajorVersion >= 18) {
+    logStep(c => `React major version is at or above version 18 (${c.cyan(reactMajorVersion.toString())}). Using Component Site for React versions >=18.`, true)
+  }
+  else if (reactMajorVersion < 18) {
+    logStep(c => `React major version is earlier than version 18 (${c.cyan(reactMajorVersion.toString())}). Using Component Site for React versions <18.`, true)
+  }
 }
 
 export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<CliError> => {
   // If verbose is specified in CLI arguments, then we can globally set it earlier
-  if (startOptions.verbose)
-    state.verbose = true
+  if (startOptions.verbose != null)
+    updateProcessVerbosity(startOptions.verbose)
 
   // -- Config
   const result = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
   if (result.success === false)
     return result.error
 
-  state.verbose = result.config.verbose
-
-  const config = result.config // Alias
+  updateProcessVerbosity(result.config.verbose)
+  const config = result.config // Convenient alias
 
   // -- Logic
-  // Check packages required to build the components site (React)
-  const results = checkPackages(['react', 'react-dom'])
-  if (isCliError(results))
-    return results
+  // Check packages required to build the Component Site for React, getting version numbers
+  const results = checkPackages()
+  if (results.hasErrors === true)
+    return createCheckPackagesError(results.error.errorMsg, results.error.name)
 
-  logStep(c => `Determining the major version number of the installed React (from ${c.cyan(`'${results?.[0]?.version}'`)}).`, true)
   const reactMajorVersionNumber = extractReactMajorVersionNumber(results)
-
-  if (reactMajorVersionNumber == null) {
-    logWarn(`Could not determine the React major version number. Will use Component Site for 18.x React.
-
-If you know what you are doing, then this can be ignored, but this is an indication of a non-standard setup.`)
-  }
-
-  if (reactMajorVersionNumber >= 18)
-    logStep(c => `React major version is at or above version 18 (using ${c.cyan(reactMajorVersionNumber.toString())}). Using Component Site for >=18.x React.`, true)
-
-  if (reactMajorVersionNumber < 18)
-    logStep(c => `React major version is earlier than version 18 (using ${c.cyan(reactMajorVersionNumber.toString())}). Using Component Site for <18.x React.`, true)
+  logMajorReactVersion(reactMajorVersionNumber)
 
   try {
-    // Build component site (React)
-    // In dev, we will build it from the local Typescript straight to bundle
+    // Build Component Site, waiting for first build
+    // In dev, we will build it straight from the local Typescript to final bundle
     await buildCompSiteReact({
       gzip: !isDev,
-      incremental: false,
       sourceMap: isDev,
       verbose: config.verbose,
       skipPrebuild: isDev,
       reactMajorVersion: reactMajorVersionNumber,
+      config,
+      onIndexExhTsFileCreate: file => {
+        logStep('Creating metadata.json file', true)
+        setMetadata({
+          includedFilePaths: file.includedFilePaths,
+          siteTitle: config.site.title,
+          isAxeEnabled: tryResolve('axe-core').success === true,
+        })
+      },
     })
   }
   catch (e: any) {
     return {
-      message: `Failed to start ${NPM_PACKAGE_CAPITALIZED_NAME}. Could not build the Component Site for React.
-      
-This could be because you have a version of React that isn't supported. Otherwise, you may have some custom npm setup that ${NPM_PACKAGE_CAPITALIZED_NAME} can't handle.`,
+      message: `Failed to start ${NPM_PACKAGE_CAPITALIZED_NAME}. Could not build the Component Site for React.\n\n    This could be because you have a version of React that isn't supported. Otherwise, you may have some custom npm setup that ${NPM_PACKAGE_CAPITALIZED_NAME} can't handle.`,
       causedBy: e,
     }
   }
-
-  // Wait for component library to get its first successful build
-  await _watchComponentLibrary(config)
 
   // Start the site server
   logStep(`Starting ${NPM_PACKAGE_CAPITALIZED_NAME}`)
@@ -172,7 +111,7 @@ This could be because you have a version of React that isn't supported. Otherwis
   process.stdin.setRawMode(true)
   process.stdin.setEncoding('utf8')
   process.stdin.on('data', key => {
-    // ctrl-c ( end of text )
+    // ctrl-c (end of text)
     // @ts-ignore
     if (key === '\u0003') {
       logStep(`Stopping ${NPM_PACKAGE_CAPITALIZED_NAME}`)

@@ -1,10 +1,10 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "extends": "../tsconfig.json",
+  "extends": "../../../../tsconfig.json",
   "include": [
     "./**/*"
   ],
   "compilerOptions": {
-    "outDir": "../../../../build/comp-site/react/site-sub18-prebuild"
+    "outDir": "../../../../build/comp-site/react/build"
   }
 }

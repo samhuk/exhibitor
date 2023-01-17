@@ -1,28 +1,63 @@
-import * as esbuild from 'esbuild'
+import { build as esbuildBuild, Plugin } from 'esbuild'
 import sassPlugin from 'esbuild-sass-plugin'
 import * as fs from 'fs'
 import glob from 'globsie'
 import path from 'path'
-import { pathToRegexp } from 'path-to-regexp'
+import { Config } from '../../common/config/types'
 
 import { createBuilder } from '../../common/esbuilder'
 import { NPM_PACKAGE_NAME } from '../../common/name'
 import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../../common/paths'
-import { ResolvedConfig } from '../config/types'
 import { logStep, logWarn } from '../logging'
 
 const isDev = process.env.EXH_DEV === 'true'
+
+/**
+ * esbuild plugin that includes the user's component library in a web browser javascript bundle.
+ *
+ * This plugin replaces all occurances of "import 'index.exh.ts" with the user's component library.
+ */
+export const srcPathPlugin: Plugin = ({
+  name: 'src-path-plugin',
+  setup: build => {
+    /**
+     * esbuild plugin that replaces all occurances of `import ... from '!exh{some path}'`
+     * with `window.exhibitSrcPath = '{some path}'"`.
+     *
+     * This allows each call to the exhibit() function to be "tagged" with where it was called from.
+     * The exhibit() function then references "window.exhibitSrcPath" to carry along that path
+     * to the client, where it's used very extensively. A component variant in the client knowin
+     * where it was defined in the source code unlocks a huge amount of functionality.
+     */
+    build.onResolve({ filter: /!exh/ }, args => ({ path: args.path, namespace: 'exhibit-src-path' }))
+    build.onLoad({ filter: /.*/, namespace: 'exhibit-src-path' }, args => ({
+      contents: `window.exhibitSrcPath = '${args.path.substring(4)}'`,
+    }))
+  },
+})
 
 fs.mkdirSync(BUILD_OUTPUT_ROOT_DIR, { recursive: true })
 
 const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
 const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
-export const buildIndexExhTsFile = (config: ResolvedConfig, includedFilePaths: string[]) => {
-  // Create an OR-list regex of the included *.exh.ts files
-  const exhFilesRegExp = new RegExp(includedFilePaths.map(p => pathToRegexp(p)).map(r => r.source).join('|'))
-
-  return createBuilder('component library', config.verbose, () => esbuild.build({
+export const buildIndexExhTsFile = (config: Config) => (
+  createBuilder('component library', config.verbose, () => esbuildBuild({
+    // Overrideable build options
+    loader: {
+      '.ttf': 'file',
+      '.woff': 'file',
+      '.woff2': 'file',
+    },
+    // Apply custom build options
+    ...config.esbuildOptions,
+    // Merge custom plugins with mandatory built-in ones
+    plugins: [
+      sassPlugin() as unknown as Plugin,
+      srcPathPlugin,
+      ...(config.esbuildOptions?.plugins ?? []),
+    ],
+    // Non-overrideable build options
     entryPoints: [bundleInputFilePath],
     outfile: bundleOutputFilePath,
     platform: 'browser',
@@ -33,33 +68,8 @@ export const buildIndexExhTsFile = (config: ResolvedConfig, includedFilePaths: s
     sourcemap: isDev,
     metafile: true,
     incremental: true,
-    plugins: [
-      sassPlugin() as unknown as esbuild.Plugin,
-      {
-        name: 'exhibitor',
-        setup: build => {
-          /* For anywhere in the index.exh.ts file that looks like "import ... from '{some path}'",
-           * replace that line with "window.exhibitSrcPath = '{some path}'". This allows each
-           * call to the exhibit() function to be "tagged" with where it was called from. The exhibit()
-           * function then references "window.exhibitSrcPath" to carry along that tag to the client,
-           * where it's used very extensively. A component variant in the client knowing where
-           * it was defined in the source code unlocks a huge amount of functionality.
-           */
-          build.onResolve({ filter: exhFilesRegExp }, args => ({ path: args.path, namespace: 'exhibitor' }))
-          build.onLoad({ filter: /.*/, namespace: 'exhibitor' }, args => ({
-            contents: `window.exhibitSrcPath = '${args.path}'`,
-          }))
-        },
-      },
-    ],
-    loader: {
-      '.ttf': 'file',
-      '.woff': 'file',
-      '.woff2': 'file',
-    },
-    ...config.esbuildOptions,
   }).then(result => ({ buildResult: result })))
-}
+)
 
 export const createIndexExhTsFile = async (
   configInclude: string[],
@@ -93,9 +103,10 @@ export const createIndexExhTsFile = async (
       .map(_path => {
         const relativeImportPath = path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')
 
-        return `export * from '${_path}'\nexport {} from '${relativeImportPath}'`
+        return `import '!exh${_path}'\nexport {} from '${relativeImportPath}'`
       })
       .join('\n'),
+    'window.exh = resolve(__exhibits)',
     'export const { nodes, pathTree } = resolve(__exhibits)',
     'export default __exhibits',
   ].filter(s => s != null).join('\n\n')
@@ -104,3 +115,33 @@ export const createIndexExhTsFile = async (
 
   return { includedFilePaths, text }
 }
+
+/**
+ * esbuild plugin that includes the user's component library in a web browser javascript bundle.
+ *
+ * This plugin replaces all occurances of "import 'index.exh.ts" with the user's component library.
+ */
+export const createComponentLibraryIncluderPlugin = (
+  config: Config,
+  onIndexExhTsFileCreation?: (file: { includedFilePaths: string[], text: string }) => void,
+): Plugin => ({
+  name: 'index-exh-ts-includer',
+  setup: build => {
+    build.onResolve({ filter: /^index\.exh\.ts$/ }, args => ({
+      path: args.path,
+      namespace: 'index-exh-ts',
+    }))
+    build.onLoad({ filter: /.*/, namespace: 'index-exh-ts' }, async () => {
+      const indexExhTsFile = await createIndexExhTsFile(config.include, config.rootStyle)
+      onIndexExhTsFileCreation?.(indexExhTsFile)
+      await buildIndexExhTsFile(config)()
+      return {
+        contents: indexExhTsFile.text,
+        resolveDir: './.exh',
+        loader: 'tsx',
+      }
+    })
+
+    srcPathPlugin.setup(build)
+  },
+})

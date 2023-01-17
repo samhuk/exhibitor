@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/samhuk/exhibitor/blob/master/src/cli/config/schema.json",
+  "$id": "https://github.com/samhuk/exhibitor/blob/master/src/common/config/schema.json",
   "title": "Exhibitor Config",
   "description": "Config for the Exhibitor CLI",
   "type": "object",

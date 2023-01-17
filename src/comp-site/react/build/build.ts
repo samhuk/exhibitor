@@ -1,54 +1,78 @@
-import { build as _build } from 'esbuild'
+import { build as esbuildBuild, Plugin } from 'esbuild'
 import * as fs from 'fs'
 import path from 'path'
+import sassPlugin from 'esbuild-sass-plugin'
 
-import { createBuilder } from '../../../common/esbuilder'
+import { build as _build } from '../../../common/esbuilder'
 import { gzipLargeFiles } from '../../../common/gzip'
 import { BuildOptions } from './types'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
 import { COMP_SITE_OUTDIR } from '../../../common/paths'
 
+import { createComponentLibraryIncluderPlugin } from '../../../cli/componentLibrary/indexExhFile'
+
 const isDev = process.env.EXH_DEV === 'true'
 
+const getComponentSiteSubType = (
+  reactMajorVersion: number,
+) => (reactMajorVersion >= 18
+  ? '18-or-more'
+  : '17-or-less')
+
 const getPaths = (options: BuildOptions) => {
+  const type = 'react'
+  const subType = getComponentSiteSubType(options.reactMajorVersion)
+
+  // If we are in dev mode or are told to skip prebuild
   if (options.skipPrebuild) {
     return {
-      entrypoint: './src/comp-site/react/site/main.tsx',
-      htmlFilePath: './src/comp-site/react/site/index.html',
+      entrypoint: `./src/comp-site/${type}/${subType}/index.tsx`,
+      indexHtmlPath: `./src/comp-site/${type}/index.html`,
     }
   }
 
-  const COMP_SITE_REACT_SITE_PREBUILD_OUTDIR = './build/comp-site/react/site-prebuild'
+  const prebuildsPath = isDev ? './build/comp-site-prebuilds' : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site-prebuilds`
+  const entrypointPathSuffix = `${type}/${subType}/index.js`
+  const indexHtmlPathSuffix = `${type}-index.html`
 
-  const compSiteSuffix = options.reactMajorVersion < 18 ? '-sub18' : ''
-  const compSiteSuffix2 = options.reactMajorVersion < 18 ? 'sub18' : ''
   return {
-    entrypoint: isDev
-      ? `${COMP_SITE_REACT_SITE_PREBUILD_OUTDIR}/comp-site/react/site/main.js`
-      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site${compSiteSuffix}-prebuild/comp-site/react/site${compSiteSuffix2}/main.js`,
-    htmlFilePath: isDev
-      ? `${COMP_SITE_REACT_SITE_PREBUILD_OUTDIR}/index.html`
-      : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site/react/site${compSiteSuffix}-prebuild/index.html`,
+    entrypoint: `${prebuildsPath}/${entrypointPathSuffix}`,
+    indexHtmlPath: `${prebuildsPath}/${indexHtmlPathSuffix}`,
   }
 }
 
-const createClientBuilder = (options: BuildOptions) => {
+const createBuilder = (options: BuildOptions) => {
   const outputJsFilePath = path.resolve(COMP_SITE_OUTDIR, 'index.js')
   const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(COMP_SITE_OUTDIR, 'index.html'))
 
   const paths = getPaths(options)
 
-  return () => _build({
+  return async () => esbuildBuild({
+    // Overrideable build options
+    loader: {
+      '.ttf': 'file',
+      '.woff': 'file',
+      '.woff2': 'file',
+    },
+    // Apply custom build options
+    ...options.config.esbuildOptions,
+    // Merge custom plugins with mandatory built-in ones
+    plugins: [
+      sassPlugin() as unknown as Plugin,
+      createComponentLibraryIncluderPlugin(options.config, options.onIndexExhTsFileCreate),
+      ...(options.config.esbuildOptions?.plugins ?? []),
+    ],
+    // Non-overrideable build options
     entryPoints: [paths.entrypoint],
     outfile: outputJsFilePath,
     bundle: true,
-    minify: true,
+    minify: !isDev,
     sourcemap: options.sourceMap,
     metafile: true,
-    incremental: options.incremental,
+    incremental: true,
   }).then(result => {
-    // Copy over additional related files to build dir
-    fs.copyFileSync(paths.htmlFilePath, indexHtmlFileOutputPath)
+    // Copy over additional files to build output dir
+    fs.copyFileSync(paths.indexHtmlPath, indexHtmlFileOutputPath)
 
     if (options.gzip)
       gzipLargeFiles(COMP_SITE_OUTDIR)
@@ -56,10 +80,10 @@ const createClientBuilder = (options: BuildOptions) => {
     return {
       buildResult: result,
       additionalOutputs: [
-        { path: indexHtmlFileOutputPath, sizeBytes: Buffer.from(fs.readFileSync(paths.htmlFilePath, { encoding: 'utf8' })).length },
+        { path: indexHtmlFileOutputPath, sizeBytes: Buffer.from(fs.readFileSync(paths.indexHtmlPath, { encoding: 'utf8' })).length },
       ],
     }
   })
 }
 
-export const build = (options: BuildOptions) => createBuilder('comp-site (React)', options.verbose, createClientBuilder(options))()
+export const build = (options: BuildOptions) => _build('Component Site for React', options.verbose, createBuilder(options))

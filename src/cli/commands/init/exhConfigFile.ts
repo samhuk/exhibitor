@@ -21,7 +21,7 @@ export const createExhConfigFile = async (): Promise<CliError | null> => {
     return null
 
   const config = {
-    $schema: 'https://raw.githubusercontent.com/samhuk/exhibitor/master/src/cli/config/schema.json',
+    $schema: 'https://raw.githubusercontent.com/samhuk/exhibitor/master/src/common/config/schema.json',
   }
   try {
     fs.writeFileSync(writePath, JSON.stringify(config, null, 2))

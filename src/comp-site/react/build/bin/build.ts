@@ -9,6 +9,6 @@ build({
   sourceMap: isDev,
   gzip: !isDev,
   incremental: false,
-  skipPrebuild: false,
+  skipPrebuild: isDev,
   reactMajorVersion: 18,
 }).then(() => exit(0)).catch(() => exit(1))

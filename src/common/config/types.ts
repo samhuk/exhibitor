@@ -28,7 +28,7 @@ export type TesterOptions<TTester extends Tester = Tester> = TypeDependantBaseIn
   'type'
 >
 
-export type Config = {
+export type UnresolvedConfig = {
   /**
    * Optional list of glob patterns to select component exhibit files.
    *
@@ -97,7 +97,7 @@ export type Config = {
   esbuildOptions?: CustomEsbuildBuildOptions
 }
 
-export type ResolvedConfig = {
+export type Config = {
   configDir: string
   rootConfigFile: string | null | undefined
   include: string[]

@@ -1,11 +1,11 @@
 import { readAndParseConfig } from './read'
 
-describe('cli/config/read', () => {
+describe('common/config/read', () => {
   describe('readAndParseConfig', () => {
     const fn = readAndParseConfig
 
     test('json', async () => {
-      const result = await fn('./src/cli/config/testConfig.json')
+      const result = await fn('./src/common/config/testConfig.json')
       expect(result).toEqual({
         $schema: './schema.json',
         rootStyle: './styles.scss',
@@ -18,7 +18,7 @@ describe('cli/config/read', () => {
     })
 
     test('js', async () => {
-      const result = await fn('./src/cli/config/testConfig.js')
+      const result = await fn('./src/common/config/testConfig.js')
       expect(result).toEqual({
         rootStyle: './styles.scss',
         site: {
@@ -30,7 +30,7 @@ describe('cli/config/read', () => {
     })
 
     // test('ts', async () => {
-    //   const result = await fn('./src/cli/config/testConfig.ts')
+    //   const result = await fn('./src/common/config/testConfig.ts')
     //   expect(result).toEqual({
     //     $schema: './schema.json',
     //     rootStyle: './styles.scss',

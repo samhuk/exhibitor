@@ -1,8 +1,8 @@
-import { Config } from './types'
+import { UnresolvedConfig } from './types'
 
 const port: number = 4002
 
-const config: Config = {
+const config: UnresolvedConfig = {
   rootStyle: './styles.scss',
   site: {
     port,
