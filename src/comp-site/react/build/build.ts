@@ -23,11 +23,16 @@ const getPaths = (options: BuildOptions) => {
   const type = 'react'
   const subType = getComponentSiteSubType(options.reactMajorVersion)
 
+  const indexHtmlOutPath = path.relative(path.resolve('./'), path.resolve(COMP_SITE_OUTDIR, 'index.html'))
+  const outFile = path.resolve(COMP_SITE_OUTDIR, 'index.js')
+
   // If we are in dev mode or are told to skip prebuild
   if (options.skipPrebuild) {
     return {
       entrypoint: `./src/comp-site/${type}/${subType}/index.tsx`,
       indexHtmlPath: `./src/comp-site/${type}/index.html`,
+      indexHtmlOutPath,
+      outFile,
     }
   }
 
@@ -38,13 +43,12 @@ const getPaths = (options: BuildOptions) => {
   return {
     entrypoint: `${prebuildsPath}/${entrypointPathSuffix}`,
     indexHtmlPath: `${prebuildsPath}/${indexHtmlPathSuffix}`,
+    indexHtmlOutPath,
+    outFile,
   }
 }
 
 const createBuilder = (options: BuildOptions) => {
-  const outputJsFilePath = path.resolve(COMP_SITE_OUTDIR, 'index.js')
-  const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(COMP_SITE_OUTDIR, 'index.html'))
-
   const paths = getPaths(options)
 
   return async () => esbuildBuild({
@@ -64,26 +68,26 @@ const createBuilder = (options: BuildOptions) => {
     ],
     // Non-overrideable build options
     entryPoints: [paths.entrypoint],
-    outfile: outputJsFilePath,
+    outfile: paths.outFile,
     bundle: true,
     minify: !isDev,
-    sourcemap: options.sourceMap,
+    sourcemap: isDev,
     metafile: true,
     incremental: true,
   }).then(result => {
     // Copy over additional files to build output dir
-    fs.copyFileSync(paths.indexHtmlPath, indexHtmlFileOutputPath)
+    fs.copyFileSync(paths.indexHtmlPath, paths.indexHtmlOutPath)
 
-    if (options.gzip)
+    if (!isDev)
       gzipLargeFiles(COMP_SITE_OUTDIR)
 
     return {
       buildResult: result,
       additionalOutputs: [
-        { path: indexHtmlFileOutputPath, sizeBytes: Buffer.from(fs.readFileSync(paths.indexHtmlPath, { encoding: 'utf8' })).length },
+        { path: paths.indexHtmlOutPath, sizeBytes: Buffer.from(fs.readFileSync(paths.indexHtmlPath, { encoding: 'utf8' })).length },
       ],
     }
   })
 }
 
-export const build = (options: BuildOptions) => _build('Component Site for React', options.verbose, createBuilder(options))
+export const build = (options: BuildOptions) => _build('Component Site for React', options.config.verbose, createBuilder(options))

@@ -8,6 +8,14 @@ export const normalizeCliString = (s: CliString): string => (
     : s
 )
 
+export const isCliError = (s: any): s is CliError => {
+  if (s.message == null)
+    return false
+
+  const typeOfMessageProp = typeof s.message
+  return typeOfMessageProp === 'string' || typeOfMessageProp === 'function'
+}
+
 export const printError = (
   error: CliError,
 ): void => {

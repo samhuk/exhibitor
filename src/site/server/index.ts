@@ -2,7 +2,6 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import * as fs from 'fs'
 import path from 'path'
-import colors from 'colors/safe'
 
 import { BUILD_OUTPUT_ROOT_DIR, COMP_SITE_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
@@ -12,6 +11,7 @@ import { sendErrorResponse } from './api/responses'
 import { env } from './env'
 import { enableHotReloading } from './hotReloading'
 import { DEFAULT_THEME } from '../../common/theme'
+import { log } from '../../cli/logging'
 
 const app = express()
 
@@ -37,10 +37,10 @@ app
 
     // -- axe
     if (req.path === '/axe.js') {
-      const pathPart = 'node_modules/axe-core/axe.min.js'
-      const relPath = `./${pathPart}`
+      const pathSuffix = 'node_modules/axe-core/axe.min.js'
+      const relPath = `./${pathSuffix}`
       if (fs.existsSync(relPath)) {
-        res.sendFile(`/${pathPart}`, { root: './' })
+        res.sendFile(`/${pathSuffix}`, { root: './' })
         return
       }
 
@@ -87,7 +87,7 @@ app
 
 const server = app.listen(env.port, env.host, () => {
   const url = `http://${env.host}:${env.port}`
-  console.log(`${(colors.green as any).bold(`${NPM_PACKAGE_CAPITALIZED_NAME} active`)}. Access via ${(colors.cyan as any).underline(url)}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
+  log(c => `${(c.green as any).bold(`${NPM_PACKAGE_CAPITALIZED_NAME} active`)}. Access via ${(c.cyan as any).underline(url)}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
 })
 
 server.keepAliveTimeout = 10000 * 1000

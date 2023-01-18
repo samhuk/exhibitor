@@ -5,6 +5,9 @@ import { log, logStep, logSuccess } from '../cli/logging'
 import prettyBytes from './prettyBytes'
 import { BuildOutput, CustomBuildResult } from './types'
 
+/**
+ * esbuild plugin that makes doing `import path from 'path'` and `import * as fs from 'fs'` possible.
+ */
 export const nativeNodeModulesPlugin: Plugin = {
   name: 'native-node-modules',
   setup(_build) {

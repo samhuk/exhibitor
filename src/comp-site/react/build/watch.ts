@@ -1,34 +1,26 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
+import { log, logStep, logSuccess } from '../../../cli/logging'
+import { printBuildResult } from '../../../common/esbuilder'
+import { CustomBuildResult } from '../../../common/types'
+import { build } from './build'
+import { BuildOptions } from './types'
 
 const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
 
-const _createIndexExhTsFile = async (
-  config: Config,
-) => {
-  const { includedFilePaths } = await createIndexExhTsFile(config.include, config.rootStyle)
-  logStep('Creating metadata.json file', true)
-  setMetadata({
-    includedFilePaths,
-    siteTitle: config.site.title,
-    isAxeEnabled: tryResolve('axe-core').success === true,
-  })
-  return { includedFilePaths }
-}
-
 const rebuildIteration = async (
   buildResult: CustomBuildResult,
-  config: Config,
+  options: BuildOptions,
 ) => {
   logStep(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
 
   try {
     const startTime = Date.now()
-    await _createIndexExhTsFile(config)
     const rebuildResult = await buildResult.buildResult.rebuild()
-    logSuccess(`(${Date.now() - startTime} ms) Done.${!config.verbose ? ' Watching for changes...' : ''}`)
+    options.onSuccessfulBuildComplete?.()
+    logSuccess(`(${Date.now() - startTime} ms) Done.${!options.config.verbose ? ' Watching for changes...' : ''}`)
     // If verbose, print build info on every rebuild
-    if (config.verbose) {
+    if (options.config.verbose) {
       printBuildResult(rebuildResult, startTime)
       logStep('Watching for changes...')
     }
@@ -39,29 +31,34 @@ const rebuildIteration = async (
 }
 
 let initialBuildWatcher: FSWatcher = null
-export const watchComponentLibrary = async (
-  config: Config,
-  onFirstSuccessfulBuild?: () => void,
+export const watchCompSite = async (
+  options: BuildOptions,
 ) => {
   try {
-    await _createIndexExhTsFile(config)
-    const buildResult = await buildIndexExhTsFile(config)()
+    // First-build iteration
+    const buildResult = await build(options)
+
+    // Start rebuild loop
     initialBuildWatcher?.close()
-    const rebuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
-    watch(() => rebuildIteration(buildResult, config), rebuildWatcher, 150, () => {
+    const rebuildWatcher = chokidar.watch(options.config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
+    watch(() => rebuildIteration(buildResult, options), rebuildWatcher, 150, () => {
       console.log('Watching for changes...')
-      onFirstSuccessfulBuild?.()
+      options.onFirstSuccessfulBuildComplete?.()
+      options.onSuccessfulBuildComplete?.()
     })
   }
   catch {
+    // If the first-build has already failed, then we don't need to start a watch
     if (initialBuildWatcher != null)
       return
-    initialBuildWatcher = chokidar.watch(config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
+
+    // Else, start the first-build loop
+    initialBuildWatcher = chokidar.watch(options.config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
     watch(
-      () => watchComponentLibrary(config, onFirstSuccessfulBuild),
+      () => watchCompSite(options),
       initialBuildWatcher,
       150,
-      () => console.log('Watching for changes...'),
+      () => log('Watching for changes...'),
     )
   }
 }

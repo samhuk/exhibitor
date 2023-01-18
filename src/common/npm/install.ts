@@ -1,4 +1,5 @@
 import { exec, ExecException } from 'child_process'
+import { log } from '../../cli/logging'
 
 export const npmInstallPackage = (
   packageName: string,
@@ -6,7 +7,7 @@ export const npmInstallPackage = (
 ) => new Promise<{ execError: ExecException } | null>((res, rej) => {
   exec(`npm i ${isDevDep ? '--save-dev' : '--save'} ${packageName}`, err => {
     if (err != null) {
-      console.log({ execError: err })
+      log(JSON.stringify(err))
       rej(err)
     }
     else {

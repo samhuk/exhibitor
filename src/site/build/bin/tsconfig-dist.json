@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "../../../../tsconfig.json",
+  "include": [
+    "./watchClient.ts",
+    "./watchServer.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "../../../../build/site/build"
+  }
+}
