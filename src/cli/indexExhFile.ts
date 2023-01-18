@@ -3,12 +3,12 @@ import sassPlugin from 'esbuild-sass-plugin'
 import * as fs from 'fs'
 import glob from 'globsie'
 import path from 'path'
-import { Config } from '../../common/config/types'
+import { Config } from '../common/config/types'
 
-import { createBuilder } from '../../common/esbuilder'
-import { NPM_PACKAGE_NAME } from '../../common/name'
-import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../../common/paths'
-import { logStep, logWarn } from '../logging'
+import { createBuilder } from '../common/esbuilder'
+import { NPM_PACKAGE_NAME } from '../common/name'
+import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../common/paths'
+import { logStep, logWarn } from './logging'
 
 const isDev = process.env.EXH_DEV === 'true'
 

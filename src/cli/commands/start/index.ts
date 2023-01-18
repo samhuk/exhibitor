@@ -1,5 +1,4 @@
 import { ChildProcess } from 'child_process'
-import { watchComponentLibrary } from '../../componentLibrary/watch'
 import { getConfigForCommand } from '../../config'
 import { baseCommand } from '../common'
 import { startServer } from './startServer'

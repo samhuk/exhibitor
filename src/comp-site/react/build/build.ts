@@ -9,7 +9,7 @@ import { BuildOptions } from './types'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
 import { COMP_SITE_OUTDIR } from '../../../common/paths'
 
-import { createComponentLibraryIncluderPlugin } from '../../../cli/componentLibrary/indexExhFile'
+import { createComponentLibraryIncluderPlugin } from '../../../cli/indexExhFile'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -26,7 +26,7 @@ const getPaths = (options: BuildOptions) => {
   const indexHtmlOutPath = path.relative(path.resolve('./'), path.resolve(COMP_SITE_OUTDIR, 'index.html'))
   const outFile = path.resolve(COMP_SITE_OUTDIR, 'index.js')
 
-  // If we are in dev mode or are told to skip prebuild
+  // If skipPrebuild is true then we will build the comp site directly from the local typescript
   if (options.skipPrebuild) {
     return {
       entrypoint: `./src/comp-site/${type}/${subType}/index.tsx`,
@@ -37,7 +37,8 @@ const getPaths = (options: BuildOptions) => {
   }
 
   const prebuildsPath = isDev ? './build/comp-site-prebuilds' : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site-prebuilds`
-  const entrypointPathSuffix = `${type}/${subType}/index.js`
+  // E.g. comp-site/react/18-or-more/index.js
+  const entrypointPathSuffix = `comp-site/${type}/${subType}/index.js`
   const indexHtmlPathSuffix = `${type}-index.html`
 
   return {

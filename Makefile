@@ -143,19 +143,6 @@ build-cli-rel:
 		_build-cli-rel
 #endregion
 
-#region Comp-Site Build-Build
-clean-build-comp-site-react-build-build:
-	rm -rf ./build/comp-site/react/build-build
-
-_build-comp-site-react-build-build:
-	npx tsc -p ./src/comp-site/react/build-build/tsconfig.json
-
-build-comp-site-react-build-build:
-	@$(MAKE) --no-print-directory \
-		clean-build-comp-site-react-build-build \
-		_build-comp-site-react-build-build
-#endregion
-
 #region Comp-Sites Prebuild
 clean-prebuild-comp-sites:
 	rm -rf ./build/comp-site/react/site-prebuild
@@ -168,9 +155,6 @@ prebuild-comp-sites:
 		clean-prebuild-comp-sites \
 		_prebuild-comp-sites
 	cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
-
-build-comp-site-react-dev:
-	npx env-cmd -e dev node ./build/comp-site/react/build/index.js
 #endregion
 
 #region Complete build
@@ -182,10 +166,7 @@ build-all:
 		build-site-rel \
 		build-api \
 		build-cli-rel \
-		prebuild-comp-site-react \
-		prebuild-comp-site-react-sub18 \
-		build-comp-site-react-build-build \
-		build-comp-site-react-build
+		prebuild-comp-sites
 #endregion
 
 #region Distribution
@@ -204,14 +185,8 @@ populate-dist:
 	mkdir -p dist/npm/exhibitor/lib/cli
 	cp -r build/cli/cli/ dist/npm/exhibitor/lib
 
-	mkdir -p dist/npm/exhibitor/lib/comp-site/react/build
-	cp -r build/comp-site/react/build/ dist/npm/exhibitor/lib/comp-site/react
-
-	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-prebuild
-	cp -r build/comp-site/react/site-prebuild/ dist/npm/exhibitor/lib/comp-site/react
-
-	mkdir -p dist/npm/exhibitor/lib/comp-site/react/site-sub18-prebuild
-	cp -r build/comp-site/react/site-sub18-prebuild/ dist/npm/exhibitor/lib/comp-site/react
+	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
+	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib
 
 prepublish:
 	@date +%s > _time_$@.txt
