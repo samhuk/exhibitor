@@ -158,7 +158,9 @@ prebuild-comp-sites:
 	@$(MAKE) --no-print-directory \
 		clean-prebuild-comp-sites \
 		_prebuild-comp-sites
-	cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
+# This fails on github actions CI for some reason with the following error:
+# cp: cannot create regular file './build/comp-site-prebuilds/react-index.html': No such file or directory
+	-cp ./src/comp-site/react/index.htmlbingo ./build/comp-site-prebuilds/react-index.html
 #endregion
 
 #region Comp-Sites TS check
