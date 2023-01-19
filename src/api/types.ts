@@ -7,4 +7,4 @@
  * ```
  */
 
-export type { Config } from '../cli/config/types'
+export type { UnresolvedConfig as Config } from '../common/config/types'

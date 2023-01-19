@@ -1,6 +1,6 @@
 {
   "name": "exhibitor",
-  "version": "2.0.15",
+  "version": "2.1.0",
   "description": "Snappy and delightful React component workshop",
   "main": "./lib/api/api/index.js",
   "types": "./lib/api/api/index.d.ts",
@@ -13,21 +13,35 @@
     "email": "samhughes1701@hotmail.co.uk",
     "url": "http://samhuk.com/about"
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/samhuk"
+  },
   "repository": "https://github.com/samhuk/exhibitor",
   "dependencies": {
     "chokidar": "^3.5.3",
     "chokidar-debounced": "^1.0.4",
     "commander": "^9.4.1",
     "cors": "^2.8.5",
-    "esbuild": "^0.15.14",
+    "esbuild": "^0.16.12",
     "express": "^4.18.2",
     "deepmerge": "^4.2.2",
-    "esbuild-sass-plugin": "^2.4.1",
+    "esbuild-sass-plugin": "^2.4.4",
     "globsie": "^0.0.12",
     "livereload": "^0.9.3",
     "colors": "1.4.0",
     "clone-deep": "^4.0.1",
     "ts-node": "^10.9.1",
     "axe-core": "^4.6.2"
+  },
+  "keywords": [
+    "react",
+    "component",
+    "workshop",
+    "storybook",
+    "ladle"
+  ],
+  "engines": {
+    "node": ">=14"
   }
 }

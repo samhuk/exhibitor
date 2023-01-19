@@ -1,1 +1,0 @@
-This is the React component site for versions sub-v18. React v18 introduced breaking changes. This is a small React app that is designed to be inside an iframe, listen for changes to the selected exhibit variant path, and display the corresponding variant for a particular variant path.

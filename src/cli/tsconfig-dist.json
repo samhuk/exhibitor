@@ -5,7 +5,6 @@
     "./index.ts"
   ],
   "compilerOptions": {
-    "declaration": false,
     "outDir": "../../build/cli"
   }
 }

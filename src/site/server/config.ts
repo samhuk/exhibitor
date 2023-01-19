@@ -1,23 +1,14 @@
-import { CONFIG_FILE_PATH_ENV_VAR_NAME } from '../../common/config'
-import { resolveConfig } from '../../cli/config'
-import { readAndParseConfig } from '../../cli/config/read'
-import { Config, ResolvedConfig } from '../../cli/config/types'
-
-const getConfig = async () => {
-  const configFilePath = process.env[CONFIG_FILE_PATH_ENV_VAR_NAME]
-
-  let config: Config = null
-  if (configFilePath != null)
-    config = await readAndParseConfig(configFilePath)
-
-  return resolveConfig(config, configFilePath)
-}
+import { updateProcessVerbosity } from '../../cli/state'
+import { CONFIG_FILE_PATH_ENV_VAR_NAME, getConfig } from '../../common/config'
+import { Config } from '../../common/config/types'
 
 // eslint-disable-next-line import/no-mutable-exports
-export let config: ResolvedConfig = null
+export let config: Config = null
 
 const main = async () => {
-  config = await getConfig()
+  config = await getConfig(process.env[CONFIG_FILE_PATH_ENV_VAR_NAME])
+
+  updateProcessVerbosity(config.verbose)
 }
 
 main()

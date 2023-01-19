@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.json",
+  "include": [
+    "./**/*",
+    "../common/**/*"
+  ],
+  "exclude": [
+    "./vue/**/*"
+  ],
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

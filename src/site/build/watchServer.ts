@@ -1,10 +1,10 @@
 import { ChildProcess, fork, ForkOptions } from 'child_process'
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
+import { log, logSuccess } from '../../cli/logging'
 
 import { DEBUG_SERVER_PORT } from '../../common/debug'
 import { printBuildResult } from '../../common/esbuilder'
-import { SITE_COMMON_DIR, SITE_SERVER_DIR, SITE_SERVER_OUTFILE } from '../../common/paths'
 import { buildServer } from './buildServer'
 import { CustomBuildResult, WatchServerOptions } from './types'
 
@@ -28,20 +28,20 @@ const startRebuildWatch = (options: WatchServerOptions, buildResult: CustomBuild
   watch(() => {
     // Kill existing server process
     serverProc?.kill()
-    console.log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding server...`)
+    log(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding server...`)
     const startTime = Date.now()
     // Rebuild server
     buildResult.buildResult.rebuild().then(_result => {
-      console.log(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
+      logSuccess(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
       // If verbose, print build info on every rebuild
       if (options.verbose) {
         printBuildResult(_result, startTime)
-        console.log('Watching for changes...')
+        log('Watching for changes...')
       }
       // Start server again
       startServer(options)
     }).catch(() => undefined) // Prevent from exiting the process
-  }, options.watchedDirPatterns, 150, () => console.log('Watching for changes...'))
+  }, options.watchedDirPatterns, 150, () => log('Watching for changes...'))
 }
 
 let initialBuildWatcher: FSWatcher = null
@@ -59,21 +59,6 @@ export const watchServer = (options: WatchServerOptions) => {
       if (initialBuildWatcher != null)
         return
       initialBuildWatcher = chokidar.watch(options.watchedDirPatterns)
-      watch(() => watchServer(options), initialBuildWatcher, 150, () => console.log('Watching for changes...'))
+      watch(() => watchServer(options), initialBuildWatcher, 150, () => log('Watching for changes...'))
     })
-}
-
-export const createWatchServerOptions = (): WatchServerOptions => {
-  const isDev = process.env.EXH_DEV === 'true'
-
-  return {
-    verbose: isDev,
-    sourceMap: isDev,
-    incremental: isDev,
-    minify: !isDev,
-    outfile: SITE_SERVER_OUTFILE,
-    watchedDirPatterns: [SITE_SERVER_DIR, SITE_COMMON_DIR],
-    serverHost: process.env.SITE_SERVER_HOST ?? 'localhost',
-    serverPort: process.env.SITE_SERVER_PORT != null ? parseInt(process.env.SITE_SERVER_PORT) : 4001,
-  }
 }

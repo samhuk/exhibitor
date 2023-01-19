@@ -8,7 +8,8 @@ export const preparePlaywrightTest = async (page: Page) => {
   if (variantPath == null)
     return false
 
-  await page.goto(`http://localhost:4001/comp-site?path=${variantPath}`)
+  // TODO: This should reference constants. Busy at the moment...
+  await page.goto(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/comp-site?path=${variantPath}`)
   await page.waitForTimeout(2000) // TODO: The comp-site needs to tell us when it's ready
   return true
 }

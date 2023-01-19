@@ -1,3 +1,4 @@
+import { ExhibitNodes, PathTree } from '../../../api/exhibit/types'
 import { getTheme } from '../connectors/theme'
 import { componentExhibitsReady } from './componentExhibits/actions'
 import { fetchMetaDataThunk } from './metadata/reducer'
@@ -6,18 +7,16 @@ import { AppDispatch } from './types'
 
 const areComponentExhibitsLoaded = () => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _test = exh
-    return true
+    return (window as any).exh != null
   }
   catch {
     return false
   }
 }
 
-const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise((res, rej) => {
+const waitUntilComponentExhibitsAreLoaded = (): Promise<{ nodes: ExhibitNodes, pathTree: PathTree }> => new Promise((res, rej) => {
   if (areComponentExhibitsLoaded()) {
-    res()
+    res((window as any).exh)
     return
   }
 
@@ -25,13 +24,13 @@ const waitUntilComponentExhibitsAreLoaded = (): Promise<void> => new Promise((re
   const interval = setInterval(() => {
     i += 1
     if (i > 100) {
-      console.log('component exhibits didnt load :(')
+      console.log('component exhibits didnt load. Did index.exh.ts build correctly?')
       clearTimeout(interval)
     }
-    console.log('trying to see if component exhibits are ready...')
+    console.log('Checking if component exhibits are ready...')
     if (areComponentExhibitsLoaded()) {
       clearTimeout(interval)
-      res()
+      res((window as any).exh)
     }
   }, 50)
 })
