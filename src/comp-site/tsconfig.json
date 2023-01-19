@@ -5,6 +5,9 @@
     "./**/*",
     "../common/**/*"
   ],
+  "exclude": [
+    "./vue/**/*"
+  ],
   "compilerOptions": {
     "noEmit": true
   }

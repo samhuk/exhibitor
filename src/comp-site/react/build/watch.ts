@@ -42,7 +42,7 @@ export const watchCompSite = async (
     initialBuildWatcher?.close()
     const rebuildWatcher = chokidar.watch(options.config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
     watch(() => rebuildIteration(buildResult, options), rebuildWatcher, 150, () => {
-      console.log('Watching for changes...')
+      logStep('Watching for changes...')
       options.onFirstSuccessfulBuildComplete?.()
       options.onSuccessfulBuildComplete?.()
     })
@@ -58,7 +58,7 @@ export const watchCompSite = async (
       () => watchCompSite(options),
       initialBuildWatcher,
       150,
-      () => log('Watching for changes...'),
+      () => logStep('Watching for changes...'),
     )
   }
 }

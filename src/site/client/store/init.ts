@@ -24,10 +24,10 @@ const waitUntilComponentExhibitsAreLoaded = (): Promise<{ nodes: ExhibitNodes, p
   const interval = setInterval(() => {
     i += 1
     if (i > 100) {
-      console.log('component exhibits didnt load :(')
+      console.log('component exhibits didnt load. Did index.exh.ts build correctly?')
       clearTimeout(interval)
     }
-    console.log('trying to see if component exhibits are ready...')
+    console.log('Checking if component exhibits are ready...')
     if (areComponentExhibitsLoaded()) {
       clearTimeout(interval)
       res((window as any).exh)
