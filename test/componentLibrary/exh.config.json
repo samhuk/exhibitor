@@ -1,6 +1,13 @@
 {
   "$schema": "../../src/common/config/schema.json",
   "rootStyle": "./styles.scss",
+  "include": [
+    "./**/*.exh.ts",
+    "./**/*.exh.tsx"
+  ],
+  "watch": [
+    "./**/*"
+  ],
   "site": {
     "port": 4002,
     "title": "Test Component Library"

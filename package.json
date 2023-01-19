@@ -3,20 +3,15 @@
     "clean-site-build": "rimraf ./build/site/build",
     "_build-site-build": "tsc -p ./src/site/build/bin/tsconfig-dist.json",
     "build-site-build": "npm run clean-site-build && npm run _build-site-build",
-
     "watch-site-client-dev": "env-cmd -e dev-start node ./build/site/build/site/build/bin/watchClient.js",
     "watch-site-server-dev": "env-cmd -e dev-start node ./build/site/build/site/build/bin/watchServer.js",
-
     "clean-comp-site-build": "rimraf ./build/comp-site/build",
     "_build-comp-site-react-build": "tsc -p ./src/comp-site/react/build/bin/tsconfig-dist.json",
     "build-comp-site-react-build": "npm run clean-comp-site-build && npm run _build-comp-site-react-build",
-
     "watch-comp-site-react-dev": "env-cmd -e dev node ./build/comp-site-react-watch/comp-site/react/build/bin/watch.js",
-
     "build-start": "concurrently -m 2 -n \"bsb ,bcsb\" -c \"red,green,blue\" \"npm run build-site-build\" \"npm run build-comp-site-react-build\"",
     "_start": "concurrently -m 4 -n \"site-ui  ,site-api ,comp-site\" -c \"red,green,blue\" \"npm run watch-comp-site-react-dev\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\"",
     "start": "npm run build-start && npm run _start",
-
     "cli-dev": "env-cmd -e dev node ./build/cli/cli/index.js start --verbose",
     "cli-dev-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json --verbose",
     "cli-dev-config-js": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.js --verbose",
@@ -25,6 +20,10 @@
   "dependencies": {
     "@babel/core": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.5",
     "@playwright/test": "^1.29.2",
     "@reduxjs/toolkit": "^1.9.1",
     "@samhuk/parse-json": "^1.0.0",
