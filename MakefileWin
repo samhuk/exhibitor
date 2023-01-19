@@ -15,7 +15,7 @@ lint-errors-only:
 
 #region JS/TS unit tests
 clean-ts-unit-tests:
-	rm -rf ./build-test
+	if exist ".\build-test" rmdir /s /q ".\build-test"
 
 build-ts-unit-tests:
 	npx tsc -p ./src/tsconfig.test.json
@@ -45,7 +45,7 @@ build-site-ts:
 
 #region Site Builder TS Build
 clean-site-build:
-	rm -rf ./build/site/build
+	if exist ".\build\site\build" rmdir .\build\site\build /s /q
 
 _build-site-build:
 	npx tsc -p ./src/site/build/tsconfig.json
@@ -58,7 +58,7 @@ build-site-build:
 
 #region Site Build
 clean-site:
-	rm -rf ./build/site/client && rm -rf ./build/site/server
+	if exist ".\build\site\client" rmdir .\build\site\client /s /q && if exist ".\build\site\server" rmdir .\build\site\server /s /q
 
 _build-site-client-dev:
 	npx env-cmd -e dev node ./build/site/build/site/build/bin/buildClient.js
@@ -95,7 +95,7 @@ build-site-rel:
 
 #region API TS Build
 clean-api:
-	rm -rf ./build/api
+	if exist ".\build\api" rmdir .\build\api /s /q
 
 _build-api:
 	npx tsc -p ./src/api/tsconfig-dist.json
@@ -108,7 +108,7 @@ build-api:
 
 #region CLI Builder TS Build
 clean-cli-build:
-	rm -rf ./build/cli/build
+	if exist ".\build\cli\build" rmdir .\build\cli\build /s /q
 
 _build-cli-build:
 	npx tsc -p ./src/cli/build/bin/tsconfig-dist.json
@@ -121,7 +121,7 @@ build-cli-build:
 
 #region CLI build
 clean-cli:
-	rm -rf ./build/cli/cli
+	if exist ".\build\cli\cli" rmdir .\build\cli\cli /s /q
 
 _build-cli-dev:
 	npx npx env-cmd -e dev node ./build/cli/build/cli/build/bin/buildCli.js
@@ -149,7 +149,7 @@ build-cli-ts:
 
 #region Comp-Sites Prebuild
 clean-prebuild-comp-sites:
-	rm -rf ./build/comp-site/react/site-prebuild
+	if exist ".\build\comp-site-prebuilds" rmdir .\build\comp-site-prebuilds /s /q
 
 _prebuild-comp-sites:
 	npx tsc -p ./src/comp-site/tsconfig-prebuilds.json
@@ -158,17 +158,12 @@ prebuild-comp-sites:
 	@$(MAKE) --no-print-directory \
 		clean-prebuild-comp-sites \
 		_prebuild-comp-sites
-	cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
-#endregion
-
-#region Comp-Sites TS check
-build-comp-site-ts:
-	npx tsc -p ./src/comp-site/tsconfig.json
+	copy .\src\comp-site\react\index.html .\build\comp-site-prebuilds\react-index.html
 #endregion
 
 #region Complete build
 clean-all:
-	rm -rf ./.exh && rm -rf ./build && rm -rf ./build-test
+	if exist ".\.exh" rmdir .\.exh /s /q && if exist ".\build" rmdir .\build /s /q && if exist ".\build-test" rmdir .\build-test /s /q
 
 build-all:
 	@$(MAKE) --no-print-directory \
@@ -206,7 +201,6 @@ prepublish:
 		ts-unit-tests \
 		build-site-ts \
 		build-cli-ts \
-		build-comp-site-ts \
 		build-all \
 		populate-dist
 	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"

@@ -72,7 +72,8 @@ export const createBuilder = (
   verbose: boolean,
   builder: () => Promise<CustomBuildResult>,
 ): () => Promise<CustomBuildResult> => () => {
-  logStep(`Building ${buildName}`)
+  if (buildName != null)
+    logStep(`Building ${buildName}`)
   const startTime = Date.now()
   return builder()
     .then(result => {

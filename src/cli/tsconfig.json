@@ -6,6 +6,6 @@
     "../common/**/*"
   ],
   "compilerOptions": {
-    "outDir": "../../build/cli"
+    "noEmit": true
   }
 }

@@ -4,5 +4,8 @@
   "include": [
     "./**/*",
     "../common/**/*"
-  ]
+  ],
+  "compilerOptions": {
+    "noEmit": true
+  }
 }
