@@ -182,10 +182,10 @@ build-all:
 
 #region Distribution
 populate-dist:
-	rm -rf ./dist/npm/exhibitor/lib/
+	rm -rf dist/npm/exhibitor/lib/
 
 	mkdir -p dist/npm/exhibitor/lib/site/server
-	cp -r ./build/site/server/ ./dist/npm/exhibitor/lib/site/server
+	cp -r build/site/server/ dist/npm/exhibitor/lib/site/server
 
 	mkdir -p dist/npm/exhibitor/lib/site/client
 	cp -r build/site/client/ dist/npm/exhibitor/lib/site/client
@@ -197,7 +197,9 @@ populate-dist:
 	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
-	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib/comp-site-prebuilds
+# This fails on github actions CI for some reason with the following error:
+# cp: cannot stat 'build/comp-site-prebuilds': No such file or directory
+	-cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib/comp-site-prebuilds
 
 prepublish:
 	@date +%s > _time_$@.txt
