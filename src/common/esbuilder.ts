@@ -88,11 +88,12 @@ export const createBuilder = (
 }
 
 export const build = (
-  buildName: string,
+  buildName: string | null,
   verbose: boolean,
   builder: () => Promise<CustomBuildResult>,
 ): Promise<CustomBuildResult> => {
-  logStep(`Building ${buildName}`)
+  if (buildName != null)
+    logStep(`Building ${buildName}`)
   const startTime = Date.now()
   return builder()
     .then(result => {

@@ -27,7 +27,7 @@ export const enableHotReloading = (app: Express): void => {
   // Else, the server will listen for messages to it's node process in order to reload clients
   else {
     process.on('message', () => {
-      logStep('refreshing clients...')
+      logStep('Refreshing clients...', true)
       liveReloadServer.refresh('/')
     })
   }

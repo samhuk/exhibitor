@@ -41,7 +41,7 @@ export const createCheckPackagesError = (causedBy: CliString, packageName: strin
 })
 
 export const checkPackages = (): CliError | { reactMajorVersion: number } => {
-  logStep('Checking that required packages are installed.')
+  logStep('Checking that required packages are installed.', true)
   const results = _checkPackages(REQUIRED_PACKAGES, {
     stopOnError: true,
     onGetResult: result => {

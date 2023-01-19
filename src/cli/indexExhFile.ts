@@ -42,7 +42,7 @@ const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_N
 const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
 export const buildIndexExhTsFile = (config: Config) => (
-  createBuilder('component library', config.verbose, () => esbuildBuild({
+  createBuilder(null, config.verbose, () => esbuildBuild({
     // Overrideable build options
     loader: {
       '.ttf': 'file',
