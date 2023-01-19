@@ -160,7 +160,7 @@ prebuild-comp-sites:
 		_prebuild-comp-sites
 # This fails on github actions CI for some reason with the following error:
 # cp: cannot create regular file './build/comp-site-prebuilds/react-index.html': No such file or directory
-	-cp ./src/comp-site/react/index.htmlbingo ./build/comp-site-prebuilds/react-index.html
+	-cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
 #endregion
 
 #region Comp-Sites TS check
@@ -185,19 +185,19 @@ populate-dist:
 	rm -rf ./dist/npm/exhibitor/lib/
 
 	mkdir -p dist/npm/exhibitor/lib/site/server
-	cp -r ./build/site/server/ ./dist/npm/exhibitor/lib/site
+	cp -r ./build/site/server/ ./dist/npm/exhibitor/lib/site/server
 
 	mkdir -p dist/npm/exhibitor/lib/site/client
-	cp -r build/site/client/ dist/npm/exhibitor/lib/site
+	cp -r build/site/client/ dist/npm/exhibitor/lib/site/client
 
 	mkdir -p dist/npm/exhibitor/lib/api
-	cp -r build/api/ dist/npm/exhibitor/lib
+	cp -r build/api/ dist/npm/exhibitor/lib/api
 
 	mkdir -p dist/npm/exhibitor/lib/cli
-	cp -r build/cli/cli/ dist/npm/exhibitor/lib
+	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
-	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib
+	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib/comp-site-prebuilds
 
 prepublish:
 	@date +%s > _time_$@.txt
