@@ -197,7 +197,7 @@ populate-dist:
 	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
 	cp -r build/comp-site-prebuilds/ dist/npm/exhibitor/lib/comp-site-prebuilds/
 
-populate-dis-wsl:
+populate-dist-wsl:
 	rm -rf dist/npm/exhibitor/lib/
 
 	mkdir -p dist/npm/exhibitor/lib/site/server
