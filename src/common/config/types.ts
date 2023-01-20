@@ -34,10 +34,18 @@ export type UnresolvedConfig = {
    *
    * This is relative to where the config file is.
    *
-   * @default
+   * @default ['']
    * all .exh.ts files local to config file.
    */
   include?: string[]
+  /**
+   * Optional list of glob patterns to ignore component exhibit files.
+   *
+   * This is relative to where the config file is.
+   *
+   * @default []
+   */
+  exclude?: string[]
   /**
    * List of glob patterns to select files/dirs to watch for changes in order
    * to live-reload the exhibitor site.
@@ -101,6 +109,7 @@ export type Config = {
   configDir: string
   rootConfigFile: string | null | undefined
   include: string[]
+  exclude: string[]
   watch: string[]
   site: {
     host: string

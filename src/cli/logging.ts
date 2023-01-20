@@ -45,6 +45,18 @@ export const log = (
   }
 }
 
+export const logStepHeader = (
+  msg: CliString,
+  verbose: boolean = false,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (verbose && !state.verbose)
+    return
+
+  const normalizedMessage = normalizeCliString(msg)
+  console.log(`${colors.blue('⚫')} -- ${colors.underline(normalizedMessage)}`)
+}
+
 export const logStep = (
   msg: CliString,
   verbose: boolean = false,

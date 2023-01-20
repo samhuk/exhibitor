@@ -4,7 +4,8 @@ import { NPM_PACKAGE_CAPITALIZED_NAME } from '../name'
 import { readAndParseConfig } from './read'
 
 export const DEFAULT_CONFIG: Config = {
-  include: ['./**/*.exh.ts'],
+  include: ['./**/*.exh.ts', './**/*.exh.tsx'],
+  exclude: [],
   watch: ['./**/*'],
   site: {
     host: 'localhost',
@@ -35,6 +36,7 @@ export const resolveConfig = (config?: UnresolvedConfig, configFilePath?: string
     configDir,
     rootConfigFile: configFilePath,
     include: makePathsRelativeToConfigDir(config?.include ?? DEFAULT_CONFIG.include, configDir),
+    exclude: makePathsRelativeToConfigDir(config?.exclude ?? DEFAULT_CONFIG.exclude, configDir),
     watch: makePathsRelativeToConfigDir(config?.watch ?? DEFAULT_CONFIG.watch, configDir),
     rootStyle: config?.rootStyle != null ? makePathRelativeToConfigDir(config.rootStyle, configDir) : undefined,
     site: {

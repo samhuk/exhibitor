@@ -51,9 +51,10 @@ const traverse = (
   variantGroupFn: (vg: VariantGroup, path: string[]) => void,
   variantFn: (v: Variant, path: string[], exhibit: ComponentExhibit) => void,
 ): PathTree => {
+  const exhibitList = Object.values(exhibits)
   const ungroupedExhibits: ComponentExhibits = {}
   const groupNameToExhibits: { [groupName: string]: ComponentExhibits } = {}
-  const groupNames: string[] = Object.values(exhibits).reduce<string[]>((acc, e) => {
+  const groupNames: string[] = exhibitList.reduce<string[]>((acc, e) => {
     if (e.groupName == null) {
       ungroupedExhibits[e.name] = e
       return acc
@@ -74,10 +75,9 @@ const traverse = (
   groupNames.forEach(groupName => {
     pathTree[groupNameToUriEncodedDict[groupName]] = {}
     exhibitGroupFn(groupNameToExhibits[groupName], [groupName])
-    Object.values(exhibits)
   })
 
-  Object.values(exhibits).forEach(e => {
+  exhibitList.forEach(e => {
     const basePathComponents = e.groupName != null ? [e.groupName] : []
     const pathTreeToPopulate = (e.groupName != null
       ? pathTree[groupNameToUriEncodedDict[e.groupName]]
@@ -130,11 +130,11 @@ const nonRootExhibit = (
   return _nonRootExhibit
 }
 
+const mapPathComponentsToUrlPathString = (p: string[]) => p.map(_p => encodeURIComponent(_p)).join('/')
+
 export const resolve = (
   exhibits: ComponentExhibits,
 ): { nodes: ExhibitNodes, pathTree: PathTree } => {
-  const mapPathComponentsToUrlPathString = (p: string[]) => p.map(_p => encodeURIComponent(_p)).join('/')
-
   const nodes: ExhibitNodes = {}
 
   const pathTree = traverse(
@@ -234,7 +234,10 @@ export const exhibit = <
         testSrcPath,
       }
 
-      __exhibits[componentExhibit.name] = componentExhibit
+      // TODO: This is kind of a workaround. It could all be a lot more robust and tidier.
+      const exhibitKey = componentExhibit.groupName != null ? `${componentExhibit.groupName}%${componentExhibit.name}` : componentExhibit.name
+
+      __exhibits[exhibitKey] = componentExhibit
 
       return componentExhibit as any
     },
