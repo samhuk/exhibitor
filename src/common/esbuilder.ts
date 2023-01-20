@@ -1,6 +1,6 @@
 import { BuildResult, Plugin } from 'esbuild'
 import path from 'path'
-import { log, logStep, logSuccess } from '../cli/logging'
+import { log, logStep, logStepHeader, logSuccess } from '../cli/logging'
 
 import prettyBytes from './prettyBytes'
 import { BuildOutput, CustomBuildResult } from './types'
@@ -67,18 +67,22 @@ export const printBuildResult = (result: BuildResult, startTime: number, additio
   log(`    Compression ratio: ${(totalInputFileSizeBytes / totalOutputFileSizeBytes).toFixed(2)}`)
 }
 
-export const createBuilder = (
-  buildName: string,
+export const build = (
+  buildName: string | null,
   verbose: boolean,
   builder: () => Promise<CustomBuildResult>,
-): () => Promise<CustomBuildResult> => () => {
-  if (buildName != null)
-    logStep(`Building ${buildName}`)
+): Promise<CustomBuildResult> => {
+  if (buildName != null) {
+    if (verbose)
+      logStepHeader(`Building ${buildName}.`)
+    else
+      logStep(`Building ${buildName}.`)
+  }
   const startTime = Date.now()
   return builder()
     .then(result => {
       if (verbose) {
-        logSuccess('Done. Results:')
+        logSuccess(`Done building ${buildName}. Results:`)
         printBuildResult(result.buildResult, startTime, result.additionalOutputs)
       }
       return result
@@ -88,23 +92,8 @@ export const createBuilder = (
     })
 }
 
-export const build = (
-  buildName: string | null,
+export const createBuilder = (
+  buildName: string,
   verbose: boolean,
   builder: () => Promise<CustomBuildResult>,
-): Promise<CustomBuildResult> => {
-  if (buildName != null)
-    logStep(`Building ${buildName}`)
-  const startTime = Date.now()
-  return builder()
-    .then(result => {
-      if (verbose) {
-        logSuccess('Done. Results:')
-        printBuildResult(result.buildResult, startTime, result.additionalOutputs)
-      }
-      return result
-    })
-    .catch(err => {
-      throw err
-    })
-}
+): () => Promise<CustomBuildResult> => () => build(buildName, verbose, builder)

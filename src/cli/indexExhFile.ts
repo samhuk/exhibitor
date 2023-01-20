@@ -8,7 +8,7 @@ import { Config } from '../common/config/types'
 import { createBuilder } from '../common/esbuilder'
 import { NPM_PACKAGE_NAME } from '../common/name'
 import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../common/paths'
-import { logStep, logStepHeader, logWarn } from './logging'
+import { logStep, logWarn } from './logging'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -41,7 +41,7 @@ fs.mkdirSync(BUILD_OUTPUT_ROOT_DIR, { recursive: true })
 const indexExhTsFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
 const indexExhTsFileOutFile = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
-export const creatIndexExhTsFileBuilder = (config: Config) => createBuilder(null, config.verbose, () => esbuildBuild({
+export const creatIndexExhTsFileBuilder = (config: Config) => createBuilder(null, false, () => esbuildBuild({
   // Overrideable build options
   loader: {
     '.ttf': 'file',
@@ -85,7 +85,7 @@ const determineIncludedExhibitFiles = async (
 export const createIndexExhTsFile = async (
   config: Config,
 ) => {
-  logStepHeader('Creating index.exh.ts file content.', true)
+  logStep('Creating index.exh.ts file content.', true)
   const includedFilePaths = await determineIncludedExhibitFiles(config)
 
   const exhibitApiFunctionPath = isDev

@@ -166,7 +166,7 @@ build-comp-site-ts:
 	npx tsc -p ./src/comp-site/tsconfig.json
 #endregion
 
-#region Complete build
+#region Complete builds
 clean-all:
 	rm -rf ./.exh && rm -rf ./build && rm -rf ./build-test
 
@@ -176,6 +176,12 @@ build-all:
 		build-api \
 		build-cli-rel \
 		prebuild-comp-sites
+
+build-all-ts:
+	@$(MAKE) --no-print-directory \
+		build-site-ts \
+		build-cli-ts \
+		build-comp-site-ts
 #endregion
 
 #region Distribution
@@ -201,19 +207,19 @@ populate-dist-wsl:
 	rm -rf dist/npm/exhibitor/lib/
 
 	mkdir -p dist/npm/exhibitor/lib/site/server
-	cp -r build/site/server/ dist/npm/exhibitor/lib/site/server
+	cp -r build/site/server/ dist/npm/exhibitor/lib/site
 
 	mkdir -p dist/npm/exhibitor/lib/site/client
-	cp -r build/site/client/ dist/npm/exhibitor/lib/site/client
+	cp -r build/site/client/ dist/npm/exhibitor/lib/site
 
 	mkdir -p dist/npm/exhibitor/lib/api
-	cp -r build/api/ dist/npm/exhibitor/lib/api
+	cp -r build/api/ dist/npm/exhibitor/lib
 
 	mkdir -p dist/npm/exhibitor/lib/cli
-	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli
+	cp -r build/cli/cli/ dist/npm/exhibitor/lib
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
-	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib/comp-site-prebuilds
+	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib
 
 prepublish:
 	@date +%s > _time_$@.txt
@@ -222,9 +228,7 @@ prepublish:
 		check-dist-outer-npm-deps \
 		lint-errors-only \
 		ts-unit-tests \
-		build-site-ts \
-		build-cli-ts \
-		build-comp-site-ts \
+		build-all-ts \
 		build-all \
 		populate-dist
 	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"

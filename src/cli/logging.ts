@@ -54,7 +54,7 @@ export const logStepHeader = (
     return
 
   const normalizedMessage = normalizeCliString(msg)
-  console.log(`${colors.blue('⚫')} -- ${colors.underline(normalizedMessage)}`)
+  console.log(`${colors.blue('⚫')} == ${colors.underline(normalizedMessage)} ==`)
 }
 
 export const logStep = (
