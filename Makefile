@@ -183,6 +183,24 @@ populate-dist:
 	rm -rf dist/npm/exhibitor/lib/
 
 	mkdir -p dist/npm/exhibitor/lib/site/server
+	cp -r build/site/server/ dist/npm/exhibitor/lib/site/server/
+
+	mkdir -p dist/npm/exhibitor/lib/site/client
+	cp -r build/site/client/ dist/npm/exhibitor/lib/site/client/
+
+	mkdir -p dist/npm/exhibitor/lib/api
+	cp -r build/api/ dist/npm/exhibitor/lib/api/
+
+	mkdir -p dist/npm/exhibitor/lib/cli
+	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli/
+
+	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
+	cp -r build/comp-site-prebuilds/ dist/npm/exhibitor/lib/comp-site-prebuilds/
+
+populate-dis-wsl:
+	rm -rf dist/npm/exhibitor/lib/
+
+	mkdir -p dist/npm/exhibitor/lib/site/server
 	cp -r build/site/server/ dist/npm/exhibitor/lib/site/server
 
 	mkdir -p dist/npm/exhibitor/lib/site/client
@@ -209,6 +227,21 @@ prepublish:
 		build-comp-site-ts \
 		build-all \
 		populate-dist
+	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"
+	@rm _time_$@.txt
+
+prepublish-wsl:
+	@date +%s > _time_$@.txt
+	npm install
+	@$(MAKE) --no-print-directory \
+		check-dist-outer-npm-deps \
+		lint-errors-only \
+		ts-unit-tests \
+		build-site-ts \
+		build-cli-ts \
+		build-comp-site-ts \
+		build-all \
+		populate-dist-wsl
 	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"
 	@rm _time_$@.txt
 #endregion
