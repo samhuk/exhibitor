@@ -149,7 +149,7 @@ build-cli-ts:
 
 #region Comp-Sites Prebuild
 clean-prebuild-comp-sites:
-	rm -rf ./build/comp-site/react/site-prebuild
+	rm -rf ./build/comp-site-prebuilds
 
 _prebuild-comp-sites:
 	npx tsc -p ./src/comp-site/tsconfig-prebuilds.json
@@ -158,9 +158,7 @@ prebuild-comp-sites:
 	@$(MAKE) --no-print-directory \
 		clean-prebuild-comp-sites \
 		_prebuild-comp-sites
-# This fails on github actions CI for some reason with the following error:
-# cp: cannot create regular file './build/comp-site-prebuilds/react-index.html': No such file or directory
-	-cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
+	cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
 #endregion
 
 #region Comp-Sites TS check
@@ -197,9 +195,7 @@ populate-dist:
 	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
-# This fails on github actions CI for some reason with the following error:
-# cp: cannot stat 'build/comp-site-prebuilds': No such file or directory
-	-cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib/comp-site-prebuilds
+	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib/comp-site-prebuilds
 
 prepublish:
 	@date +%s > _time_$@.txt
