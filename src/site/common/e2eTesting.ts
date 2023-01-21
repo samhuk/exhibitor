@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
-import { JSONReport } from '@playwright/test/types/testReporter'
-
 export type RunE2eTestOptions = {
   /**
    * @example './button.spec.ts'
@@ -17,4 +14,4 @@ export type RunE2eTestOptions = {
   headed: boolean
 }
 
-export type PlaywrightTestResults = JSONReport
+export type PlaywrightTestResults = string

@@ -1,12 +1,15 @@
 import React from 'react'
+import { Data64URIReader, Entry, TextWriter, ZipReader } from '@zip.js/zip.js'
+import { ReportView } from '../../../../../../external/playwright-html-reporter/src/reportView'
 
 import { VariantExhibitNode } from '../../../../../../api/exhibit/types'
-import { PlaywrightTestResults, RunE2eTestOptions } from '../../../../../common/e2eTesting'
+import { RunE2eTestOptions } from '../../../../../common/e2eTesting'
 import RunButton from '../../../../common/buttons/runButton'
 import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { runE2eTestThunk } from '../../../../store/componentExhibits/e2eTesting/reducer'
 import { LoadingState } from '../../../../store/types'
+import PlaywrightTestResults from './playwrightTestResults'
 
 const RunButtonEl = (props: {
   variantNode: VariantExhibitNode
@@ -24,50 +27,6 @@ const RunButtonEl = (props: {
   }
   return <RunButton onClick={onClick} title="Run Tests" />
 }
-
-const SpecEl = (props: {
-  spec: PlaywrightTestResults['suites'][number]['specs'][number]
-}) => (
-  <div className="item">
-    Spec: {props.spec.title}
-    Pass?: {props.spec.ok ? 'YES' : 'NO'}
-  </div>
-)
-
-const SpecsEl = (props: {
-  specs: PlaywrightTestResults['suites'][number]['specs']
-}) => (
-  <div className="spec-list">
-    <b>Specs:</b>
-    {props.specs.map(spec => <SpecEl spec={spec} />)}
-  </div>
-)
-
-const SuiteEl = (props: {
-  suite: PlaywrightTestResults['suites'][number]
-}) => (
-  <div className="item">
-    Suite: {props.suite.title}
-    <SpecsEl specs={props.suite.specs} />
-  </div>
-)
-
-const SuitesEl = (props: {
-  suites: PlaywrightTestResults['suites']
-}) => (
-  <div className="suite-list">
-    <b>Suites:</b>
-    {props.suites.map(suite => <SuiteEl suite={suite} />)}
-  </div>
-)
-
-const ResultsEl = (props: {
-  results: PlaywrightTestResults
-}) => (
-  <div className="results">
-    <SuitesEl suites={props.results.suites} />
-  </div>
-)
 
 const LoadingEl = () => (
   <div className="loading">Running...</div>
@@ -101,7 +60,7 @@ export const render = (props: {
   return (
     <div className="testing">
       <HeaderEl variantNode={props.variantNode} />
-      {results != null ? <ResultsEl results={results} /> : null}
+      {results != null ? <PlaywrightTestResults results={results as any} /> : null}
     </div>
   )
 }

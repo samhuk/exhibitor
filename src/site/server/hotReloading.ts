@@ -6,7 +6,9 @@ import { logStep } from '../../cli/logging'
 import { BUILD_OUTPUT_ROOT_DIR, SITE_CLIENT_OUTDIR } from '../../common/paths'
 
 export const enableHotReloading = (app: Express): void => {
-  const liveReloadServer = livereload.createServer()
+  const liveReloadServer = livereload.createServer({
+    exclusions: [/\.exh\/playwright-reports\//],
+  })
   liveReloadServer.server.once('connection', () => {
     setTimeout(() => {
       liveReloadServer.refresh('/')
@@ -22,6 +24,7 @@ export const enableHotReloading = (app: Express): void => {
       SITE_CLIENT_OUTDIR,
       // Watch for changes to the components build output directory
       BUILD_OUTPUT_ROOT_DIR,
+      './src/external/playwright-html-reporter',
     ].filter(v => v != null))
   }
   // Else, the server will listen for messages to it's node process in order to reload clients

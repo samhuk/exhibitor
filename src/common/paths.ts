@@ -44,4 +44,3 @@ export const META_DATA_FILE_NAME = 'metadata.json' as const
 export const META_DATA_FILE = `${BUILD_OUTPUT_ROOT_DIR}/${META_DATA_FILE_NAME}` as const
 
 // -- Playwright testing
-export const JSON_REPORTER_FILE = './.exh/playwright/results.json'
