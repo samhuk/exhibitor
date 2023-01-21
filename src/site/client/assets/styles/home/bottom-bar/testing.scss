@@ -50,6 +50,12 @@
         flex-direction: column;
         height: 100%;
 
+        input {
+          background-color: $bg-color;
+          color: $text-color;
+          border: $border;
+        }
+
         .pt-3 {
           padding: 5px;
 
@@ -73,6 +79,10 @@
   
         .pt-2 {
           padding: 5px;
+
+          span {
+            color: $text-color-m20;
+          }
         }
   
         .test-case-column {
@@ -102,11 +112,16 @@
         .chip-body {
           border: $border;
           border-top: none;
+          padding: 0;
         }
 
         .test-file-test {
           &:hover {
             background-color: $bg-color-m7;
+          }
+
+          &:not(:first-child) {
+            border-top: $border;
           }
         }
 
@@ -122,6 +137,25 @@
             &.selected {
               border-bottom: 2px solid $text-color-m20;
             }
+          }
+        }
+
+        .test-result-error-message {
+          color: #efefef;
+          margin-bottom: 0;
+          border-radius: 0;
+        }
+
+        .tree-item {
+          line-height: inherit;
+          padding: 5px;
+
+          &:first-child {
+            padding-top: 10px;
+          }
+
+          &:last-child {
+            padding-bottom: 10px;
           }
         }
       }

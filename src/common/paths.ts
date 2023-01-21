@@ -44,3 +44,4 @@ export const META_DATA_FILE_NAME = 'metadata.json' as const
 export const META_DATA_FILE = `${BUILD_OUTPUT_ROOT_DIR}/${META_DATA_FILE_NAME}` as const
 
 // -- Playwright testing
+export const PLAYWRIGHT_HTML_REPORTER_CODE_CLONE_DIR = './src/external/playwright-html-reporter' as const
