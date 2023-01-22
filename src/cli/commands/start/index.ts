@@ -5,8 +5,8 @@ import { startServer } from './startServer'
 import { applyStartOptionsToConfig } from './config'
 import { StartCliArgumentsOptions } from './types'
 import { watchCompSite } from '../../../comp-site/react/build/watch'
-import { updateProcessVerbosity } from '../../state'
-import { isCliError, logStep } from '../../logging'
+import { getProcessVerbosity, updateProcessVerbosity } from '../../state'
+import { isCliError, logStep, logStepHeader } from '../../logging'
 import { CliError } from '../../types'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { checkPackages } from './checkPackages'
@@ -38,6 +38,10 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   if (startOptions.verbose != null)
     updateProcessVerbosity(startOptions.verbose)
   // Get config for command
+  if (getProcessVerbosity())
+    logStepHeader('Determining supplied configuration.')
+  else
+    logStep('Determining supplied configuration.')
   const geConfigResult = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
   if (geConfigResult.success === false)
     return geConfigResult.error

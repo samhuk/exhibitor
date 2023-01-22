@@ -38,50 +38,55 @@ export const srcPathPlugin: Plugin = ({
 
 fs.mkdirSync(BUILD_OUTPUT_ROOT_DIR, { recursive: true })
 
-const bundleInputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
-const bundleOutputFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
+const indexExhTsFilePath = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME)
+const indexExhTsFileOutFile = path.join(BUILD_OUTPUT_ROOT_DIR, BUNDLE_OUTPUT_FILE_NAME)
 
-export const buildIndexExhTsFile = (config: Config) => (
-  createBuilder(null, config.verbose, () => esbuildBuild({
-    // Overrideable build options
-    loader: {
-      '.ttf': 'file',
-      '.woff': 'file',
-      '.woff2': 'file',
-    },
-    // Apply custom build options
-    ...config.esbuildOptions,
-    // Merge custom plugins with mandatory built-in ones
-    plugins: [
-      sassPlugin() as unknown as Plugin,
-      srcPathPlugin,
-      ...(config.esbuildOptions?.plugins ?? []),
-    ],
-    // Non-overrideable build options
-    entryPoints: [bundleInputFilePath],
-    outfile: bundleOutputFilePath,
-    platform: 'browser',
-    format: 'iife',
-    globalName: 'exh',
-    bundle: true,
-    minify: !isDev,
-    sourcemap: isDev,
-    metafile: true,
-    incremental: true,
-  }).then(result => ({ buildResult: result })))
-)
+export const creatIndexExhTsFileBuilder = (config: Config) => createBuilder(null, false, () => esbuildBuild({
+  // Overrideable build options
+  loader: {
+    '.ttf': 'file',
+    '.woff': 'file',
+    '.woff2': 'file',
+  },
+  // Apply custom build options
+  ...config.esbuildOptions,
+  // Merge custom plugins with mandatory built-in ones
+  plugins: [
+    sassPlugin() as unknown as Plugin,
+    srcPathPlugin,
+    ...(config.esbuildOptions?.plugins ?? []),
+  ],
+  // Non-overrideable build options
+  entryPoints: [indexExhTsFilePath],
+  outfile: indexExhTsFileOutFile,
+  platform: 'browser',
+  format: 'iife',
+  globalName: 'exh',
+  bundle: true,
+  minify: !isDev,
+  sourcemap: isDev,
+  metafile: true,
+  incremental: true,
+}).then(result => ({ buildResult: result })))
 
-export const createIndexExhTsFile = async (
-  configInclude: string[],
-  rootStylePath?: string,
+const determineIncludedExhibitFiles = async (
+  config: Config,
 ) => {
-  logStep('Creating index.exh.ts file content.', true)
-  logStep(c => `Determining included exhibit files. (using ${c.cyan(JSON.stringify(configInclude))}).`, true)
-  const includedFilePaths = await glob(configInclude)
+  logStep(c => `Determining included exhibit files. (using ${c.cyan(JSON.stringify(config.include))}).`, true)
+  const includedFilePaths = await glob(config.include, { ignore: config.exclude })
   if (includedFilePaths.length > 0)
     logStep(c => `Found ${c.cyan(includedFilePaths.length.toString())} exhibit files.`)
   else
-    logWarn(c => `Did not find any exhibit files with the defined include (${c.cyan(JSON.stringify(configInclude))}).`)
+    logWarn(c => `Did not find any exhibit files with the defined include (${c.cyan(JSON.stringify(config.include))}).`)
+
+  return includedFilePaths
+}
+
+export const createIndexExhTsFile = async (
+  config: Config,
+) => {
+  logStep('Creating index.exh.ts file content.', true)
+  const includedFilePaths = await determineIncludedExhibitFiles(config)
 
   const exhibitApiFunctionPath = isDev
     // E.g. ../src/componentsBuild/exhibit
@@ -89,29 +94,24 @@ export const createIndexExhTsFile = async (
     // E.g. exhibitor/lib/api/exhibit
     : `${NPM_PACKAGE_NAME}/lib/api/api/exhibit`
 
-  const _rootStylePath = rootStylePath != null
-    ? path.relative(BUILD_OUTPUT_ROOT_DIR, rootStylePath).replace(/\\/g, '/')
-    : null
+  const textLines = [`import { resolve, __exhibits } from '${exhibitApiFunctionPath}'`]
 
-  const text = [
-    // import { resolve, __exhibits } from 'exhibitor/lib/api/api/exhibit' (in release)
-    `import { resolve, __exhibits } from '${exhibitApiFunctionPath}'`,
-    // E.g. import '../myComponentLibraryDir/styles.scss'
-    _rootStylePath != null ? `import '${_rootStylePath}'` : null,
-    // E.g. list of "export {} from '../myComponentLibraryDir/button.exh.ts'"
-    includedFilePaths
-      .map(_path => {
-        const relativeImportPath = path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')
+  if (config.rootStyle != null)
+    // E.g. import '../src/button/index.scss'
+    textLines.push(`import '${path.relative(BUILD_OUTPUT_ROOT_DIR, config.rootStyle).replace(/\\/g, '/')}'`)
 
-        return `import '!exh${_path}'\nexport {} from '${relativeImportPath}'`
-      })
-      .join('\n'),
-    'window.exh = resolve(__exhibits)',
-    'export const { nodes, pathTree } = resolve(__exhibits)',
-    'export default __exhibits',
-  ].filter(s => s != null).join('\n\n')
+  // E.g.:
+  // import '!exhsrc/button/index.exh.ts'
+  // export {} from '../src/button/index.exh.ts'
+  textLines.push(includedFilePaths
+    .map(_path => `import '!exh${_path}'\nexport {} from '${path.relative(BUILD_OUTPUT_ROOT_DIR, _path).replace(/\\/g, '/')}'`)
+    .join('\n'))
 
-  fs.writeFileSync(bundleInputFilePath, text)
+  textLines.push('window.exh = resolve(__exhibits)\nexport const { nodes, pathTree } = resolve(__exhibits)\nexport default __exhibits')
+
+  const text = textLines.join('\n\n')
+
+  fs.writeFileSync(indexExhTsFilePath, text)
 
   return { includedFilePaths, text }
 }
@@ -127,21 +127,27 @@ export const createComponentLibraryIncluderPlugin = (
 ): Plugin => ({
   name: 'index-exh-ts-includer',
   setup: build => {
+    // Put the importation to "index.exh.ts" into the index-exh-ts namespace
     build.onResolve({ filter: /^index\.exh\.ts$/ }, args => ({
       path: args.path,
       namespace: 'index-exh-ts',
     }))
+
+    const indexExhTsFileBuilder = creatIndexExhTsFileBuilder(config)
+    /* For that importation to "index.exh.ts", replace it with importations of the user's
+     * matched component exhibit files from their component library.
+     */
     build.onLoad({ filter: /.*/, namespace: 'index-exh-ts' }, async () => {
-      const indexExhTsFile = await createIndexExhTsFile(config.include, config.rootStyle)
+      const indexExhTsFile = await createIndexExhTsFile(config)
       onIndexExhTsFileCreation?.(indexExhTsFile)
-      await buildIndexExhTsFile(config)()
+      await indexExhTsFileBuilder()
       return {
         contents: indexExhTsFile.text,
         resolveDir: './.exh',
         loader: 'tsx',
       }
     })
-
+    // Add the exhibit srcPath plugin
     srcPathPlugin.setup(build)
   },
 })

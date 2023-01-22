@@ -1,6 +1,6 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.json",
   "include": [
     "./react/17-or-less/**/*",
     "./react/18-or-more/**/*"

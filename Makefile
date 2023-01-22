@@ -149,7 +149,7 @@ build-cli-ts:
 
 #region Comp-Sites Prebuild
 clean-prebuild-comp-sites:
-	rm -rf ./build/comp-site/react/site-prebuild
+	rm -rf ./build/comp-site-prebuilds
 
 _prebuild-comp-sites:
 	npx tsc -p ./src/comp-site/tsconfig-prebuilds.json
@@ -158,9 +158,7 @@ prebuild-comp-sites:
 	@$(MAKE) --no-print-directory \
 		clean-prebuild-comp-sites \
 		_prebuild-comp-sites
-# This fails on github actions CI for some reason with the following error:
-# cp: cannot create regular file './build/comp-site-prebuilds/react-index.html': No such file or directory
-	-cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
+	cp ./src/comp-site/react/index.html ./build/comp-site-prebuilds/react-index.html
 #endregion
 
 #region Comp-Sites TS check
@@ -168,7 +166,7 @@ build-comp-site-ts:
 	npx tsc -p ./src/comp-site/tsconfig.json
 #endregion
 
-#region Complete build
+#region Complete builds
 clean-all:
 	rm -rf ./.exh && rm -rf ./build && rm -rf ./build-test
 
@@ -178,6 +176,12 @@ build-all:
 		build-api \
 		build-cli-rel \
 		prebuild-comp-sites
+
+build-all-ts:
+	@$(MAKE) --no-print-directory \
+		build-site-ts \
+		build-cli-ts \
+		build-comp-site-ts
 #endregion
 
 #region Distribution
@@ -185,23 +189,52 @@ populate-dist:
 	rm -rf dist/npm/exhibitor/lib/
 
 	mkdir -p dist/npm/exhibitor/lib/site/server
-	cp -r build/site/server/ dist/npm/exhibitor/lib/site/server
+	cp -r build/site/server/ dist/npm/exhibitor/lib/site/server/
 
 	mkdir -p dist/npm/exhibitor/lib/site/client
-	cp -r build/site/client/ dist/npm/exhibitor/lib/site/client
+	cp -r build/site/client/ dist/npm/exhibitor/lib/site/client/
 
 	mkdir -p dist/npm/exhibitor/lib/api
-	cp -r build/api/ dist/npm/exhibitor/lib/api
+	cp -r build/api/ dist/npm/exhibitor/lib/api/
 
 	mkdir -p dist/npm/exhibitor/lib/cli
-	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli
+	cp -r build/cli/cli/ dist/npm/exhibitor/lib/cli/
 
 	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
-# This fails on github actions CI for some reason with the following error:
-# cp: cannot stat 'build/comp-site-prebuilds': No such file or directory
-	-cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib/comp-site-prebuilds
+	cp -r build/comp-site-prebuilds/ dist/npm/exhibitor/lib/comp-site-prebuilds/
+
+populate-dist-wsl:
+	rm -rf dist/npm/exhibitor/lib/
+
+	mkdir -p dist/npm/exhibitor/lib/site/server
+	cp -r build/site/server/ dist/npm/exhibitor/lib/site
+
+	mkdir -p dist/npm/exhibitor/lib/site/client
+	cp -r build/site/client/ dist/npm/exhibitor/lib/site
+
+	mkdir -p dist/npm/exhibitor/lib/api
+	cp -r build/api/ dist/npm/exhibitor/lib
+
+	mkdir -p dist/npm/exhibitor/lib/cli
+	cp -r build/cli/cli/ dist/npm/exhibitor/lib
+
+	mkdir -p dist/npm/exhibitor/lib/comp-site-prebuilds
+	cp -r build/comp-site-prebuilds dist/npm/exhibitor/lib
 
 prepublish:
+	@date +%s > _time_$@.txt
+	npm install
+	@$(MAKE) --no-print-directory \
+		check-dist-outer-npm-deps \
+		lint-errors-only \
+		ts-unit-tests \
+		build-all-ts \
+		build-all \
+		populate-dist
+	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"
+	@rm _time_$@.txt
+
+prepublish-wsl:
 	@date +%s > _time_$@.txt
 	npm install
 	@$(MAKE) --no-print-directory \
@@ -212,7 +245,7 @@ prepublish:
 		build-cli-ts \
 		build-comp-site-ts \
 		build-all \
-		populate-dist
+		populate-dist-wsl
 	@printf "\n-- Total dt: $$(($$(date +%s)-$$(cat  _time_$@.txt)))\n"
 	@rm _time_$@.txt
 #endregion

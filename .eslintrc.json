@@ -33,7 +33,8 @@
     "*.env",
     "*.md",
     "*.bat",
-    "*.js"
+    "*.js",
+    "src/external/playwright-html-reporter/**/*"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

@@ -8,4 +8,6 @@ export const state: { verbose: boolean } = {
 
 export const updateProcessVerbosity = (newVerbosity: boolean) => state.verbose = newVerbosity
 
+export const getProcessVerbosity = () => state.verbose
+
 export default state

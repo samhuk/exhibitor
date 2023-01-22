@@ -6,3 +6,9 @@
 @import './buttons/index.scss';
 @import './text/index.scss';
 @import './test-reporting/index.scss';
+
+// TODO: Create proper checkbox component
+
+input[type=checkbox] {
+  cursor: pointer;
+}
