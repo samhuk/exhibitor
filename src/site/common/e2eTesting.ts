@@ -11,7 +11,7 @@ export type RunE2eTestOptions = {
    * @example 'Final Draft/Button/Red'
    */
   variantPath: string
-  headed: boolean
+  headless: boolean
 }
 
 export type PlaywrightTestResults = string

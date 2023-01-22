@@ -5,8 +5,9 @@ import {
   RUN_COMPLETE,
   State,
   Actions,
-  Run,
-  RunComplete,
+  run,
+  runComplete,
+  TOGGLE_HEADLESS,
 } from './actions'
 import { runE2eTest as runE2eTestRequest } from '../../../connectors/e2eTesting'
 import { SELECT_VARIANT } from '../actions'
@@ -15,6 +16,9 @@ import { RunE2eTestOptions } from '../../../../common/e2eTesting'
 const initialState: State = {
   loadingState: LoadingState.IDLE,
   results: null,
+  options: {
+    headless: true,
+  },
   error: null,
 }
 
@@ -36,6 +40,14 @@ export const e2eTestingReducer = (
         results: action.results,
         error: action.error,
       }
+    case TOGGLE_HEADLESS:
+      return {
+        ...state,
+        options: {
+          ...state.options,
+          headless: !state.options.headless,
+        },
+      }
     case SELECT_VARIANT as any:
       return initialState
     default:
@@ -44,8 +56,8 @@ export const e2eTestingReducer = (
 }
 
 export const runE2eTestThunk = (options: RunE2eTestOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {
-  dispatch(Run())
+  dispatch(run())
   runE2eTestRequest(options).then(response => {
-    dispatch(RunComplete(response.data, response.error))
+    dispatch(runComplete(response.data, response.error))
   })
 }

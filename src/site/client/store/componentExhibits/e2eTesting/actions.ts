@@ -5,10 +5,16 @@ export const RUN = 'e2eTesting/run'
 
 export const RUN_COMPLETE = 'e2eTesting/runComplete'
 
+export const TOGGLE_HEADLESS = 'e2eTesting/toggleHeadless'
+
+export type Options = {
+  headless: boolean
+}
+
 export type State = {
-  // doFetch: boolean
   loadingState: LoadingState
   results: PlaywrightTestResults
+  options: Options
   error: any
 }
 
@@ -22,14 +28,22 @@ type RunCompleteAction = {
   error: any
 }
 
-export type Actions = RunAction | RunCompleteAction
+type ToggleHeadlessAction = {
+  type: typeof TOGGLE_HEADLESS
+}
 
-export const Run = (): Actions => ({
+export type Actions = RunAction | RunCompleteAction | ToggleHeadlessAction
+
+export const run = (): Actions => ({
   type: RUN,
 })
 
-export const RunComplete = (results: PlaywrightTestResults, error: any): Actions => ({
+export const runComplete = (results: PlaywrightTestResults, error: any): Actions => ({
   type: RUN_COMPLETE,
   results,
   error,
+})
+
+export const toggleHeadless = (): Actions => ({
+  type: TOGGLE_HEADLESS,
 })

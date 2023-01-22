@@ -22,6 +22,10 @@
         display: flex;
         justify-content: start;
         align-items: center;
+
+        .cl-run-button {
+          margin-right: 5px;
+        }
       }
 
       .right {

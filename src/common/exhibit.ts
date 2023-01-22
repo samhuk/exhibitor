@@ -82,6 +82,20 @@ export const runAxe = (): Promise<AxeResults> => waitUntilAxeIsLoaded().then(axe
     console.error('axe failed:', error)
   }))
 
+const getQueryParamValue = (parameterName: string) => {
+  // eslint-disable-next-line no-restricted-globals
+  const sPageURL = window.location.search.substring(1)
+  const sURLVariables = sPageURL.split('&')
+  let queryParamKeyValuePair: [string, string] = null
+
+  for (let i = 0; i < sURLVariables.length; i += 1) {
+    queryParamKeyValuePair = sURLVariables[i].split('=') as [string, string]
+    if (queryParamKeyValuePair[0] === parameterName)
+      return queryParamKeyValuePair[1] === undefined ? '' : queryParamKeyValuePair[1]
+  }
+  return null
+}
+
 const getVariantPathFromLocation = () => {
   // eslint-disable-next-line no-restricted-globals
   if (parent !== window) {
@@ -93,8 +107,8 @@ const getVariantPathFromLocation = () => {
     return locationPath.startsWith('/') ? locationPath.slice(1) : locationPath
   }
 
-  // eslint-disable-next-line no-restricted-globals
-  const pathFromSearch = new URLSearchParams(location.search).get('path')
+  // We use our own function to get the path because built-in JS lib functions auto-decode the param value.
+  const pathFromSearch = getQueryParamValue('path')
   if (pathFromSearch == null || pathFromSearch.length < 2)
     return null
 

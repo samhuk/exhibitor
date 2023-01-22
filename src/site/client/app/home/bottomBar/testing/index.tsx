@@ -1,12 +1,11 @@
 import React from 'react'
-import { Data64URIReader, Entry, TextWriter, ZipReader } from '@zip.js/zip.js'
-import { ReportView } from '../../../../../../external/playwright-html-reporter/src/reportView'
 
 import { VariantExhibitNode } from '../../../../../../api/exhibit/types'
 import { RunE2eTestOptions } from '../../../../../common/e2eTesting'
 import RunButton from '../../../../common/buttons/runButton'
 import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
+import { toggleHeadless } from '../../../../store/componentExhibits/e2eTesting/actions'
 import { runE2eTestThunk } from '../../../../store/componentExhibits/e2eTesting/reducer'
 import { LoadingState } from '../../../../store/types'
 import PlaywrightTestResults from './playwrightTestResults'
@@ -16,41 +15,55 @@ const RunButtonEl = (props: {
 }) => {
   const dispatch = useAppDispatch()
   const variantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)
+  const options = useAppSelector(s => s.e2eTesting.options)
   const onClick = () => {
-    const options: RunE2eTestOptions = {
+    const _options: RunE2eTestOptions = {
       exhibitSrcFilePath: props.variantNode.exhibit.srcPath,
-      headed: true,
+      headless: options.headless,
       testFilePath: props.variantNode.exhibit.testSrcPath,
       variantPath,
     }
-    dispatch(runE2eTestThunk(options))
+    dispatch(runE2eTestThunk(_options))
   }
   return <RunButton onClick={onClick} title="Run Tests" />
 }
 
-const LoadingEl = () => (
-  <div className="loading">Running...</div>
-)
-
-const HeaderEl = (props: {
-  variantNode: VariantExhibitNode
-}) => {
+const LoadingEl = () => {
   const loadingState = useAppSelector(s => s.e2eTesting.loadingState)
+  return loadingState === LoadingState.FETCHING
+    ? <div className="loading">Running...</div>
+    : null
+}
+
+const ToggleHeadlessEl = () => {
+  const dispatch = useAppDispatch()
+  const headless = useAppSelector(s => s.e2eTesting.options.headless)
+
   return (
-    <div className="header">
-      <div className="left">
-        <RunButtonEl variantNode={props.variantNode} />
-        {loadingState === LoadingState.FETCHING ? <LoadingEl /> : null}
-      </div>
-      <div className="right">
-        <div className="tester-link">
-          <span>Tester:</span>
-          <ExternalLink text="Playwright" href="https://playwright.dev/" />
-        </div>
-      </div>
+    <div>
+      <span>Headless:</span>
+      <input onClick={() => dispatch(toggleHeadless())} type="checkbox" checked={headless} />
     </div>
   )
 }
+
+const HeaderEl = (props: {
+  variantNode: VariantExhibitNode
+}) => (
+  <div className="header">
+    <div className="left">
+      <RunButtonEl variantNode={props.variantNode} />
+      <LoadingEl />
+      <ToggleHeadlessEl />
+    </div>
+    <div className="right">
+      <div className="tester-link">
+        <span>Tester:</span>
+        <ExternalLink text="Playwright" href="https://playwright.dev/" />
+      </div>
+    </div>
+  </div>
+)
 
 export const render = (props: {
   variantNode: VariantExhibitNode

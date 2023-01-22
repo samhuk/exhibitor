@@ -22,6 +22,14 @@
         display: flex;
         justify-content: start;
         align-items: center;
+
+        .loading {
+          margin-right: 10px;
+        }
+
+        .cl-run-button {
+          margin-right: 5px;
+        }
       }
 
       .right {

@@ -57,7 +57,7 @@ const setPlaywrightConfig = (
       ['html', { open: 'never', outputFolder: './playwright-reports', outputFile: 'index.html' }],
     ],
     use: {
-      headless: options.headed,
+      headless: options.headless,
     },
     testDir: PLAYWRIGHT_BASE_CONFIG_TEST_DIR,
   }
