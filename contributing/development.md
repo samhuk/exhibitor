@@ -1,10 +1,10 @@
 # Development
 
-This document describes the process for setting up and running this package on your local computer.
+This document describes the process for setting up and running Exhibitor on your local computer.
 
 ## Prerequisites
 
-This app uses Node.js.
+Exhibitor uses Node.js.
 
 You can get Node.js [here](https://nodejs.org/en/).
 
@@ -12,15 +12,15 @@ If on Windows and are using Chocolatey, run `choco install nodejs`.
 
 It runs on MacOS, Windows, and Linux environments.
 
-One exception are the **release building scripts**. These use `make`, which can be installed via `sudo apt install make`. If on Windows, it is recommended to use WSL.
+One exception is the **release process** because it uses `make` which is unavailable on Windows. One must use a UNIX-like OS or WSL. `make` can be installed via `sudo apt install make`.
 
-It runs on many versions of Node.js, tested back to version 14.x.
+Exhibitor is tested to Node.js versions back to 16.
 
 ## Development Deployment
 
 For a development deployment, run `npm start`.
 
-This starts a hot-reloading build of the site client, server, and test component library (within `/test/componentLibrary`), and serves the client and server by default at http://localhost:4001.
+This starts a hot-reloading build of the Exhibitor Site Client, Server, and test component library (within `/test/componentLibrary`), and serves the Site by default at http://localhost:4001.
 
 ## Structure
 
@@ -32,7 +32,7 @@ Exhibitor is split into four main parts - **api**, **cli**, **site**, and **comp
 
 The Typescript for the API is at `/src/api`.
 
-This is the Javascript API that user consume in their code in order to use the package.
+This is the Javascript API that the user consumes in their code in order to use the package, for example `npx exhibitor start`.
 
 ### CLI
 
@@ -46,7 +46,7 @@ The CLI uses Node.js.
 
 The Typescript for the Site is at `/src/site`.
 
-This contains all of the code for the Exhibitor website that the user uses. It is split into three main parts - **Client**, **Server**, and **Common**.
+This contains all of the code for the Exhibitor Site that the user uses. It is split into three main parts - **Client**, **Server**, and **Common**:
 
 #### Client
 
@@ -64,35 +64,53 @@ The server uses express.js.
 
 #### Common
 
-The common directory holds all of the Typescript code that is shared by the site client and server. This is particularly useful for sharing response types, DTOs, etc.
+The common directory contains Typescript that is shared by the Site Client and Server. This is particularly useful for sharing response types, DTOs, etc.
 
 ### Comp-site
 
 The Typescript for the Component Site is at `/src/comp-site`.
 
-The Component Site exists to enable the user to render their components with a React version of their chosing. Currently, it is a very small and simple React app that renders the user's components. It is rendered inside an iframe element inside exhibitor, essentially being a "child site". The Component Site exists in this repository as Typescript. For distribution, it is prebuilt (not bundled) into Javascript code with tsc. On the user's side, the CLI `start` command completes the build with esbuild, bundling in *their* version of `react` and `react-dom`.
+The Component Site exists to enable the user to render their components with a React version of their chosing. It is a tiny React app that renders the user's components. It is rendered inside an iframe element inside Exhibitor, essentially being a "react app inside a react app". For distribution, it is prebuilt (not bundled) into Javascript code with tsc. On the user's side, the CLI `start` command completes the build with esbuild, bundling in *their* version of `react` and `react-dom`.
 
 ## Linting
 
-ESLint is used for Typescript linting. To lint the Typescript code, run `make lint`. To only lint for errors (excluding warnings), run `make lint-errors-only`.
+ESLint and tsc is used for Typescript linting.
+
+To ESLint the Typescript code, run `make lint`. To only check for errors (excluding warnings), run `make lint-errors-only`.
+
+To run a tsc check (no code emission) of all the code, run `make build-all-ts`.
 
 ## Building
 
 To build all three parts of the package, run `make build-all`. This will output build artifacts to `/build`, separated by package area, i.e. `/build/api`, `/build/cli`, `/build/site/client`, `/build/site/server`, etc.
 
+To perform a full check and build of all of the code of Exhibitor, run `make prepublish` if using a unix-like OS or `make prepublish-wsl` if using WSL. This currently runs:
+
+* NPM dependency check for dist
+* ESLint check
+* tsc check
+* Build Site Client
+* Build Site Server
+* Build API
+* Build CLI
+* Prebuild Component Site
+* Copy over all build outputs to /dist/npm/exhibitor 
+
 ## Releasing
+
+A unix-like OS or WSL is required for this.
 
 From the repo root dir:
 
 Run `make patch` to patch the package version. `make minor` and `make major` are also available, but these should be very rarely used.
 
-Run `make prepublish`
+Run `make prepublish` if using a unix-like OS or `make prepublish-wsl` if using WSL.
 
-`/dist/npm/exhibitor/lib` will now be populated and is ready for puiblishing to npm.
+Note: `/dist/npm/exhibitor/lib` will now be populated and is ready for puiblishing to npm.
 
-Run `make npm-publish-dry`
+Run `make npm-publish-dry` to test the NPM publishing process without actually publishing.
 
-Run `make npm-publish`
+Run `make npm-publish` to publish to NPM
 
 ## Debugging
 

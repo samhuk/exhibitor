@@ -9,7 +9,12 @@
       "description": "Optional list of glob patterns to select component exhibit files. This is relative to where the config file is. If defined, this must contain at least one entry.",
       "type": "array",
       "minItems": 1,
-      "default": ["./**/*.exh.ts"]
+      "default": ["./**/*.exh.ts", "./**/*.exh.tsx"]
+    },
+    "exclude": {
+      "description": "Optional list of glob patterns to ignore component exhibit files. This is relative to where the config file is.",
+      "type": "array",
+      "default": []
     },
     "watch": {
       "description": "Optional list of glob patterns to select files/dirs to watch for changes in order to live-reload the exhibitor site. This is relative to where the config file is. If defined, this must contain at least one entry.",
