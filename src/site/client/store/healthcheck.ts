@@ -1,4 +1,4 @@
-import { HealthcheckStatus } from '../../common/responses'
+import { HealthcheckStatus } from '../../common/healthcheck'
 import { fetchHealthCheckStatus } from '../connectors/healthcheck'
 import { createBasicStoreSegmentArtifacts } from './basic'
 

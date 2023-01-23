@@ -9,7 +9,7 @@ import {
   runComplete,
   TOGGLE_HEADLESS,
 } from './actions'
-import { runE2eTest as runE2eTestRequest } from '../../../connectors/e2eTesting'
+import { runPlaywrightTests as runPlaywrightTestsRequest } from '../../../connectors/testing'
 import { SELECT_VARIANT } from '../actions'
 import { RunE2eTestOptions } from '../../../../common/e2eTesting'
 
@@ -55,9 +55,9 @@ export const e2eTestingReducer = (
   }
 }
 
-export const runE2eTestThunk = (options: RunE2eTestOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {
+export const runPlaywrightTestsThunk = (options: RunE2eTestOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {
   dispatch(run())
-  runE2eTestRequest(options).then(response => {
-    dispatch(runComplete(response.data, response.error))
+  runPlaywrightTestsRequest(options).then(response => {
+    dispatch(runComplete(response))
   })
 }

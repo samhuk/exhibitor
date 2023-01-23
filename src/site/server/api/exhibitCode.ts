@@ -1,19 +1,26 @@
 import { Request, Response } from 'express'
 import * as fs from 'fs'
-import { serverError } from './errorVariants'
-import { sendErrorResponse, sendSuccessResponse } from './responses'
+import { createExhError, isExhError } from '../../../common/exhError'
+import { ExhError } from '../../../common/exhError/types'
+import { sendErrorResponse, sendSuccessResponse } from '../common/responses'
 
-export const handleGetExhibitCode = (req: Request, res: Response) => {
+const getExhibitCode = (req: Request): string | ExhError => {
   const exhibitSrcPath = req.query.exhibitSrcPath as string
-
-  let exhibitCode: string
   try {
-    exhibitCode = fs.readFileSync(exhibitSrcPath, { encoding: 'utf8' })
+    return fs.readFileSync(exhibitSrcPath, { encoding: 'utf8' })
   }
   catch (e: any) {
-    sendErrorResponse(req, res, serverError(`Could not read the file '${exhibitSrcPath}'.\n\nError: ${e}`))
-    return
+    return createExhError({
+      message: c => `Could not read the component exhibit source file at '${c.cyan(exhibitSrcPath)}`,
+      causedBy: e,
+    })
   }
+}
 
-  sendSuccessResponse(req, res, exhibitCode)
+export const handleGetExhibitCode = (req: Request, res: Response) => {
+  const result = getExhibitCode(req)
+  if (isExhError(result))
+    sendErrorResponse(res, result)
+  else
+    sendSuccessResponse(res, result, { contentType: 'text/plain' })
 }

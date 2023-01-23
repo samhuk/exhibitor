@@ -15,5 +15,5 @@ watchClient({
   incremental: isDev,
   minify: !isDev,
   outDir: SITE_CLIENT_OUTDIR,
-  watchedDirPatterns: [SITE_CLIENT_DIR, SITE_COMMON_DIR, PLAYWRIGHT_HTML_REPORTER_CODE_CLONE_DIR],
+  watchedDirPatterns: [SITE_CLIENT_DIR, SITE_COMMON_DIR, PLAYWRIGHT_HTML_REPORTER_CODE_CLONE_DIR, './src/common'],
 })

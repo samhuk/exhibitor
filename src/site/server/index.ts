@@ -6,12 +6,13 @@ import path from 'path'
 import { BUILD_OUTPUT_ROOT_DIR, COMP_SITE_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import api from './api'
-import { notFound } from './api/errorVariants'
-import { sendErrorResponse } from './api/responses'
+import { sendErrorResponse } from './common/responses'
 import { env } from './env'
 import { enableHotReloading } from './hotReloading'
 import { DEFAULT_THEME } from '../../common/theme'
 import { log } from '../../cli/logging'
+import { createExhError } from '../../common/exhError'
+import { ErrorType } from '../../common/errorTypes'
 
 const app = express()
 
@@ -23,7 +24,7 @@ app.use(cookieParser())
 app
   .use('/api', api)
   // Send 404 for api requests that don't match an api route
-  .use('/api', (req, res) => sendErrorResponse(req, res, notFound('Unknown endpoint')))
+  .use('/api', (req, res) => sendErrorResponse(res, createExhError({ message: 'unknown endpoint', type: ErrorType.NOT_FOUND })))
 
 // We use the backend to serve client files
 const clientDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH)
@@ -44,7 +45,7 @@ app
         return
       }
 
-      sendErrorResponse(req, res, notFound(`Cannot find axe script at ${relPath}'`))
+      sendErrorResponse(res, createExhError({ message: `Cannot find axe script at ${relPath}'`, type: ErrorType.NOT_FOUND }))
       return
     }
 
@@ -57,7 +58,7 @@ app
         return
       }
 
-      sendErrorResponse(req, res, notFound(`Styles do not exist for theme '${theme}'`))
+      sendErrorResponse(res, createExhError({ message: `Styles do not exist for theme '${theme}'`, type: ErrorType.NOT_FOUND }))
       return
     }
 

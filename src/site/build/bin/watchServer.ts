@@ -9,7 +9,7 @@ watchServer({
   incremental: isDev,
   minify: !isDev,
   outfile: SITE_SERVER_OUTFILE,
-  watchedDirPatterns: [SITE_SERVER_DIR, SITE_COMMON_DIR],
+  watchedDirPatterns: [SITE_SERVER_DIR, SITE_COMMON_DIR, './src/common'],
   serverHost: process.env.SITE_SERVER_HOST ?? 'localhost',
   serverPort: process.env.SITE_SERVER_PORT != null ? parseInt(process.env.SITE_SERVER_PORT) : null,
 })

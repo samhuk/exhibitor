@@ -6,7 +6,7 @@ import RunButton from '../../../../common/buttons/runButton'
 import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { toggleHeadless } from '../../../../store/componentExhibits/e2eTesting/actions'
-import { runE2eTestThunk } from '../../../../store/componentExhibits/e2eTesting/reducer'
+import { runPlaywrightTestsThunk } from '../../../../store/componentExhibits/e2eTesting/reducer'
 import { LoadingState } from '../../../../store/types'
 import PlaywrightTestResults from './playwrightTestResults'
 
@@ -23,7 +23,7 @@ const RunButtonEl = (props: {
       testFilePath: props.variantNode.exhibit.testSrcPath,
       variantPath,
     }
-    dispatch(runE2eTestThunk(_options))
+    dispatch(runPlaywrightTestsThunk(_options))
   }
   return <RunButton onClick={onClick} title="Run Tests" />
 }
@@ -42,7 +42,7 @@ const ToggleHeadlessEl = () => {
   return (
     <div>
       <span>Headless:</span>
-      <input onClick={() => dispatch(toggleHeadless())} type="checkbox" checked={headless} />
+      <input onChange={() => dispatch(toggleHeadless())} type="checkbox" checked={headless} />
     </div>
   )
 }

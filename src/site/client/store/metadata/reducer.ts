@@ -4,7 +4,7 @@ import {
   FETCH,
   FETCHED,
   fetchMetaData,
-  MetaDataActions,
+  Actions,
   metaDataFetched,
   MetaDataState,
 } from './actions'
@@ -20,7 +20,7 @@ const initialState: MetaDataState = {
 export const metaDataReducer = (
   // eslint-disable-next-line default-param-last
   state = initialState,
-  action: MetaDataActions,
+  action: Actions,
 ): MetaDataState => {
   switch (action.type) {
     case FETCH:
@@ -28,23 +28,24 @@ export const metaDataReducer = (
         ...state,
         doFetch: false,
       }
-    case FETCHED:
+    case FETCHED: {
+      if (action.metaData?.siteTitle != null)
+        document.title = action.metaData.siteTitle
       return {
         ...state,
         loadingState: action.error != null ? LoadingState.IDLE : LoadingState.FAILED,
         metaData: action.metaData,
         error: action.error,
       }
+    }
     default:
       return state
   }
 }
 
-export const fetchMetaDataThunk = (): ThunkAction<void, RootState, any, MetaDataActions> => dispatch => {
+export const fetchMetaDataThunk = (): ThunkAction<void, RootState, any, Actions> => dispatch => {
   dispatch(fetchMetaData())
   fetchMetaDataRequest().then(response => {
-    if (response.data?.siteTitle != null)
-      document.title = response.data.siteTitle
-    dispatch(metaDataFetched(response.data, response.error))
+    dispatch(metaDataFetched(response))
   })
 }

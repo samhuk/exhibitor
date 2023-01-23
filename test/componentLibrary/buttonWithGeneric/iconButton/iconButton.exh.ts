@@ -1,5 +1,5 @@
-import exhibit from '../../../src/api'
-import { ButtonColor } from '../button/button'
+import exhibit from '../../../../src/api'
+import { ButtonColor } from '../../button/button'
 import IconButton from './iconButton'
 
 export const iconButtonExhibit = exhibit(IconButton, 'IconButton')

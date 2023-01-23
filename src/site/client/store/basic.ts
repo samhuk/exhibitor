@@ -1,5 +1,6 @@
 import { ThunkAction } from 'redux-thunk'
-import { ResponseBase } from '../../common/responses'
+import { ExhResponse } from '../../common/responses'
+import { isSerializedExhError, normalizeExhResponse } from '../misc'
 import { LoadingState } from './types'
 
 export type State<TValue extends any = any> = {
@@ -24,7 +25,7 @@ type FetchedAction<
 
 type BasicStoreSegmentArtifacts<
   TValue extends any,
-  TFetchRequestFn extends (...args: any[]) => Promise<ResponseBase<TValue>> = (...args: any[]) => Promise<ResponseBase<TValue>>,
+  TFetchRequestFn extends (...args: any[]) => Promise<ExhResponse<TValue>> = (...args: any[]) => Promise<ExhResponse<TValue>>,
 > = {
   fetchThunk: (...args: Parameters<TFetchRequestFn>) => ThunkAction<void, any, any, any>
   reducer: (state: State<TValue>, action: any) => State<TValue>,
@@ -33,7 +34,7 @@ type BasicStoreSegmentArtifacts<
 export const createBasicStoreSegmentArtifacts = <
   TActionSegmentName extends string,
   TValue extends any,
-  TFetchRequestFn extends (...args: any[]) => Promise<ResponseBase<TValue>>,
+  TFetchRequestFn extends (...args: any[]) => Promise<ExhResponse<TValue>>,
 >(
     segmentActionName: TActionSegmentName,
     fetchRequestFn: TFetchRequestFn,
@@ -54,17 +55,20 @@ export const createBasicStoreSegmentArtifacts = <
     type: FETCH,
   })
 
-  const fetchedAction = (newValue: TValue, error: any): FetchedAction<typeof FETCHED, TValue> => ({
-    type: FETCHED,
-    value: newValue,
-    error,
-  })
+  const fetchedAction = (response: ExhResponse<TValue>): FetchedAction<typeof FETCHED, TValue> => {
+    const res = normalizeExhResponse(response)
+    return {
+      type: FETCHED,
+      value: res.data,
+      error: res.error,
+    }
+  }
 
   const fetchThunk = (...args: any[]): ThunkAction<void, any, any, any> => dispatch => {
     // Start the fetching state
     dispatch(fetchAction())
     fetchRequestFn(...args).then(response => {
-      dispatch(fetchedAction(response.data, response.error))
+      dispatch(fetchedAction(response))
     })
   }
 

@@ -1,9 +1,11 @@
 import { of, lastValueFrom } from 'rxjs'
 import { ajax, AjaxError, AjaxResponse } from 'rxjs/ajax'
 import { map, catchError } from 'rxjs/operators'
-import { ResponseBase } from '../../common/responses'
+import { SerializedExhError } from '../../../common/exhError/serialization/types'
+import { ExhResponse } from '../../common/responses'
 
 const DEFAULT_HEADERS = { 'Content-Type': 'application/json' }
+const DEFAULT_TIMEOUT = 30000
 
 export const localUrlPrefix = () => `${window.location.protocol}//${window.location.host}`
 
@@ -24,32 +26,28 @@ export const parseQueryParameters = (queryParameters: { [param: string]: string|
 export const get = <TResponseData>(
   url: string,
   queryParameters?: { [param: string]: string|number|boolean },
-  headers: { [headerName: string]: string } = DEFAULT_HEADERS,
-  responseType: XMLHttpRequestResponseType = 'json',
-) => lastValueFrom(ajax({
+  options?: {
+    headers?: { [headerName: string]: string },
+    responseType?: XMLHttpRequestResponseType
+  },
+): Promise<ExhResponse<TResponseData>> => lastValueFrom(ajax({
     url: localApiUrlPrefix(url).concat(parseQueryParameters(queryParameters)),
     method: 'GET',
-    headers,
-    responseType,
-    timeout: 10000,
+    headers: options?.headers ?? DEFAULT_HEADERS,
+    responseType: options?.responseType ?? 'json',
+    timeout: DEFAULT_TIMEOUT,
     withCredentials: true,
   }).pipe(
-    map(res => (res as AjaxResponse<ResponseBase<TResponseData>>).response),
+    map(res => (res as AjaxResponse<ExhResponse<TResponseData>>).response),
     catchError((err: AjaxError) => {
       if (err.name === 'AjaxTimeoutError') {
-        const timeoutResponse: ResponseBase = {
-          data: false,
-          error: {
-            statusCode: 500,
-            type: 'timeout',
-            data: null,
-            stack: null,
-          },
+        const serializedError: SerializedExhError = {
+          message: 'request timeout',
         }
         // eslint-disable-next-line no-param-reassign
-        err.response = timeoutResponse
+        err.response = serializedError
       }
-      return of(err.response as ResponseBase<TResponseData>)
+      return of(err.response as ExhResponse<TResponseData>)
     }),
   ))
 
@@ -57,32 +55,28 @@ export const post = <TResponseData>(
   url: string,
   body: any,
   queryParameters?: { [param: string]: any },
-  headers: { [headerName: string]: string } = DEFAULT_HEADERS,
-  responseType: XMLHttpRequestResponseType = 'json',
-) => lastValueFrom(ajax({
+  options?: {
+    headers?: { [headerName: string]: string },
+    responseType?: XMLHttpRequestResponseType
+  },
+): Promise<ExhResponse<TResponseData>> => lastValueFrom(ajax({
     url: localApiUrlPrefix(url).concat(parseQueryParameters(queryParameters)),
     method: 'POST',
-    headers,
-    responseType,
+    headers: options?.headers ?? DEFAULT_HEADERS,
+    responseType: options?.responseType ?? 'json',
     body: JSON.stringify(body),
-    timeout: 10000,
+    timeout: DEFAULT_TIMEOUT,
     withCredentials: true,
   }).pipe(
-    map(res => (res as AjaxResponse<ResponseBase<TResponseData>>).response),
+    map(res => (res as AjaxResponse<ExhResponse<TResponseData>>).response),
     catchError((err: AjaxError) => {
       if (err.name === 'AjaxTimeoutError') {
-        const timeoutResponse: ResponseBase = {
-          data: false,
-          error: {
-            statusCode: 500,
-            type: 'timeout',
-            data: null,
-            stack: null,
-          },
+        const serializedError: SerializedExhError = {
+          message: 'request timeout',
         }
         // eslint-disable-next-line no-param-reassign
-        err.response = timeoutResponse
+        err.response = serializedError
       }
-      return of(err.response as ResponseBase<TResponseData>)
+      return of(err.response as ExhResponse<TResponseData>)
     }),
   ))

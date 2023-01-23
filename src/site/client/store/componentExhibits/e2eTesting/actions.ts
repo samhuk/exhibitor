@@ -1,4 +1,6 @@
 import { PlaywrightTestResults } from '../../../../common/e2eTesting'
+import { ExhResponse } from '../../../../common/responses'
+import { isSerializedExhError, normalizeExhResponse } from '../../../misc'
 import { LoadingState } from '../../types'
 
 export const RUN = 'e2eTesting/run'
@@ -38,11 +40,14 @@ export const run = (): Actions => ({
   type: RUN,
 })
 
-export const runComplete = (results: PlaywrightTestResults, error: any): Actions => ({
-  type: RUN_COMPLETE,
-  results,
-  error,
-})
+export const runComplete = (response: ExhResponse<PlaywrightTestResults>): Actions => {
+  const res = normalizeExhResponse(response)
+  return {
+    type: RUN_COMPLETE,
+    results: res.data,
+    error: res.error,
+  }
+}
 
 export const toggleHeadless = (): Actions => ({
   type: TOGGLE_HEADLESS,

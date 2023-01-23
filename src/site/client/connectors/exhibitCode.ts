@@ -5,4 +5,5 @@ export const fetchExhibitCode = (exhibitSrcPath: string) => get<string>(
   {
     exhibitSrcPath,
   },
+  { responseType: 'text' },
 )

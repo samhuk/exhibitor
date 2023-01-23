@@ -4,7 +4,7 @@ import {
   FETCH,
   FETCHED,
   fetchExhibitCode,
-  ExhibitCodeActions,
+  Actions,
   exhibitCodeFetched,
   ExhibitCodeState,
 } from './actions'
@@ -21,7 +21,7 @@ const initialState: ExhibitCodeState = {
 export const exhibitCodeReducer = (
   // eslint-disable-next-line default-param-last
   state = initialState,
-  action: ExhibitCodeActions,
+  action: Actions,
 ): ExhibitCodeState => {
   switch (action.type) {
     case FETCH:
@@ -43,9 +43,9 @@ export const exhibitCodeReducer = (
   }
 }
 
-export const fetchExhibitCodeThunk = (exhibitSrcPath: string): ThunkAction<void, RootState, any, ExhibitCodeActions> => dispatch => {
+export const fetchExhibitCodeThunk = (exhibitSrcPath: string): ThunkAction<void, RootState, any, Actions> => dispatch => {
   dispatch(fetchExhibitCode())
   fetchExhibitCodeRequest(exhibitSrcPath).then(response => {
-    dispatch(exhibitCodeFetched(response.data, response.error))
+    dispatch(exhibitCodeFetched(response))
   })
 }

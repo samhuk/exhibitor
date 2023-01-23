@@ -1,5 +1,7 @@
 import { LoadingState } from '../types'
 import { MetaData } from '../../../../common/metadata'
+import { ExhResponse } from '../../../common/responses'
+import { normalizeExhResponse } from '../../misc'
 
 export const FETCH = 'metaData/fetch'
 
@@ -22,14 +24,17 @@ type MetaDataFetchedAction = {
   error: any
 }
 
-export type MetaDataActions = FetchMetaDataAction | MetaDataFetchedAction
+export type Actions = FetchMetaDataAction | MetaDataFetchedAction
 
-export const fetchMetaData = (): MetaDataActions => ({
+export const fetchMetaData = (): Actions => ({
   type: FETCH,
 })
 
-export const metaDataFetched = (metaData: MetaData, error: any): MetaDataActions => ({
-  type: FETCHED,
-  metaData,
-  error,
-})
+export const metaDataFetched = (response: ExhResponse<MetaData>): Actions => {
+  const res = normalizeExhResponse(response)
+  return {
+    type: FETCHED,
+    metaData: res.data,
+    error: res.error,
+  }
+}

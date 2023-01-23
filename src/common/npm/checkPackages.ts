@@ -110,13 +110,17 @@ export type CheckPackagesResult<
   THasErrors extends boolean = boolean,
   TPackageNames extends string = string,
 > = BoolDependant<{
-  true: TStopOnError extends true
-    ? { error: CheckPackageResult<CheckPackageResultType.ERROR> }
-    : { errors: CheckPackageResults<TPackageNames, CheckPackageResultType.ERROR> }
-  false: { }
-}, THasErrors, 'hasErrors'> & {
-  results: CheckPackageResults<TPackageNames>
-}
+  true: (TStopOnError extends true
+    ? {
+      error: CheckPackageResult<CheckPackageResultType.ERROR>
+    }
+    : {
+      errors: CheckPackageResults<TPackageNames, CheckPackageResultType.ERROR>
+    }) & {
+      results: CheckPackageResults<TPackageNames>
+    }
+  false: { results: CheckPackageResults<TPackageNames, CheckPackageResultType.SUCCESS | CheckPackageResultType.SUCCESS_NO_VERSION > }
+}, THasErrors, 'hasErrors'>
 
 type CheckPackagesOptions = {
   /**
@@ -126,6 +130,13 @@ type CheckPackagesOptions = {
   onGetResult?: (result: CheckPackageResult) => void,
 }
 
+/**
+ * Tries to resolve the given list of paths, returning a dictionary of their paths
+ * and any errors encountered.
+ *
+ * @example
+ * checkPackages(['playwright-core/cli', '@playwright/test'] as const, { stopOnError: true })
+ */
 export const checkPackages = <
   TPackageNameList extends Readonly<string[]> | string[],
   TOptions extends CheckPackagesOptions

@@ -1,3 +1,5 @@
+import { ExhResponse } from '../../../../common/responses'
+import { isSerializedExhError, normalizeExhResponse } from '../../../misc'
 import { LoadingState } from '../../types'
 
 export const FETCH = 'exhibitCode/fetch'
@@ -21,14 +23,17 @@ type ExhibitCodeFetchedAction = {
   error: any
 }
 
-export type ExhibitCodeActions = FetchExhibitCodeAction | ExhibitCodeFetchedAction
+export type Actions = FetchExhibitCodeAction | ExhibitCodeFetchedAction
 
-export const fetchExhibitCode = (): ExhibitCodeActions => ({
+export const fetchExhibitCode = (): Actions => ({
   type: FETCH,
 })
 
-export const exhibitCodeFetched = (exhibitCode: string, error: any): ExhibitCodeActions => ({
-  type: FETCHED,
-  exhibitCode,
-  error,
-})
+export const exhibitCodeFetched = (response: ExhResponse<string>): Actions => {
+  const res = normalizeExhResponse(response)
+  return {
+    type: FETCHED,
+    exhibitCode: res.data,
+    error: res.error,
+  }
+}

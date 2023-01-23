@@ -8,6 +8,11 @@ export type BaseCliArgumentsOptions = {
   config?: string
 }
 
+export type NormalizedCliError = {
+  message: string
+  causedBy?: string
+}
+
 export type CliError = {
   message: CliString
   causedBy?: CliString

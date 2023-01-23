@@ -2,7 +2,7 @@ import './toast.scss'
 
 import React, { MouseEventHandler } from 'react'
 
-import IconButton from '../iconButton/iconButton'
+import IconButton from '../buttonWithGeneric/iconButton/iconButton'
 import TypedIcon, { IconType } from '../icons/typedIcon'
 import Ternary from '../util/ternary'
 
