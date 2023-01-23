@@ -1,0 +1,17 @@
+@import './header.scss';
+@import './playwright/results.scss';
+
+@mixin testing {
+  .testing {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &>* {
+      margin-left: 12px; // Inline with run button
+    }
+
+    @include testing-header;
+    @include results;
+  }
+}

@@ -1,6 +1,5 @@
 import cors from 'cors'
 import { json, Router } from 'express'
-import { createExhError, isExhError } from '../../../common/exhError'
 
 import { RunE2eTestOptions } from '../../common/e2eTesting'
 import { handleGetExhibitCode } from './exhibitCode'
@@ -14,7 +13,7 @@ const router = Router()
   .use(json())
   .use('/healthcheck', handleGetHealthCheck)
   .get('/metadata', handleGetMetaData)
-  .get('/exhibitCode', handleGetExhibitCode)
+  .get('/exhibit-code', handleGetExhibitCode)
   .post('/run-pw-tests', async (req, res) => {
     const options: RunE2eTestOptions = req.body
 
@@ -24,20 +23,6 @@ const router = Router()
       sendSuccessResponse(res, results.htmlReportData, { contentType: 'text/plain' })
     else
       sendErrorResponse(res, results.error)
-  })
-  .get('/error-test', (req, res) => {
-    try {
-      throw createExhError({ message: 'Could not do the thing', causedBy: 'Because I could not do the thing' })
-    }
-    catch (e: any) {
-      if (isExhError(e)) {
-        e.log()
-        res.send({
-          data: null,
-          error: e.serialize(),
-        })
-      }
-    }
   })
 
 export default router

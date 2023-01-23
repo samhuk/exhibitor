@@ -1,0 +1,11 @@
+@import './report-view.scss';
+
+@mixin results {
+  .playwright-results {
+    margin-left: 0;
+    min-height: 0;
+    min-width: 0;
+
+    @include report-view;
+  }
+}

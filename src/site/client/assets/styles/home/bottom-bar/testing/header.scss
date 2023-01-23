@@ -1,0 +1,39 @@
+@mixin testing-header {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0px;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    .left {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+
+      .loading {
+        margin-right: 10px;
+      }
+
+      .cl-run-button {
+        margin-right: 5px;
+      }
+    }
+
+    .right {
+      display: flex;
+      justify-content: start;
+
+      .tester-link {
+        display: flex;
+        align-items: center;
+
+        span {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}

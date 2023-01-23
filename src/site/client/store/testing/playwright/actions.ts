@@ -1,13 +1,14 @@
+import { SerializedExhError } from '../../../../../common/exhError/serialization/types'
 import { PlaywrightTestResults } from '../../../../common/e2eTesting'
 import { ExhResponse } from '../../../../common/responses'
-import { isSerializedExhError, normalizeExhResponse } from '../../../misc'
+import { normalizeExhResponse } from '../../../misc'
 import { LoadingState } from '../../types'
 
-export const RUN = 'e2eTesting/run'
+export const RUN = 'testing/playwright/run'
 
-export const RUN_COMPLETE = 'e2eTesting/runComplete'
+export const RUN_COMPLETE = 'testing/playwright/runComplete'
 
-export const TOGGLE_HEADLESS = 'e2eTesting/toggleHeadless'
+export const TOGGLE_HEADLESS = 'testing/playwright/toggleHeadless'
 
 export type Options = {
   headless: boolean
@@ -17,7 +18,7 @@ export type State = {
   loadingState: LoadingState
   results: PlaywrightTestResults
   options: Options
-  error: any
+  error: SerializedExhError
 }
 
 type RunAction = {

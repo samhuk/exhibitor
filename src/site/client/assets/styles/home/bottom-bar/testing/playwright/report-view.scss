@@ -1,0 +1,133 @@
+@mixin report-view {
+  .htmlreport {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+
+    main {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      input {
+        background-color: $bg-color;
+        color: $text-color;
+        border: $border;
+      }
+
+      .pt-3 {
+        padding: 5px;
+
+        .header-view-status-container {
+          nav {
+            a {
+              border: $border;
+              color: $text-color;
+
+              &:hover {
+                background-color: $bg-color-m7 !important;
+              }
+
+              span {
+                color: $text-color;
+              }
+            }
+          }
+        }
+      }
+
+      .pt-2 {
+        padding: 5px;
+
+        span {
+          color: $text-color-m20;
+        }
+      }
+
+      .test-case-column {
+        min-height: 0;
+        min-width: 0;
+        margin: 0;
+        padding: 5px;
+        overflow-y: scroll;
+
+        .tabbed-pane {
+          overflow: initial;
+        }
+      }
+
+      .test-case-title {
+        padding: 0;
+        margin-bottom: 5px;
+        font-size: 24px !important;
+      }
+
+      .test-case-location {
+        padding: 0;
+      }
+
+      .chip {
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+
+      .chip-header {
+        margin-top: 10px;
+        background-color: $bg-color-m7;
+        border: $border;
+        color: $text-color;
+      }
+
+      .chip-body {
+        border: $border;
+        border-top: none;
+        padding: 0;
+      }
+
+      .test-file-test {
+        &:hover {
+          background-color: $bg-color-m7;
+        }
+
+        &:not(:first-child) {
+          border-top: $border;
+        }
+      }
+
+      .test-file-path {
+        color: $text-color-m20;
+      }
+
+      .tabbed-pane-tab-strip {
+        color: $text-color;
+        box-shadow: inset 0 -1px 0 $bg-color-m15 !important;
+
+        .tabbed-pane-tab-element {
+          &.selected {
+            border-bottom: 2px solid $text-color-m20;
+          }
+        }
+      }
+
+      .test-result-error-message {
+        color: #efefef;
+        margin-bottom: 0;
+        border-radius: 0;
+      }
+
+      .tree-item {
+        line-height: inherit;
+        padding: 5px;
+
+        &:first-child {
+          padding-top: 10px;
+        }
+
+        &:last-child {
+          padding-bottom: 10px;
+        }
+      }
+    }
+  }
+}

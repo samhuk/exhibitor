@@ -32,8 +32,8 @@ const setPlaywrightConfig = (
 export const runPlaywrightTests = (
   options: RunE2eTestOptions,
 ) => new Promise<RunPlaywrightTestsResult>((res, rej) => {
+  // Check that required packages are installed
   const result = checkPackages(REQUIRED_PACKAGES, { stopOnError: true })
-
   if (result.hasErrors === true) {
     const recommendedPackageName = result.error.name === 'playwright-core/cli' ? 'playwright-core' : result.error.name
     res({
@@ -48,10 +48,9 @@ export const runPlaywrightTests = (
     return
   }
 
+  // Create paths to required files
   const playwrightCliJsPath = result.results['playwright-core/cli'].path
-
   const testFilePath = path.join(path.dirname(options.exhibitSrcFilePath), options.testFilePath).replace(/\\/g, '/')
-
   // Add on our own environment variables
   process.env[VARIANT_PATH_ENV_VAR_NAME] = options.variantPath
   setPlaywrightConfig(options)

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Data64URIReader, Entry, TextWriter, ZipReader } from '@zip.js/zip.js'
 
-import { ReportView } from '../../../../../../external/playwright-html-reporter/src/reportView'
+import { ReportView } from '../../../../../../../external/playwright-html-reporter/src/reportView'
+import { useAppSelector } from '../../../../../store'
 
 type ZipReport = {
   json: () => any
@@ -30,19 +31,25 @@ const createZipReport = async (base64String: string): Promise<ZipReport> => {
   }
 }
 
-const render = (props: {
-  results: string
-}) => {
-  const [report, setReport] = useState<ZipReport | undefined>()
+const render = () => {
+  const loadingState = useAppSelector(s => s.testing.playwright.loadingState)
+  const results = useAppSelector(s => s.testing.playwright.results)
+  const [report, setReport] = useState<ZipReport | null>(null)
 
   useEffect(() => {
-    if (report != null)
+    if (results == null) {
+      setReport(null)
       return
+    }
 
-    createZipReport(props.results).then(setReport)
-  }, [props.results])
+    createZipReport(results).then(setReport)
+  }, [results])
 
-  return <ReportView report={report} />
+  return (
+    <div className="playwright-results">
+      {report != null ? <ReportView report={report} /> : null}
+    </div>
+  )
 }
 
 export default render

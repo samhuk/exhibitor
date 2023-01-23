@@ -10,7 +10,7 @@ import {
   TOGGLE_HEADLESS,
 } from './actions'
 import { runPlaywrightTests as runPlaywrightTestsRequest } from '../../../connectors/testing'
-import { SELECT_VARIANT } from '../actions'
+import { SELECT_VARIANT } from '../../componentExhibits/actions'
 import { RunE2eTestOptions } from '../../../../common/e2eTesting'
 
 const initialState: State = {
@@ -22,7 +22,7 @@ const initialState: State = {
   error: null,
 }
 
-export const e2eTestingReducer = (
+export const playwrightReducer = (
   // eslint-disable-next-line default-param-last
   state = initialState,
   action: Actions,
