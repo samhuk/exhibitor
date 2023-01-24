@@ -18,7 +18,8 @@ const setPlaywrightConfig = (
 ) => {
   const playwrightConfig: PlaywrightTestConfig = {
     reporter: [
-      ['html', { open: 'never', outputFolder: PLAYWRIGHT_REPORTS_DIR, outputFile: 'index.html' }],
+      ['html', { open: 'never', outputFolder: PLAYWRIGHT_REPORTS_DIR }],
+      ['playwright-html-data-reporter'],
     ],
     use: {
       headless: options.headless,
