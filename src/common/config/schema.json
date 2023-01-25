@@ -22,6 +22,11 @@
       "minItems": 1,
       "default": ["./**/*"]
     },
+    "watchExclude": {
+      "description": "Optional list of glob patterns to ignore files/dirs to watch for changes in order to live-reload the exhibitor site. This is relative to where the config file is.",
+      "type": "array",
+      "default": []
+    },
     "site": {
       "description": "Optional configuration of the exhibitor site.",
       "type": "object",

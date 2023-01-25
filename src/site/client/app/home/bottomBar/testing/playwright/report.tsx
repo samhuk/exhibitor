@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Data64URIReader, Entry, TextWriter, ZipReader } from '@zip.js/zip.js'
+import AnsiToHtml from 'ansi-to-html'
 
 import { ReportView } from '../../../../../../../external/playwright-html-reporter/src/reportView'
 import { useAppSelector } from '../../../../../store'
@@ -32,24 +33,18 @@ const createZipReport = async (base64String: string): Promise<ZipReport> => {
 }
 
 const render = () => {
-  const loadingState = useAppSelector(s => s.testing.playwright.loadingState)
-  const results = useAppSelector(s => s.testing.playwright.results)
+  const htmlReportData = useAppSelector(s => s.testing.playwright.results?.htmlReportData)
   const [report, setReport] = useState<ZipReport | null>(null)
 
   useEffect(() => {
-    if (results == null) {
+    if (htmlReportData == null) {
       setReport(null)
       return
     }
+    createZipReport(htmlReportData).then(setReport)
+  }, [htmlReportData])
 
-    createZipReport(results).then(setReport)
-  }, [results])
-
-  return (
-    <div className="playwright-results">
-      {report != null ? <ReportView report={report} /> : null}
-    </div>
-  )
+  return report != null ? <ReportView report={report} /> : null
 }
 
 export default render

@@ -1,14 +1,14 @@
 import React from 'react'
 
 import { VariantExhibitNode } from '../../../../../../api/exhibit/types'
-import { RunE2eTestOptions } from '../../../../../common/e2eTesting'
+import { RunPlaywrightTestsOptions } from '../../../../../common/testing/playwright'
 import RunButton from '../../../../common/buttons/runButton'
 import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { toggleHeadless } from '../../../../store/testing/playwright/actions'
 import { runPlaywrightTestsThunk } from '../../../../store/testing/playwright/reducer'
 import { LoadingState } from '../../../../store/types'
-import PlaywrightTestResults from './playwright/results'
+import PlaywrightTestResults from './playwright'
 
 const RunButtonEl = (props: {
   variantNode: VariantExhibitNode
@@ -17,7 +17,7 @@ const RunButtonEl = (props: {
   const variantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)
   const options = useAppSelector(s => s.testing.playwright.options)
   const onClick = () => {
-    const _options: RunE2eTestOptions = {
+    const _options: RunPlaywrightTestsOptions = {
       exhibitSrcFilePath: props.variantNode.exhibit.srcPath,
       headless: options.headless,
       testFilePath: props.variantNode.exhibit.testSrcPath,

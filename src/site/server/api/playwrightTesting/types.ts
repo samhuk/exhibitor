@@ -12,7 +12,7 @@ type BoolDependant2<
 export type RunPlaywrightTestsResult<
   TSuccess extends boolean = boolean,
 > = BoolDependant2<
-  { htmlReportData: string },
+  { htmlReportData: string | null, stdOutList: string[] },
   { error: ExhError },
   TSuccess,
   'success'

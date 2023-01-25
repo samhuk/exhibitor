@@ -17,4 +17,9 @@ export type RunPlaywrightTestsOptions = {
   headless: boolean
 }
 
+export type RunPlayrightTestsResponse = {
+  htmlReportData: string | null
+  stdOutList: string[]
+}
+
 export type PlaywrightTestResults = string

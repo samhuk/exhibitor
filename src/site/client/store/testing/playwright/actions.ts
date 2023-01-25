@@ -1,5 +1,5 @@
 import { SerializedExhError } from '../../../../../common/exhError/serialization/types'
-import { PlaywrightTestResults } from '../../../../common/e2eTesting'
+import { RunPlayrightTestsResponse } from '../../../../common/testing/playwright'
 import { ExhResponse } from '../../../../common/responses'
 import { normalizeExhResponse } from '../../../misc'
 import { LoadingState } from '../../types'
@@ -16,7 +16,9 @@ export type Options = {
 
 export type State = {
   loadingState: LoadingState
-  results: PlaywrightTestResults
+  results: RunPlayrightTestsResponse
+  dateLastStarted: number
+  dateLastCompleted: number
   options: Options
   error: SerializedExhError
 }
@@ -27,7 +29,7 @@ type RunAction = {
 
 type RunCompleteAction = {
   type: typeof RUN_COMPLETE
-  results: PlaywrightTestResults
+  results: RunPlayrightTestsResponse
   error: any
 }
 
@@ -41,7 +43,7 @@ export const run = (): Actions => ({
   type: RUN,
 })
 
-export const runComplete = (response: ExhResponse<PlaywrightTestResults>): Actions => {
+export const runComplete = (response: ExhResponse<RunPlayrightTestsResponse>): Actions => {
   const res = normalizeExhResponse(response)
   return {
     type: RUN_COMPLETE,

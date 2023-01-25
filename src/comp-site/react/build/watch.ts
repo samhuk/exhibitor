@@ -1,12 +1,12 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
-import { log, logStep, logSuccess } from '../../../cli/logging'
+import { logStep, logSuccess } from '../../../cli/logging'
 import { printBuildResult } from '../../../common/esbuilder'
 import { CustomBuildResult } from '../../../common/types'
 import { build } from './build'
 import { BuildOptions } from './types'
 
-const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*']
+const IGNORED_DIRS_FOR_WATCH_COMP_LIB = ['**/.exh/**/*', '**/node_modules/**/*'] as const
 
 const rebuildIteration = async (
   buildResult: CustomBuildResult,
@@ -34,13 +34,14 @@ let initialBuildWatcher: FSWatcher = null
 export const watchCompSite = async (
   options: BuildOptions,
 ) => {
+  const ignoredWatchPatterns = [...IGNORED_DIRS_FOR_WATCH_COMP_LIB, ...options.config.watchExclude]
   try {
     // First-build iteration
     const buildResult = await build(options)
 
     // Start rebuild loop
     initialBuildWatcher?.close()
-    const rebuildWatcher = chokidar.watch(options.config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
+    const rebuildWatcher = chokidar.watch(options.config.watch, { ignored: ignoredWatchPatterns })
     watch(() => rebuildIteration(buildResult, options), rebuildWatcher, 150, () => {
       logStep('Watching for changes...')
       options.onFirstSuccessfulBuildComplete?.()
@@ -53,7 +54,7 @@ export const watchCompSite = async (
       return
 
     // Else, start the first-build loop
-    initialBuildWatcher = chokidar.watch(options.config.watch, { ignored: IGNORED_DIRS_FOR_WATCH_COMP_LIB })
+    initialBuildWatcher = chokidar.watch(options.config.watch, { ignored: ignoredWatchPatterns })
     watch(
       () => watchCompSite(options),
       initialBuildWatcher,

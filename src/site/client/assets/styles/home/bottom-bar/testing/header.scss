@@ -1,12 +1,9 @@
 @mixin testing-header {
-  .header {
+  >.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-left: 0px;
-    padding-top: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
+    margin: 5px;
 
     .left {
       display: flex;
@@ -25,6 +22,7 @@
     .right {
       display: flex;
       justify-content: start;
+      align-items: center;
 
       .tester-link {
         display: flex;

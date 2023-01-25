@@ -1,11 +1,9 @@
-import { PlaywrightTestResults, RunE2eTestOptions } from '../../common/e2eTesting'
+import { RunPlaywrightTestsOptions, RunPlayrightTestsResponse } from '../../common/testing/playwright'
 import { post } from './core'
 
 export const runPlaywrightTests = (
-  options: RunE2eTestOptions,
-) => post<PlaywrightTestResults>(
+  options: RunPlaywrightTestsOptions,
+) => post<RunPlayrightTestsResponse>(
   'run-pw-tests',
   options,
-  null,
-  { responseType: 'text' },
 )

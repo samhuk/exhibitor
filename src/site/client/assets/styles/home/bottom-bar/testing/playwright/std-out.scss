@@ -1,0 +1,12 @@
+@mixin std-out {
+  .std-out {
+    margin-left: 12px;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+
+    pre {
+      margin: 0;
+    }
+  }
+}

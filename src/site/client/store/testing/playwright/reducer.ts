@@ -11,11 +11,13 @@ import {
 } from './actions'
 import { runPlaywrightTests as runPlaywrightTestsRequest } from '../../../connectors/testing'
 import { SELECT_VARIANT } from '../../componentExhibits/actions'
-import { RunE2eTestOptions } from '../../../../common/e2eTesting'
+import { RunPlaywrightTestsOptions } from '../../../../common/testing/playwright'
 
 const initialState: State = {
   loadingState: LoadingState.IDLE,
   results: null,
+  dateLastStarted: null,
+  dateLastCompleted: null,
   options: {
     headless: true,
   },
@@ -32,6 +34,8 @@ export const playwrightReducer = (
       return {
         ...state,
         loadingState: LoadingState.FETCHING,
+        dateLastStarted: Date.now(),
+        dateLastCompleted: null,
       }
     case RUN_COMPLETE:
       return {
@@ -39,6 +43,7 @@ export const playwrightReducer = (
         loadingState: action.error != null ? LoadingState.IDLE : LoadingState.FAILED,
         results: action.results,
         error: action.error,
+        dateLastCompleted: Date.now(),
       }
     case TOGGLE_HEADLESS:
       return {
@@ -55,7 +60,7 @@ export const playwrightReducer = (
   }
 }
 
-export const runPlaywrightTestsThunk = (options: RunE2eTestOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {
+export const runPlaywrightTestsThunk = (options: RunPlaywrightTestsOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {
   dispatch(run())
   runPlaywrightTestsRequest(options).then(response => {
     dispatch(runComplete(response))

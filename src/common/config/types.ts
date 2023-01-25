@@ -34,8 +34,7 @@ export type UnresolvedConfig = {
    *
    * This is relative to where the config file is.
    *
-   * @default ['']
-   * all .exh.ts files local to config file.
+   * @default ['./**\/*.exh.ts', './**\/*.exh.tsx', './**\/*.exh.js', './**\/*.exh.jsx']
    */
   include?: string[]
   /**
@@ -51,8 +50,19 @@ export type UnresolvedConfig = {
    * to live-reload the exhibitor site.
    *
    * This is relative to where the config file is.
+   *
+   * @default ['./**\/*']
    */
   watch?: string[]
+  /**
+   * Optional list of glob patterns to ignore files/dirs to watch for changes in order
+   * to live-reload the exhibitor site.
+   *
+   * This is relative to where the config file is.
+   *
+   * @default []
+   */
+  watchExclude?: string[]
   /**
    * Optional configuration of the exhibitor site.
    */
@@ -111,6 +121,7 @@ export type Config = {
   include: string[]
   exclude: string[]
   watch: string[]
+  watchExclude: string[]
   site: {
     host: string
     port: number

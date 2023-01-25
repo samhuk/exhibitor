@@ -6,8 +6,8 @@ import Button from '../../../test/componentLibrary/button/button'
 import { buttonExhibit } from '../../../test/componentLibrary/button/button.exh'
 import ButtonWithGeneric from '../../../test/componentLibrary/buttonWithGeneric/buttonWithGeneric'
 import { buttonWithGenericExhibit } from '../../../test/componentLibrary/buttonWithGeneric/buttonWithGeneric.exh'
-import IconButton from '../../../test/componentLibrary/iconButton/iconButton'
-import { iconButtonExhibit } from '../../../test/componentLibrary/iconButton/iconButton.exh'
+import IconButton from '../../../test/componentLibrary/buttonWithGeneric/iconButton/iconButton'
+import { iconButtonExhibit } from '../../../test/componentLibrary/buttonWithGeneric/iconButton/iconButton.exh'
 import TypedIcon from '../../../test/componentLibrary/icons/typedIcon'
 import { typedIconExhibit } from '../../../test/componentLibrary/icons/typedIcon.exh'
 import LoadingSpinner from '../../../test/componentLibrary/loadingSpinner/loadingSpinner'
@@ -211,8 +211,6 @@ describe('exhibit', () => {
       [loadingSpinnerExhibit.name]: loadingSpinnerExhibit,
       [toastExhibit.name]: toastExhibit,
     })
-
-    // fs.writeFileSync('test.json', JSON.stringify(Object.keys(result.nodes), null, 2))
 
     expect(result.pathTree).toEqual(expectedPathTree)
     expect(Object.keys(result.nodes)).toEqual([
