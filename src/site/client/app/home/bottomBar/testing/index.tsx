@@ -1,23 +1,22 @@
 import React from 'react'
 
 import { VariantExhibitNode } from '../../../../../../api/exhibit/types'
-import { RunE2eTestOptions } from '../../../../../common/e2eTesting'
+import { RunPlaywrightTestsOptions } from '../../../../../common/testing/playwright'
 import RunButton from '../../../../common/buttons/runButton'
 import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
-import { toggleHeadless } from '../../../../store/componentExhibits/e2eTesting/actions'
-import { runPlaywrightTestsThunk } from '../../../../store/componentExhibits/e2eTesting/reducer'
-import { LoadingState } from '../../../../store/types'
-import PlaywrightTestResults from './playwrightTestResults'
+import { toggleHeadless } from '../../../../store/testing/playwright/actions'
+import { runPlaywrightTestsThunk } from '../../../../store/testing/playwright/reducer'
+import PlaywrightTestResults from './playwright'
 
 const RunButtonEl = (props: {
   variantNode: VariantExhibitNode
 }) => {
   const dispatch = useAppDispatch()
   const variantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)
-  const options = useAppSelector(s => s.e2eTesting.options)
+  const options = useAppSelector(s => s.testing.playwright.options)
   const onClick = () => {
-    const _options: RunE2eTestOptions = {
+    const _options: RunPlaywrightTestsOptions = {
       exhibitSrcFilePath: props.variantNode.exhibit.srcPath,
       headless: options.headless,
       testFilePath: props.variantNode.exhibit.testSrcPath,
@@ -28,16 +27,9 @@ const RunButtonEl = (props: {
   return <RunButton onClick={onClick} title="Run Tests" />
 }
 
-const LoadingEl = () => {
-  const loadingState = useAppSelector(s => s.e2eTesting.loadingState)
-  return loadingState === LoadingState.FETCHING
-    ? <div className="loading">Running...</div>
-    : null
-}
-
 const ToggleHeadlessEl = () => {
   const dispatch = useAppDispatch()
-  const headless = useAppSelector(s => s.e2eTesting.options.headless)
+  const headless = useAppSelector(s => s.testing.playwright.options.headless)
 
   return (
     <div>
@@ -53,7 +45,6 @@ const HeaderEl = (props: {
   <div className="header">
     <div className="left">
       <RunButtonEl variantNode={props.variantNode} />
-      <LoadingEl />
       <ToggleHeadlessEl />
     </div>
     <div className="right">
@@ -65,17 +56,20 @@ const HeaderEl = (props: {
   </div>
 )
 
+const BetaNoticeEl = () => (
+  <div className="beta-notice">
+    <div className="text">Beta feature</div>
+  </div>
+)
+
 export const render = (props: {
   variantNode: VariantExhibitNode
-}) => {
-  const results = useAppSelector(s => s.e2eTesting.results)
-
-  return (
-    <div className="testing">
-      <HeaderEl variantNode={props.variantNode} />
-      {results != null ? <PlaywrightTestResults results={results as any} /> : null}
-    </div>
-  )
-}
+}) => (
+  <div className="testing">
+    <BetaNoticeEl />
+    <HeaderEl variantNode={props.variantNode} />
+    <PlaywrightTestResults />
+  </div>
+)
 
 export default render

@@ -39,6 +39,8 @@ export const HeaderView: React.FC<React.PropsWithChildren<{
     })();
   });
 
+  const projectName = projectNames.length === 1 && projectNames[0] != null && projectNames[0].length > 0 ? projectNames[0] : null
+
   return (<>
     <div className='pt-3'>
       <div className='header-view-status-container ml-2 pl-2 d-flex'>
@@ -57,10 +59,7 @@ export const HeaderView: React.FC<React.PropsWithChildren<{
         }}></input>
       </form>
     </div>
-    <div className='pt-2'>
-      {projectNames.length === 1 && <span data-testid="project-name" style={{ float: 'left' }}>Project: {projectNames[0]}</span>}
-      <span data-testid="overall-duration" style={{ paddingRight: '10px', float: 'right' }}>Total time: {msToString(stats.duration)}</span>
-    </div>
+    {projectName != null ? <span data-testid="project-name" style={{ float: 'left' }}>Project: {projectName}</span> : null}
   </>);
 };
 

@@ -6,8 +6,9 @@
     "./**/*.exh.tsx"
   ],
   "watch": [
-    "./**/*"
+    "./test/componentLibrary/**/*"
   ],
+  "watchExclude": ["./test/componentLibrary/**/*.spec.*"],
   "site": {
     "port": 4002,
     "title": "Test Component Library"

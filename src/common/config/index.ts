@@ -7,6 +7,7 @@ export const DEFAULT_CONFIG: Config = {
   include: ['./**/*.exh.ts', './**/*.exh.tsx'],
   exclude: [],
   watch: ['./**/*'],
+  watchExclude: [],
   site: {
     host: 'localhost',
     port: 4001,
@@ -38,6 +39,7 @@ export const resolveConfig = (config?: UnresolvedConfig, configFilePath?: string
     include: makePathsRelativeToConfigDir(config?.include ?? DEFAULT_CONFIG.include, configDir),
     exclude: makePathsRelativeToConfigDir(config?.exclude ?? DEFAULT_CONFIG.exclude, configDir),
     watch: makePathsRelativeToConfigDir(config?.watch ?? DEFAULT_CONFIG.watch, configDir),
+    watchExclude: makePathsRelativeToConfigDir(config?.watchExclude ?? DEFAULT_CONFIG.watchExclude, configDir),
     rootStyle: config?.rootStyle != null ? makePathRelativeToConfigDir(config.rootStyle, configDir) : undefined,
     site: {
       host: config?.site?.host != null ? config.site.host : DEFAULT_CONFIG.site.host,

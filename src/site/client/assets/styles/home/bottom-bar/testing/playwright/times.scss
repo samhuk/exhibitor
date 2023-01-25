@@ -1,0 +1,11 @@
+@mixin times {
+  .times {
+    color: $text-color-m20;
+    display: flex;
+    justify-content: center;
+
+   .completed {
+      margin-left: 20px;
+    }
+  }
+}

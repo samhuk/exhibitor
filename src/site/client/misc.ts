@@ -7,7 +7,7 @@ export const isSerializedExhError = (s: any): s is SerializedExhError => (
   s != null && typeof s === 'object' && EXH_ERROR_INTERNAL_IDENTIFIER_PROP_NAME in s
 )
 
-type NormalizedExhResponse<TExhResponse extends ExhResponse> = {
+export type NormalizedExhResponse<TExhResponse extends ExhResponse> = {
   data?: Exclude<TExhResponse, SerializedExhError>
   error?: SerializedExhError
 }

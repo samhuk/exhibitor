@@ -21,7 +21,9 @@ export const sendErrorResponse = (
       causedBy: error.message,
       stack: error.stack,
     }
+
   const response: ExhResponse = serializedExhError
+
   res.status(STATUS_CODES[serializedExhError.type ?? ErrorType.SERVER_ERROR] ?? 500).send(response)
 }
 
@@ -33,5 +35,18 @@ export const sendSuccessResponse = <TData extends any = any>(
   if (options?.contentType != null)
     res.header('Content-Type', options?.contentType)
 
-  res.status(200).send(data)
+  const response: ExhResponse<TData> = data
+
+  res.status(200).send(response)
+}
+
+export const sendResponse = <TData extends any = any>(
+  res: AnyResponse,
+  data: TData | ExhError | Error,
+  options?: { contentType: MimeType },
+) => {
+  if (isExhError(data) || (data instanceof Error))
+    sendErrorResponse(res, data)
+  else
+    sendSuccessResponse(res, data, options)
 }

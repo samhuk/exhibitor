@@ -3,7 +3,7 @@
 @import './event-log.scss';
 @import './props.scss';
 @import './header.scss';
-@import './testing.scss';
+@import './testing/index.scss';
 
 @mixin bottom-bar {
   flex-grow: 1;
