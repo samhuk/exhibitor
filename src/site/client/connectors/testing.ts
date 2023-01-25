@@ -6,4 +6,8 @@ export const runPlaywrightTests = (
 ) => post<RunPlayrightTestsResponse>(
   'run-pw-tests',
   options,
+  null,
+  {
+    timeoutSeconds: 1800, // 30 minutes
+  },
 )

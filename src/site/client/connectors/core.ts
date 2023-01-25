@@ -29,13 +29,17 @@ export const get = <TResponseData>(
   options?: {
     headers?: { [headerName: string]: string },
     responseType?: XMLHttpRequestResponseType
+    /**
+     * @default 30
+     */
+    timeoutSeconds?: number
   },
 ): Promise<ExhResponse<TResponseData>> => lastValueFrom(ajax({
     url: localApiUrlPrefix(url).concat(parseQueryParameters(queryParameters)),
     method: 'GET',
     headers: options?.headers ?? DEFAULT_HEADERS,
     responseType: options?.responseType ?? 'json',
-    timeout: DEFAULT_TIMEOUT,
+    timeout: options?.timeoutSeconds != null ? (options.timeoutSeconds * 1000) : DEFAULT_TIMEOUT,
     withCredentials: true,
   }).pipe(
     map(res => (res as AjaxResponse<ExhResponse<TResponseData>>).response),
@@ -56,8 +60,12 @@ export const post = <TResponseData>(
   body: any,
   queryParameters?: { [param: string]: any },
   options?: {
-    headers?: { [headerName: string]: string },
+    headers?: { [headerName: string]: string }
     responseType?: XMLHttpRequestResponseType
+    /**
+     * @default 30
+     */
+    timeoutSeconds?: number
   },
 ): Promise<ExhResponse<TResponseData>> => lastValueFrom(ajax({
     url: localApiUrlPrefix(url).concat(parseQueryParameters(queryParameters)),
@@ -65,7 +73,7 @@ export const post = <TResponseData>(
     headers: options?.headers ?? DEFAULT_HEADERS,
     responseType: options?.responseType ?? 'json',
     body: JSON.stringify(body),
-    timeout: DEFAULT_TIMEOUT,
+    timeout: options?.timeoutSeconds != null ? (options.timeoutSeconds * 1000) : DEFAULT_TIMEOUT,
     withCredentials: true,
   }).pipe(
     map(res => (res as AjaxResponse<ExhResponse<TResponseData>>).response),
