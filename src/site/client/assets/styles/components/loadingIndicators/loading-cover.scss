@@ -1,0 +1,18 @@
+.cl-loading-cover {
+  width: 100%;
+  height: 100%;
+  background-color: $bg-color;
+  z-index: 1000;
+  opacity: 0.5;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .modal {
+    padding: 10px;
+    opacity: 1;
+    border-radius: $border-radius;
+    font-size: 30px;
+  }
+}

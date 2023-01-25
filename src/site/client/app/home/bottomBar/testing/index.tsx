@@ -7,7 +7,6 @@ import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { toggleHeadless } from '../../../../store/testing/playwright/actions'
 import { runPlaywrightTestsThunk } from '../../../../store/testing/playwright/reducer'
-import { LoadingState } from '../../../../store/types'
 import PlaywrightTestResults from './playwright'
 
 const RunButtonEl = (props: {
@@ -28,13 +27,6 @@ const RunButtonEl = (props: {
   return <RunButton onClick={onClick} title="Run Tests" />
 }
 
-const LoadingEl = () => {
-  const loadingState = useAppSelector(s => s.testing.playwright.loadingState)
-  return loadingState === LoadingState.FETCHING
-    ? <div className="loading">Running...</div>
-    : null
-}
-
 const ToggleHeadlessEl = () => {
   const dispatch = useAppDispatch()
   const headless = useAppSelector(s => s.testing.playwright.options.headless)
@@ -53,7 +45,6 @@ const HeaderEl = (props: {
   <div className="header">
     <div className="left">
       <RunButtonEl variantNode={props.variantNode} />
-      <LoadingEl />
       <ToggleHeadlessEl />
     </div>
     <div className="right">

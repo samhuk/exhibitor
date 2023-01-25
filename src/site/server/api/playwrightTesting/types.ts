@@ -1,4 +1,5 @@
 import { ExhError } from '../../../../common/exhError/types'
+import { RunPlayrightTestsResponse } from '../../../common/testing/playwright'
 
 type BoolDependant2<
   TTrueValue extends any,
@@ -12,7 +13,7 @@ type BoolDependant2<
 export type RunPlaywrightTestsResult<
   TSuccess extends boolean = boolean,
 > = BoolDependant2<
-  { htmlReportData: string | null, stdOutList: string[] },
+  RunPlayrightTestsResponse,
   { error: ExhError },
   TSuccess,
   'success'

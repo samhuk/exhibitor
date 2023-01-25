@@ -53,6 +53,12 @@
 
         .tabbed-pane {
           overflow: initial;
+
+          .vbox {
+            .hbox {
+              margin-bottom: 10px;
+            }
+          }
         }
       }
 
@@ -76,6 +82,8 @@
           background-color: $bg-color-m7;
           border: $border;
           color: $text-color;
+          display: flex;
+          align-items: center;
         }
   
         .chip-body {
@@ -126,6 +134,15 @@
 
         &:last-child {
           padding-bottom: 10px;
+        }
+      }
+
+      .subnav-item {
+        display: flex;
+        align-items: center;
+
+        .counter {
+          margin-left: 5px;
         }
       }
     }

@@ -67,7 +67,7 @@ export const runPlaywrightTests = (
   const stdErrList: string[] = []
 
   const filteredStdOutList = [
-    '[36m[39m\n[36m  npx playwright show-report .exh\\playwright-reports[39m\n[36m[39m\n',
+    '\x1b[36m\x1b[39m\n\x1b[36m  npx playwright show-report .exh\\playwright-reports\x1b[39m\n\x1b[36m\x1b[39m\n',
     'To open last HTML report run:\n',
     '  npx playwright show-report .exh\\playwright-reports',
     '\n',
@@ -91,6 +91,6 @@ export const runPlaywrightTests = (
     if (isExhError(results))
       res({ success: false, error: results })
     else
-      res({ success: true, htmlReportData: results, stdOutList })
+      res({ success: true, htmlReportData: results, stdOutList, variantPath: options.variantPath })
   }))
 })

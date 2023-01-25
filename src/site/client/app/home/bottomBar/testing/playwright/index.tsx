@@ -6,6 +6,7 @@ import Report from './report'
 import StdOut from './stdOut'
 import { useAppSelector } from '../../../../../store'
 import Times from './times'
+import LoadingCover from './loadingCover'
 
 enum Page {
   REPORT,
@@ -13,7 +14,6 @@ enum Page {
 }
 
 const render = () => {
-  // const loadingState = useAppSelector(s => s.testing.playwright.loadingState)
   const [page, setPage] = useState(Page.REPORT)
   const results = useAppSelector(s => s.testing.playwright.results)
   const navItemOptionsList: NavItemOptions[] = []
@@ -38,6 +38,7 @@ const render = () => {
 
   return (
     <div className="playwright-results">
+      <LoadingCover />
       <div className="header">
         <Nav navItems={navItemOptionsList} />
         <div className="right">

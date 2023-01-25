@@ -1,5 +1,5 @@
 import { ThunkAction } from 'redux-thunk'
-import { LoadingState, RootState } from '../../types'
+import { AppDispatch, LoadingState, RootState } from '../../types'
 import {
   RUN,
   RUN_COMPLETE,
@@ -12,6 +12,8 @@ import {
 import { runPlaywrightTests as runPlaywrightTestsRequest } from '../../../connectors/testing'
 import { SELECT_VARIANT } from '../../componentExhibits/actions'
 import { RunPlaywrightTestsOptions } from '../../../../common/testing/playwright'
+import { playwrightTestReportService } from '../../../services/playwrightTestReportService'
+import { normalizeExhResponse } from '../../../misc'
 
 const initialState: State = {
   loadingState: LoadingState.IDLE,
@@ -37,7 +39,7 @@ export const playwrightReducer = (
         dateLastStarted: Date.now(),
         dateLastCompleted: null,
       }
-    case RUN_COMPLETE:
+    case RUN_COMPLETE: {
       return {
         ...state,
         loadingState: action.error != null ? LoadingState.IDLE : LoadingState.FAILED,
@@ -45,6 +47,7 @@ export const playwrightReducer = (
         error: action.error,
         dateLastCompleted: Date.now(),
       }
+    }
     case TOGGLE_HEADLESS:
       return {
         ...state,
@@ -60,9 +63,23 @@ export const playwrightReducer = (
   }
 }
 
-export const runPlaywrightTestsThunk = (options: RunPlaywrightTestsOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {
+const _runPlaywrightTestsThunk = async (options: RunPlaywrightTestsOptions, dispatch: AppDispatch) => {
   dispatch(run())
-  runPlaywrightTestsRequest(options).then(response => {
-    dispatch(runComplete(response))
-  })
+  const res = await runPlaywrightTestsRequest(options)
+  const _res = normalizeExhResponse(res)
+  if (_res.data != null) {
+    const existingItemForVariantPath = playwrightTestReportService.getByVariantPath(options.variantPath)
+    if (existingItemForVariantPath != null)
+      playwrightTestReportService.remove(existingItemForVariantPath.id)
+
+    await playwrightTestReportService.add({
+      variantPath: _res.data.variantPath,
+      reportData: _res.data.htmlReportData,
+    })
+  }
+  dispatch(runComplete(_res))
+}
+
+export const runPlaywrightTestsThunk = (options: RunPlaywrightTestsOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {
+  _runPlaywrightTestsThunk(options, dispatch)
 }

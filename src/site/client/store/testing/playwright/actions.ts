@@ -1,7 +1,7 @@
 import { SerializedExhError } from '../../../../../common/exhError/serialization/types'
-import { RunPlayrightTestsResponse } from '../../../../common/testing/playwright'
 import { ExhResponse } from '../../../../common/responses'
-import { normalizeExhResponse } from '../../../misc'
+import { RunPlayrightTestsResponse } from '../../../../common/testing/playwright'
+import { NormalizedExhResponse } from '../../../misc'
 import { LoadingState } from '../../types'
 
 export const RUN = 'testing/playwright/run'
@@ -43,14 +43,12 @@ export const run = (): Actions => ({
   type: RUN,
 })
 
-export const runComplete = (response: ExhResponse<RunPlayrightTestsResponse>): Actions => {
-  const res = normalizeExhResponse(response)
-  return {
-    type: RUN_COMPLETE,
-    results: res.data,
-    error: res.error,
-  }
-}
+// TODO: These response types are getting a bit tedious...
+export const runComplete = (normalizedExhResponse: NormalizedExhResponse<ExhResponse<RunPlayrightTestsResponse>>): Actions => ({
+  type: RUN_COMPLETE,
+  results: normalizedExhResponse.data,
+  error: normalizedExhResponse.error,
+})
 
 export const toggleHeadless = (): Actions => ({
   type: TOGGLE_HEADLESS,

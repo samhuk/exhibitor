@@ -9,6 +9,8 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
+    position: relative;
+    min-height: 50px;
 
     >.header {
       margin-bottom: 5px;
