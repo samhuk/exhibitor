@@ -56,10 +56,17 @@ const HeaderEl = (props: {
   </div>
 )
 
+const BetaNoticeEl = () => (
+  <div className="beta-notice">
+    <div className="text">Beta feature</div>
+  </div>
+)
+
 export const render = (props: {
   variantNode: VariantExhibitNode
 }) => (
   <div className="testing">
+    <BetaNoticeEl />
     <HeaderEl variantNode={props.variantNode} />
     <PlaywrightTestResults />
   </div>

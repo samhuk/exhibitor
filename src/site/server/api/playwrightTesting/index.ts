@@ -5,6 +5,7 @@ import * as fs from 'fs'
 import path from 'path'
 import { logStep } from '../../../../cli/logging'
 import { createExhError, isExhError } from '../../../../common/exhError'
+import { logSuccess, logWarn } from '../../../../common/logging'
 import { checkPackages } from '../../../../common/npm/checkPackages'
 import { VARIANT_PATH_ENV_VAR_NAME } from '../../../../common/testing'
 import { RunPlaywrightTestsOptions } from '../../../common/testing/playwright'
@@ -60,7 +61,7 @@ export const runPlaywrightTests = (
   // Clear any lingering results from the previous run, if they exist
   removeCurrentResults()
   // Run playwright test
-  logStep(c => `Executing playwright test: ${c.cyan(testFilePath)}. Playwright output:`)
+  logStep(c => `Executing Playwright test file: ${c.cyan(testFilePath)}. Playwright output:`)
   const testProcess = fork(playwrightCliJsPath, args, { silent: true })
 
   const stdOutList: string[] = []
@@ -87,7 +88,11 @@ export const runPlaywrightTests = (
     console.log(dataStr)
   })
   testProcess.on('exit', (code, signal) => getResults().then(results => {
-    console.log('code, signal:', code, signal)
+    if (code === 0)
+      logSuccess('Playwright successfully exited.')
+    if (code !== 0)
+      logWarn(c => `Playwright exited with code ${c.yellow(code.toString())}. This could indicate that either test(s) failed, there was test compilation errors, or Playwright is incorrectly configured or on an unsupported version.`)
+
     if (isExhError(results))
       res({ success: false, error: results })
     else
