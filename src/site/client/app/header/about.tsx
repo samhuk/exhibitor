@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { usePopper } from 'react-popper'
+// @ts-ignore
+import version from '../../../../../version.txt'
+import ExternalLink from '../../common/text/externalLink'
 
 export const render = () => {
   const [referenceElement, setReferenceElement] = useState(null)
@@ -8,12 +11,8 @@ export const render = () => {
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     modifiers: [
       { name: 'arrow', options: { element: arrowElement } },
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 5],
-        },
-      },
+      { name: 'offset', options: { offset: [0, 10] } },
+      { name: 'preventOverflow', options: { altAxis: true, padding: 5 } },
     ],
   })
   const [show, setShow] = useState(false)
@@ -27,8 +26,12 @@ export const render = () => {
         ? (
           // eslint-disable-next-line react/jsx-props-no-spreading
           <div className="tooltip" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
-            React: v{React.version}
             <div className="arrow" ref={setArrowElement} style={styles.arrow} />
+            <div className="line">Exhibitor: v<b>{version}</b></div>
+            <div className="line">React: v<b>{React.version}</b></div>
+            <div className="line"><ExternalLink text="Github" href="https://github.com/samhuk/exhibitor" /></div>
+            <div className="line"><ExternalLink text="Wiki" href="https://github.com/samhuk/exhibitor/wiki" /></div>
+            <div className="line"><ExternalLink text="Discussions 💬" href="https://github.com/samhuk/exhibitor/discussions" /></div>
           </div>
         ) : null}
     </div>
