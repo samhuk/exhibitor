@@ -1,5 +1,11 @@
 @import '../common/borders.scss';
 
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
 .exh-header {
   width: 100%;
   padding: 5px;
@@ -30,6 +36,9 @@
         border: $border;
         border-radius: $border-radius;
         padding: 5px;
+
+        opacity: 0;
+        animation: fade-in 200ms ease-out forwards;
 
         .arrow, .arrow::before {
           position: absolute;
