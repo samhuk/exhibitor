@@ -15,7 +15,7 @@ const render = () => {
     return (
       <div className="non-test-errors-notice">
         <ErrorIcon />
-        {nonTestErrorCount === 1 ? 'An error occured ' : 'Errors occured '}
+        {nonTestErrorCount === 1 ? 'An error occured ' : `${nonTestErrorCount} errors occured `}
         that {nonTestErrorCount === 1 ? 'was' : 'were'} not part of any test, preventing them from running. See Terminal Output for details.
       </div>
     )
