@@ -36,6 +36,14 @@
       }
     }
 
+    .non-test-errors-notice {
+      padding: 20px;
+
+      i {
+        margin-right: 10px;
+      }
+    }
+
     @include times;
     @include report-view;
     @include std-out;

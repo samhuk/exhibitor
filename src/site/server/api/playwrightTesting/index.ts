@@ -66,6 +66,7 @@ export const runPlaywrightTests = (
 
   const stdOutList: string[] = []
   const stdErrList: string[] = []
+  let nonTestErrorCount: number = 0
 
   const filteredStdOutList = [
     '\n',
@@ -91,6 +92,10 @@ export const runPlaywrightTests = (
     if (cleaned.replace(/\s/g, '').length === 0)
       return
 
+    const nonTestErrorRegexResult = /([0-9]*) error was not a part of any test/.exec(cleaned)
+    if (nonTestErrorRegexResult != null)
+      nonTestErrorCount = parseInt(nonTestErrorRegexResult[1])
+
     stdOutList.push(cleaned)
     console.log(cleaned)
   })
@@ -108,6 +113,6 @@ export const runPlaywrightTests = (
     if (isExhError(results))
       res({ success: false, error: results })
     else
-      res({ success: true, htmlReportData: results, stdOutList, variantPath: options.variantPath })
+      res({ success: true, htmlReportData: results, stdOutList, variantPath: options.variantPath, nonTestErrorCount })
   }))
 })
