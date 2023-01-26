@@ -5,27 +5,8 @@
   .testing {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     position: relative;
-
-    .beta-notice {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-
-      .text {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        background-color: #d14d00;
-        color: white;
-        font-size: 12px;
-        padding: 1px 5px;
-        font-weight: bold;
-        box-shadow: 0px 0px 5px 2px $bg-color-m10;
-      }
-    }
+    height: 100%;
 
     &>* {
       margin-left: 12px; // Inline with run button

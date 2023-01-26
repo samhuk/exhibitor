@@ -3,6 +3,7 @@ import React from 'react'
 import { VariantExhibitNode } from '../../../../../../api/exhibit/types'
 import { RunPlaywrightTestsOptions } from '../../../../../common/testing/playwright'
 import RunButton from '../../../../common/buttons/runButton'
+import FeatureStatusNotice, { FeatureStatus } from '../../../../common/notices/featureStatusNotice'
 import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { toggleHeadless } from '../../../../store/testing/playwright/actions'
@@ -56,17 +57,11 @@ const HeaderEl = (props: {
   </div>
 )
 
-const BetaNoticeEl = () => (
-  <div className="beta-notice">
-    <div className="text">Beta feature</div>
-  </div>
-)
-
 export const render = (props: {
   variantNode: VariantExhibitNode
 }) => (
   <div className="testing">
-    <BetaNoticeEl />
+    <FeatureStatusNotice featureName="Playwright testing" status={FeatureStatus.BETA} />
     <HeaderEl variantNode={props.variantNode} />
     <PlaywrightTestResults />
   </div>
