@@ -18,6 +18,7 @@ export type RunPlaywrightTestsOptions = {
 }
 
 export type RunPlayrightTestsResponse = {
+  nonTestErrorCount: number
   variantPath: string
   htmlReportData: string | null
   stdOutList: string[]

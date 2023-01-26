@@ -66,12 +66,16 @@ export const runPlaywrightTests = (
 
   const stdOutList: string[] = []
   const stdErrList: string[] = []
+  let nonTestErrorCount: number = 0
 
   const filteredStdOutList = [
-    '\x1b[36m\x1b[39m\n\x1b[36m  npx playwright show-report .exh\\playwright-reports\x1b[39m\n\x1b[36m\x1b[39m\n',
-    'To open last HTML report run:\n',
-    '  npx playwright show-report .exh\\playwright-reports',
     '\n',
+  ]
+
+  const omittedStdOutFragmentList = [
+    // eslint-disable-next-line max-len
+    'To open last HTML report run:\n',
+    '\x1b[36m\x1b[39m\n\x1b[36m  npx playwright show-report .exh\\playwright-reports\x1b[39m\n\x1b[36m\x1b[39m\n',
   ]
 
   // TODO: Currently we are just logging stdio from playwright process to our stdout. This should be improved & configurable.
@@ -79,8 +83,21 @@ export const runPlaywrightTests = (
     const dataStr = String(data)
     if (filteredStdOutList.indexOf(dataStr) !== -1)
       return
-    stdOutList.push(dataStr)
-    console.log(dataStr)
+
+    let cleaned = dataStr
+    for (let i = 0; i < omittedStdOutFragmentList.length; i += 1)
+      cleaned = cleaned.replace(omittedStdOutFragmentList[i], '')
+
+    // If cleaned stdout is only whitespace, ignore it
+    if (cleaned.replace(/\s/g, '').length === 0)
+      return
+
+    const nonTestErrorRegexResult = /([0-9]*) error was not a part of any test/.exec(cleaned)
+    if (nonTestErrorRegexResult != null)
+      nonTestErrorCount = parseInt(nonTestErrorRegexResult[1])
+
+    stdOutList.push(cleaned)
+    console.log(cleaned)
   })
   testProcess.stderr.on('data', data => {
     const dataStr = String(data)
@@ -96,6 +113,6 @@ export const runPlaywrightTests = (
     if (isExhError(results))
       res({ success: false, error: results })
     else
-      res({ success: true, htmlReportData: results, stdOutList, variantPath: options.variantPath })
+      res({ success: true, htmlReportData: results, stdOutList, variantPath: options.variantPath, nonTestErrorCount })
   }))
 })
