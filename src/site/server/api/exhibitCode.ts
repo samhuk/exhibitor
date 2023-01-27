@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import * as fs from 'fs'
-import { createExhError, isExhError } from '../../../common/exhError'
+import { createExhError } from '../../../common/exhError'
 import { ExhError } from '../../../common/exhError/types'
-import { sendErrorResponse, sendSuccessResponse } from '../common/responses'
+import { sendResponse } from '../common/responses'
 
 const getExhibitCode = (req: Request): string | ExhError => {
   const exhibitSrcPath = req.query.exhibitSrcPath as string
@@ -19,8 +19,5 @@ const getExhibitCode = (req: Request): string | ExhError => {
 
 export const handleGetExhibitCode = (req: Request, res: Response) => {
   const result = getExhibitCode(req)
-  if (isExhError(result))
-    sendErrorResponse(res, result)
-  else
-    sendSuccessResponse(res, result, { contentType: 'text/plain' })
+  sendResponse(res, result, { contentType: 'text/plain' })
 }

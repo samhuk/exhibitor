@@ -40,11 +40,21 @@ export const sendSuccessResponse = <TData extends any = any>(
   res.status(200).send(response)
 }
 
+/**
+ * Sends a success or error response for the given express.js `res` object.
+ *
+ * This handles either case where the data to respond with is error-like or success-like data.
+ *
+ * @example
+ * const myResult: { id: number, name: string } | ExhError = doThing(...)
+ * sendResponse(myResult)
+ */
 export const sendResponse = <TData extends any = any>(
   res: AnyResponse,
   data: TData | ExhError | Error,
   options?: { contentType: MimeType },
 ) => {
+  // If data is an error or is the instance of an Error, then send an error response
   if (isExhError(data) || (data instanceof Error))
     sendErrorResponse(res, data)
   else

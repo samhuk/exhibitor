@@ -1,17 +1,19 @@
 // eslint-disable-next-line import/no-unresolved
 import { PlaywrightTestConfig } from '@playwright/test/types/test'
 import { fork } from 'child_process'
+import { Request, Response } from 'express'
 import * as fs from 'fs'
 import path from 'path'
 import { logStep } from '../../../../cli/logging'
 import { createExhError, isExhError } from '../../../../common/exhError'
+import { ExhError } from '../../../../common/exhError/types'
 import { logSuccess, logWarn } from '../../../../common/logging'
 import { checkPackages } from '../../../../common/npm/checkPackages'
 import { VARIANT_PATH_ENV_VAR_NAME } from '../../../../common/testing'
-import { RunPlaywrightTestsOptions } from '../../../common/testing/playwright'
+import { RunPlayrightTestsResponse, RunPlaywrightTestsOptions } from '../../../common/testing/playwright'
+import { sendResponse } from '../../common/responses'
 import { PLAYWRIGHT_REPORTS_DIR, PLAYWRIGHT_BASE_CONFIG_TEST_DIR, PLAYWRIGHT_BASE_CONFIG_FILE, REQUIRED_PACKAGES } from './constants'
 import { getResults, removeCurrentResults } from './getResults'
-import { RunPlaywrightTestsResult } from './types'
 
 const setPlaywrightConfig = (
   options: RunPlaywrightTestsOptions,
@@ -31,22 +33,19 @@ const setPlaywrightConfig = (
   fs.writeFileSync(PLAYWRIGHT_BASE_CONFIG_FILE, JSON.stringify(playwrightConfig, null, 2))
 }
 
-export const runPlaywrightTests = (
+const runPlaywrightTests = (
   options: RunPlaywrightTestsOptions,
-) => new Promise<RunPlaywrightTestsResult>((res, rej) => {
+) => new Promise<RunPlayrightTestsResponse | ExhError>((res, rej) => {
   // Check that required packages are installed
   const result = checkPackages(REQUIRED_PACKAGES, { stopOnError: true })
   if (result.hasErrors === true) {
     const recommendedPackageName = result.error.name === 'playwright-core/cli' ? 'playwright-core' : result.error.name
-    res({
-      success: false,
-      error: createExhError({
-        message: 'Could not execute Playwright test(s).',
-        causedBy: c => `Could not resolve ${c.underline(result.error.name)}. Error: ${result.error}`,
-        advice: c => `Try ${c.bold(`npm i --save-dev ${recommendedPackageName}`)}.`,
-        log: true,
-      }),
-    })
+    res(createExhError({
+      message: 'Could not execute Playwright test(s).',
+      causedBy: c => `Could not resolve ${c.underline(result.error.name)}. Error: ${result.error}`,
+      advice: c => `Try ${c.bold(`npm i --save-dev ${recommendedPackageName}`)}.`,
+      log: true,
+    }))
     return
   }
 
@@ -111,8 +110,14 @@ export const runPlaywrightTests = (
       logWarn(c => `Playwright exited with code ${c.yellow(code.toString())}. This could indicate that either test(s) failed, there was test compilation errors, or Playwright is incorrectly configured or on an unsupported version.`)
 
     if (isExhError(results))
-      res({ success: false, error: results })
+      res(results)
     else
-      res({ success: true, htmlReportData: results, stdOutList, variantPath: options.variantPath, nonTestErrorCount })
+      res({ htmlReportData: results, stdOutList, variantPath: options.variantPath, nonTestErrorCount })
   }))
 })
+
+export const handleRunPlaywrightTests = async (req: Request, res: Response) => {
+  const options: RunPlaywrightTestsOptions = req.body
+  const results = await runPlaywrightTests(options)
+  sendResponse(res, results)
+}
