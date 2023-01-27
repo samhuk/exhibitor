@@ -32,13 +32,13 @@ Exhibitor is split into four main parts - **api**, **cli**, **site**, and **comp
 
 The Typescript for the API is at `/src/api`.
 
-This is the Javascript API that the user consumes in their code in order to use the package, for example `npx exhibitor start`.
+This is the Javascript API that the user consumes in their code in order to use the package, for example `exhibit(MyReactComponent, 'MyReactComponent')`.
 
 ### CLI
 
 The Typescript for the CLI is at `/src/cli`.
 
-This is the Command Line Interface application that the user runs to do things like start the Site.
+This is the Command Line Interface application that the user runs to do things like start Exhibitor, for example `npx exhibitor start`.
 
 The CLI uses Node.js.
 
@@ -46,7 +46,7 @@ The CLI uses Node.js.
 
 The Typescript for the Site is at `/src/site`.
 
-This contains all of the code for the Exhibitor Site that the user uses. It is split into three main parts - **Client**, **Server**, and **Common**:
+This contains all of the code for the Exhibitor Site that the user uses. It is one of the largest parts of Exhibitor. It is split into three main parts - **Client**, **Server**, and **Common**:
 
 #### Client
 
@@ -70,7 +70,7 @@ The common directory contains Typescript that is shared by the Site Client and S
 
 The Typescript for the Component Site is at `/src/comp-site`.
 
-The Component Site exists to enable the user to render their components with a React version of their chosing. It is a tiny React app that renders the user's components. It is rendered inside an iframe element inside Exhibitor, essentially being a "react app inside a react app". For distribution, it is prebuilt (not bundled) into Javascript code with tsc. On the user's side, the CLI `start` command completes the build with esbuild, bundling in *their* version of `react` and `react-dom`.
+The Component Site is a small React app that renders the users components. It enables the user to render their components with a React version of *their* chosing. It is rendered inside an iframe element inside Exhibitor Site (a react app inside a react app, basically). For distribution, it is prebuilt (*not* bundled) into Javascript code with tsc. On the user's side, the CLI `start` command completes the build with esbuild, bundling in *their* version of `react` and `react-dom`.
 
 ## Linting
 
