@@ -13,7 +13,7 @@
     {
       "label": "buildServerDev",
       "type": "shell",
-      "command": "npm run build-server-dev",
+      "command": "make build-site-rel",
       "presentation": {
         "reveal": "silent",
         "revealProblems": "onProblem",
