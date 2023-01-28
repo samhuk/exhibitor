@@ -3,6 +3,7 @@ import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../../common/name'
 import { useAppDispatch, useAppSelector } from '../../store'
 import { incrementTheme } from '../../store/theme/actions'
 import About from './about'
+import Intercom from './intercom'
 
 export const render = () => {
   const dispatch = useAppDispatch()
@@ -18,6 +19,7 @@ export const render = () => {
         {NPM_PACKAGE_CAPITALIZED_NAME}
       </div>
       <div className="right">
+        <Intercom />
         <About />
         <button type="button" onClick={onThemeButtonClick} title={theme === 'dark' ? 'Enable light theme' : 'Enable dark theme'}>
           <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`} />

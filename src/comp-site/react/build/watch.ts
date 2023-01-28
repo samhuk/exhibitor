@@ -1,7 +1,7 @@
 import chokidar, { FSWatcher } from 'chokidar'
-import { watch } from 'chokidar-debounced'
 import { logStep, logSuccess } from '../../../cli/logging'
 import { printBuildResult } from '../../../common/esbuilder'
+import { debounce } from '../../../common/function'
 import { CustomBuildResult } from '../../../common/types'
 import { build } from './build'
 import { BuildOptions } from './types'
@@ -41,12 +41,15 @@ export const watchCompSite = async (
 
     // Start rebuild loop
     initialBuildWatcher?.close()
-    const rebuildWatcher = chokidar.watch(options.config.watch, { ignored: ignoredWatchPatterns })
-    watch(() => rebuildIteration(buildResult, options), rebuildWatcher, 150, () => {
-      logStep('Watching for changes...')
-      options.onFirstSuccessfulBuildComplete?.()
-      options.onSuccessfulBuildComplete?.()
-    })
+    const fn = debounce(() => rebuildIteration(buildResult, options), 200)
+    const watcher = chokidar
+      .watch(options.config.watch, { ignored: ignoredWatchPatterns })
+      .on('ready', () => {
+        logStep('Watching for changes...')
+        options.onFirstSuccessfulBuildComplete?.()
+        options.onSuccessfulBuildComplete?.()
+        watcher.on('add', fn).on('change', fn).on('unlink', fn)
+      })
   }
   catch {
     // If the first-build has already failed, then we don't need to start a watch
@@ -54,12 +57,12 @@ export const watchCompSite = async (
       return
 
     // Else, start the first-build loop
-    initialBuildWatcher = chokidar.watch(options.config.watch, { ignored: ignoredWatchPatterns })
-    watch(
-      () => watchCompSite(options),
-      initialBuildWatcher,
-      150,
-      () => logStep('Watching for changes...'),
-    )
+    const fn = debounce(() => watchCompSite(options), 200)
+    initialBuildWatcher = chokidar
+      .watch(options.config.watch, { ignored: ignoredWatchPatterns })
+      .on('ready', () => {
+        logStep('Watching for changes...')
+        initialBuildWatcher.on('add', fn).on('change', fn).on('unlink', fn)
+      })
   }
 }

@@ -23,6 +23,38 @@
     display: flex;
     align-items: center;
 
+    .intercom {
+      margin-right: 10px;
+      display: flex;
+
+      .not-connected-icon {
+        color: $red-color;
+        position: relative;
+        width: 20px;
+        height: 1em;
+
+        i {
+          position: absolute;
+        }
+
+        .fa-plug {
+          top: 0;
+          left: 0;
+        }
+
+        .fa-xmark {
+          bottom: -10px;
+          right: 0;
+        }
+      }
+
+      &.connected {
+        .fa-plug {
+          color: $green-color;
+        }
+      }
+    }
+
     .about {
       .info-button {
         &.active {

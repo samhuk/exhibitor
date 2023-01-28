@@ -19,6 +19,7 @@ export type BuildServerOptions = {
 
 export type WatchClientOptions = BuildClientOptions & {
   watchedDirPatterns: string[]
+  onSuccessfulBuildComplete?: () => void
 }
 
 export type WatchServerOptions = BuildServerOptions & {

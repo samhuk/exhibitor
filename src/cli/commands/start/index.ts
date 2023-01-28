@@ -1,4 +1,5 @@
 import { ChildProcess } from 'child_process'
+import WebSocket from 'ws'
 import { getConfigForCommand } from '../../config'
 import { baseCommand } from '../common'
 import { startServer } from './startServer'
@@ -14,6 +15,9 @@ import { setMetadata } from '../../../common/metadata'
 import { tryResolve } from '../../../common/npm/resolve'
 import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
+import { createIntercomClient } from '../../../common/intercom/client'
+import { IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
+import { logIntercomInfo } from '../../../common/logging'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -57,7 +61,10 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   if (isCliError(checkPackagesResult))
     return checkPackagesResult
 
-  let siteServerProcess: ChildProcess = null
+  const intercomClient = createIntercomClient({
+    identityType: IntercomIdentityType.CLI,
+    webSocketCreator: url => new WebSocket(url) as any,
+  })
 
   try {
     // Watch Component Site, waiting for first successful build
@@ -67,7 +74,11 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
       config,
       onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config),
       onSuccessfulBuildComplete: () => {
-        siteServerProcess?.send({})
+        logIntercomInfo('Sending build complete message to intercom.')
+        intercomClient.send({
+          to: IntercomIdentityType.SITE_CLIENT,
+          type: IntercomMessageType.COMPONENT_LIBRARY_BUILD_COMPLETED,
+        })
       },
     })
   }
@@ -85,11 +96,11 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     onServerProcessKill: () => process.exit(0),
   })
 
+  await intercomClient.connect()
+
   // If start server result is not a child process, then it's an error, therefore return.
   if (!(startServerResult instanceof ChildProcess))
     return startServerResult
-
-  siteServerProcess = startServerResult
 
   return null
 }, { exitWhenReturns: false })

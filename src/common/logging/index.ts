@@ -1,4 +1,4 @@
-import colors from 'colors/safe'
+import colors, { bold } from 'colors/safe'
 import { isExhError } from '../exhError'
 
 import { ExhError } from '../exhError/types'
@@ -88,7 +88,7 @@ export const logInfo = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${colors.blue('i')} ${normalizedMessage}`)
+  console.log(`${colors.blue('i')}  ${normalizedMessage}`)
 }
 
 /**
@@ -147,4 +147,40 @@ export const logError = (
   console.log(colors.red('Error:'), normalizedMessage)
   if (normalizedCausedBy != null)
     console.log('\n  Caused by:', normalizedCausedBy)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
+ * logIntercomInfo('Doing something') // ☎ Doing something
+ */
+export const logIntercomInfo = (
+  msg: ExhString,
+  verbose: boolean = false,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (verbose && !state.verbose)
+    return
+
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${normalizedMessage}`)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
+ * logIntercomProblem('Doing something') // ☎ Doing something
+ */
+export const logIntercomProblem = (
+  msg: ExhString,
+  verbose: boolean = false,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (verbose && !state.verbose)
+    return
+
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${normalizedMessage}`)
 }

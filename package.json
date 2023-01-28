@@ -32,13 +32,11 @@
     "@testing-library/dom": "^8.19.1",
     "@textea/json-viewer": "^2.12.3",
     "@types/clone-deep": "^4.0.1",
-    "@types/connect-livereload": "^0.6.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.15",
     "@types/jest": "^29.2.4",
     "@types/jsdom": "^20.0.1",
-    "@types/livereload": "^0.9.2",
     "@types/node": "^18.11.18",
     "@types/nodemon": "^1.19.2",
     "@types/pako": "^2.0.0",
@@ -56,7 +54,6 @@
     "colors": "1.4.0",
     "commander": "^9.4.1",
     "concurrently": "^7.6.0",
-    "connect-livereload": "^0.6.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "deepmerge": "^4.2.2",
@@ -75,7 +72,6 @@
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
     "jsdom": "^20.0.3",
-    "livereload": "^0.9.3",
     "npm": "^9.2.0",
     "pako": "^2.1.0",
     "path-to-regexp": "^6.2.1",
@@ -94,10 +90,12 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "ws": "^8.12.0"
   },
   "devDependencies": {
     "@types/react-highlight": "^0.12.5",
-    "@types/react-syntax-highlighter": "^15.5.6"
+    "@types/react-syntax-highlighter": "^15.5.6",
+    "@types/ws": "^8.5.4"
   }
 }

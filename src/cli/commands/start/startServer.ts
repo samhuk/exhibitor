@@ -1,7 +1,7 @@
 import { ChildProcess, fork } from 'child_process'
 import path from 'path'
 import * as fs from 'fs'
-import { CONFIG_FILE_PATH_ENV_VAR_NAME } from '../../../common/config'
+import { CONFIG_FILE_PATH_ENV_VAR_NAME, VERBOSE_ENV_VAR_NAME } from '../../../common/config'
 import { NPM_PACKAGE_CAPITALIZED_NAME, NPM_PACKAGE_NAME } from '../../../common/name'
 import { SITE_SERVER_OUTFILE } from '../../../common/paths'
 import { determineIfPortFree } from '../../common/isPortFree'
@@ -54,6 +54,7 @@ export const startServer = async (options: {
     ...process.env,
     SERVER_PORT: portStr,
     SERVER_HOST: options.config.site.host,
+    [VERBOSE_ENV_VAR_NAME]: options.config.verbose ? 'true' : 'false',
     [CONFIG_FILE_PATH_ENV_VAR_NAME]: options.config.rootConfigFile,
   }
 

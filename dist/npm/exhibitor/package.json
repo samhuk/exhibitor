@@ -28,7 +28,6 @@
     "deepmerge": "^4.2.2",
     "esbuild-sass-plugin": "^2.4.4",
     "globsie": "^0.0.12",
-    "livereload": "^0.9.3",
     "colors": "1.4.0",
     "clone-deep": "^4.0.1",
     "ts-node": "^10.9.1",

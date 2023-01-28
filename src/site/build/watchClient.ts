@@ -13,6 +13,7 @@ const startRebuildWatch = (options: WatchClientOptions, buildResult: CustomBuild
     // Rebuild client
     buildResult.buildResult.rebuild()
       .then(_result => {
+        options.onSuccessfulBuildComplete?.()
         logSuccess(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
         // If verbose, print build info on every rebuild
         if (options.verbose) {
@@ -30,6 +31,7 @@ export const watchClient = (options: WatchClientOptions) => {
   buildClient(options)
     // If initial build successful, start rebuild watch
     .then(result => {
+      options?.onSuccessfulBuildComplete()
       initialBuildWatcher?.close()
       startRebuildWatch(options, result)
     })
