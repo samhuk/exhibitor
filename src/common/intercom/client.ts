@@ -100,9 +100,6 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
       updateStatus(IntercomStatus.NOT_CONNECTED)
       log('Connection to intercom lost.')
 
-      // Wait a second until we try reconnecting, as it's most likely that this occurs in dev when the server is rebuilt
-      await wait(1000)
-
       updateStatus(IntercomStatus.CONNECTING)
       const _newWs = await waitUntilConnect(internalOptions, true) // Wait until reconnection
       const result = options.events?.onReconnect?.(_newWs)

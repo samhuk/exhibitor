@@ -24,7 +24,7 @@
     align-items: center;
 
     .intercom {
-      margin-right: 10px;
+      padding: 6px;
       display: flex;
 
       .not-connected-icon {
@@ -46,11 +46,24 @@
           bottom: -10px;
           right: 0;
         }
+
+        .fa-spinner {
+          color: #888;
+          right: -6px;
+          top: -6px;
+          font-size: 12px;
+        }
       }
 
       &.connected {
         .fa-plug {
           color: $green-color;
+        }
+      }
+
+      .cl-tooltip {
+        .cl-success-icon, .cl-error-icon {
+          margin-right: 5px;
         }
       }
     }
@@ -119,7 +132,9 @@
     }
 
     button {
-      padding: 4px 8px;
+      display: flex;
+      margin-left: 5px;
+      padding: 8px;
     }
   }
 }

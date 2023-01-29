@@ -1,5 +1,4 @@
 import { ExhibitNodes, PathTree } from '../../../api/exhibit/types'
-import { DEFAULT_INTERCOM_PORT } from '../../../common/intercom'
 import { createIntercomClient } from '../../../common/intercom/client'
 import { IntercomIdentityType } from '../../../common/intercom/types'
 import { getTheme } from '../connectors/theme'
