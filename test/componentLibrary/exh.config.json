@@ -10,7 +10,7 @@
   ],
   "watchExclude": [],
   "site": {
-    "port": 4002,
+    "port": 4001,
     "title": "Test Component Library"
   },
   "verbose": true,

@@ -7,3 +7,6 @@ export const debounce = <TArgs extends any[], TReturn>(fn: (...args: TArgs) => T
     }, debounceMs)
   }
 }
+
+// eslint-disable-next-line no-promise-executor-return
+export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))

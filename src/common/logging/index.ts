@@ -197,7 +197,7 @@ export const logIntercomSuccess = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.green('✔')} ${normalizedMessage}`)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.green('✔')}  ${normalizedMessage}`)
 }
 
 /**
@@ -209,10 +209,6 @@ export const logIntercomSuccess = (
 export const logIntercomError = (
   msg: ExhString,
 ) => {
-  // If log msg is verbose and the current state is not verbose, then dont log
-  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
-    return
-
   const normalizedMessage = normalizeExhString(msg)
   console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.red('x')}  ${normalizedMessage}`)
 }

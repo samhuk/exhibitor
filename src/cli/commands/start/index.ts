@@ -21,7 +21,8 @@ import { logIntercomError, logIntercomInfo, logIntercomStep, logIntercomSuccess 
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
-import { determineIfPortFree } from '../../common/isPortFree'
+import { findFreePort } from '../../common/isPortFree'
+import { wait } from '../../../common/function'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -54,43 +55,30 @@ const _createIntercomClient = async (config: Config): Promise<IntercomClient | E
     })
   }
 
-  let port = parsedPortFromEnv ?? DEFAULT_INTERCOM_PORT
-  let isPortFree: boolean = false
-  while (!isPortFree) {
-    // eslint-disable-next-line no-loop-func
-    logIntercomStep(c => `Determining if port ${c.cyan(port.toString())} is available to use.`)
-
-    if (port === config.site.port) {
-      const previousPort = port
-      port += 1
-      createExhError({
-        // eslint-disable-next-line no-loop-func
-        message: c => `Port ${c.cyan(previousPort.toString())} is not available to use because it's being used for the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has been configured to use it. Trying ${c.cyan(port.toString())}.`,
-      }).log()
-      // eslint-disable-next-line no-continue
-      continue
-    }
-
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      isPortFree = await determineIfPortFree(config.site.host, port)
-    }
-    catch (err) {
-      return createExhError({
-        message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
-        // eslint-disable-next-line no-loop-func
-        causedBy: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for Intercom.\n\n    Details: ${err}.`,
-      })
-    }
-    if (!isPortFree) {
-      const previousPort = port
-      port += 1
-      // eslint-disable-next-line no-loop-func
-      logIntercomError(c => `Port ${c.cyan(previousPort.toString())} is not available to use. Trying ${c.cyan(port.toString())}`)
-    }
-  }
-
-  logIntercomSuccess(c => `Port ${c.cyan(port.toString())} is available to use`)
+  let err: ExhError = null
+  const port = await findFreePort({
+    host: config.site.host,
+    preferredPort: parsedPortFromEnv ?? DEFAULT_INTERCOM_PORT,
+    exclusions: [config.site.port], // Don't put Intercom on same port as Site Server
+    maxAttempts: 10,
+    events: {
+      onAttemptStart: p => logIntercomStep(c => `Determining if port ${c.cyan(p.toString())} is available to use.`),
+      onAttemptSuccess: p => logIntercomSuccess(c => `Port ${c.cyan(p.toString())} is available to use.`),
+      onAttemptFail: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use.`),
+      onAttemptExcluded: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use because the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has already been configured to use it.`),
+      onAttemptUnexpectedError: (p, _err) => {
+        err = createExhError({
+          message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
+          // eslint-disable-next-line no-loop-func
+          causedBy: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for Intercom.\n\n    Details: ${_err}.`,
+        })
+        return { exit: true }
+      },
+      onMaxAttempts: () => logIntercomError(c => `Max attempts exceeded for finding an available port to use. Try using the ${c.bold(INTERCOM_PORT_ENV_VAR_NAME)} environment variable to set a different preferred port.`),
+    },
+  })
+  if (err != null)
+    return err
 
   return createIntercomClient({
     host: config.site.host,
@@ -168,6 +156,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     onServerProcessKill: () => process.exit(0),
   })
 
+  await wait(500) // Wait a bit for the server to start
   // Once the site server process has started, try and connect our intercom client to it.
   await intercomClient.connect()
 

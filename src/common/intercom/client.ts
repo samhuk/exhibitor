@@ -1,3 +1,4 @@
+import { wait } from '../function'
 import {
   IntercomClient,
   IntercomClientOptions,
@@ -12,9 +13,6 @@ export enum IntercomStatus {
   CONNECTING,
   CONNECTED
 }
-
-// eslint-disable-next-line no-promise-executor-return
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 const handleMessage = (msg: MessageEvent, options: IntercomClientOptions) => {
   const intercomMessage = JSON.parse(msg.data) as IntercomMessage
@@ -43,14 +41,14 @@ const _connect = (options: IntercomClientOptionsInternal, onConnect: (ws: WebSoc
     ws.close()
     ws = null
     options.log('Failed to connect to intercom. Trying again in 1s.')
-    await wait(1000)
+    await wait(500)
     _connect(options, onConnect)
   }
   ws.addEventListener('open', onOpen)
   ws.addEventListener('close', onClose)
 }
 
-const waitUntilConnect = (options: IntercomClientOptionsInternal, isReconnect: boolean = false) => new Promise<WebSocket>((res, rej) => {
+const waitUntilConnect = (options: IntercomClientOptionsInternal, isReconnect: boolean = false) => new Promise<WebSocket>(res => {
   options.log(`${isReconnect ? 'Trying to reconnect' : 'Connecting'} to intercom at ${options.host}:${options.port}.`)
   _connect(options, res)
 })
