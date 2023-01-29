@@ -52,16 +52,6 @@ export const startServer = async (options: {
 
   const portStr = options.config.site.port.toString()
 
-  // Build up the env for the Exhibitor Site server process
-  const env: NodeJS.ProcessEnv = {
-    ...process.env,
-    EXH_SITE_SERVER_PORT: portStr,
-    EXH_SITE_SERVER_HOST: options.config.site.host,
-    [VERBOSE_ENV_VAR_NAME]: options.config.verbose ? 'true' : 'false',
-    [CONFIG_FILE_PATH_ENV_VAR_NAME]: options.config.rootConfigFile,
-    [INTERCOM_PORT_ENV_VAR_NAME]: options.intercomCliClient.port.toString(),
-  }
-
   // Check if port is free
   logStep(c => `Determining if port ${c.cyan(portStr)} is available to use for the Exhibitor server.`, true)
   let isPortFree: boolean
@@ -76,6 +66,16 @@ export const startServer = async (options: {
     return createStartServerError(c => `Port ${(c.cyan as any).bold(portStr)} is not available (attempted url: ${c.cyan(`${options.config.site.host}:${portStr}`)}).`)
 
   logSuccess(c => `Port ${c.cyan(portStr)} is available to use.`, true)
+
+  // Build up the env for the Exhibitor Site server process
+  const env: NodeJS.ProcessEnv = {
+    ...process.env,
+    EXH_SITE_SERVER_PORT: portStr,
+    EXH_SITE_SERVER_HOST: options.config.site.host,
+    [VERBOSE_ENV_VAR_NAME]: options.config.verbose.toString(),
+    [CONFIG_FILE_PATH_ENV_VAR_NAME]: options.config.rootConfigFile,
+    [INTERCOM_PORT_ENV_VAR_NAME]: options.intercomCliClient.port.toString(),
+  }
 
   // Execute the built site server js script
   logStep(c => `Starting the Exhibitor server process (${c.cyan(serverJsPath)})`, true)

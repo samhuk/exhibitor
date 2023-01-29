@@ -16,13 +16,10 @@ import { createInteromServer } from './intercom'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
 import { updateProcessVerbosity } from '../../common/processState'
-import { updateProcessShowIntercomLog } from '../../common/state'
 
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
   updateProcessVerbosity(process.env[VERBOSE_ENV_VAR_NAME] === 'true')
-
-  updateProcessShowIntercomLog(process.env.EXH_SHOW_INTERCOM_LOG === 'true')
 
   await loadConfig()
 

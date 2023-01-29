@@ -1,5 +1,4 @@
 import { exit } from 'process'
-import { updateProcessShowIntercomLog } from '../../common/state'
 import { handleError } from '../error'
 import { CliError } from '../types'
 
@@ -12,8 +11,6 @@ export const baseCommand = <TFn extends (...args: any[]) => Promise<CliError | n
   fn: TFn,
   options?: { exitWhenReturns?: boolean },
 ) => async (...args: Parameters<TFn>) => {
-    updateProcessShowIntercomLog(process.env.EXH_SHOW_INTERCOM_LOG === 'true')
-
     try {
       const commandError = await fn(...args)
       if (commandError != null)
