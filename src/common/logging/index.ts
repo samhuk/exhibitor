@@ -153,7 +153,7 @@ export const logError = (
  * Prints a message to console stdout that is related to the intercom functionality.
  *
  * @example
- * logIntercomInfo('Doing something') // ☎ Doing something
+ * logIntercomInfo('Did something') // -- IC -- i  Did something
  */
 export const logIntercomInfo = (
   msg: ExhString,
@@ -163,14 +163,14 @@ export const logIntercomInfo = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${normalizedMessage}`)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.blue('i')}  ${normalizedMessage}`)
 }
 
 /**
  * Prints a message to console stdout that is related to the intercom functionality.
  *
  * @example
- * logIntercomInfo('Doing something') // -- IC -- Doing something
+ * logIntercomStep('Doing something') // -- IC -- ⚫ Doing something
  */
 export const logIntercomStep = (
   msg: ExhString,
@@ -187,6 +187,23 @@ export const logIntercomStep = (
  * Prints a message to console stdout that is related to the intercom functionality.
  *
  * @example
+ * logIntercomSuccess('Did something') // -- IC -- ✔ Did something
+ */
+export const logIntercomSuccess = (
+  msg: ExhString,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
+    return
+
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.green('✔')} ${normalizedMessage}`)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
  * logIntercomProblem('Doing something') // -- IC -- Doing something
  */
 export const logIntercomError = (
@@ -197,5 +214,5 @@ export const logIntercomError = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${normalizedMessage}`)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.red('x')}  ${normalizedMessage}`)
 }

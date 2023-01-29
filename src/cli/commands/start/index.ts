@@ -17,7 +17,7 @@ import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
 import { createIntercomClient } from '../../../common/intercom/client'
 import { IntercomClient, IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
-import { logIntercomInfo, logIntercomStep } from '../../../common/logging'
+import { logIntercomError, logIntercomInfo, logIntercomStep, logIntercomSuccess } from '../../../common/logging'
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
@@ -62,7 +62,7 @@ const _createIntercomClient = async (config: Config): Promise<IntercomClient | E
 
     if (port === config.site.port) {
       // eslint-disable-next-line no-loop-func
-      logIntercomInfo(c => `Port ${c.cyan(port.toString())} is not available to use because it's being used for the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has been configured to use it. Trying ${c.cyan((port += 1).toString())}`)
+      logIntercomError(c => `Port ${c.cyan(port.toString())} is not available to use because it's being used for the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has been configured to use it. Trying ${c.cyan((port += 1).toString())}.`)
       // eslint-disable-next-line no-continue
       continue
     }
@@ -80,10 +80,10 @@ const _createIntercomClient = async (config: Config): Promise<IntercomClient | E
     }
     if (!isPortFree)
       // eslint-disable-next-line no-loop-func
-      logIntercomInfo(c => `Port ${c.cyan(port.toString())} is not available to use. Trying ${c.cyan((port += 1).toString())}`)
+      logIntercomError(c => `Port ${c.cyan(port.toString())} is not available to use. Trying ${c.cyan((port += 1).toString())}`)
   }
 
-  logIntercomInfo(c => `Port ${c.cyan(port.toString())} is available to use`)
+  logIntercomSuccess(c => `Port ${c.cyan(port.toString())} is available to use`)
 
   return createIntercomClient({
     host: config.site.host,

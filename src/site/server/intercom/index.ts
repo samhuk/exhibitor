@@ -4,10 +4,9 @@ import { IntercomIdentityType, IntercomMessage, IntercomMessageType } from '../.
 import { logIntercomInfo } from '../../../common/logging'
 import { createClientStore } from './clientStore'
 
-export const initIntercom = () => {
+export const createInteromServer = () => {
   const host = process.env.EXH_SITE_SERVER_HOST
   const port = process.env[INTERCOM_PORT_ENV_VAR_NAME] != null ? parseInt(process.env[INTERCOM_PORT_ENV_VAR_NAME]) : DEFAULT_INTERCOM_PORT
-  console.log(process.env.EXH_SHOW_INTERCOM_LOG)
   logIntercomInfo(c => `Creating Intercom server on ${c.cyan(`${host}:${port}`)}`)
   const wss = new WebSocketServer({ host, port })
 
@@ -18,6 +17,7 @@ export const initIntercom = () => {
     clientStore.getClientList(msg.to).forEach(client => {
       if (client.ws.readyState !== WebSocket.OPEN)
         return
+      logIntercomInfo(c => `Relaying msg to ${c.bold(msg.to)} (${client.shortUuid}).`)
       client.ws.send(JSON.stringify(msg))
     })
   }

@@ -12,7 +12,7 @@ import { DEFAULT_THEME } from '../../common/theme'
 import { log } from '../../cli/logging'
 import { createExhError } from '../../common/exhError'
 import { ErrorType } from '../../common/errorTypes'
-import { initIntercom } from './intercom'
+import { createInteromServer } from './intercom'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
 import { updateProcessVerbosity } from '../../common/processState'
@@ -26,7 +26,7 @@ const main = async () => {
 
   await loadConfig()
 
-  initIntercom()
+  createInteromServer()
 
   const app = express()
   app.use(cookieParser())
