@@ -34,7 +34,8 @@ let initialBuildWatcher: FSWatcher = null
 export const watchCompSite = async (
   options: BuildOptions,
 ) => {
-  const ignoredWatchPatterns = [...IGNORED_DIRS_FOR_WATCH_COMP_LIB, ...options.config.watchExclude]
+  // TODO: We are going to need to make the .spec.{whatever} files optional to ignore...
+  const ignoredWatchPatterns = [...IGNORED_DIRS_FOR_WATCH_COMP_LIB, ...options.config.watchExclude, /\.spec\.[tj]{1}sx?$/]
   try {
     // First-build iteration
     const buildResult = await build(options)
