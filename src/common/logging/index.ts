@@ -171,6 +171,24 @@ export const logIntercomInfo = (
  * Prints a message to console stdout that is related to the intercom functionality.
  *
  * @example
+ * logIntercomInfo('Doing something') // ☎ Doing something
+ */
+export const logIntercomStep = (
+  msg: ExhString,
+  verbose: boolean = false,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (verbose && !state.verbose)
+    return
+
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.blue('⚫')} ${normalizedMessage}`)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
  * logIntercomProblem('Doing something') // ☎ Doing something
  */
 export const logIntercomProblem = (

@@ -10,7 +10,7 @@ export const buttonExhibit = exhibit(Button, 'Button')
     onClick: () => undefined,
     color: ButtonColor.DEFAULT,
     iconPosition: IconPosition.LEFT,
-    text: 'Button Textss',
+    text: 'Button Text',
     size: ButtonSize.NORMAL,
     disabled: false,
   })

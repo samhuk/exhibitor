@@ -6,10 +6,13 @@ import { createOnIndexExhTsFileCreateHandler } from '../../../../cli/commands/st
 import { createIntercomClient } from '../../../../common/intercom/client'
 import { IntercomIdentityType, IntercomMessageType } from '../../../../common/intercom/types'
 import { logIntercomInfo } from '../../../../common/logging'
+import { updateProcessShowIntercomLog } from '../../../../common/state'
 
 const TEST_COMPONENT_LIBRARY_EXH_CONFIG_FILE = `${TEST_COMPONENT_LIBRARY_ROOT_DIR}/${DEFAULT_CONFIG_FILE_NAME}` as const
 
 const main = async () => {
+  updateProcessShowIntercomLog(process.env.SHOW_INTERCOM_LOG === 'true')
+
   const config = await getConfig(TEST_COMPONENT_LIBRARY_EXH_CONFIG_FILE)
 
   const intercomClient = createIntercomClient({

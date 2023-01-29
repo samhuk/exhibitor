@@ -1,4 +1,4 @@
-import { updateProcessVerbosity } from '../../cli/state'
+import { updateProcessVerbosity } from '../../common/state'
 import { CONFIG_FILE_PATH_ENV_VAR_NAME, getConfig } from '../../common/config'
 import { Config } from '../../common/config/types'
 import { logStep } from '../../common/logging'

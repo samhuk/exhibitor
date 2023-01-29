@@ -6,12 +6,14 @@ export enum IntercomIdentityType {
   CLI = 'CLI',
   COMP_LIB_WATCH = 'COMP_LIB_WATCH',
   CLIENT_WATCH = 'CLIENT_WATCH',
+  ANONYMOUS = 'ANONYMOUS'
 }
 
 export enum IntercomMessageType {
   COMPONENT_LIBRARY_BUILD_COMPLETED = 'COMPONENT_LIBRARY_BUILD_COMPLETED',
   SITE_CLIENT_BUILD_COMPLETED = 'SITE_CLIENT_BUILD_COMPLETED',
   SITE_SERVER_BUILD_COMPLETED = 'SITE_SERVER_BUILD_COMPLETED',
+  IDENTIFY = 'IDENTIFY',
 }
 
 export type IntercomMessageOptions = OmitTyped<IntercomMessage, 'from'>
@@ -22,6 +24,7 @@ export type IntercomMessage<TType extends IntercomMessageType = IntercomMessageT
     [IntercomMessageType.COMPONENT_LIBRARY_BUILD_COMPLETED]: { },
     [IntercomMessageType.SITE_CLIENT_BUILD_COMPLETED]: { },
     [IntercomMessageType.SITE_SERVER_BUILD_COMPLETED]: { },
+    [IntercomMessageType.IDENTIFY]: {},
   },
   TType
 > & { from: IntercomIdentityType, to: IntercomIdentityType }

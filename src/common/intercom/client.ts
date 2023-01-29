@@ -1,4 +1,4 @@
-import { IntercomIdentityType, IntercomMessage, IntercomMessageOptions } from './types'
+import { IntercomIdentityType, IntercomMessage, IntercomMessageOptions, IntercomMessageType } from './types'
 
 export enum IntercomStatus {
   NOT_CONNECTED,
@@ -12,7 +12,7 @@ type IntercomClientOptions = {
   events?: {
     onStatusChange?: (newStatus: IntercomStatus, previousStatus: IntercomStatus) => void
     onMessage?: (msg: IntercomMessage) => void
-    onReconnect?: (ws: WebSocket) => void
+    onReconnect?: (ws: WebSocket) => ({ proceed?: boolean }) | void
   },
 }
 
@@ -63,6 +63,9 @@ const waitUntilConnect = (webSocketCreator: (url: string) => WebSocket, isReconn
   _connect(webSocketCreator, res)
 })
 
+// eslint-disable-next-line no-promise-executor-return
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 export const createIntercomClient = (options: IntercomClientOptions) => {
   let instance: IntercomClient
   let ws: WebSocket
@@ -94,15 +97,27 @@ export const createIntercomClient = (options: IntercomClientOptions) => {
     ws = newWs
     updateStatus(IntercomStatus.CONNECTED)
 
+    instance.send({
+      to: IntercomIdentityType.SITE_SERVER,
+      type: IntercomMessageType.IDENTIFY,
+    })
+
     ws.addEventListener('message', e => handleMessage(e, options))
 
     ws.addEventListener('close', async () => {
       ws.close()
       updateStatus(IntercomStatus.NOT_CONNECTED)
       console.log('Connection to intercom lost.')
+
+      // Wait a second until we try reconnecting, as it's most likely that this occurs in dev when the server is rebuilt
+      await wait(1000)
+
       updateStatus(IntercomStatus.CONNECTING)
       const _newWs = await waitUntilConnect(options.webSocketCreator, true) // Wait until reconnection
-      options.events?.onReconnect?.(_newWs)
+      const result = options.events?.onReconnect?.(_newWs)
+      if (!((result as any)?.proceed ?? true))
+        return
+
       onConnect(_newWs)
       // Send all of the queued messages
       sendQueuedMessages()

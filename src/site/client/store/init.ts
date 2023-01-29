@@ -1,6 +1,6 @@
 import { ExhibitNodes, PathTree } from '../../../api/exhibit/types'
 import { createIntercomClient } from '../../../common/intercom/client'
-import { IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
+import { IntercomIdentityType } from '../../../common/intercom/types'
 import { getTheme } from '../connectors/theme'
 import { componentExhibitsReady } from './componentExhibits/actions'
 import { setStatus } from './intercom/actions'
@@ -66,6 +66,7 @@ export const init = async (dispatch: AppDispatch) => {
       onReconnect: () => {
         // eslint-disable-next-line no-restricted-globals
         location.reload()
+        return { proceed: false }
       },
     },
   })
