@@ -16,8 +16,12 @@ import { tryResolve } from '../../../common/npm/resolve'
 import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
 import { createIntercomClient } from '../../../common/intercom/client'
-import { IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
-import { logIntercomInfo } from '../../../common/logging'
+import { IntercomClient, IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
+import { logIntercomInfo, logIntercomStep } from '../../../common/logging'
+import { ExhError } from '../../../common/exhError/types'
+import { createExhError, isExhError } from '../../../common/exhError'
+import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
+import { determineIfPortFree } from '../../common/isPortFree'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -27,12 +31,65 @@ const watchCompSiteWaitForFirstSuccessfulBuild = async (
   watchCompSite({ ...options, onFirstSuccessfulBuildComplete: res })
 })
 
-export const createOnIndexExhTsFileCreateHandler = (config: Config) => (file: { includedFilePaths: string[] }) => {
+export const createOnIndexExhTsFileCreateHandler = (
+  config: Config,
+  intercom: { host: string, port: number },
+) => (file: { includedFilePaths: string[] }) => {
   logStep('Creating metadata.json file', true)
   setMetadata({
     includedFilePaths: file.includedFilePaths,
     siteTitle: config.site.title,
     isAxeEnabled: tryResolve('axe-core').success === true,
+    intercom,
+  })
+}
+
+const _createIntercomClient = async (config: Config): Promise<IntercomClient | ExhError> => {
+  const portFromEnv = process.env[INTERCOM_PORT_ENV_VAR_NAME]
+  const parsedPortFromEnv = portFromEnv != null ? parseInt(portFromEnv) : null
+  if (parsedPortFromEnv != null && Number.isNaN(parsedPortFromEnv)) {
+    return createExhError({
+      message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
+      causedBy: c => `The ${c.bold(INTERCOM_PORT_ENV_VAR_NAME)} environment variable is present however not a valid integer. Recieved: ${c.cyan(portFromEnv)}`,
+    })
+  }
+
+  let port = parsedPortFromEnv ?? DEFAULT_INTERCOM_PORT
+  let isPortFree: boolean = false
+  while (!isPortFree) {
+    // eslint-disable-next-line no-loop-func
+    logIntercomStep(c => `Determining if port ${c.cyan(port.toString())} is available to use.`)
+
+    if (port === config.site.port) {
+      // eslint-disable-next-line no-loop-func
+      logIntercomInfo(c => `Port ${c.cyan(port.toString())} is not available to use because it's being used for the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has been configured to use it. Trying ${c.cyan((port += 1).toString())}`)
+      // eslint-disable-next-line no-continue
+      continue
+    }
+
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      isPortFree = await determineIfPortFree(config.site.host, port)
+    }
+    catch (err) {
+      return createExhError({
+        message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
+        // eslint-disable-next-line no-loop-func
+        causedBy: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for Intercom.\n\n    Details: ${err}.`,
+      })
+    }
+    if (!isPortFree)
+      // eslint-disable-next-line no-loop-func
+      logIntercomInfo(c => `Port ${c.cyan(port.toString())} is not available to use. Trying ${c.cyan((port += 1).toString())}`)
+  }
+
+  logIntercomInfo(c => `Port ${c.cyan(port.toString())} is available to use`)
+
+  return createIntercomClient({
+    host: config.site.host,
+    port,
+    identityType: IntercomIdentityType.CLI,
+    webSocketCreator: url => new WebSocket(url) as any,
   })
 }
 
@@ -61,10 +118,10 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   if (isCliError(checkPackagesResult))
     return checkPackagesResult
 
-  const intercomClient = createIntercomClient({
-    identityType: IntercomIdentityType.CLI,
-    webSocketCreator: url => new WebSocket(url) as any,
-  })
+  // Create intercom client
+  const intercomClient = await _createIntercomClient(config)
+  if (isExhError(intercomClient))
+    return intercomClient
 
   try {
     // Watch Component Site, waiting for first successful build
@@ -72,8 +129,9 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
       skipPrebuild: isDev,
       reactMajorVersion: checkPackagesResult.reactMajorVersion,
       config,
-      onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config),
+      onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, { host: intercomClient.host, port: intercomClient.port }),
       onSuccessfulBuildComplete: () => {
+        // Inform clients every time the comp site (with the user's component library) finishes a build.
         logIntercomInfo('Sending build complete message to intercom.')
         intercomClient.send({
           to: IntercomIdentityType.SITE_CLIENT,
@@ -92,10 +150,13 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   // Start the site server
   logStep(`Starting ${NPM_PACKAGE_CAPITALIZED_NAME}`)
   const startServerResult = await startServer({
+    intercomCliClient: intercomClient,
     config,
+    // If the server dies, kill ourselves as well
     onServerProcessKill: () => process.exit(0),
   })
 
+  // Once the site server process has started, try and connect our intercom client to it.
   await intercomClient.connect()
 
   // If start server result is not a child process, then it's an error, therefore return.

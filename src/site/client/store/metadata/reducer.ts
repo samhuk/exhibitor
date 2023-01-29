@@ -9,6 +9,8 @@ import {
   MetaDataState,
 } from './actions'
 import { fetchMetaData as fetchMetaDataRequest } from '../../connectors/metaData'
+import { MetaData } from '../../../../common/metadata'
+import { isSerializedExhError } from '../../misc'
 
 const initialState: MetaDataState = {
   doFetch: true,
@@ -43,9 +45,11 @@ export const metaDataReducer = (
   }
 }
 
-export const fetchMetaDataThunk = (): ThunkAction<void, RootState, any, Actions> => dispatch => {
+export const fetchMetaDataThunk = (onComplete?: (metadata: MetaData) => void): ThunkAction<void, RootState, any, Actions> => dispatch => {
   dispatch(fetchMetaData())
   fetchMetaDataRequest().then(response => {
     dispatch(metaDataFetched(response))
+    if (!isSerializedExhError(response))
+      onComplete?.(response)
   })
 }

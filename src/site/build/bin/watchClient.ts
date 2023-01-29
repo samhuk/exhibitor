@@ -10,13 +10,16 @@ import { createIntercomClient } from '../../../common/intercom/client'
 import { IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
 import { logIntercomInfo } from '../../../common/logging'
 import { updateProcessShowIntercomLog } from '../../../common/state'
+import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 
 const isDev = process.env.EXH_DEV === 'true'
 
 const main = async () => {
-  updateProcessShowIntercomLog(process.env.SHOW_INTERCOM_LOG === 'true')
+  updateProcessShowIntercomLog(process.env.EXH_SHOW_INTERCOM_LOG === 'true')
 
   const intercomClient = createIntercomClient({
+    host: process.env.EXH_SITE_SERVER_HOST,
+    port: process.env[INTERCOM_PORT_ENV_VAR_NAME] != null ? parseInt(process.env[INTERCOM_PORT_ENV_VAR_NAME]) : DEFAULT_INTERCOM_PORT,
     identityType: IntercomIdentityType.CLIENT_WATCH,
     webSocketCreator: url => new WebSocket(url) as any,
   })

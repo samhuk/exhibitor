@@ -1,4 +1,5 @@
 import { OmitTyped, TypeDependantBaseIntersection } from '@samhuk/type-helpers'
+import { IntercomStatus } from './client'
 
 export enum IntercomIdentityType {
   SITE_CLIENT = 'SITE_CLIENT',
@@ -28,3 +29,11 @@ export type IntercomMessage<TType extends IntercomMessageType = IntercomMessageT
   },
   TType
 > & { from: IntercomIdentityType, to: IntercomIdentityType }
+
+export type IntercomClient = {
+  host: string
+  port: number
+  status: IntercomStatus
+  connect: () => Promise<void>
+  send: (msg: IntercomMessageOptions) => void
+}

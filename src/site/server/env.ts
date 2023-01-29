@@ -115,8 +115,8 @@ const getEnvironmentVariableString = (
 }
 
 const getEnv = (): Env => ({
-  port: getEnvironmentVariableNumber('SERVER_PORT', 4001),
-  host: getEnvironmentVariableString('SERVER_HOST', 'localhost'),
+  host: getEnvironmentVariableString('EXH_SITE_SERVER_HOST', 'localhost'),
+  port: getEnvironmentVariableNumber('EXH_SITE_SERVER_PORT', 4001),
   isDev: getEnvironmentVariableBoolean('EXH_DEV', false),
 })
 

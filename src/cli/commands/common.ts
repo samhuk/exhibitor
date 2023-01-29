@@ -12,7 +12,7 @@ export const baseCommand = <TFn extends (...args: any[]) => Promise<CliError | n
   fn: TFn,
   options?: { exitWhenReturns?: boolean },
 ) => async (...args: Parameters<TFn>) => {
-    updateProcessShowIntercomLog(process.env.SHOW_INTERCOM_LOG === 'true')
+    updateProcessShowIntercomLog(process.env.EXH_SHOW_INTERCOM_LOG === 'true')
 
     try {
       const commandError = await fn(...args)

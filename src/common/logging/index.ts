@@ -157,10 +157,9 @@ export const logError = (
  */
 export const logIntercomInfo = (
   msg: ExhString,
-  verbose: boolean = false,
 ) => {
   // If log msg is verbose and the current state is not verbose, then dont log
-  if (verbose && !state.verbose)
+  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
     return
 
   const normalizedMessage = normalizeExhString(msg)
@@ -171,14 +170,13 @@ export const logIntercomInfo = (
  * Prints a message to console stdout that is related to the intercom functionality.
  *
  * @example
- * logIntercomInfo('Doing something') // ☎ Doing something
+ * logIntercomInfo('Doing something') // -- IC -- Doing something
  */
 export const logIntercomStep = (
   msg: ExhString,
-  verbose: boolean = false,
 ) => {
   // If log msg is verbose and the current state is not verbose, then dont log
-  if (verbose && !state.verbose)
+  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
     return
 
   const normalizedMessage = normalizeExhString(msg)
@@ -189,14 +187,13 @@ export const logIntercomStep = (
  * Prints a message to console stdout that is related to the intercom functionality.
  *
  * @example
- * logIntercomProblem('Doing something') // ☎ Doing something
+ * logIntercomProblem('Doing something') // -- IC -- Doing something
  */
-export const logIntercomProblem = (
+export const logIntercomError = (
   msg: ExhString,
-  verbose: boolean = false,
 ) => {
   // If log msg is verbose and the current state is not verbose, then dont log
-  if (verbose && !state.verbose)
+  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
     return
 
   const normalizedMessage = normalizeExhString(msg)

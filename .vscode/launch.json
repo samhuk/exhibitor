@@ -65,8 +65,8 @@
     //   "program": "./build/cli/cli/index.js",
     //   "env": {
     //     "NODE_ENV": "development",
-    //     "SITE_SERVER_HOST": "localhost",
-    //     "SITE_SERVER_PORT": "4001",
+    //     "EXH_SITE_SERVER_HOST": "localhost",
+    //     "SITE_EXH_SERVER_PORT": "4001",
     //     "EXH_CONFIG_FILE_PATH": "./test/componentLibrary/exh.config.json",
     //     "EXH_DEV": "true",
     //     "EXH_VERBOSE": "true"

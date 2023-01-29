@@ -25,9 +25,6 @@ export const render = () => {
         : (
           <NotConnectedIconEl />
         )}
-      {/* {status !== IntercomStatus.CONNECTING
-        ? <i className="loading-icon fas fa-spinner fa-spin" />
-        : null} */}
     </div>
   )
 }

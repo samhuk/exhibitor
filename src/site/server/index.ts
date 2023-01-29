@@ -22,7 +22,7 @@ const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
   updateProcessVerbosity(process.env[VERBOSE_ENV_VAR_NAME] === 'true')
 
-  updateProcessShowIntercomLog(process.env.SHOW_INTERCOM_LOG === 'true')
+  updateProcessShowIntercomLog(process.env.EXH_SHOW_INTERCOM_LOG === 'true')
 
   await loadConfig()
 

@@ -6,6 +6,10 @@ export type MetaData = {
   includedFilePaths: string[]
   siteTitle: string
   isAxeEnabled: boolean
+  intercom: {
+    host: string
+    port: number
+  }
 }
 
 export const setMetadata = (

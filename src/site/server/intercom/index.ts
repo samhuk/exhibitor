@@ -1,17 +1,20 @@
 import WebSocket, { WebSocketServer } from 'ws'
+import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { IntercomIdentityType, IntercomMessage, IntercomMessageType } from '../../../common/intercom/types'
 import { logIntercomInfo } from '../../../common/logging'
 import { createClientStore } from './clientStore'
 
-const PREFERRED_PORT = 8000
-
 export const initIntercom = () => {
-  logIntercomInfo('Creating Intercom server')
-  const wss = new WebSocketServer({ port: PREFERRED_PORT })
+  const host = process.env.EXH_SITE_SERVER_HOST
+  const port = process.env[INTERCOM_PORT_ENV_VAR_NAME] != null ? parseInt(process.env[INTERCOM_PORT_ENV_VAR_NAME]) : DEFAULT_INTERCOM_PORT
+  console.log(process.env.EXH_SHOW_INTERCOM_LOG)
+  logIntercomInfo(c => `Creating Intercom server on ${c.cyan(`${host}:${port}`)}`)
+  const wss = new WebSocketServer({ host, port })
 
   const clientStore = createClientStore()
 
   const broadcastMessage = (msg: IntercomMessage) => {
+    // Send the message to all clients of the identity type of the message's "to" property.
     clientStore.getClientList(msg.to).forEach(client => {
       if (client.ws.readyState !== WebSocket.OPEN)
         return
@@ -31,6 +34,8 @@ export const initIntercom = () => {
       logIntercomInfo(c => `Recieved message from ${c.bold(client.identityType)} (${client.shortUuid}). Message: ${c.cyan(dataStr)}`)
 
       if (client.identityType === IntercomIdentityType.ANONYMOUS) {
+        if (msg.from == null)
+          logIntercomInfo(c => `Anonymous message from ${client.shortUuid} had no 'from' property. Who is this? Message: ${c.cyan(dataStr)}`)
         clientStore.identify(client.uuid, msg.from)
         logIntercomInfo(c => `Identified client ${client.shortUuid} as ${c.bold(msg.from)}`)
       }
@@ -39,7 +44,7 @@ export const initIntercom = () => {
         return
 
       if (msg.to === IntercomIdentityType.SITE_SERVER)
-        return // We don't yet have a need for this
+        return // The server doesn't yet have any need for recieved messages other than the IDENTITY one
 
       broadcastMessage(msg)
     })

@@ -8,6 +8,8 @@ import { determineIfPortFree } from '../../common/isPortFree'
 import { CliError, CliString } from '../../types'
 import { logStep, logSuccess } from '../../logging'
 import { Config } from '../../../common/config/types'
+import { IntercomClient } from '../../../common/intercom/types'
+import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 
 const isDev = process.env.EXH_DEV === 'true'
 
@@ -37,6 +39,7 @@ const modifyServerProcessForKeyboardInput = (
 }
 
 export const startServer = async (options: {
+  intercomCliClient: IntercomClient,
   config: Config,
   onServerProcessKill?: () => void,
 }): Promise<CliError | ChildProcess> => {
@@ -52,10 +55,11 @@ export const startServer = async (options: {
   // Build up the env for the Exhibitor Site server process
   const env: NodeJS.ProcessEnv = {
     ...process.env,
-    SERVER_PORT: portStr,
-    SERVER_HOST: options.config.site.host,
+    EXH_SITE_SERVER_PORT: portStr,
+    EXH_SITE_SERVER_HOST: options.config.site.host,
     [VERBOSE_ENV_VAR_NAME]: options.config.verbose ? 'true' : 'false',
     [CONFIG_FILE_PATH_ENV_VAR_NAME]: options.config.rootConfigFile,
+    [INTERCOM_PORT_ENV_VAR_NAME]: options.intercomCliClient.port.toString(),
   }
 
   // Check if port is free

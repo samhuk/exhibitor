@@ -1,7 +1,6 @@
 import WebSocket from 'ws'
 import { randomUUID } from 'crypto'
 import { IntercomIdentityType } from '../../../common/intercom/types'
-import { logIntercomInfo } from '../../../common/logging'
 
 type AddClientOptions = {
   identityType?: IntercomIdentityType
