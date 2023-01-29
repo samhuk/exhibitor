@@ -1,21 +1,16 @@
-import { IntercomClient, IntercomIdentityType, IntercomMessage, IntercomMessageType } from './types'
+import {
+  IntercomClient,
+  IntercomClientOptions,
+  IntercomClientOptionsInternal,
+  IntercomIdentityType,
+  IntercomMessage,
+  IntercomMessageType,
+} from './types'
 
 export enum IntercomStatus {
   NOT_CONNECTED,
   CONNECTING,
   CONNECTED
-}
-
-type IntercomClientOptions = {
-  identityType: IntercomIdentityType
-  webSocketCreator: (url: string) => WebSocket
-  host: string
-  port: number
-  events?: {
-    onStatusChange?: (newStatus: IntercomStatus, previousStatus: IntercomStatus) => void
-    onMessage?: (msg: IntercomMessage) => void
-    onReconnect?: (ws: WebSocket) => ({ proceed?: boolean }) | void
-  },
 }
 
 // eslint-disable-next-line no-promise-executor-return
@@ -30,7 +25,7 @@ const handleMessage = (msg: MessageEvent, options: IntercomClientOptions) => {
   options.events?.onMessage(intercomMessage)
 }
 
-const _connect = (options: IntercomClientOptions, onConnect: (ws: WebSocket) => void) => {
+const _connect = (options: IntercomClientOptionsInternal, onConnect: (ws: WebSocket) => void) => {
   let ws: WebSocket
   ws = options.webSocketCreator(`ws://${options.host}:${options.port}`)
   ws.onerror = () => {} // onClose function below will handle failed connection logic. This prevents crashes in nodejs envs.
@@ -39,7 +34,7 @@ const _connect = (options: IntercomClientOptions, onConnect: (ws: WebSocket) => 
   onOpen = () => {
     ws.removeEventListener('open', onOpen)
     ws.removeEventListener('close', onClose)
-    console.log('Connected to intercom.')
+    options.log('Connected to intercom.')
     onConnect(ws)
   }
   onClose = async () => {
@@ -47,7 +42,7 @@ const _connect = (options: IntercomClientOptions, onConnect: (ws: WebSocket) => 
     ws.removeEventListener('close', onClose)
     ws.close()
     ws = null
-    console.log('Failed to connect to intercom. Trying again in 1s.')
+    options.log('Failed to connect to intercom. Trying again in 1s.')
     await wait(1000)
     _connect(options, onConnect)
   }
@@ -55,12 +50,16 @@ const _connect = (options: IntercomClientOptions, onConnect: (ws: WebSocket) => 
   ws.addEventListener('close', onClose)
 }
 
-const waitUntilConnect = (options: IntercomClientOptions, isReconnect: boolean = false) => new Promise<WebSocket>((res, rej) => {
-  console.log(`${isReconnect ? 'Trying to reconnect' : 'Connecting'} to intercom at ${options.host}:${options.port}.`)
+const waitUntilConnect = (options: IntercomClientOptionsInternal, isReconnect: boolean = false) => new Promise<WebSocket>((res, rej) => {
+  options.log(`${isReconnect ? 'Trying to reconnect' : 'Connecting'} to intercom at ${options.host}:${options.port}.`)
   _connect(options, res)
 })
 
 export const createIntercomClient = (options: IntercomClientOptions): IntercomClient => {
+  const log: (s: string) => void = options.enableLogging ? (s: string) => console.log(s) : () => {}
+
+  const internalOptions: IntercomClientOptionsInternal = { ...options, log }
+
   let instance: IntercomClient
   let ws: WebSocket
   const queuedMessages: IntercomMessage[] = []
@@ -101,13 +100,13 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
     ws.addEventListener('close', async () => {
       ws.close()
       updateStatus(IntercomStatus.NOT_CONNECTED)
-      console.log('Connection to intercom lost.')
+      log('Connection to intercom lost.')
 
       // Wait a second until we try reconnecting, as it's most likely that this occurs in dev when the server is rebuilt
       await wait(1000)
 
       updateStatus(IntercomStatus.CONNECTING)
-      const _newWs = await waitUntilConnect(options, true) // Wait until reconnection
+      const _newWs = await waitUntilConnect(internalOptions, true) // Wait until reconnection
       const result = options.events?.onReconnect?.(_newWs)
       if (!((result as any)?.proceed ?? true))
         return
@@ -124,7 +123,7 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
     status: IntercomStatus.NOT_CONNECTED,
     connect: async () => {
       options.events?.onStatusChange?.(IntercomStatus.CONNECTING, instance.status)
-      const newWs = await waitUntilConnect(options)
+      const newWs = await waitUntilConnect(internalOptions)
       onConnect(newWs)
     },
     send: msgOptions => {

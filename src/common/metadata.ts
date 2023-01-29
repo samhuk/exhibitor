@@ -9,6 +9,7 @@ export type MetaData = {
   intercom: {
     host: string
     port: number
+    enableLogging: boolean
   }
 }
 

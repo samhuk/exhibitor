@@ -19,6 +19,7 @@ const main = async () => {
     port: process.env[INTERCOM_PORT_ENV_VAR_NAME] != null ? parseInt(process.env[INTERCOM_PORT_ENV_VAR_NAME]) : DEFAULT_INTERCOM_PORT,
     identityType: IntercomIdentityType.CLIENT_WATCH,
     webSocketCreator: url => new WebSocket(url) as any,
+    enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
   })
 
   await intercomClient.connect()

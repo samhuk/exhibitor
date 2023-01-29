@@ -5,7 +5,7 @@ import { logIntercomInfo } from '../../../common/logging'
 import { createClientStore } from './clientStore'
 
 export const createInteromServer = () => {
-  const host = process.env.EXH_SITE_SERVER_HOST
+  const host = process.env.EXH_SITE_SERVER_HOST ?? 'localhost'
   const port = process.env[INTERCOM_PORT_ENV_VAR_NAME] != null ? parseInt(process.env[INTERCOM_PORT_ENV_VAR_NAME]) : DEFAULT_INTERCOM_PORT
   logIntercomInfo(c => `Creating Intercom server on ${c.cyan(`${host}:${port}`)}`)
   const wss = new WebSocketServer({ host, port })

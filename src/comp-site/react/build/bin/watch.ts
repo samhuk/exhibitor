@@ -18,6 +18,7 @@ const main = async () => {
     port: process.env[INTERCOM_PORT_ENV_VAR_NAME] != null ? parseInt(process.env[INTERCOM_PORT_ENV_VAR_NAME]) : DEFAULT_INTERCOM_PORT,
     identityType: IntercomIdentityType.COMP_LIB_WATCH,
     webSocketCreator: url => new WebSocket(url) as any,
+    enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
   })
 
   await intercomClient.connect()
@@ -26,7 +27,11 @@ const main = async () => {
     skipPrebuild: true,
     config,
     reactMajorVersion: 18,
-    onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, { host: intercomClient.host, port: intercomClient.port }),
+    onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, {
+      host: intercomClient.host,
+      port: intercomClient.port,
+      enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
+    }),
     onSuccessfulBuildComplete: () => {
       logIntercomInfo('Sending build complete message to intercom.')
       intercomClient.send({

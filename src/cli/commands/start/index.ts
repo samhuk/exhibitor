@@ -33,7 +33,7 @@ const watchCompSiteWaitForFirstSuccessfulBuild = async (
 
 export const createOnIndexExhTsFileCreateHandler = (
   config: Config,
-  intercom: { host: string, port: number },
+  intercom: { host: string, port: number, enableLogging: boolean },
 ) => (file: { includedFilePaths: string[] }) => {
   logStep('Creating metadata.json file', true)
   setMetadata({
@@ -61,8 +61,12 @@ const _createIntercomClient = async (config: Config): Promise<IntercomClient | E
     logIntercomStep(c => `Determining if port ${c.cyan(port.toString())} is available to use.`)
 
     if (port === config.site.port) {
-      // eslint-disable-next-line no-loop-func
-      logIntercomError(c => `Port ${c.cyan(port.toString())} is not available to use because it's being used for the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has been configured to use it. Trying ${c.cyan((port += 1).toString())}.`)
+      const previousPort = port
+      port += 1
+      createExhError({
+        // eslint-disable-next-line no-loop-func
+        message: c => `Port ${c.cyan(previousPort.toString())} is not available to use because it's being used for the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has been configured to use it. Trying ${c.cyan(port.toString())}.`,
+      }).log()
       // eslint-disable-next-line no-continue
       continue
     }
@@ -78,9 +82,12 @@ const _createIntercomClient = async (config: Config): Promise<IntercomClient | E
         causedBy: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for Intercom.\n\n    Details: ${err}.`,
       })
     }
-    if (!isPortFree)
+    if (!isPortFree) {
+      const previousPort = port
+      port += 1
       // eslint-disable-next-line no-loop-func
-      logIntercomError(c => `Port ${c.cyan(port.toString())} is not available to use. Trying ${c.cyan((port += 1).toString())}`)
+      logIntercomError(c => `Port ${c.cyan(previousPort.toString())} is not available to use. Trying ${c.cyan(port.toString())}`)
+    }
   }
 
   logIntercomSuccess(c => `Port ${c.cyan(port.toString())} is available to use`)
@@ -90,6 +97,7 @@ const _createIntercomClient = async (config: Config): Promise<IntercomClient | E
     port,
     identityType: IntercomIdentityType.CLI,
     webSocketCreator: url => new WebSocket(url) as any,
+    enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
   })
 }
 
@@ -129,7 +137,11 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
       skipPrebuild: isDev,
       reactMajorVersion: checkPackagesResult.reactMajorVersion,
       config,
-      onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, { host: intercomClient.host, port: intercomClient.port }),
+      onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, {
+        host: intercomClient.host,
+        port: intercomClient.port,
+        enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
+      }),
       onSuccessfulBuildComplete: () => {
         // Inform clients every time the comp site (with the user's component library) finishes a build.
         logIntercomInfo('Sending build complete message to intercom.')

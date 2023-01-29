@@ -37,3 +37,20 @@ export type IntercomClient = {
   connect: () => Promise<void>
   send: (msg: IntercomMessageOptions) => void
 }
+
+export type IntercomClientOptions = {
+  identityType: IntercomIdentityType
+  webSocketCreator: (url: string) => WebSocket
+  host: string
+  port: number
+  enableLogging: boolean
+  events?: {
+    onStatusChange?: (newStatus: IntercomStatus, previousStatus: IntercomStatus) => void
+    onMessage?: (msg: IntercomMessage) => void
+    onReconnect?: (ws: WebSocket) => ({ proceed?: boolean }) | void
+  },
+}
+
+export type IntercomClientOptionsInternal = IntercomClientOptions & {
+  log: (s: string) => void
+}

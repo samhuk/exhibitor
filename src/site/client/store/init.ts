@@ -54,6 +54,7 @@ export const init = async (dispatch: AppDispatch) => {
       // eslint-disable-next-line no-restricted-globals
       host: metaData.intercom.host,
       port: metaData.intercom.port,
+      enableLogging: metaData.intercom.enableLogging,
       events: {
         onStatusChange: newStatus => {
           dispatch(setStatus(newStatus))
