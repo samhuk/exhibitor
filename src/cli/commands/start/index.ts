@@ -49,7 +49,7 @@ export const createOnIndexExhTsFileCreateHandler = (
   })
 }
 
-const _createIntercomClient = async (config: Config): Promise<IntercomClient | ExhError> => {
+const determineIntercomPort = async (config: Config): Promise<number | ExhError> => {
   const portFromEnv = process.env[INTERCOM_PORT_ENV_VAR_NAME]
   const parsedPortFromEnv = portFromEnv != null ? parseInt(portFromEnv) : null
   if (parsedPortFromEnv != null && Number.isNaN(parsedPortFromEnv)) {
@@ -84,13 +84,7 @@ const _createIntercomClient = async (config: Config): Promise<IntercomClient | E
   if (err != null)
     return err
 
-  return createIntercomClient({
-    host: config.site.host,
-    port,
-    identityType: IntercomIdentityType.CLI,
-    webSocketCreator: url => new WebSocket(url) as any,
-    enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
-  })
+  return port
 }
 
 export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<CliError> => {
@@ -118,26 +112,46 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   if (isCliError(checkPackagesResult))
     return checkPackagesResult
 
-  let compLibBuildStatusReporter: BuildStatusReporter = null
-
   // Create intercom client
-  const intercomClient = await _createIntercomClient(config)
-  if (isExhError(intercomClient))
-    return intercomClient
+  const intercomPort = await determineIntercomPort(config)
+  if (isExhError(intercomPort))
+    return intercomPort
+
+  let compLibBuildStatusReporter: BuildStatusReporter
+  let intercomClient: IntercomClient
 
   const sendBuildStatusUpdateToIntercom = (status: BuildStatus, prevStatus: BuildStatus) => {
-    // Inform clients every time the comp site (with the user's component library) finishes a build.
-    logIntercomInfo('Sending build status update message to intercom.')
     intercomClient.send({
-      to: IntercomIdentityType.SITE_CLIENT,
       type: IntercomMessageType.BUILD_STATUS_CHANGE,
       status,
       prevStatus,
     })
   }
 
+  const sendCurrentBuildStatusUpdateToIntercom = () => {
+    intercomClient.send({
+      type: IntercomMessageType.BUILD_STATUS_CHANGE,
+      status: compLibBuildStatusReporter.status,
+      prevStatus: compLibBuildStatusReporter.status,
+    })
+  }
+
   compLibBuildStatusReporter = createBuildStatusReporter({
     onChange: sendBuildStatusUpdateToIntercom,
+  })
+
+  intercomClient = createIntercomClient({
+    host: config.site.host,
+    port: intercomPort,
+    identityType: IntercomIdentityType.COMP_LIB_WATCH,
+    webSocketCreator: url => new WebSocket(url) as any,
+    enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
+    events: {
+      onReconnect: () => {
+        // When we reconnect to Intercom, send our status
+        sendCurrentBuildStatusUpdateToIntercom()
+      },
+    },
   })
 
   try {
@@ -164,7 +178,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   // Start the site server
   logStep(`Starting ${NPM_PACKAGE_CAPITALIZED_NAME}`)
   const startServerResult = await startServer({
-    intercomCliClient: intercomClient,
+    intercomPort,
     config,
     // If the server dies, kill ourselves as well
     onServerProcessKill: () => process.exit(0),
@@ -174,9 +188,11 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   if (!(startServerResult instanceof ChildProcess))
     return startServerResult
 
-  await wait(500) // Wait a bit for the server to start
   // Once the site server process has started, try and connect our intercom client to it.
   await intercomClient.connect()
+
+  // When we first connect to Intercom, send our status
+  sendCurrentBuildStatusUpdateToIntercom()
 
   return null
 }, { exitWhenReturns: false })

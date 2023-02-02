@@ -39,7 +39,7 @@ const modifyServerProcessForKeyboardInput = (
 }
 
 export const startServer = async (options: {
-  intercomCliClient: IntercomClient,
+  intercomPort: number,
   config: Config,
   onServerProcessKill?: () => void,
 }): Promise<CliError | ChildProcess> => {
@@ -70,11 +70,12 @@ export const startServer = async (options: {
   // Build up the env for the Exhibitor Site server process
   const env: NodeJS.ProcessEnv = {
     ...process.env,
+    EXH_CLI: 'true',
     EXH_SITE_SERVER_PORT: portStr,
     EXH_SITE_SERVER_HOST: options.config.site.host,
     [VERBOSE_ENV_VAR_NAME]: options.config.verbose.toString(),
     [CONFIG_FILE_PATH_ENV_VAR_NAME]: options.config.rootConfigFile,
-    [INTERCOM_PORT_ENV_VAR_NAME]: options.intercomCliClient.port.toString(),
+    [INTERCOM_PORT_ENV_VAR_NAME]: options.intercomPort.toString(),
   }
 
   // Execute the built site server js script

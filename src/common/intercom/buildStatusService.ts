@@ -3,17 +3,17 @@ import { BuildStatuses, BuildStatusService, BuiltIntercomIdentity } from './type
 
 export const areAllBuildStatusesSuccessful = (statuses: BuildStatuses) => !Object.values(statuses).some(s => s !== BuildStatus.SUCCESS)
 
-export const createBuildStatusService = (): BuildStatusService => {
+export const createBuildStatusService = (initialStatuses?: Partial<BuildStatuses>): BuildStatusService => {
   let instance: BuildStatusService
 
   let allSuccessfulListenerFns: (() => void)[] = []
 
   return instance = {
     statuses: {
-      CLI: BuildStatus.SUCCESS,
-      CLIENT_WATCH: BuildStatus.NONE,
-      COMP_LIB_WATCH: BuildStatus.NONE,
-      SITE_SERVER: BuildStatus.SUCCESS,
+      CLI: initialStatuses.CLI ?? BuildStatus.NONE,
+      CLIENT_WATCH: initialStatuses.CLIENT_WATCH ?? BuildStatus.NONE,
+      COMP_LIB_WATCH: initialStatuses.COMP_LIB_WATCH ?? BuildStatus.NONE,
+      SITE_SERVER: initialStatuses.SITE_SERVER ?? BuildStatus.NONE,
     },
     allSuccessful: false,
     getUnsuccessfulBuilds: () => Object.entries(instance.statuses)

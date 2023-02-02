@@ -18,6 +18,7 @@ import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
 import { updateProcessVerbosity } from '../../common/processState'
 import { createBuildStatusService } from '../../common/intercom/buildStatusService'
 import { logInfo } from '../../common/logging'
+import { BuildStatus } from '../../common/building'
 
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
@@ -25,7 +26,13 @@ const main = async () => {
 
   await loadConfig()
 
-  const buildStatusService = createBuildStatusService()
+  const buildStatusService = createBuildStatusService({
+    // These are not yet involved in the live-reload intercom system
+    CLI: BuildStatus.SUCCESS,
+    SITE_SERVER: BuildStatus.SUCCESS,
+    // If the server is started by the CLI, then the client is already built
+    CLIENT_WATCH: process.env.EXH_CLI === 'true' ? BuildStatus.SUCCESS : BuildStatus.NONE,
+  })
 
   createInteromServer(buildStatusService)
 
