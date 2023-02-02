@@ -23,13 +23,17 @@ import { createExhError, isExhError } from '../../../common/exhError'
 import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { findFreePort } from '../../common/isPortFree'
 import { wait } from '../../../common/function'
+import { BuildStatus, BuildStatusReporter, createBuildStatusReporter } from '../../../common/building'
 
 const isDev = process.env.EXH_DEV === 'true'
 
 const watchCompSiteWaitForFirstSuccessfulBuild = async (
   options: BuildOptions,
 ): Promise<void> => new Promise<void>(res => {
-  watchCompSite({ ...options, onFirstSuccessfulBuildComplete: res })
+  watchCompSite({
+    ...options,
+    onFirstSuccessfulBuild: res,
+  })
 })
 
 export const createOnIndexExhTsFileCreateHandler = (
@@ -114,10 +118,27 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   if (isCliError(checkPackagesResult))
     return checkPackagesResult
 
+  let compLibBuildStatusReporter: BuildStatusReporter = null
+
   // Create intercom client
   const intercomClient = await _createIntercomClient(config)
   if (isExhError(intercomClient))
     return intercomClient
+
+  const sendBuildStatusUpdateToIntercom = (status: BuildStatus, prevStatus: BuildStatus) => {
+    // Inform clients every time the comp site (with the user's component library) finishes a build.
+    logIntercomInfo('Sending build status update message to intercom.')
+    intercomClient.send({
+      to: IntercomIdentityType.SITE_CLIENT,
+      type: IntercomMessageType.BUILD_STATUS_CHANGE,
+      status,
+      prevStatus,
+    })
+  }
+
+  compLibBuildStatusReporter = createBuildStatusReporter({
+    onChange: sendBuildStatusUpdateToIntercom,
+  })
 
   try {
     // Watch Component Site, waiting for first successful build
@@ -130,14 +151,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
         port: intercomClient.port,
         enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
       }),
-      onSuccessfulBuildComplete: () => {
-        // Inform clients every time the comp site (with the user's component library) finishes a build.
-        logIntercomInfo('Sending build complete message to intercom.')
-        intercomClient.send({
-          to: IntercomIdentityType.SITE_CLIENT,
-          type: IntercomMessageType.COMPONENT_LIBRARY_BUILD_COMPLETED,
-        })
-      },
+      buildStatusReporter: compLibBuildStatusReporter,
     })
   }
   catch (e: any) {
@@ -156,13 +170,13 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     onServerProcessKill: () => process.exit(0),
   })
 
-  await wait(500) // Wait a bit for the server to start
-  // Once the site server process has started, try and connect our intercom client to it.
-  await intercomClient.connect()
-
   // If start server result is not a child process, then it's an error, therefore return.
   if (!(startServerResult instanceof ChildProcess))
     return startServerResult
+
+  await wait(500) // Wait a bit for the server to start
+  // Once the site server process has started, try and connect our intercom client to it.
+  await intercomClient.connect()
 
   return null
 }, { exitWhenReturns: false })

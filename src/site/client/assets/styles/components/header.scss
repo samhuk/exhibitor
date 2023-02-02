@@ -23,6 +23,22 @@
     display: flex;
     align-items: center;
 
+    .build-statuses {
+      margin-right: 15px;
+
+      span {
+        margin-left: 15px;
+      }
+
+      i {
+        margin-left: 5px;
+
+        &.fa-check {
+          color: $green-color;
+        }
+      }
+    }
+
     .intercom {
       padding: 6px;
       display: flex;

@@ -1,19 +1,34 @@
-import { IntercomStatus } from '../../../../common/intercom/client'
+import { BuildStatus } from '../../../../common/building'
+import { IntercomConnectionStatus } from '../../../../common/intercom/client'
+import { BuildStatuses, BuiltIntercomIdentity } from '../../../../common/intercom/types'
 
 export const SET_STATUS = 'intercom/setStatus'
 
+export const SET_BUILD_STATUSES = 'intercom/setBuildStatuses'
+
 export type State = {
-  status: IntercomStatus
+  connectionStatus: IntercomConnectionStatus
+  buildStatuses: { [intercomIdentity in BuiltIntercomIdentity]: BuildStatus }
 }
 
 type SetStatusAction = {
   type: typeof SET_STATUS
-  status: IntercomStatus
+  connectionStatus: IntercomConnectionStatus
 }
 
-export type Actions = SetStatusAction
+type SetBuildStatusAction = {
+  type: typeof SET_BUILD_STATUSES
+  buildStatuses: BuildStatuses
+}
 
-export const setStatus = (newStatus: IntercomStatus): Actions => ({
+export type Actions = SetStatusAction | SetBuildStatusAction
+
+export const setConnectionStatus = (connectionStatus: IntercomConnectionStatus): Actions => ({
   type: SET_STATUS,
-  status: newStatus,
+  connectionStatus,
+})
+
+export const setBuildStatuses = (buildStatuses: BuildStatuses): Actions => ({
+  type: SET_BUILD_STATUSES,
+  buildStatuses,
 })

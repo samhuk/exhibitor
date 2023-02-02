@@ -1,5 +1,6 @@
-import { OmitTyped, TypeDependantBaseIntersection } from '@samhuk/type-helpers'
-import { IntercomStatus } from './client'
+import { TypeDependantBaseIntersection } from '@samhuk/type-helpers'
+import { BuildStatus } from '../building'
+import { IntercomConnectionStatus } from './client'
 
 export enum IntercomIdentityType {
   SITE_CLIENT = 'SITE_CLIENT',
@@ -10,31 +11,59 @@ export enum IntercomIdentityType {
   ANONYMOUS = 'ANONYMOUS'
 }
 
+export type BuiltIntercomIdentity = IntercomIdentityType.CLI
+  | IntercomIdentityType.CLIENT_WATCH
+  | IntercomIdentityType.COMP_LIB_WATCH
+  | IntercomIdentityType.SITE_SERVER
+
+export type BuildStatuses = { [identityType in BuiltIntercomIdentity]: BuildStatus }
+
+export type BuildStatusService = {
+  statuses: BuildStatuses
+  allSuccessful: boolean
+  update: (intercomIdentity: BuiltIntercomIdentity, newStatus: BuildStatus) => void
+  getUnsuccessfulBuilds: () => { identityType: BuiltIntercomIdentity, status: Exclude<BuildStatus, BuildStatus.SUCCESS> }[]
+  waitUntilNextAllSuccessful: () => Promise<void>
+}
+
 export enum IntercomMessageType {
-  COMPONENT_LIBRARY_BUILD_COMPLETED = 'COMPONENT_LIBRARY_BUILD_COMPLETED',
-  SITE_CLIENT_BUILD_COMPLETED = 'SITE_CLIENT_BUILD_COMPLETED',
-  SITE_SERVER_BUILD_COMPLETED = 'SITE_SERVER_BUILD_COMPLETED',
+  BUILD_STATUS_CHANGE = 'BUILD_STATUS_CHANGE',
+  BUILD_STATUSES_NOTICE = 'BUILD_STATUSES_NOTICE',
+  BUILD_STATUSES_CHANGE = 'BUILD_STATUSES_CHANGE',
   IDENTIFY = 'IDENTIFY',
 }
 
-export type IntercomMessageOptions = OmitTyped<IntercomMessage, 'from'>
-
-export type IntercomMessage<TType extends IntercomMessageType = IntercomMessageType> = TypeDependantBaseIntersection<
+export type IntercomMessageOptions<
+  TType extends IntercomMessageType = IntercomMessageType,
+  > = TypeDependantBaseIntersection<
   IntercomMessageType,
   {
-    [IntercomMessageType.COMPONENT_LIBRARY_BUILD_COMPLETED]: { },
-    [IntercomMessageType.SITE_CLIENT_BUILD_COMPLETED]: { },
-    [IntercomMessageType.SITE_SERVER_BUILD_COMPLETED]: { },
-    [IntercomMessageType.IDENTIFY]: {},
+    [IntercomMessageType.BUILD_STATUSES_NOTICE]: {
+      statuses: BuildStatuses
+    }
+    [IntercomMessageType.BUILD_STATUS_CHANGE]: {
+      prevStatus: BuildStatus
+      status: BuildStatus
+    }
+    [IntercomMessageType.IDENTIFY]: { }
+    [IntercomMessageType.BUILD_STATUSES_CHANGE]: {
+      prevStatuses: BuildStatuses
+      statuses: BuildStatuses
+    }
   },
   TType
-> & { from: IntercomIdentityType, to: IntercomIdentityType }
+> & { to?: IntercomIdentityType }
+
+export type IntercomMessage<
+  TType extends IntercomMessageType = IntercomMessageType,
+> = IntercomMessageOptions<TType> & { from: IntercomIdentityType }
 
 export type IntercomClient = {
   host: string
   port: number
-  status: IntercomStatus
+  status: IntercomConnectionStatus
   connect: () => Promise<void>
+  disconnect: () => void
   send: (msg: IntercomMessageOptions) => void
 }
 
@@ -44,8 +73,12 @@ export type IntercomClientOptions = {
   host: string
   port: number
   enableLogging: boolean
+  /**
+   * @default true
+   */
+  queueMsgOnDropout?: boolean
   events?: {
-    onStatusChange?: (newStatus: IntercomStatus, previousStatus: IntercomStatus) => void
+    onStatusChange?: (newStatus: IntercomConnectionStatus, previousStatus: IntercomConnectionStatus) => void
     onMessage?: (msg: IntercomMessage) => void
     onReconnect?: (ws: WebSocket) => ({ proceed?: boolean }) | void
   },

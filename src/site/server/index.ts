@@ -16,6 +16,8 @@ import { createInteromServer } from './intercom'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
 import { updateProcessVerbosity } from '../../common/processState'
+import { createBuildStatusService } from '../../common/intercom/buildStatusService'
+import { logInfo } from '../../common/logging'
 
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
@@ -23,10 +25,27 @@ const main = async () => {
 
   await loadConfig()
 
-  createInteromServer()
+  const buildStatusService = createBuildStatusService()
+
+  createInteromServer(buildStatusService)
 
   const app = express()
   app.use(cookieParser())
+
+  // For all requests to the http server, wait until all builds are successful.
+  // TODO: We could serve a very simple page that displays a "not all successfully built yet" notice that listens on intercom.
+  app
+    .use('*', async (req, res, next) => {
+      if (!buildStatusService.allSuccessful) {
+        const unsuccessfulBuildStatusesString = buildStatusService.getUnsuccessfulBuilds().map(info => `${info.identityType} (${info.status})`).join(', ')
+        logInfo(c => `Request ${c.cyan(req.url)} must wait until all builds are successful. Waiting on: ${unsuccessfulBuildStatusesString}`)
+        await buildStatusService.waitUntilNextAllSuccessful()
+        next()
+        return
+      }
+
+      next()
+    })
 
   // Handle api requests
   app

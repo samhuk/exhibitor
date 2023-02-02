@@ -1,4 +1,5 @@
 import { BuildResult } from 'esbuild'
+import { BuildStatus, BuildStatusReporter } from '../../common/building'
 
 export type BuildClientOptions = {
   minify: boolean
@@ -19,7 +20,7 @@ export type BuildServerOptions = {
 
 export type WatchClientOptions = BuildClientOptions & {
   watchedDirPatterns: string[]
-  onSuccessfulBuildComplete?: () => void
+  buildStatusReporter: BuildStatusReporter
 }
 
 export type WatchServerOptions = BuildServerOptions & {

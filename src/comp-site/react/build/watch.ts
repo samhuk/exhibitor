@@ -1,5 +1,6 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { logStep, logSuccess } from '../../../cli/logging'
+import { BuildStatus } from '../../../common/building'
 import { printBuildResult } from '../../../common/esbuilder'
 import { debounce } from '../../../common/function'
 import { CustomBuildResult } from '../../../common/types'
@@ -13,11 +14,12 @@ const rebuildIteration = async (
   options: BuildOptions,
 ) => {
   logStep(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
+  options.buildStatusReporter.update(BuildStatus.IN_PROGRESS)
 
   try {
     const startTime = Date.now()
     const rebuildResult = await buildResult.buildResult.rebuild()
-    options.onSuccessfulBuildComplete?.()
+    options.buildStatusReporter.update(BuildStatus.SUCCESS)
     logSuccess(`(${Date.now() - startTime} ms) Done.${!options.config.verbose ? ' Watching for changes...' : ''}`)
     // If verbose, print build info on every rebuild
     if (options.config.verbose) {
@@ -26,7 +28,8 @@ const rebuildIteration = async (
     }
   }
   catch {
-    // Silence errors, since esbuild prints them already.
+    // Silence errors, since esbuild prints them already. But report the error to reporter still.
+    options.buildStatusReporter.update(BuildStatus.ERROR)
   }
 }
 
@@ -37,8 +40,11 @@ export const watchCompSite = async (
   // TODO: We are going to need to make the .spec.{whatever} files optional to ignore...
   const ignoredWatchPatterns = [...IGNORED_DIRS_FOR_WATCH_COMP_LIB, ...options.config.watchExclude, /\.spec\.[tj]{1}sx?$/]
   try {
+    options.buildStatusReporter.update(BuildStatus.IN_PROGRESS)
     // First-build iteration
     const buildResult = await build(options)
+
+    options.onFirstSuccessfulBuild?.()
 
     // Start rebuild loop
     initialBuildWatcher?.close()
@@ -47,12 +53,12 @@ export const watchCompSite = async (
       .watch(options.config.watch, { ignored: ignoredWatchPatterns })
       .on('ready', () => {
         logStep('Watching for changes...')
-        options.onFirstSuccessfulBuildComplete?.()
-        options.onSuccessfulBuildComplete?.()
+        options.buildStatusReporter.update(BuildStatus.SUCCESS)
         watcher.on('add', fn).on('change', fn).on('unlink', fn)
       })
   }
   catch {
+    options.buildStatusReporter.update(BuildStatus.ERROR)
     // If the first-build has already failed, then we don't need to start a watch
     if (initialBuildWatcher != null)
       return

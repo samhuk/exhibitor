@@ -8,7 +8,7 @@ import {
   IntercomMessageType,
 } from './types'
 
-export enum IntercomStatus {
+export enum IntercomConnectionStatus {
   NOT_CONNECTED,
   CONNECTING,
   CONNECTED
@@ -20,7 +20,7 @@ const handleMessage = (msg: MessageEvent, options: IntercomClientOptions) => {
   if (intercomMessage == null)
     return
 
-  options.events?.onMessage(intercomMessage)
+  options.events?.onMessage?.(intercomMessage)
 }
 
 const _connect = (options: IntercomClientOptionsInternal, onConnect: (ws: WebSocket) => void) => {
@@ -56,14 +56,19 @@ const waitUntilConnect = (options: IntercomClientOptionsInternal, isReconnect: b
 export const createIntercomClient = (options: IntercomClientOptions): IntercomClient => {
   const log: (s: string) => void = options.enableLogging ? (s: string) => console.log(s) : () => {}
 
-  const internalOptions: IntercomClientOptionsInternal = { ...options, log }
+  const internalOptions: IntercomClientOptionsInternal = {
+    ...options,
+    queueMsgOnDropout: options.queueMsgOnDropout ?? true,
+    log,
+  }
 
   let instance: IntercomClient
   let ws: WebSocket
   const queuedMessages: IntercomMessage[] = []
+  let beenToldToDisconnect = false
 
   const send = (msg: IntercomMessage) => {
-    if (instance.status !== IntercomStatus.CONNECTED)
+    if (instance.status !== IntercomConnectionStatus.CONNECTED && options.queueMsgOnDropout)
       queuedMessages.push(msg)
     else
       ws.send(JSON.stringify(msg))
@@ -79,14 +84,14 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
     }
   }
 
-  const updateStatus = (newStatus: IntercomStatus) => {
+  const updateStatus = (newStatus: IntercomConnectionStatus) => {
     options.events?.onStatusChange?.(newStatus, instance.status)
     instance.status = newStatus
   }
 
   const onConnect = (newWs: WebSocket) => {
     ws = newWs
-    updateStatus(IntercomStatus.CONNECTED)
+    updateStatus(IntercomConnectionStatus.CONNECTED)
 
     instance.send({
       to: IntercomIdentityType.SITE_SERVER,
@@ -96,33 +101,41 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
     ws.addEventListener('message', e => handleMessage(e, options))
 
     ws.addEventListener('close', async () => {
+      if (beenToldToDisconnect)
+        return
       ws.close()
-      updateStatus(IntercomStatus.NOT_CONNECTED)
+      updateStatus(IntercomConnectionStatus.NOT_CONNECTED)
       log('Connection to intercom lost.')
 
-      updateStatus(IntercomStatus.CONNECTING)
+      updateStatus(IntercomConnectionStatus.CONNECTING)
       const _newWs = await waitUntilConnect(internalOptions, true) // Wait until reconnection
       const result = options.events?.onReconnect?.(_newWs)
       if (!((result as any)?.proceed ?? true))
         return
 
       onConnect(_newWs)
-      // Send all of the queued messages
-      sendQueuedMessages()
+      if (options.queueMsgOnDropout) {
+        // Send all of the queued messages
+        sendQueuedMessages()
+      }
     })
   }
 
   return instance = {
     host: options.host,
     port: options.port,
-    status: IntercomStatus.NOT_CONNECTED,
+    status: IntercomConnectionStatus.NOT_CONNECTED,
     connect: async () => {
-      options.events?.onStatusChange?.(IntercomStatus.CONNECTING, instance.status)
+      options.events?.onStatusChange?.(IntercomConnectionStatus.CONNECTING, instance.status)
       const newWs = await waitUntilConnect(internalOptions)
       onConnect(newWs)
     },
     send: msgOptions => {
       send({ ...msgOptions, from: options.identityType })
+    },
+    disconnect: () => {
+      beenToldToDisconnect = true
+      ws.close()
     },
   }
 }
