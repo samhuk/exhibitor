@@ -7,7 +7,6 @@ import { BUILD_OUTPUT_ROOT_DIR, COMP_SITE_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIEN
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import api from './api'
 import { sendErrorResponse } from './common/responses'
-import { env } from './env'
 import { DEFAULT_THEME } from '../../common/theme'
 import { log } from '../../cli/logging'
 import { createExhError } from '../../common/exhError'
@@ -19,6 +18,7 @@ import { updateProcessVerbosity } from '../../common/processState'
 import { createBuildStatusService } from '../../common/intercom/buildStatusService'
 import { logInfo } from '../../common/logging'
 import { BuildStatus } from '../../common/building'
+import { ExhEnv, getEnv } from '../../common/env'
 
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
@@ -120,9 +120,15 @@ const main = async () => {
       res.sendFile('/', { root: clientDir })
     })
 
-  const server = app.listen(env.port, env.host, () => {
-    const url = `http://${env.host}:${env.port}`
-    log(c => `${(c.green as any).bold(`${NPM_PACKAGE_CAPITALIZED_NAME} active`)}. Access via ${(c.cyan as any).underline(url)}.${process.env.NODE_ENV === 'development' ? ' [DEVELOPMENT]' : ''}`)
+  const host = process.env.EXH_SITE_SERVER_HOST ?? 'localhost'
+  const port = process.env.EXH_SITE_SERVER_PORT != null
+    ? parseInt(process.env.EXH_SITE_SERVER_PORT)
+    : 4001
+  const isDev = getEnv() === ExhEnv.DEV
+
+  const server = app.listen(port, host, () => {
+    const url = `http://${host}:${port}`
+    log(c => `${(c.green as any).bold(`${NPM_PACKAGE_CAPITALIZED_NAME} active`)}. Access via ${(c.cyan as any).underline(url)}.${isDev ? ' [DEVELOPMENT]' : ''}`)
   })
 
   server.keepAliveTimeout = 10000 * 1000

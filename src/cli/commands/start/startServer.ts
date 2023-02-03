@@ -8,10 +8,10 @@ import { determineIfPortFree } from '../../common/isPortFree'
 import { CliError, CliString } from '../../types'
 import { logStep, logSuccess } from '../../logging'
 import { Config } from '../../../common/config/types'
-import { IntercomClient } from '../../../common/intercom/types'
 import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
+import { ExhEnv, getEnv } from '../../../common/env'
 
-const isDev = process.env.EXH_DEV === 'true'
+const exhEnv = getEnv()
 
 const createStartServerError = (causedBy: CliString): CliError => ({
   message: `Could not start the ${NPM_PACKAGE_NAME} server.`,
@@ -43,7 +43,7 @@ export const startServer = async (options: {
   config: Config,
   onServerProcessKill?: () => void,
 }): Promise<CliError | ChildProcess> => {
-  const serverJsPath = isDev
+  const serverJsPath = exhEnv === ExhEnv.DEV || exhEnv === ExhEnv.DEV_REL
     ? SITE_SERVER_OUTFILE
     : path.join(`./node_modules/${NPM_PACKAGE_NAME}`, './lib/site/server/index.js').replace(/\\/g, '/')
 

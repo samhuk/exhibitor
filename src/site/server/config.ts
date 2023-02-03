@@ -7,7 +7,7 @@ import { logStep } from '../../common/logging'
 export let config: Config = null
 
 export const loadConfig = async () => {
-  logStep(c => `Site Server is loading config from ${process.env[CONFIG_FILE_PATH_ENV_VAR_NAME]}`, true)
+  logStep(`Site Server is loading config from ${process.env[CONFIG_FILE_PATH_ENV_VAR_NAME]}`, true)
   config = await getConfig(process.env[CONFIG_FILE_PATH_ENV_VAR_NAME])
   updateProcessVerbosity(config.verbose)
 }

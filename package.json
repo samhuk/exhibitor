@@ -13,6 +13,7 @@
     "_start": "concurrently -m 4 -n \"comp-site,site-ui  ,site-api \" -c \"red,green,blue\" \"npm run watch-comp-site-react-dev\" \"npm run watch-site-client-dev\" \"npm run watch-site-server-dev\"",
     "start": "npm run build-start && npm run _start",
     "cli-dev": "env-cmd -e dev node ./build/cli/cli/index.js start --verbose",
+    "cli-dev-rel-config": "env-cmd -e dev-rel node ./build/cli/cli/index.js start",
     "cli-dev-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json --verbose",
     "cli-dev-config-js": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.js --verbose",
     "cli-dev-config-ts": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.ts --verbose"

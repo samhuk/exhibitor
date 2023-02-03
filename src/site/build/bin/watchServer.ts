@@ -1,7 +1,8 @@
+import { ExhEnv, getEnv } from '../../../common/env'
 import { SITE_COMMON_DIR, SITE_SERVER_DIR, SITE_SERVER_OUTFILE } from '../../../common/paths'
 import { watchServer } from '../watchServer'
 
-const isDev = process.env.EXH_DEV === 'true'
+const isDev = getEnv() === ExhEnv.DEV
 
 watchServer({
   verbose: isDev,

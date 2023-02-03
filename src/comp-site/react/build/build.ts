@@ -10,8 +10,10 @@ import { NPM_PACKAGE_NAME } from '../../../common/name'
 import { COMP_SITE_OUTDIR } from '../../../common/paths'
 
 import { createComponentLibraryIncluderPlugin } from '../../../cli/indexExhFile'
+import { ExhEnv, getEnv } from '../../../common/env'
 
-const isDev = process.env.EXH_DEV === 'true'
+const exhEnv = getEnv()
+const isDev = exhEnv === ExhEnv.DEV
 
 const getComponentSiteSubType = (
   reactMajorVersion: number,
@@ -36,7 +38,9 @@ const getPaths = (options: BuildOptions) => {
     }
   }
 
-  const prebuildsPath = isDev ? './build/comp-site-prebuilds' : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site-prebuilds`
+  const prebuildsPath = exhEnv === ExhEnv.DEV || exhEnv === ExhEnv.DEV_REL
+    ? './build/comp-site-prebuilds'
+    : `./node_modules/${NPM_PACKAGE_NAME}/lib/comp-site-prebuilds`
   // E.g. comp-site/react/18-or-more/index.js
   const entrypointPathSuffix = `comp-site/${type}/${subType}/index.js`
   const indexHtmlPathSuffix = `${type}-index.html`

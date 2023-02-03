@@ -10,8 +10,9 @@ import { createIntercomClient } from '../../../common/intercom/client'
 import { IntercomClient, IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
 import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { BuildStatus, BuildStatusReporter, createBuildStatusReporter } from '../../../common/building'
+import { ExhEnv, getEnv } from '../../../common/env'
 
-const isDev = process.env.EXH_DEV === 'true'
+const isDev = getEnv() === ExhEnv.DEV
 
 const main = async () => {
   let buildStatusReporter: BuildStatusReporter = null

@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import glob from 'globsie'
 import path from 'path'
 import { Config } from '../common/config/types'
+import { getEnv, ExhEnv } from '../common/env'
 
 import { createBuilder } from '../common/esbuilder'
 import { logInfo } from '../common/logging'
@@ -11,7 +12,8 @@ import { NPM_PACKAGE_NAME } from '../common/name'
 import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../common/paths'
 import { logStep, logWarn } from './logging'
 
-const isDev = process.env.EXH_DEV === 'true'
+const exhEnv = getEnv()
+const isDev = exhEnv === ExhEnv.DEV
 
 /**
  * esbuild plugin that includes the user's component library in a web browser javascript bundle.
@@ -89,8 +91,8 @@ export const createIndexExhTsFile = async (
   logStep('Creating index.exh.ts file content.', true)
   const includedFilePaths = await determineIncludedExhibitFiles(config)
 
-  const exhibitApiFunctionPath = isDev
-    // E.g. ../src/componentsBuild/exhibit
+  const exhibitApiFunctionPath = exhEnv === ExhEnv.DEV || exhEnv === ExhEnv.DEV_REL
+    // E.g. ../src/api/exhibit
     ? path.relative(BUILD_OUTPUT_ROOT_DIR, './src/api/exhibit').replace(/\\/g, '/')
     // E.g. exhibitor/lib/api/exhibit
     : `${NPM_PACKAGE_NAME}/lib/api/api/exhibit`

@@ -17,15 +17,17 @@ import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
 import { createIntercomClient } from '../../../common/intercom/client'
 import { IntercomClient, IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
-import { logIntercomError, logIntercomInfo, logIntercomStep, logIntercomSuccess } from '../../../common/logging'
+import { logIntercomError, logIntercomStep, logIntercomSuccess } from '../../../common/logging'
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { findFreePort } from '../../common/isPortFree'
-import { wait } from '../../../common/function'
 import { BuildStatus, BuildStatusReporter, createBuildStatusReporter } from '../../../common/building'
+import { ExhEnv, getEnv } from '../../../common/env'
+import { VERBOSE_ENV_VAR_NAME } from '../../../common/config'
 
-const isDev = process.env.EXH_DEV === 'true'
+const exhEnv = getEnv()
+const isDev = exhEnv === ExhEnv.DEV
 
 const watchCompSiteWaitForFirstSuccessfulBuild = async (
   options: BuildOptions,
@@ -45,6 +47,7 @@ export const createOnIndexExhTsFileCreateHandler = (
     includedFilePaths: file.includedFilePaths,
     siteTitle: config.site.title,
     isAxeEnabled: tryResolve('axe-core').success === true,
+    env: exhEnv,
     intercom,
   })
 }
@@ -89,9 +92,12 @@ const determineIntercomPort = async (config: Config): Promise<number | ExhError>
 
 export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<CliError> => {
   // -- Config
-  // If verbose is specified in CLI arguments, then we can globally set it earlier
-  if (startOptions.verbose != null)
-    updateProcessVerbosity(startOptions.verbose)
+  // If verbose is specified in CLI arguments or env var, then we can globally set it earlier
+  const earlyVerbose = startOptions.verbose != null
+    ? startOptions.verbose
+    : (process.env[VERBOSE_ENV_VAR_NAME] === 'true' ?? false)
+  updateProcessVerbosity(earlyVerbose)
+
   // Get config for command
   if (getProcessVerbosity())
     logStepHeader('Determining supplied configuration.')

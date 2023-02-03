@@ -51,11 +51,11 @@ export const getConfigForCommand = async <
   const configFilePath = configFilePathResult as string | null
 
   if (configFilePath == null)
-    logWarn('No configuration file provided. Using default configuration with any CLI arguments provided as overrides.', true)
+    logWarn('No configuration provided. Using default configuration with any CLI arguments provided as overrides.', true)
   const config = await getConfig(configFilePath)
 
   // Modify resolved config, if modifier fn is defined.
-  logStep('Overriding config from specific file (or default config) with any CLI arguments.', true)
+  logStep('Overriding configuration with any CLI arguments.', true)
   const modifiedConfigError = applyCliArgumentsOptionsToConfig(config, cliArgumentsOptions)
   if (modifiedConfigError != null)
     return { success: false, error: modifiedConfigError }
