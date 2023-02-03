@@ -33,6 +33,7 @@ export const createIntercomClient = async (metaData: MetaData, dispatch: AppDisp
         }
       },
       onReconnect: () => {
+        intercomClient.disconnect()
         // eslint-disable-next-line no-restricted-globals
         location.reload()
         return { proceed: false }

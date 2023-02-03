@@ -39,6 +39,7 @@ const modifyServerProcessForKeyboardInput = (
 }
 
 export const startServer = async (options: {
+  serverPort: number
   intercomPort: number,
   config: Config,
   onServerProcessKill?: () => void,
@@ -50,28 +51,11 @@ export const startServer = async (options: {
   if (!fs.existsSync(serverJsPath))
     return createStartServerError(c => `Could not find the ${NPM_PACKAGE_NAME} server javascript to execute at ${c.cyan(serverJsPath)}`)
 
-  const portStr = options.config.site.port.toString()
-
-  // Check if port is free
-  logStep(c => `Determining if port ${c.cyan(portStr)} is available to use for the Exhibitor server.`, true)
-  let isPortFree: boolean
-  try {
-    isPortFree = await determineIfPortFree(options.config.site.host, options.config.site.port)
-  }
-  catch (err) {
-    return createStartServerError(`An unexpected error occured while determining whether port ${options.config.site.port} is available to use.\n\n    Details: ${err}.`)
-  }
-
-  if (!isPortFree)
-    return createStartServerError(c => `Port ${(c.cyan as any).bold(portStr)} is not available (attempted url: ${c.cyan(`${options.config.site.host}:${portStr}`)}).`)
-
-  logSuccess(c => `Port ${c.cyan(portStr)} is available to use.`, true)
-
   // Build up the env for the Exhibitor Site server process
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     EXH_CLI: 'true',
-    EXH_SITE_SERVER_PORT: portStr,
+    EXH_SITE_SERVER_PORT: options.serverPort.toString(),
     EXH_SITE_SERVER_HOST: options.config.site.host,
     [VERBOSE_ENV_VAR_NAME]: options.config.verbose.toString(),
     [CONFIG_FILE_PATH_ENV_VAR_NAME]: options.config.rootConfigFile,

@@ -96,7 +96,7 @@ const Render = () => {
     setExpandedPaths(newExpandedPaths)
     saveNavBarState({
       widthPx: widthPxRef.current,
-      expandedPaths,
+      expandedPaths: newExpandedPaths,
     })
   }
 

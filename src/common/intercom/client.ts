@@ -9,9 +9,9 @@ import {
 } from './types'
 
 export enum IntercomConnectionStatus {
-  NOT_CONNECTED,
-  CONNECTING,
-  CONNECTED
+  NOT_CONNECTED = 'NOT_CONNECTED',
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED'
 }
 
 const handleMessage = (msg: MessageEvent, options: IntercomClientOptions) => {
@@ -67,6 +67,13 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
   const queuedMessages: IntercomMessage[] = []
   let beenToldToDisconnect = false
 
+  const identifyOurself = () => {
+    instance.send({
+      to: IntercomIdentityType.SITE_SERVER,
+      type: IntercomMessageType.IDENTIFY,
+    })
+  }
+
   const send = (msg: IntercomMessage) => {
     if (instance.status !== IntercomConnectionStatus.CONNECTED && internalOptions.queueMsgOnDropout)
       queuedMessages.push(msg)
@@ -92,11 +99,7 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
   const onConnect = (newWs: WebSocket) => {
     ws = newWs
     updateStatus(IntercomConnectionStatus.CONNECTED)
-
-    instance.send({
-      to: IntercomIdentityType.SITE_SERVER,
-      type: IntercomMessageType.IDENTIFY,
-    })
+    identifyOurself()
 
     ws.addEventListener('message', e => handleMessage(e, internalOptions))
 
@@ -109,6 +112,7 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
 
       updateStatus(IntercomConnectionStatus.CONNECTING)
       const _newWs = await waitUntilConnect(internalOptions, true) // Wait until reconnection
+      updateStatus(IntercomConnectionStatus.CONNECTED)
       const result = internalOptions.events?.onReconnect?.(_newWs)
       if (!((result as any)?.proceed ?? true))
         return
@@ -126,7 +130,7 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
     port: internalOptions.port,
     status: IntercomConnectionStatus.NOT_CONNECTED,
     connect: async () => {
-      internalOptions.events?.onStatusChange?.(IntercomConnectionStatus.CONNECTING, instance.status)
+      updateStatus(IntercomConnectionStatus.CONNECTING)
       const newWs = await waitUntilConnect(internalOptions)
       onConnect(newWs)
     },

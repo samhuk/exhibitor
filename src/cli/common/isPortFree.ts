@@ -47,7 +47,7 @@ export const findFreePort = async (options: {
     options.events?.onAttemptStart?.(port)
 
     // If port is excluded, skip iteration to next port
-    if (options.exclusions.indexOf(port) !== -1) {
+    if (options.exclusions != null && options.exclusions.indexOf(port) !== -1) {
       options.events?.onAttemptExcluded?.(port)
     }
     else {

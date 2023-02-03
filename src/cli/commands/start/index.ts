@@ -17,7 +17,7 @@ import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
 import { createIntercomClient } from '../../../common/intercom/client'
 import { IntercomClient, IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
-import { logIntercomError, logIntercomStep, logIntercomSuccess } from '../../../common/logging'
+import { logError, logIntercomError, logIntercomStep, logIntercomSuccess, logSuccess } from '../../../common/logging'
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
@@ -52,7 +52,34 @@ export const createOnIndexExhTsFileCreateHandler = (
   })
 }
 
-const determineIntercomPort = async (config: Config): Promise<number | ExhError> => {
+const determineServerPort = async (config: Config): Promise<number | ExhError> => {
+  let err: ExhError = null
+  const port = await findFreePort({
+    host: config.site.host,
+    preferredPort: config.site.port,
+    maxAttempts: 10,
+    events: {
+      onAttemptStart: p => logStep(c => `Determining if port ${c.cyan(p.toString())} is available to use for Exhibitor.`, true),
+      onAttemptSuccess: p => logSuccess(c => `Port ${c.cyan(p.toString())} is available to use.`, true),
+      onAttemptFail: p => createExhError({ message: c => `Port ${c.cyan(p.toString())} is not available to use.` }).log(),
+      onAttemptUnexpectedError: (p, _err) => {
+        err = createExhError({
+          message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
+          // eslint-disable-next-line no-loop-func
+          causedBy: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use.\n\n    Details: ${_err}.`,
+        })
+        return { exit: true }
+      },
+      onMaxAttempts: () => createExhError({ message: 'Max attempts exceeded for finding an available port to use.' }).log(),
+    },
+  })
+  if (err != null)
+    return err
+
+  return port
+}
+
+const determineIntercomPort = async (host: string, serverPort: number): Promise<number | ExhError> => {
   const portFromEnv = process.env[INTERCOM_PORT_ENV_VAR_NAME]
   const parsedPortFromEnv = portFromEnv != null ? parseInt(portFromEnv) : null
   if (parsedPortFromEnv != null && Number.isNaN(parsedPortFromEnv)) {
@@ -64,15 +91,15 @@ const determineIntercomPort = async (config: Config): Promise<number | ExhError>
 
   let err: ExhError = null
   const port = await findFreePort({
-    host: config.site.host,
+    host,
     preferredPort: parsedPortFromEnv ?? DEFAULT_INTERCOM_PORT,
-    exclusions: [config.site.port], // Don't put Intercom on same port as Site Server
+    exclusions: [serverPort], // Don't put Intercom on same port as Site Server
     maxAttempts: 10,
     events: {
       onAttemptStart: p => logIntercomStep(c => `Determining if port ${c.cyan(p.toString())} is available to use.`),
-      onAttemptSuccess: p => logIntercomSuccess(c => `Port ${c.cyan(p.toString())} is available to use.`),
-      onAttemptFail: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use.`),
-      onAttemptExcluded: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use because the ${NPM_PACKAGE_CAPITALIZED_NAME} Site has already been configured to use it.`),
+      onAttemptSuccess: p => logIntercomSuccess(c => `Port ${c.cyan(p.toString())} is available to use for Exhibitor Intercom.`),
+      onAttemptFail: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for Exhibitor Intercom.`),
+      onAttemptExcluded: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for Exhibitor Intercom because the ${NPM_PACKAGE_CAPITALIZED_NAME} Exhibitor Server is already using it.`),
       onAttemptUnexpectedError: (p, _err) => {
         err = createExhError({
           message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
@@ -118,11 +145,17 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   if (isCliError(checkPackagesResult))
     return checkPackagesResult
 
-  // Create intercom client
-  const intercomPort = await determineIntercomPort(config)
+  // Determine server port
+  const serverPort = await determineServerPort(config)
+  if (isExhError(serverPort))
+    return serverPort
+
+  // Determine intercom port
+  const intercomPort = await determineIntercomPort(config.site.host, serverPort)
   if (isExhError(intercomPort))
     return intercomPort
 
+  // -- Start intercom
   let compLibBuildStatusReporter: BuildStatusReporter
   let intercomClient: IntercomClient
 
@@ -184,6 +217,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   // Start the site server
   logStep(`Starting ${NPM_PACKAGE_CAPITALIZED_NAME}`)
   const startServerResult = await startServer({
+    serverPort,
     intercomPort,
     config,
     // If the server dies, kill ourselves as well
