@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+import { ExhEnv } from './env'
 
 import { META_DATA_FILE } from './paths'
 
@@ -6,6 +7,12 @@ export type MetaData = {
   includedFilePaths: string[]
   siteTitle: string
   isAxeEnabled: boolean
+  intercom: {
+    host: string
+    port: number
+    enableLogging: boolean
+  }
+  env: ExhEnv
 }
 
 export const setMetadata = (

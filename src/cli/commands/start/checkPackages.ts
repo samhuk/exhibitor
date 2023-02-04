@@ -1,7 +1,7 @@
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { CheckPackageResultType, checkPackages as _checkPackages, CheckPackagesResult } from '../../../common/npm/checkPackages'
 import { logWarn, logStep, logSuccess, logStepHeader } from '../../logging'
-import { getProcessVerbosity } from '../../state'
+import { getProcessVerbosity } from '../../../common/state'
 import { CliError, CliString } from '../../types'
 
 export type StartCommandCheckPackagesResult<

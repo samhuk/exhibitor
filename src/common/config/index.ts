@@ -22,6 +22,8 @@ export const DEFAULT_CONFIG: Config = {
 
 export const CONFIG_FILE_PATH_ENV_VAR_NAME = 'EXH_CONFIG_FILE_PATH'
 
+export const VERBOSE_ENV_VAR_NAME = 'EXH_VERBOSE'
+
 export const makePathRelativeToConfigDir = (p: string, configDir: string): string => (
   // eslint-disable-next-line prefer-regex-literals
   path.join(configDir, p).replace(new RegExp('\\\\', 'g'), '/')

@@ -11,15 +11,29 @@
       ],
       "preLaunchTask": "unitTestsDebugPreLaunchTask"
     },
+    // TODO: Get this working again
+    // {
+    //   "name": "Attach Client",
+    //   "type": "firefox",
+    //   "request": "attach",
+    //   "url": "http://localhost:4001/",
+    //   "webRoot": "\\build\\site\\client",
+    //   "pathMappings": [
+    //     {
+    //       "url": "http://localhost:4001/src",
+    //       "path": "src"
+    //     }
+    //   ]
+    // },
     {
-      "name": "Attach Client",
+      "name": "Launch Client",
       "type": "firefox",
-      "request": "attach",
-      "url": "http://localhost:8080/",
-      "webRoot": "/build/client",
+      "request": "launch",
+      "url": "http://localhost:4001/index.html",
+      "webRoot": "${workspaceFolder}/build/site/client",
       "pathMappings": [
         {
-          "url": "http://localhost:8080/src",
+          "url": "http://localhost:4001/src",
           "path": "${workspaceFolder}/src"
         }
       ]
@@ -35,7 +49,7 @@
     },
     {
       "name": "Start Server",
-      "program": "./build/server/out.js",
+      "program": "./build/server/index.js",
       "request": "launch",
       "skipFiles": [
         "<node_internals>/**"
@@ -43,28 +57,25 @@
       "preLaunchTask": "buildServerDev",
       "type": "node"
     },
-    {
-      "name": "Watch Test Component Libary Dev",
-      "type": "node",
-      "request": "launch",
-      "program": "./build/component-library-bin/cli/componentLibrary/bin/watch.js",
-      "args": [
-          "--runInBand",
-          "--no-cache"
-      ],
-      // "preLaunchTask": "unitTestsDebugPreLaunchTask"
-    },
-    {
-      "name": "CLI Start Command",
-      "type": "node",
-      "request": "launch",
-      "program": "./build/cli/cli/index.js",
-      "args": [
-          "start",
-          "--runInBand",
-          "--no-cache"
-      ],
-      // "preLaunchTask": "unitTestsDebugPreLaunchTask"
-    },
+    // TODO: Get this working again
+    // {
+    //   "name": "CLI Start",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "./build/cli/cli/index.js",
+    //   "env": {
+    //     "NODE_ENV": "development",
+    //     "EXH_SITE_SERVER_HOST": "localhost",
+    //     "SITE_EXH_SERVER_PORT": "4001",
+    //     "EXH_CONFIG_FILE_PATH": "./test/componentLibrary/exh.config.json",
+    //     "EXH_DEV": "true",
+    //     "EXH_VERBOSE": "true"
+    //   },
+    //   "args": [
+    //       "start",
+    //       "--runInBand",
+    //       "--no-cache"
+    //   ],
+    // },
   ]
 }

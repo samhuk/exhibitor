@@ -1,4 +1,4 @@
-import colors from 'colors/safe'
+import colors, { bold } from 'colors/safe'
 import { isExhError } from '../exhError'
 
 import { ExhError } from '../exhError/types'
@@ -88,7 +88,7 @@ export const logInfo = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${colors.blue('i')} ${normalizedMessage}`)
+  console.log(`${colors.blue('i')}  ${normalizedMessage}`)
 }
 
 /**
@@ -147,4 +147,68 @@ export const logError = (
   console.log(colors.red('Error:'), normalizedMessage)
   if (normalizedCausedBy != null)
     console.log('\n  Caused by:', normalizedCausedBy)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
+ * logIntercomInfo('Did something') // -- IC -- i  Did something
+ */
+export const logIntercomInfo = (
+  msg: ExhString,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
+    return
+
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.blue('i')}  ${normalizedMessage}`)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
+ * logIntercomStep('Doing something') // -- IC -- ⚫ Doing something
+ */
+export const logIntercomStep = (
+  msg: ExhString,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
+    return
+
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.blue('⚫')} ${normalizedMessage}`)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
+ * logIntercomSuccess('Did something') // -- IC -- ✔ Did something
+ */
+export const logIntercomSuccess = (
+  msg: ExhString,
+) => {
+  // If log msg is verbose and the current state is not verbose, then dont log
+  if (process.env.EXH_SHOW_INTERCOM_LOG !== 'true')
+    return
+
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.green('✔')}  ${normalizedMessage}`)
+}
+
+/**
+ * Prints a message to console stdout that is related to the intercom functionality.
+ *
+ * @example
+ * logIntercomProblem('Doing something') // -- IC -- Doing something
+ */
+export const logIntercomError = (
+  msg: ExhString,
+) => {
+  const normalizedMessage = normalizeExhString(msg)
+  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.red('x')}  ${normalizedMessage}`)
 }

@@ -1,5 +1,5 @@
 import colors from 'colors/safe'
-import state from './state'
+import state from '../common/state'
 import { CliError, CliString, NormalizedCliError } from './types'
 
 export const normalizeCliString = (s: CliString): string => (

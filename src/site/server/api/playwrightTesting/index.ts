@@ -70,6 +70,7 @@ export const runPlaywrightTests = (
 
   const filteredStdOutList = [
     '\n',
+    '\n\n',
   ]
 
   const omittedStdOutFragmentList = [
@@ -101,6 +102,9 @@ export const runPlaywrightTests = (
   })
   testProcess.stderr.on('data', data => {
     const dataStr = String(data)
+    if (filteredStdOutList.indexOf(dataStr) !== -1)
+      return
+
     stdErrList.push(dataStr)
     console.log(dataStr)
   })

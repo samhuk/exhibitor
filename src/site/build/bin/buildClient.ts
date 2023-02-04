@@ -1,9 +1,10 @@
 import { exit } from 'process'
 
+import { ExhEnv, getEnv } from '../../../common/env'
 import { SITE_CLIENT_OUTDIR } from '../../../common/paths'
 import { buildClient } from '../buildClient'
 
-const isDev = process.env.EXH_DEV === 'true'
+const isDev = getEnv() === ExhEnv.DEV
 
 buildClient({
   verbose: isDev,

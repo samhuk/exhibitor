@@ -3,7 +3,7 @@ import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
 import { log, logSuccess } from '../../cli/logging'
 
-import { DEBUG_SERVER_PORT } from '../../common/debug'
+import { EXH_SERVER_DEBUG_PORT } from '../../common/debug'
 import { printBuildResult } from '../../common/esbuilder'
 import { buildServer } from './buildServer'
 import { CustomBuildResult, WatchServerOptions } from './types'
@@ -14,10 +14,10 @@ const startServer = (options: WatchServerOptions) => {
   const forkOptions: ForkOptions = {
     env: {
       ...process.env,
-      SERVER_PORT: options.serverPort.toString(),
-      SERVER_HOST: options.serverHost,
+      EXH_SITE_SERVER_PORT: options.serverPort.toString(),
+      EXH_SITE_SERVER_HOST: options.serverHost,
     },
-    execArgv: [`--inspect=127.0.0.1:${DEBUG_SERVER_PORT}`],
+    execArgv: [`--inspect=127.0.0.1:${EXH_SERVER_DEBUG_PORT}`],
   }
 
   // Start server process with a custom debug port of 5004. This must be kept in-sync with /.vscode/launch.json

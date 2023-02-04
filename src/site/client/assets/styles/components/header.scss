@@ -23,6 +23,86 @@
     display: flex;
     align-items: center;
 
+    .build-statuses {
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+
+      .status {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 10px;
+        font-size: 12px;
+        margin-bottom: 2px;
+
+        .name {
+          color: $text-color-m20;
+          letter-spacing: 2px;
+          margin-bottom: 2px;
+        }
+
+        i {
+          &.fa-check {
+            color: $green-color;
+          }
+
+          &.fa-xmark {
+            color: $red-color;
+          }
+
+          &.fa-question {
+            color: $text-color-m20;
+          }
+        }
+      }
+    }
+
+    .intercom {
+      padding: 6px;
+      display: flex;
+
+      .not-connected-icon {
+        color: $red-color;
+        position: relative;
+        width: 20px;
+        height: 1em;
+
+        i {
+          position: absolute;
+        }
+
+        .fa-plug {
+          top: 0;
+          left: 0;
+        }
+
+        .fa-xmark {
+          bottom: -10px;
+          right: 0;
+        }
+
+        .fa-spinner {
+          color: #888;
+          right: -6px;
+          top: -6px;
+          font-size: 12px;
+        }
+      }
+
+      &.connected {
+        .fa-plug {
+          color: $green-color;
+        }
+      }
+
+      .cl-tooltip {
+        .cl-success-icon, .cl-error-icon {
+          margin-right: 5px;
+        }
+      }
+    }
+
     .about {
       .info-button {
         &.active {
@@ -87,7 +167,9 @@
     }
 
     button {
-      padding: 4px 8px;
+      display: flex;
+      margin-left: 5px;
+      padding: 8px;
     }
   }
 }

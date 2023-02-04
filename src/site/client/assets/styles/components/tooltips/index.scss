@@ -1,0 +1,46 @@
+.cl-tooltip {
+  z-index: 1000;
+  background-color: $bg-color-m7;
+  border: $border;
+  border-radius: $border-radius;
+  padding: 5px;
+
+  opacity: 0;
+  animation: fade-in 200ms ease-out forwards;
+
+  .arrow, .arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    border-top: $border;
+    border-left: $border;
+    z-index: 999;
+  }
+
+  .arrow {
+    visibility: hidden;
+  }
+
+  .arrow::before {
+    visibility: visible;
+    content: '';
+    transform: rotate(45deg);
+  }
+
+  &[data-popper-placement^='top'] > .arrow {
+    bottom: -6px;
+  }
+  
+  &[data-popper-placement^='bottom'] > .arrow {
+    top: -6px;
+  }
+  
+  &[data-popper-placement^='left'] > .arrow {
+    right: -6px;
+  }
+  
+  &[data-popper-placement^='right'] > .arrow {
+    left: -6px;
+  }
+}

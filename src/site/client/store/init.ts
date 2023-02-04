@@ -1,5 +1,6 @@
 import { ExhibitNodes, PathTree } from '../../../api/exhibit/types'
 import { getTheme } from '../connectors/theme'
+import { createIntercomClient } from '../intercom'
 import { componentExhibitsReady } from './componentExhibits/actions'
 import { fetchMetaDataThunk } from './metadata/reducer'
 import { setTheme } from './theme/actions'
@@ -43,5 +44,7 @@ export const init = async (dispatch: AppDispatch) => {
 
   await waitUntilComponentExhibitsAreLoaded()
   dispatch(componentExhibitsReady(null))
-  dispatch(fetchMetaDataThunk())
+  dispatch(fetchMetaDataThunk(metaData => {
+    createIntercomClient(metaData, dispatch)
+  }))
 }

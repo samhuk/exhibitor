@@ -14,7 +14,7 @@ const createServerBuilder = (options: BuildServerOptions) => () => build({
   metafile: true,
   incremental: options.incremental,
   platform: 'node',
-  external: ['livereload-js', 'playwright-core/cli'],
+  external: ['playwright-core/cli'],
   plugins: [
     nativeNodeModulesPlugin,
     nodeExternalsPlugin({

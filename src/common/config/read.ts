@@ -167,11 +167,14 @@ const resolveConfigFilePath = (
 export const readAndParseConfig = async (
   configFilePath: string,
 ): Promise<UnresolvedConfig> => {
-  const ConfigFilePath = resolveConfigFilePath(configFilePath, process.cwd())
+  const resolvedConfigFilePath = resolveConfigFilePath(configFilePath, process.cwd())
 
-  let configObj = await getConfigObj(ConfigFilePath)
+  if (resolvedConfigFilePath == null)
+    return null
 
-  if (ConfigFilePath.endsWith('package.json')) {
+  let configObj = await getConfigObj(resolvedConfigFilePath)
+
+  if (resolvedConfigFilePath.endsWith('package.json')) {
     logStep('Configuration file path is a package.json file. Looking for \'.exhibitor\' property.', true)
     configObj = (configObj as any).exhibitor
   }

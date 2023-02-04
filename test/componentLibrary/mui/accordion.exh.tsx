@@ -8,7 +8,7 @@ const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
-});
+})
 
 exhibit(() => (
   <ThemeProvider theme={darkTheme}>

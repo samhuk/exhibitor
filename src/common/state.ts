@@ -1,8 +1,12 @@
+type ProcessState = {
+  verbose: boolean
+}
+
 /**
  * Convenient global storage while a command executes. This can be useful for
  * state like verbosity.
  */
-export const state: { verbose: boolean } = {
+export const state: ProcessState = {
   verbose: false,
 }
 

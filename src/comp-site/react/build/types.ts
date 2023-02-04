@@ -1,3 +1,4 @@
+import { BuildStatusReporter } from '../../../common/building'
 import { Config } from '../../../common/config/types'
 
 export type BuildOptions = {
@@ -5,6 +6,6 @@ export type BuildOptions = {
   reactMajorVersion: number
   config: Config
   onIndexExhTsFileCreate?: (file: { includedFilePaths: string[] }) => void
-  onFirstSuccessfulBuildComplete?: () => void
-  onSuccessfulBuildComplete?: () => void
+  buildStatusReporter: BuildStatusReporter
+  onFirstSuccessfulBuild?: () => void
 }
