@@ -86,6 +86,14 @@ const Render = () => {
 
   useEffect(resizer, [el])
 
+  const updateExpandedPaths = (value: { [path: string]: boolean }) => {
+    setExpandedPaths(value)
+    saveNavBarState({
+      widthPx: widthPxRef.current,
+      expandedPaths: value,
+    })
+  }
+
   const onGroupDirExpansionChange = (node: ExhibitNode, newIsExpanded: boolean) => {
     const newExpandedPaths = { ...expandedPaths }
     if (newIsExpanded)
@@ -93,32 +101,25 @@ const Render = () => {
     else
       delete newExpandedPaths[node.path]
 
-    setExpandedPaths(newExpandedPaths)
-    saveNavBarState({
-      widthPx: widthPxRef.current,
-      expandedPaths: newExpandedPaths,
-    })
+    updateExpandedPaths(newExpandedPaths)
   }
 
   const onExpandAllButtonClick = () => {
     const newExpandedPaths: { [path: string]: boolean } = {}
     Object.keys(exh.nodes).forEach(path => newExpandedPaths[path] = true)
-
-    setExpandedPaths(newExpandedPaths)
-    saveNavBarState({
-      widthPx: widthPxRef.current,
-      expandedPaths: newExpandedPaths,
-    })
+    updateExpandedPaths(newExpandedPaths)
   }
 
-  const onCollapseAllButtonClick = () => {
-    const newExpandedPaths = {}
+  const onCollapseAllButtonClick = () => updateExpandedPaths({})
 
-    setExpandedPaths(newExpandedPaths)
-    saveNavBarState({
-      widthPx: widthPxRef.current,
-      expandedPaths: newExpandedPaths,
-    })
+  const onCollapseAllNonExhibitGroupButtonClick = () => {
+    const newExpandedPaths: { [path: string]: boolean } = {}
+
+    Object.entries(exh.nodes)
+      .filter(([path, node]) => node.type === ExhibitNodeType.EXHIBIT_GROUP)
+      .forEach(([path]) => newExpandedPaths[path] = true)
+
+    updateExpandedPaths(newExpandedPaths)
   }
 
   return (
@@ -137,6 +138,13 @@ const Render = () => {
           onClick={() => onCollapseAllButtonClick()}
           aria-label="Collapse all"
           title="Collapse all"
+        />
+        <button
+          type="button"
+          className="fas fa-layer-group"
+          onClick={() => onCollapseAllNonExhibitGroupButtonClick()}
+          aria-label="Collapse variant groups"
+          title="Collapse variant groups"
         />
       </div>
       <div className="nodes">
