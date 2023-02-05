@@ -1,5 +1,5 @@
-import { BuildStatus } from '../building'
-import { BuildStatuses, BuildStatusService, BuiltIntercomIdentity } from './types'
+import { BuildStatus } from '../../common/building'
+import { BuildStatuses, BuildStatusService, BuiltIntercomIdentity } from '../types'
 
 export const areAllBuildStatusesSuccessful = (statuses: BuildStatuses) => !Object.values(statuses).some(s => s !== BuildStatus.SUCCESS)
 

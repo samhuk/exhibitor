@@ -1,6 +1,6 @@
 import { BuildStatus } from '../../../../common/building'
-import { IntercomConnectionStatus } from '../../../../common/intercom/client'
-import { BuildStatuses, BuiltIntercomIdentity } from '../../../../common/intercom/types'
+import { IntercomConnectionStatus } from '../../../../intercom/client'
+import { BuildStatuses, BuiltIntercomIdentity } from '../../../../intercom/types'
 
 export const SET_STATUS = 'intercom/setStatus'
 

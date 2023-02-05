@@ -1,12 +1,10 @@
-import { wait } from '../function'
+import { wait } from '../../common/function'
+import { createIntercomMessage } from '../message'
+import { IntercomMessage, IntercomMessageType } from '../message/types'
 import {
-  IntercomClient,
-  IntercomClientOptions,
-  IntercomClientOptionsInternal,
   IntercomIdentityType,
-  IntercomMessage,
-  IntercomMessageType,
-} from './types'
+} from '../types'
+import { IntercomClientOptions, IntercomClientOptionsInternal, IntercomClient } from './types'
 
 export enum IntercomConnectionStatus {
   NOT_CONNECTED = 'NOT_CONNECTED',
@@ -15,7 +13,7 @@ export enum IntercomConnectionStatus {
 }
 
 const handleMessage = (msg: MessageEvent, options: IntercomClientOptions) => {
-  const intercomMessage = JSON.parse(msg.data) as IntercomMessage
+  const intercomMessage = options.webSocket.recieve(msg)
 
   if (intercomMessage == null)
     return
@@ -25,7 +23,7 @@ const handleMessage = (msg: MessageEvent, options: IntercomClientOptions) => {
 
 const _connect = (options: IntercomClientOptionsInternal, onConnect: (ws: WebSocket) => void) => {
   let ws: WebSocket
-  ws = options.webSocketCreator(`ws://${options.host}:${options.port}`)
+  ws = options.webSocket.create(`ws://${options.host}:${options.port}`)
   ws.onerror = () => {} // onClose function below will handle failed connection logic. This prevents crashes in nodejs envs.
   let onOpen: () => void = null
   let onClose: () => Promise<void> = null
@@ -135,7 +133,7 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
       onConnect(newWs)
     },
     send: msgOptions => {
-      send({ ...msgOptions, from: internalOptions.identityType })
+      send(createIntercomMessage(internalOptions.identityType, msgOptions))
     },
     disconnect: () => {
       beenToldToDisconnect = true

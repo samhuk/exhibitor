@@ -3,7 +3,8 @@
   "extends": "../../tsconfig.json",
   "include": [
     "./**/*",
-    "../common/**/*"
+    "../common/**/*",
+    "'../intercom/**/*"
   ],
   "compilerOptions": {
     "noEmit": true

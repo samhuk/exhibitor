@@ -1,7 +1,8 @@
 import WebSocket, { WebSocketServer } from 'ws'
-import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME, isBuiltIntercomIdentity } from '../../../common/intercom'
-import { BuildStatusService, IntercomIdentityType, IntercomMessage, IntercomMessageType } from '../../../common/intercom/types'
-import { logIntercomInfo } from '../../../common/logging'
+import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME, isBuiltIntercomIdentity } from '..'
+import { logIntercomInfo } from '../../common/logging'
+import { IntercomMessage, IntercomMessageType } from '../message/types'
+import { BuildStatusService, IntercomIdentityType } from '../types'
 import { createClientStore } from './clientStore'
 
 export const createInteromServer = (buildStatusService: BuildStatusService) => {

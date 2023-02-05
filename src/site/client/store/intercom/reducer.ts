@@ -1,6 +1,6 @@
 import { BuildStatus } from '../../../../common/building'
-import { IntercomConnectionStatus } from '../../../../common/intercom/client'
-import { IntercomIdentityType } from '../../../../common/intercom/types'
+import { IntercomConnectionStatus } from '../../../../intercom/client'
+import { IntercomIdentityType } from '../../../../intercom/types'
 import {
   SET_STATUS,
   Actions,

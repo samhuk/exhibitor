@@ -6,11 +6,13 @@ import {
   SITE_COMMON_DIR,
 } from '../../../common/paths'
 import { watchClient } from '../watchClient'
-import { createIntercomClient } from '../../../common/intercom/client'
-import { IntercomClient, IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
-import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { BuildStatus, BuildStatusReporter, createBuildStatusReporter } from '../../../common/building'
 import { ExhEnv, getEnv } from '../../../common/env'
+import { IntercomClient } from '../../../intercom/client/types'
+import { createNodeIntercomClient } from '../../../intercom/client/node'
+import { IntercomMessageType } from '../../../intercom/message/types'
+import { IntercomIdentityType } from '../../../intercom/types'
+import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom'
 
 const isDev = getEnv() === ExhEnv.DEV
 
@@ -34,11 +36,10 @@ const main = async () => {
     })
   }
 
-  intercomClient = createIntercomClient({
+  intercomClient = createNodeIntercomClient({
     host: process.env.EXH_SITE_SERVER_HOST,
     port: process.env[INTERCOM_PORT_ENV_VAR_NAME] != null ? parseInt(process.env[INTERCOM_PORT_ENV_VAR_NAME]) : DEFAULT_INTERCOM_PORT,
     identityType: IntercomIdentityType.CLIENT_WATCH,
-    webSocketCreator: url => new WebSocket(url) as any,
     enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
     events: {
       onReconnect: () => {

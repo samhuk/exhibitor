@@ -11,14 +11,14 @@ import { DEFAULT_THEME } from '../../common/theme'
 import { log } from '../../cli/logging'
 import { createExhError } from '../../common/exhError'
 import { ErrorType } from '../../common/errorTypes'
-import { createInteromServer } from './intercom'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
 import { updateProcessVerbosity } from '../../common/processState'
-import { createBuildStatusService } from '../../common/intercom/buildStatusService'
 import { logInfo } from '../../common/logging'
 import { BuildStatus } from '../../common/building'
 import { ExhEnv, getEnv } from '../../common/env'
+import { createBuildStatusService } from '../../intercom/server/buildStatusService'
+import { createInteromServer } from '../../intercom/server'
 
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here

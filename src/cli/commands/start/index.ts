@@ -15,16 +15,18 @@ import { setMetadata } from '../../../common/metadata'
 import { tryResolve } from '../../../common/npm/resolve'
 import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
-import { createIntercomClient } from '../../../common/intercom/client'
-import { IntercomClient, IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
-import { logError, logIntercomError, logIntercomStep, logIntercomSuccess, logSuccess } from '../../../common/logging'
+import { logIntercomError, logIntercomStep, logIntercomSuccess, logSuccess } from '../../../common/logging'
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
-import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { findFreePort } from '../../common/isPortFree'
 import { BuildStatus, BuildStatusReporter, createBuildStatusReporter } from '../../../common/building'
 import { ExhEnv, getEnv } from '../../../common/env'
 import { VERBOSE_ENV_VAR_NAME } from '../../../common/config'
+import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom'
+import { createNodeIntercomClient } from '../../../intercom/client/node'
+import { IntercomMessageType } from '../../../intercom/message/types'
+import { IntercomClient } from '../../../intercom/client/types'
+import { IntercomIdentityType } from '../../../intercom/types'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
@@ -179,11 +181,10 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     onChange: sendBuildStatusUpdateToIntercom,
   })
 
-  intercomClient = createIntercomClient({
+  intercomClient = createNodeIntercomClient({
     host: config.site.host,
     port: intercomPort,
     identityType: IntercomIdentityType.COMP_LIB_WATCH,
-    webSocketCreator: url => new WebSocket(url) as any,
     enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
     events: {
       onReconnect: () => {

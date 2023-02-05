@@ -4,12 +4,11 @@ import * as fs from 'fs'
 import { CONFIG_FILE_PATH_ENV_VAR_NAME, VERBOSE_ENV_VAR_NAME } from '../../../common/config'
 import { NPM_PACKAGE_CAPITALIZED_NAME, NPM_PACKAGE_NAME } from '../../../common/name'
 import { SITE_SERVER_OUTFILE } from '../../../common/paths'
-import { determineIfPortFree } from '../../common/isPortFree'
 import { CliError, CliString } from '../../types'
-import { logStep, logSuccess } from '../../logging'
+import { logStep } from '../../logging'
 import { Config } from '../../../common/config/types'
-import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { ExhEnv, getEnv } from '../../../common/env'
+import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom'
 
 const exhEnv = getEnv()
 
