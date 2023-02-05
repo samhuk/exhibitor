@@ -27,11 +27,18 @@ export const render = () => {
           // eslint-disable-next-line react/jsx-props-no-spreading
           <div className="tooltip" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
             <div className="arrow" ref={setArrowElement} style={styles.arrow} />
-            <div className="line">Exhibitor: v<b>{version}</b></div>
-            <div className="line">React: v<b>{React.version}</b></div>
-            <div className="line"><ExternalLink text="Github" href="https://github.com/samhuk/exhibitor" /></div>
-            <div className="line"><ExternalLink text="Wiki" href="https://github.com/samhuk/exhibitor/wiki" /></div>
-            <div className="line"><ExternalLink text="Discussions 💬" href="https://github.com/samhuk/exhibitor/discussions" /></div>
+            <div className="line">Exhibitor <b>{version}</b></div>
+            <div className="line">React <b>{React.version}</b></div>
+            <div className="cl-h-divider" />
+            <div className="line">
+              <ExternalLink text="Github" iconClass="fa-brands fa-github" href="https://github.com/samhuk/exhibitor" />
+            </div>
+            <div className="line">
+              <ExternalLink text="Wiki" iconClass="fas fa-circle-info" href="https://github.com/samhuk/exhibitor/wiki" />
+            </div>
+            <div className="line">
+              <ExternalLink text="Discussions" iconClass="fas fa-comments" href="https://github.com/samhuk/exhibitor/discussions" />
+            </div>
           </div>
         ) : null}
     </div>
