@@ -73,10 +73,10 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
   }
 
   const send = (msg: IntercomMessage) => {
-    if (instance.status !== IntercomConnectionStatus.CONNECTED && internalOptions.queueMsgOnDropout)
-      queuedMessages.push(msg)
-    else
+    if (instance.status === IntercomConnectionStatus.CONNECTED)
       ws.send(JSON.stringify(msg))
+    else if (internalOptions.queueMsgOnDropout)
+      queuedMessages.push(msg)
   }
 
   const sendQueuedMessages = () => {
@@ -85,7 +85,7 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
       if (ws.readyState !== ws.OPEN)
         return
 
-      send(queuedMessages.shift())
+      ws.send(JSON.stringify(queuedMessages.shift()))
     }
   }
 
