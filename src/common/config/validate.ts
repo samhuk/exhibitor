@@ -1,14 +1,16 @@
 import path from 'path'
 import * as fs from 'fs'
-import { CliString, CliError } from '../../cli/types'
 import { Config } from './types'
+import { ExhString } from '../exhString/types'
+import { ExhError } from '../exhError/types'
+import { createExhError } from '../exhError'
 
-const createValidateConfigError = (causedBy: CliString): CliError => ({
+const createValidateConfigError = (causedBy: ExhString): ExhError => createExhError({
   message: 'Invalid configuration',
   causedBy,
 })
 
-export const _validateConfig = (config: Config): CliString | null => {
+export const _validateConfig = (config: Config): ExhString | null => {
   // -- include
   if (config.include.length < 1)
     return c => `config.include - must have at least one entry, if defined. Received: ${c.cyan(JSON.stringify(config.include))}`
@@ -38,7 +40,7 @@ export const _validateConfig = (config: Config): CliString | null => {
   return null
 }
 
-export const validateConfig = (config: Config): CliError | null => {
+export const validateConfig = (config: Config): ExhError | null => {
   const errorMessage = _validateConfig(config)
 
   return errorMessage != null

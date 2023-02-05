@@ -5,7 +5,7 @@ import type { Service as TsNodeService } from 'ts-node'
 import parseJson from '@samhuk/parse-json'
 import stripJsonComments from '@samhuk/strip-json-comments'
 import { UnresolvedConfig } from './types'
-import { logStep } from '../../cli/logging'
+import { logStep } from '../logging'
 
 let registeredCompilerPromise: Promise<TsNodeService>
 
@@ -158,7 +158,7 @@ const resolveConfigFilePath = (
   if (isFile(absolutePath))
     return absolutePath
 
-  return null // TODO: CliError
+  return null // TODO: ExhError?
 }
 
 /**

@@ -1,13 +1,14 @@
 import * as fs from 'fs'
+import { createExhError } from '../../../common/exhError'
+import { ExhError } from '../../../common/exhError/types'
+import { ExhString } from '../../../common/exhString/types'
 
-import { CliString, CliError } from '../../types'
-
-const createError = (causedBy: CliString): CliError => ({
+const createError = (causedBy: ExhString): ExhError => createExhError({
   message: 'Could not create example component',
   causedBy,
 })
 
-export const createExampleComponentCode = (): CliError | null => {
+export const createExampleComponentCode = (): ExhError | null => {
   try {
     if (!fs.existsSync('./src/button'))
       fs.mkdirSync('./src/button', { recursive: true })

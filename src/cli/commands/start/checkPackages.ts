@@ -1,8 +1,9 @@
+import { createExhError } from '../../../common/exhError'
+import { ExhError } from '../../../common/exhError/types'
+import { ExhString } from '../../../common/exhString/types'
+import { logStep, logStepHeader, logSuccess, logWarn } from '../../../common/logging'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { CheckPackageResultType, checkPackages as _checkPackages, CheckPackagesResult } from '../../../common/npm/checkPackages'
-import { logWarn, logStep, logSuccess, logStepHeader } from '../../logging'
-import { getProcessVerbosity } from '../../../common/state'
-import { CliError, CliString } from '../../types'
 
 export type StartCommandCheckPackagesResult<
   THasErrors extends boolean = boolean
@@ -36,12 +37,12 @@ const extractReactMajorVersion = (results: StartCommandCheckPackagesResult): num
   return result.semVer.major
 }
 
-export const createCheckPackagesError = (causedBy: CliString, packageName: string): CliError => ({
+export const createCheckPackagesError = (causedBy: ExhString, packageName: string): ExhError => createExhError({
   message: c => `Failed to start ${NPM_PACKAGE_CAPITALIZED_NAME}. Package check failed for ${c.underline(packageName)}.`,
   causedBy,
 })
 
-export const checkPackages = (): CliError | { reactMajorVersion: number } => {
+export const checkPackages = (): ExhError | { reactMajorVersion: number } => {
   logStepHeader('Checking that required packages are installed.', true)
   const results = _checkPackages(REQUIRED_PACKAGES, {
     stopOnError: true,

@@ -1,7 +1,7 @@
 import { BoolDependant, TypeDependantBaseIntersection } from '@samhuk/type-helpers'
 import * as fs from 'fs'
 import path from 'path'
-import { CliString } from '../../cli/types'
+import { ExhString } from '../exhString/types'
 import { tryResolve } from './resolve'
 
 export type SemVer = {
@@ -42,10 +42,10 @@ export type CheckPackageResult<
   }
   [CheckPackageResultType.SUCCESS_NO_VERSION]: {
     path: string
-    warningMsg: CliString
+    warningMsg: ExhString
   }
   [CheckPackageResultType.ERROR]: {
-    errorMsg: CliString
+    errorMsg: ExhString
   }
 }, TCheckPackageResultType, 'type'> & { name: string }
 

@@ -1,6 +1,6 @@
 import { BuildResult, Plugin } from 'esbuild'
 import path from 'path'
-import { log, logStep, logStepHeader, logSuccess } from '../cli/logging'
+import { log, logStep, logStepHeader, logSuccess } from './logging'
 
 import prettyBytes from './prettyBytes'
 import { BuildOutput, CustomBuildResult } from './types'

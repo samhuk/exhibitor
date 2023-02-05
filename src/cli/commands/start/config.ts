@@ -1,9 +1,11 @@
 import { StartCliArgumentsOptions } from './types'
-import { CliError, CliString } from '../../types'
 import { Config } from '../../../common/config/types'
 import { isValidHost } from '../../../common/network'
+import { ExhString } from '../../../common/exhString/types'
+import { ExhError } from '../../../common/exhError/types'
+import { createExhError } from '../../../common/exhError'
 
-const createError = (causedBy: CliString): CliError => ({
+const createError = (causedBy: ExhString): ExhError => createExhError({
   message: 'Could not parse CLI arguments',
   causedBy,
 })
@@ -11,7 +13,7 @@ const createError = (causedBy: CliString): CliError => ({
 export const applyStartOptionsToConfig = (
   config: Config,
   options: StartCliArgumentsOptions,
-): CliError | null => {
+): ExhError | null => {
   if (options.host != null) {
     if (!isValidHost(options.host))
       return createError(c => `argument 'host' is not a valid hostname or IP address. Received: ${c.cyan(JSON.stringify(options.host))}`)

@@ -102,11 +102,11 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
     ws.addEventListener('message', e => handleMessage(e, internalOptions))
 
     ws.addEventListener('close', async () => {
-      if (beenToldToDisconnect)
-        return
       ws.close()
       updateStatus(IntercomConnectionStatus.NOT_CONNECTED)
       log('Connection to intercom lost.')
+      if (beenToldToDisconnect)
+        return
 
       updateStatus(IntercomConnectionStatus.CONNECTING)
       const _newWs = await waitUntilConnect(internalOptions, true) // Wait until reconnection
@@ -128,6 +128,7 @@ export const createIntercomClient = (options: IntercomClientOptions): IntercomCl
     port: internalOptions.port,
     status: IntercomConnectionStatus.NOT_CONNECTED,
     connect: async () => {
+      beenToldToDisconnect = false
       updateStatus(IntercomConnectionStatus.CONNECTING)
       const newWs = await waitUntilConnect(internalOptions)
       onConnect(newWs)

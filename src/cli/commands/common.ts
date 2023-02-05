@@ -1,27 +1,27 @@
 import { exit } from 'process'
-import { handleError } from '../error'
-import { CliError } from '../types'
+import { createExhError } from '../../common/exhError'
+import { ExhError } from '../../common/exhError/types'
 
-export const endSuccessfulCommand = () => {
-  exit(0) // TODO: Remove once ready
-}
-
-export const baseCommand = <TFn extends (...args: any[]) => Promise<CliError | null>>(
+export const baseCommand = <TFn extends (...args: any[]) => Promise<ExhError | null>>(
   commandName: string,
   fn: TFn,
   options?: { exitWhenReturns?: boolean },
 ) => async (...args: Parameters<TFn>) => {
     try {
-      const commandError = await fn(...args)
-      if (commandError != null)
-        handleError(commandError)
-      else if (options?.exitWhenReturns ?? true)
-        endSuccessfulCommand()
+      const err = await fn(...args)
+      if (err != null) {
+        err.log()
+        exit(1)
+      }
+      else if (options?.exitWhenReturns ?? true) {
+        exit(0)
+      }
     }
     catch (e: any) {
-      handleError({
+      createExhError({
         message: c => `An unexpected error occured for the '${c.bold(commandName)}' command.`,
         causedBy: e,
-      })
+      }).log()
+      exit(1)
     }
   }

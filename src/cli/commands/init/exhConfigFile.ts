@@ -1,13 +1,15 @@
 import * as fs from 'fs'
+import { createExhError } from '../../../common/exhError'
+import { ExhError } from '../../../common/exhError/types'
+import { ExhString } from '../../../common/exhString/types'
 import { askBooleanQuestion } from '../../common/input'
-import { CliError, CliString } from '../../types'
 
-const createError = (causedBy: CliString): CliError => ({
+const createError = (causedBy: ExhString): ExhError => createExhError({
   message: 'Could not create Exhibitor configuration file \'exh.config.json\'.',
   causedBy,
 })
 
-export const createExhConfigFile = async (): Promise<CliError | null> => {
+export const createExhConfigFile = async (): Promise<ExhError | null> => {
   const writePath = './exh.config.json'
 
   const doesExhConfigFileExist = fs.existsSync(writePath)

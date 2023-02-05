@@ -1,5 +1,5 @@
 import { exec, ExecException } from 'child_process'
-import { log } from '../../cli/logging'
+import { log } from '../logging'
 
 export const npmInstallPackage = (
   packageName: string,

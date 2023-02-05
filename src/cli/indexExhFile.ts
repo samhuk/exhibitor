@@ -7,10 +7,9 @@ import { Config } from '../common/config/types'
 import { getEnv, ExhEnv } from '../common/env'
 
 import { createBuilder } from '../common/esbuilder'
-import { logInfo } from '../common/logging'
+import { logInfo, logStep, logWarn } from '../common/logging'
 import { NPM_PACKAGE_NAME } from '../common/name'
 import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME } from '../common/paths'
-import { logStep, logWarn } from './logging'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV

@@ -1,9 +1,9 @@
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
-import { log, logSuccess } from '../../cli/logging'
 import { BuildStatus } from '../../common/building'
 
 import { printBuildResult } from '../../common/esbuilder'
+import { log, logSuccess } from '../../common/logging'
 import { buildClient } from './buildClient'
 import { CustomBuildResult, WatchClientOptions } from './types'
 

@@ -1,12 +1,14 @@
 import * as fs from 'fs'
-import { CliError, CliString } from '../../types'
+import { createExhError } from '../../../common/exhError'
+import { ExhError } from '../../../common/exhError/types'
+import { ExhString } from '../../../common/exhString/types'
 
-const createError = (causedBy: CliString): CliError => ({
+const createError = (causedBy: ExhString): ExhError => createExhError({
   message: 'Could not add git ignore entry.',
   causedBy,
 })
 
-export const addGitIgnoreEntries = (): CliError | null => {
+export const addGitIgnoreEntries = (): ExhError | null => {
   const gitIgnorePath = './.gitignore'
   const gitIgnoreEntries: string[] = [
     '/node_modules',

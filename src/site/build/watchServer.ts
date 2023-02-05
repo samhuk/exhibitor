@@ -1,10 +1,10 @@
 import { ChildProcess, fork, ForkOptions } from 'child_process'
 import chokidar, { FSWatcher } from 'chokidar'
 import { watch } from 'chokidar-debounced'
-import { log, logSuccess } from '../../cli/logging'
 
 import { EXH_SERVER_DEBUG_PORT } from '../../common/debug'
 import { printBuildResult } from '../../common/esbuilder'
+import { log, logSuccess } from '../../common/logging'
 import { buildServer } from './buildServer'
 import { CustomBuildResult, WatchServerOptions } from './types'
 

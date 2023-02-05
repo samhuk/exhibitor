@@ -1,5 +1,4 @@
 import { ChildProcess } from 'child_process'
-import WebSocket from 'ws'
 import { getConfigForCommand } from '../../config'
 import { baseCommand } from '../common'
 import { startServer } from './startServer'
@@ -7,15 +6,13 @@ import { applyStartOptionsToConfig } from './config'
 import { StartCliArgumentsOptions } from './types'
 import { watchCompSite } from '../../../comp-site/react/build/watch'
 import { getProcessVerbosity, updateProcessVerbosity } from '../../../common/state'
-import { isCliError, logStep, logStepHeader } from '../../logging'
-import { CliError } from '../../types'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { checkPackages } from './checkPackages'
 import { setMetadata } from '../../../common/metadata'
 import { tryResolve } from '../../../common/npm/resolve'
 import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
-import { logIntercomError, logIntercomStep, logIntercomSuccess, logSuccess } from '../../../common/logging'
+import { logIntercomError, logIntercomStep, logIntercomSuccess, logStep, logStepHeader, logSuccess } from '../../../common/logging'
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { findFreePort } from '../../common/isPortFree'
@@ -119,7 +116,7 @@ const determineIntercomPort = async (host: string, serverPort: number): Promise<
   return port
 }
 
-export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<CliError> => {
+export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<ExhError> => {
   // -- Config
   // If verbose is specified in CLI arguments or env var, then we can globally set it earlier
   const earlyVerbose = startOptions.verbose != null
@@ -132,11 +129,11 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     logStepHeader('Determining supplied configuration.')
   else
     logStep('Determining supplied configuration.')
-  const geConfigResult = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
-  if (geConfigResult.success === false)
-    return geConfigResult.error
+  const getConfigResult = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
+  if (isExhError(getConfigResult))
+    return getConfigResult
 
-  const config = geConfigResult.config // Convenient alias
+  const config = getConfigResult // Convenient alias
 
   // Update global verbosity according to config
   updateProcessVerbosity(config.verbose)
@@ -144,7 +141,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   // -- Logic
   // Check packages required to build the Component Site for React, getting version numbers
   const checkPackagesResult = checkPackages()
-  if (isCliError(checkPackagesResult))
+  if (isExhError(checkPackagesResult))
     return checkPackagesResult
 
   // Determine server port
@@ -209,10 +206,10 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     })
   }
   catch (e: any) {
-    return {
+    return createExhError({
       message: `Failed to start ${NPM_PACKAGE_CAPITALIZED_NAME}. Could not build the Component Site for React.\n\n    This could be because you have a version of React that isn't supported. Otherwise, you may have some custom npm setup that ${NPM_PACKAGE_CAPITALIZED_NAME} can't handle.`,
       causedBy: e,
-    }
+    })
   }
 
   // Start the site server
