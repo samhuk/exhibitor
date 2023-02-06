@@ -97,6 +97,8 @@
       }
 
       .cl-tooltip {
+        z-index: $hover-tooltip-z-index;
+
         .cl-success-icon, .cl-error-icon {
           margin-right: 5px;
         }
@@ -111,7 +113,7 @@
       }
 
       .tooltip {
-        z-index: 1000;
+        z-index: $click-tooltip-z-index;
         background-color: $bg-color-m7;
         border: $border;
         border-radius: $border-radius;
