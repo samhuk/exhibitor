@@ -35,7 +35,7 @@
   }
 
   .tooltip {
-    z-index: 1000;
+    z-index: $click-tooltip-z-index;
     background-color: $bg-color;
     border: $border;
     border-radius: $border-radius;

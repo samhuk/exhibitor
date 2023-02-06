@@ -2,7 +2,7 @@
   width: 100%;
   height: 100%;
   background-color: $bg-color;
-  z-index: 1000;
+  z-index: $bg-z-index;
   opacity: 0.5;
   position: absolute;
   display: flex;
