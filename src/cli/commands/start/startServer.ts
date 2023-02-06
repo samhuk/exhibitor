@@ -4,16 +4,17 @@ import * as fs from 'fs'
 import { CONFIG_FILE_PATH_ENV_VAR_NAME, VERBOSE_ENV_VAR_NAME } from '../../../common/config'
 import { NPM_PACKAGE_CAPITALIZED_NAME, NPM_PACKAGE_NAME } from '../../../common/name'
 import { SITE_SERVER_OUTFILE } from '../../../common/paths'
-import { determineIfPortFree } from '../../common/isPortFree'
-import { CliError, CliString } from '../../types'
-import { logStep, logSuccess } from '../../logging'
 import { Config } from '../../../common/config/types'
-import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../common/intercom'
 import { ExhEnv, getEnv } from '../../../common/env'
+import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom'
+import { ExhString } from '../../../common/exhString/types'
+import { ExhError } from '../../../common/exhError/types'
+import { logStep } from '../../../common/logging'
+import { createExhError } from '../../../common/exhError'
 
 const exhEnv = getEnv()
 
-const createStartServerError = (causedBy: CliString): CliError => ({
+const createStartServerError = (causedBy: ExhString): ExhError => createExhError({
   message: `Could not start the ${NPM_PACKAGE_NAME} server.`,
   causedBy,
 })
@@ -43,7 +44,7 @@ export const startServer = async (options: {
   intercomPort: number,
   config: Config,
   onServerProcessKill?: () => void,
-}): Promise<CliError | ChildProcess> => {
+}): Promise<ExhError | ChildProcess> => {
   const serverJsPath = exhEnv === ExhEnv.DEV || exhEnv === ExhEnv.DEV_REL
     ? SITE_SERVER_OUTFILE
     : path.join(`./node_modules/${NPM_PACKAGE_NAME}`, './lib/site/server/index.js').replace(/\\/g, '/')

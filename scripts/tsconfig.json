@@ -1,10 +1,9 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "include": [
     "./**/*",
-    "../common/**/*",
-    "'../intercom/**/*"
+    "../src/common/**/*"
   ],
   "compilerOptions": {
     "noEmit": true

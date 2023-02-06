@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { usePopper } from 'react-popper'
-import { IntercomConnectionStatus } from '../../../../common/intercom/client'
+import { IntercomConnectionStatus } from '../../../../intercom/client'
 import ErrorIcon from '../../common/testReporting/errorIcon'
 import SuccessIcon from '../../common/testReporting/successIcon'
 import { useAppSelector } from '../../store'

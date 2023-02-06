@@ -23,7 +23,7 @@ export const render = () => {
         <BuildStatuses />
         <Intercom />
         <About />
-        <button type="button" onClick={onThemeButtonClick} title={theme === 'dark' ? 'Enable light theme' : 'Enable dark theme'}>
+        <button type="button" onClick={onThemeButtonClick} title={theme === 'dark' ? 'Light mode' : 'Dark mode'}>
           <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`} />
         </button>
       </div>

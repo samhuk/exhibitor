@@ -1,4 +1,4 @@
-import { BuildStatus } from '../building'
+import { BuildStatus } from '../common/building'
 import { IntercomIdentityType, BuiltIntercomIdentity, BuildStatuses } from './types'
 
 export const DEFAULT_INTERCOM_PORT = 38769

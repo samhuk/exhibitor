@@ -1,6 +1,7 @@
 import { exit } from 'process'
 import readline from 'readline'
-import { logError } from '../logging'
+import { createExhError } from '../../common/exhError'
+import { logError } from '../../common/logging'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -34,7 +35,7 @@ export const tryGetInput = (options: {
         options.onComplete(val)
       }
       else {
-        logError({ message: errMsg })
+        createExhError({ message: errMsg }).log()
         tryGetInput(options)
       }
     }

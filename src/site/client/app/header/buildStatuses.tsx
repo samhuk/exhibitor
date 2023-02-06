@@ -2,7 +2,7 @@ import React from 'react'
 import { useAppSelector } from '../../store'
 import { BuildStatus } from '../../../../common/building'
 import { ExhEnv } from '../../../../common/env'
-import { IntercomConnectionStatus } from '../../../../common/intercom/client'
+import { IntercomConnectionStatus } from '../../../../intercom/client'
 
 const BuildStatusIcon = (props: {
   connectionStatus: IntercomConnectionStatus

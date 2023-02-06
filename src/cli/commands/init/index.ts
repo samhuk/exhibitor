@@ -1,10 +1,10 @@
 import { baseCommand } from '../common'
-import { logStep, logSuccess } from '../../logging'
 import { createExhConfigFile } from './exhConfigFile'
 import { createExampleComponentCode } from './exampleComponent'
 import { addGitIgnoreEntries } from './addGitIgnoreEntries'
 import { initPackageJson } from './packageJsonFile'
 import { installNpmDependencies } from './npmDependencies'
+import { logStep, logSuccess } from '../../../common/logging'
 
 export const init = baseCommand('init', async () => {
   let err = await initPackageJson()

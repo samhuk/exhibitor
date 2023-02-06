@@ -1,14 +1,16 @@
 import * as fs from 'fs'
+import { createExhError } from '../../../common/exhError'
+import { ExhError } from '../../../common/exhError/types'
+import { ExhString } from '../../../common/exhString/types'
+import { logStep } from '../../../common/logging'
 import { askBooleanQuestion } from '../../common/input'
-import { logStep } from '../../logging'
-import { CliError, CliString } from '../../types'
 
-const createError = (causedBy: CliString): CliError => ({
+const createError = (causedBy: ExhString): ExhError => createExhError({
   message: 'Could not modify package.json for exhibitor use.',
   causedBy,
 })
 
-const modifyPackageJsonFile = async (): Promise<CliError | null> => {
+const modifyPackageJsonFile = async (): Promise<ExhError | null> => {
   const packageJson = fs.readFileSync('./package.json', { encoding: 'utf8' })
   let packageJsonObj: any
   try {
@@ -40,7 +42,7 @@ const modifyPackageJsonFile = async (): Promise<CliError | null> => {
   return null
 }
 
-export const initPackageJson = async (): Promise<CliError | null> => {
+export const initPackageJson = async (): Promise<ExhError | null> => {
   // Ensure that package.json exists
   const doesPackageJsonFileExists = fs.existsSync('./package.json')
   if (!doesPackageJsonFileExists)

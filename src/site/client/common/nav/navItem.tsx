@@ -8,6 +8,7 @@ export const render = (props: { navItem: NavItemOptions }) => (
     title={props.navItem.title ?? props.navItem.text}
     onClick={props.navItem.onClick}
   >
+    {props.navItem.additionalElement != null ? props.navItem.additionalElement : null}
     <div className={`wrapper${props.navItem.text == null ? ' no-text' : ''}`}>
       {props.navItem.iconName != null
         ? <i className={`fas fa-${props.navItem.iconName}`} />

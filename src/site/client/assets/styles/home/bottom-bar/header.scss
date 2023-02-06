@@ -11,14 +11,16 @@
 
     .left {
       button {
+        position: relative;
+
         .has-unseen-indicator {
           width: 8px;
           height: 8px;
           position: absolute;
-          top: -4px;
-          right: -4px;
+          top: -2px;
+          right: -2px;
           border-radius: 5px;
-          background-color: red;
+          background-color: $red-color;
         }
       }
     }

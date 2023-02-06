@@ -1,15 +1,14 @@
-import { areAllBuildStatusesSuccessful } from '../../../common/intercom/buildStatusService'
-import { createIntercomClient as _createIntercomClient } from '../../../common/intercom/client'
-import { IntercomIdentityType, IntercomMessageType } from '../../../common/intercom/types'
 import { MetaData } from '../../../common/metadata'
+import { createBrowserIntercomClient } from '../../../intercom/client/browser'
+import { IntercomMessageType } from '../../../intercom/message/types'
+import { areAllBuildStatusesSuccessful } from '../../../intercom/server/buildStatusService'
+import { IntercomIdentityType } from '../../../intercom/types'
 import { setBuildStatuses, setConnectionStatus } from '../store/intercom/actions'
 import { AppDispatch } from '../store/types'
 
 export const createIntercomClient = async (metaData: MetaData, dispatch: AppDispatch) => {
-  const intercomClient = _createIntercomClient({
+  const intercomClient = createBrowserIntercomClient({
     identityType: IntercomIdentityType.SITE_CLIENT,
-    webSocketCreator: url => new WebSocket(url),
-    // eslint-disable-next-line no-restricted-globals
     host: metaData.intercom.host,
     port: metaData.intercom.port,
     enableLogging: metaData.intercom.enableLogging,

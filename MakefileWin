@@ -1,5 +1,3 @@
-VERSION = $(shell cat version.txt)
-
 #region Dist and outer npm dependency comparison check
 check-dist-outer-npm-deps:
 	npx ts-node ./scripts/checkDistOuterNpmDeps.ts

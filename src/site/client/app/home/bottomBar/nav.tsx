@@ -41,6 +41,7 @@ export const render = () => {
     navItemOptionsList.push({
       title: 'Event Log',
       iconName: 'phone',
+      additionalElement: hasUnseenEvents ? <div className="has-unseen-indicator" /> : null,
       onClick: () => dispatch(selectBottomBar(BottomBarType.EventLog)),
       active: selectedType === BottomBarType.EventLog,
     })
