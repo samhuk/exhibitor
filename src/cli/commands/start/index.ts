@@ -5,7 +5,7 @@ import { startServer } from './startServer'
 import { applyStartOptionsToConfig } from './config'
 import { StartCliArgumentsOptions } from './types'
 import { watchCompSite } from '../../../comp-site/react/build/watch'
-import { getProcessVerbosity, updateProcessVerbosity } from '../../../common/state'
+import state from '../../../common/state'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { checkPackages } from './checkPackages'
 import { setMetadata } from '../../../common/metadata'
@@ -122,10 +122,10 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   const earlyVerbose = startOptions.verbose != null
     ? startOptions.verbose
     : (process.env[VERBOSE_ENV_VAR_NAME] === 'true' ?? false)
-  updateProcessVerbosity(earlyVerbose)
+  state.verbose = earlyVerbose
 
   // Get config for command
-  if (getProcessVerbosity())
+  if (state.verbose)
     logStepHeader('Determining supplied configuration.')
   else
     logStep('Determining supplied configuration.')
@@ -136,7 +136,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   const config = getConfigResult // Convenient alias
 
   // Update global verbosity according to config
-  updateProcessVerbosity(config.verbose)
+  state.verbose = config.verbose
 
   // -- Logic
   // Check packages required to build the Component Site for React, getting version numbers

@@ -124,10 +124,10 @@ clean-cli:
 	rm -rf ./build/cli/cli
 
 _build-cli-dev:
-	npx npx env-cmd -e dev node ./build/cli/build/cli/build/bin/buildCli.js
+	npx env-cmd -e dev node ./build/cli/build/cli/build/bin/buildCli.js
 
 _build-cli-rel:
-	npx npx env-cmd -e rel node ./build/cli/build/cli/build/bin/buildCli.js
+	npx env-cmd -e rel node ./build/cli/build/cli/build/bin/buildCli.js
 
 build-cli-dev:
 	@$(MAKE) --no-print-directory \

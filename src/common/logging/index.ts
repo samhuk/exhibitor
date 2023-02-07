@@ -1,10 +1,9 @@
-import colors, { bold } from 'colors/safe'
+import colors from 'colors/safe'
 import { isExhError } from '../exhError'
-
 import { ExhError } from '../exhError/types'
 import { normalizeExhString } from '../exhString'
 import { ExhString } from '../exhString/types'
-import state from '../processState'
+import state from '../state'
 
 const _logText = (msg: ExhString) => console.log(normalizeExhString(msg))
 

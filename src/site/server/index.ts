@@ -12,16 +12,16 @@ import { createExhError } from '../../common/exhError'
 import { ErrorType } from '../../common/errorTypes'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
-import { updateProcessVerbosity } from '../../common/processState'
 import { log, logInfo } from '../../common/logging'
 import { BuildStatus } from '../../common/building'
 import { ExhEnv, getEnv } from '../../common/env'
 import { createBuildStatusService } from '../../intercom/server/buildStatusService'
 import { createInteromServer } from '../../intercom/server'
+import state from '../../common/state'
 
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
-  updateProcessVerbosity(process.env[VERBOSE_ENV_VAR_NAME] === 'true')
+  state.verbose = process.env[VERBOSE_ENV_VAR_NAME] === 'true'
 
   await loadConfig()
 

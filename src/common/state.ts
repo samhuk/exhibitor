@@ -1,17 +1,24 @@
-type ProcessState = {
+export type NodeProcessState = {
   verbose: boolean
 }
 
 /**
- * Convenient global storage while a command executes. This can be useful for
+ * Convenient global state for node processes. This can be useful for
  * state like verbosity.
  */
-export const state: ProcessState = {
+const _state: NodeProcessState = {
   verbose: false,
 }
 
-export const updateProcessVerbosity = (newVerbosity: boolean) => state.verbose = newVerbosity
+const _globalThis = globalThis as any
 
-export const getProcessVerbosity = () => state.verbose
+const main = () => {
+  if (_globalThis.state == null)
+    _globalThis.state = _state
+}
+
+main()
+
+export const state: NodeProcessState = _globalThis.state
 
 export default state
