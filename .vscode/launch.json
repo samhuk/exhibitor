@@ -57,6 +57,16 @@
       "preLaunchTask": "buildServerDev",
       "type": "node"
     },
+    {
+      "name": "Run CLI start command",
+      "program": "./build/cli/cli/index.js",
+      "type": "node",
+      "request": "launch",
+      "args": ["start", "--verbose"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
     // TODO: Get this working again
     // {
     //   "name": "CLI Start",
