@@ -10,6 +10,8 @@ export const RUN_COMPLETE = 'testing/playwright/runComplete'
 
 export const TOGGLE_HEADLESS = 'testing/playwright/toggleHeadless'
 
+export const ADD_PROGRESS_MESSAGE_ACTION = 'testing/playwright/addProgressMessage'
+
 export type Options = {
   headless: boolean
 }
@@ -19,6 +21,7 @@ export type State = {
   results: RunPlayrightTestsResponse
   dateLastStarted: number
   dateLastCompleted: number
+  progressMessages: string[]
   options: Options
   error: SerializedExhError
 }
@@ -37,7 +40,12 @@ type ToggleHeadlessAction = {
   type: typeof TOGGLE_HEADLESS
 }
 
-export type Actions = RunAction | RunCompleteAction | ToggleHeadlessAction
+type AddProgressMessageAction = {
+  type: typeof ADD_PROGRESS_MESSAGE_ACTION
+  msg: string
+}
+
+export type Actions = RunAction | RunCompleteAction | ToggleHeadlessAction | AddProgressMessageAction
 
 export const run = (): Actions => ({
   type: RUN,
@@ -52,4 +60,9 @@ export const runComplete = (normalizedExhResponse: NormalizedExhResponse<ExhResp
 
 export const toggleHeadless = (): Actions => ({
   type: TOGGLE_HEADLESS,
+})
+
+export const addProgressMessage = (msg: string): Actions => ({
+  type: ADD_PROGRESS_MESSAGE_ACTION,
+  msg,
 })

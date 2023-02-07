@@ -4,6 +4,7 @@ import { IntercomMessageType } from '../../../intercom/message/types'
 import { areAllBuildStatusesSuccessful } from '../../../intercom/server/buildStatusService'
 import { IntercomIdentityType } from '../../../intercom/types'
 import { setBuildStatuses, setConnectionStatus } from '../store/intercom/actions'
+import { addProgressMessage } from '../store/testing/playwright/actions'
 import { AppDispatch } from '../store/types'
 
 export const createIntercomClient = async (metaData: MetaData, dispatch: AppDispatch) => {
@@ -29,6 +30,9 @@ export const createIntercomClient = async (metaData: MetaData, dispatch: AppDisp
           else {
             dispatch(setBuildStatuses(msg.statuses))
           }
+        }
+        else if (msg.type === IntercomMessageType.TEST_PROGRESS_UPDATE) {
+          dispatch(addProgressMessage(msg.data))
         }
       },
       onReconnect: () => {

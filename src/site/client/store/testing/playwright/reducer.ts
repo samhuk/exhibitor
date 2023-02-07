@@ -8,6 +8,7 @@ import {
   run,
   runComplete,
   TOGGLE_HEADLESS,
+  ADD_PROGRESS_MESSAGE_ACTION,
 } from './actions'
 import { runPlaywrightTests as runPlaywrightTestsRequest } from '../../../connectors/testing'
 import { SELECT_VARIANT } from '../../componentExhibits/actions'
@@ -24,6 +25,7 @@ const initialState: State = {
     headless: true,
   },
   error: null,
+  progressMessages: [],
 }
 
 export const playwrightReducer = (
@@ -38,6 +40,7 @@ export const playwrightReducer = (
         loadingState: LoadingState.FETCHING,
         dateLastStarted: Date.now(),
         dateLastCompleted: null,
+        progressMessages: [],
       }
     case RUN_COMPLETE: {
       return {
@@ -55,6 +58,11 @@ export const playwrightReducer = (
           ...state.options,
           headless: !state.options.headless,
         },
+      }
+    case ADD_PROGRESS_MESSAGE_ACTION:
+      return {
+        ...state,
+        progressMessages: state.progressMessages.concat(action.msg),
       }
     case SELECT_VARIANT as any:
       return initialState

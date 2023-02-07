@@ -7,10 +7,28 @@ import StdOut from './stdOut'
 import { useAppSelector } from '../../../../../store'
 import Times from './times'
 import LoadingCover from './loadingCover'
+import { LoadingState } from '../../../../../store/types'
 
 enum Page {
   REPORT,
   STD_OUT
+}
+
+const ProgressEl = () => {
+  const loadingState = useAppSelector(s => s.testing.playwright?.loadingState)
+  const progressMessages = useAppSelector(s => s.testing.playwright?.progressMessages) ?? []
+  if (loadingState !== LoadingState.FETCHING)
+    return null
+
+  return (
+    <div className="progress">
+      {progressMessages.map(msg => (
+        <div className="msg">
+          {msg}
+        </div>
+      ))}
+    </div>
+  )
 }
 
 const render = () => {
@@ -39,6 +57,7 @@ const render = () => {
   return (
     <div className="playwright-results">
       <LoadingCover />
+      <ProgressEl />
       <div className="header">
         <Nav navItems={navItemOptionsList} />
         <div className="right">

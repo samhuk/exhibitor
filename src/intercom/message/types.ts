@@ -7,6 +7,7 @@ export enum IntercomMessageType {
   BUILD_STATUSES_NOTICE = 'BUILD_STATUSES_NOTICE',
   BUILD_STATUSES_CHANGE = 'BUILD_STATUSES_CHANGE',
   IDENTIFY = 'IDENTIFY',
+  TEST_PROGRESS_UPDATE = 'TEST_PROGRESS_UPDATE'
 }
 
 export type IntercomMessageOptions<
@@ -14,6 +15,9 @@ export type IntercomMessageOptions<
   > = TypeDependantBaseIntersection<
   IntercomMessageType,
   {
+    [IntercomMessageType.TEST_PROGRESS_UPDATE]: {
+      data: any
+    }
     [IntercomMessageType.BUILD_STATUSES_NOTICE]: {
       statuses: BuildStatuses
     }

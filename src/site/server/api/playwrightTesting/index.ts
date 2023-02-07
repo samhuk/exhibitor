@@ -20,6 +20,7 @@ const setPlaywrightConfig = (
       ['html', { open: 'never', outputFolder: PLAYWRIGHT_REPORTS_DIR }],
       ['list'],
       ['playwright-html-data-reporter'],
+      ['../src/site/server/api/playwrightTesting/intercomReporter.ts', { intercomHost: 'localhost', intercomPort: 4002 }],
     ],
     use: {
       headless: options.headless,

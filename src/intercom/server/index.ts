@@ -72,7 +72,8 @@ export const createInteromServer = (buildStatusService: BuildStatusService) => {
         return
       }
 
-      broadcastMessage(msg)
+      if (msg.to != null && msg.to !== IntercomIdentityType.SITE_SERVER)
+        broadcastMessage(msg)
     })
 
     ws.on('close', code => {
