@@ -16,7 +16,6 @@ import { logIntercomError, logIntercomStep, logIntercomSuccess, logStep, logStep
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { findFreePort } from '../../common/isPortFree'
-import { BuildStatusReporter } from '../../../common/building'
 import { ExhEnv, getEnv } from '../../../common/env'
 import { VERBOSE_ENV_VAR_NAME } from '../../../common/config'
 import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom/common'

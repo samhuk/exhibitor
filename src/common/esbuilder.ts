@@ -87,9 +87,6 @@ export const build = (
       }
       return result
     })
-    .catch(err => {
-      throw err
-    })
 }
 
 export const createBuilder = (
