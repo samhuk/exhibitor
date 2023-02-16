@@ -1,43 +1,40 @@
+import { createBrowserStoreClient } from 'sock-state/lib/client/browser'
+import { CONSOLE_LOG_CLIENT_REPORTER } from 'sock-state/lib/client/reporter'
 import { MetaData } from '../../../common/metadata'
-import { createBrowserIntercomClient } from '../../../intercom/client/browser'
-import { IntercomMessageType } from '../../../intercom/message/types'
-import { areAllBuildStatusesSuccessful } from '../../../intercom/server/buildStatusService'
-import { IntercomIdentityType } from '../../../intercom/types'
+import { areAllBuildStatusesSuccessful, createBuildStatusesReducer, BUILD_STATUSES_TOPIC } from '../../../intercom/common'
+import { BuildStatuses, BuildStatusesActions } from '../../../intercom/types'
 import { setBuildStatuses, setConnectionStatus } from '../store/intercom/actions'
 import { AppDispatch } from '../store/types'
 
 export const createIntercomClient = async (metaData: MetaData, dispatch: AppDispatch) => {
-  const intercomClient = createBrowserIntercomClient({
-    identityType: IntercomIdentityType.SITE_CLIENT,
+  const intercomClient = createBrowserStoreClient({
     host: metaData.intercom.host,
     port: metaData.intercom.port,
-    enableLogging: metaData.intercom.enableLogging,
-    events: {
-      onStatusChange: newStatus => {
-        dispatch(setConnectionStatus(newStatus))
-      },
-      onMessage: msg => {
-        if (msg.type === IntercomMessageType.BUILD_STATUSES_NOTICE) {
-          dispatch(setBuildStatuses(msg.statuses))
-        }
-        else if (msg.type === IntercomMessageType.BUILD_STATUSES_CHANGE) {
-          if (areAllBuildStatusesSuccessful(msg.statuses)) {
-            intercomClient.disconnect()
-            // eslint-disable-next-line no-restricted-globals
-            location.reload()
-          }
-          else {
-            dispatch(setBuildStatuses(msg.statuses))
-          }
-        }
-      },
-      onReconnect: () => {
-        intercomClient.disconnect()
+    reporter: metaData.intercom.enableLogging ? CONSOLE_LOG_CLIENT_REPORTER : null,
+  })
+
+  intercomClient.on('connection-status-change', newStatus => {
+    dispatch(setConnectionStatus(newStatus))
+  })
+
+  const buildStatusesTopic = intercomClient.topic<BuildStatuses, BuildStatusesActions>(BUILD_STATUSES_TOPIC)
+
+  buildStatusesTopic.on('state-change', createBuildStatusesReducer(), (newBuildStatuses, isGetInitialState) => {
+    // Ensure that we don't do a location.reload() on the initial state get, as this would cause an infinite loop
+    if (isGetInitialState) {
+      dispatch(setBuildStatuses(newBuildStatuses))
+      return
+    }
+
+    if (areAllBuildStatusesSuccessful(newBuildStatuses)) {
+      intercomClient.disconnect().then(() => {
         // eslint-disable-next-line no-restricted-globals
         location.reload()
-        return { proceed: false }
-      },
-    },
+      })
+    }
+    else {
+      dispatch(setBuildStatuses(newBuildStatuses))
+    }
   })
 
   await intercomClient.connect()

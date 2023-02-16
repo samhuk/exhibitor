@@ -16,14 +16,13 @@ import { logIntercomError, logIntercomStep, logIntercomSuccess, logStep, logStep
 import { ExhError } from '../../../common/exhError/types'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { findFreePort } from '../../common/isPortFree'
-import { BuildStatus, BuildStatusReporter, createBuildStatusReporter } from '../../../common/building'
+import { BuildStatusReporter } from '../../../common/building'
 import { ExhEnv, getEnv } from '../../../common/env'
 import { VERBOSE_ENV_VAR_NAME } from '../../../common/config'
-import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom'
-import { createNodeIntercomClient } from '../../../intercom/client/node'
-import { IntercomMessageType } from '../../../intercom/message/types'
-import { IntercomClient } from '../../../intercom/client/types'
-import { IntercomIdentityType } from '../../../intercom/types'
+import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom/common'
+import { createBuiltExhIdentityClient } from '../../../intercom/client'
+import { BuiltExhIdentity } from '../../../intercom/types'
+import { startIntercomServer } from '../../../intercom/server'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
@@ -155,40 +154,18 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     return intercomPort
 
   // -- Start intercom
-  let compLibBuildStatusReporter: BuildStatusReporter
-  let intercomClient: IntercomClient
-
-  const sendBuildStatusUpdateToIntercom = (status: BuildStatus, prevStatus: BuildStatus) => {
-    intercomClient.send({
-      type: IntercomMessageType.BUILD_STATUS_CHANGE,
-      status,
-      prevStatus,
-    })
-  }
-
-  const sendCurrentBuildStatusUpdateToIntercom = () => {
-    intercomClient.send({
-      type: IntercomMessageType.BUILD_STATUS_CHANGE,
-      status: compLibBuildStatusReporter.status,
-      prevStatus: compLibBuildStatusReporter.status,
-    })
-  }
-
-  compLibBuildStatusReporter = createBuildStatusReporter({
-    onChange: sendBuildStatusUpdateToIntercom,
-  })
-
-  intercomClient = createNodeIntercomClient({
+  const intercomNetworkLocation = {
     host: config.site.host,
     port: intercomPort,
-    identityType: IntercomIdentityType.COMP_LIB_WATCH,
-    enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
-    events: {
-      onReconnect: () => {
-        // When we reconnect to Intercom, send our status
-        sendCurrentBuildStatusUpdateToIntercom()
-      },
-    },
+  }
+
+  const intercomServer = startIntercomServer({
+    networkLocation: intercomNetworkLocation,
+    isSiteAlreadyBuilt: true,
+  })
+
+  const compLibWatchIntercomClient = createBuiltExhIdentityClient(BuiltExhIdentity.COMP_LIB, {
+    networkLocation: intercomNetworkLocation,
   })
 
   try {
@@ -198,11 +175,11 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
       reactMajorVersion: checkPackagesResult.reactMajorVersion,
       config,
       onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, {
-        host: intercomClient.host,
-        port: intercomClient.port,
+        host: intercomNetworkLocation.host,
+        port: intercomNetworkLocation.port,
         enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
       }),
-      buildStatusReporter: compLibBuildStatusReporter,
+      buildStatusReporter: compLibWatchIntercomClient.buildStatusReporter,
     })
   }
   catch (e: any) {
@@ -225,12 +202,6 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   // If start server result is not a child process, then it's an error, therefore return.
   if (!(startServerResult instanceof ChildProcess))
     return startServerResult
-
-  // Once the site server process has started, try and connect our intercom client to it.
-  await intercomClient.connect()
-
-  // When we first connect to Intercom, send our status
-  sendCurrentBuildStatusUpdateToIntercom()
 
   return null
 }, { exitWhenReturns: false })

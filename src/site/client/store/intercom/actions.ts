@@ -1,19 +1,19 @@
+import { ConnectionStatus } from 'sock-state/lib/common/connectionStatus'
 import { BuildStatus } from '../../../../common/building'
-import { IntercomConnectionStatus } from '../../../../intercom/client'
-import { BuildStatuses, BuiltIntercomIdentity } from '../../../../intercom/types'
+import { BuildStatuses, BuiltExhIdentity } from '../../../../intercom/types'
 
 export const SET_STATUS = 'intercom/setStatus'
 
 export const SET_BUILD_STATUSES = 'intercom/setBuildStatuses'
 
 export type State = {
-  connectionStatus: IntercomConnectionStatus
-  buildStatuses: { [intercomIdentity in BuiltIntercomIdentity]: BuildStatus }
+  connectionStatus: ConnectionStatus
+  buildStatuses: { [intercomIdentity in BuiltExhIdentity]: BuildStatus }
 }
 
 type SetStatusAction = {
   type: typeof SET_STATUS
-  connectionStatus: IntercomConnectionStatus
+  connectionStatus: ConnectionStatus
 }
 
 type SetBuildStatusAction = {
@@ -23,7 +23,7 @@ type SetBuildStatusAction = {
 
 export type Actions = SetStatusAction | SetBuildStatusAction
 
-export const setConnectionStatus = (connectionStatus: IntercomConnectionStatus): Actions => ({
+export const setConnectionStatus = (connectionStatus: ConnectionStatus): Actions => ({
   type: SET_STATUS,
   connectionStatus,
 })

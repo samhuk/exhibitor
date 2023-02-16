@@ -2,6 +2,8 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import * as fs from 'fs'
 import path from 'path'
+import createNodeStoreClient from 'sock-state/lib/client/node'
+import { CONSOLE_LOG_CLIENT_REPORTER } from 'sock-state'
 
 import { BUILD_OUTPUT_ROOT_DIR, COMP_SITE_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
@@ -12,12 +14,46 @@ import { createExhError } from '../../common/exhError'
 import { ErrorType } from '../../common/errorTypes'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
-import { log, logInfo } from '../../common/logging'
+import { log, logInfo, logStep } from '../../common/logging'
 import { BuildStatus } from '../../common/building'
 import { ExhEnv, getEnv } from '../../common/env'
-import { createBuildStatusService } from '../../intercom/server/buildStatusService'
-import { createInteromServer } from '../../intercom/server'
 import state from '../../common/state'
+import { getIntercomNetworkLocationFromProcessEnvs } from '../../intercom/client'
+import { createBuildStatusesReducer, BUILD_STATUSES_TOPIC } from '../../intercom/common'
+import { createBuildStatusService } from './buildStatusService'
+import { BuildStatuses, BuildStatusesActions } from '../../intercom/types'
+
+const isDev = getEnv() === ExhEnv.DEV
+
+const createIntercomClient = () => {
+  logStep('Creating build status service for Site Server.', true)
+  const buildStatusService = createBuildStatusService({
+    // Well, we are the site server, so if we are running then we must have successfully built!
+    SITE_SERVER: BuildStatus.SUCCESS,
+    // If the server is started by the CLI, then the site client and server is already built
+    SITE_CLIENT: process.env.EXH_CLI === 'true' ? BuildStatus.SUCCESS : BuildStatus.NONE,
+  })
+
+  const networkLocation = getIntercomNetworkLocationFromProcessEnvs(process)
+  const client = createNodeStoreClient({
+    host: networkLocation.host,
+    port: networkLocation.port,
+    reporter: isDev ? CONSOLE_LOG_CLIENT_REPORTER : null,
+  })
+
+  const buildStatusesTopic = client.topic<BuildStatuses, BuildStatusesActions>(BUILD_STATUSES_TOPIC)
+
+  buildStatusesTopic.on('state-change', createBuildStatusesReducer(), buildStatuses => {
+    logInfo(c => `Site Server received build status update: ${c.cyan(JSON.stringify(buildStatuses))}`, true)
+    buildStatusService.updateStatuses(buildStatuses)
+  })
+
+  client.connect()
+
+  return {
+    buildStatusService,
+  }
+}
 
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
@@ -25,15 +61,7 @@ const main = async () => {
 
   await loadConfig()
 
-  const buildStatusService = createBuildStatusService({
-    // These are not yet involved in the live-reload intercom system
-    CLI: BuildStatus.SUCCESS,
-    SITE_SERVER: BuildStatus.SUCCESS,
-    // If the server is started by the CLI, then the client is already built
-    CLIENT_WATCH: process.env.EXH_CLI === 'true' ? BuildStatus.SUCCESS : BuildStatus.NONE,
-  })
-
-  createInteromServer(buildStatusService)
+  const { buildStatusService } = createIntercomClient()
 
   const app = express()
   app.use(cookieParser())
@@ -43,7 +71,7 @@ const main = async () => {
   app
     .use('*', async (req, res, next) => {
       if (!buildStatusService.allSuccessful) {
-        const unsuccessfulBuildStatusesString = buildStatusService.getUnsuccessfulBuilds().map(info => `${info.identityType} (${info.status})`).join(', ')
+        const unsuccessfulBuildStatusesString = buildStatusService.getUnsuccessfulBuilds().map(info => `${info.identity} (${info.status})`).join(', ')
         logInfo(c => `Request ${c.cyan(req.url)} must wait until all builds are successful. Waiting on: ${unsuccessfulBuildStatusesString}`)
         await buildStatusService.waitUntilNextAllSuccessful()
         next()
@@ -123,7 +151,6 @@ const main = async () => {
   const port = process.env.EXH_SITE_SERVER_PORT != null
     ? parseInt(process.env.EXH_SITE_SERVER_PORT)
     : 4001
-  const isDev = getEnv() === ExhEnv.DEV
 
   const server = app.listen(port, host, () => {
     const url = `http://${host}:${port}`

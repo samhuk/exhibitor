@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "../../../tsconfig.json",
+  "include": [
+    "./server.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "../../../build/intercom-server"
+  }
+}

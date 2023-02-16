@@ -1,14 +1,14 @@
 import React from 'react'
+import { ConnectionStatus } from 'sock-state/lib/common/connectionStatus'
 import { useAppSelector } from '../../store'
 import { BuildStatus } from '../../../../common/building'
 import { ExhEnv } from '../../../../common/env'
-import { IntercomConnectionStatus } from '../../../../intercom/client'
 
 const BuildStatusIcon = (props: {
-  connectionStatus: IntercomConnectionStatus
+  connectionStatus: ConnectionStatus
   status: BuildStatus
 }) => (
-  props.connectionStatus !== IntercomConnectionStatus.CONNECTED
+  props.connectionStatus !== ConnectionStatus.CONNECTED
     ? <i className="fas fa-question" />
     : props.status === BuildStatus.SUCCESS
       ? <i className="fas fa-check" />
@@ -26,13 +26,21 @@ export const render = () => {
     <div className="build-statuses">
       <div className="status">
         <span className="name">CL</span>
-        <BuildStatusIcon connectionStatus={connectionStatus} status={buildStatuses.COMP_LIB_WATCH} />
+        <BuildStatusIcon connectionStatus={connectionStatus} status={buildStatuses.COMP_LIB} />
       </div>
       {isDev
         ? (
           <div className="status">
             <span className="name">SC</span>
-            <BuildStatusIcon connectionStatus={connectionStatus} status={buildStatuses.CLIENT_WATCH} />
+            <BuildStatusIcon connectionStatus={connectionStatus} status={buildStatuses.SITE_CLIENT} />
+          </div>
+        )
+        : null}
+      {isDev
+        ? (
+          <div className="status">
+            <span className="name">SS</span>
+            <BuildStatusIcon connectionStatus={connectionStatus} status={buildStatuses.SITE_SERVER} />
           </div>
         )
         : null}
