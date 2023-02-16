@@ -21,17 +21,17 @@
   "dependencies": {
     "chokidar": "^3.5.3",
     "chokidar-debounced": "^1.0.4",
-    "commander": "^9.4.1",
+    "commander": "^10.0.0",
     "cors": "^2.8.5",
     "esbuild": "^0.16.12",
     "express": "^4.18.2",
-    "deepmerge": "^4.2.2",
-    "esbuild-sass-plugin": "^2.4.4",
+    "deepmerge": "^4.3.0",
+    "esbuild-sass-plugin": "^2.5.0",
     "globsie": "^0.0.12",
     "colors": "1.4.0",
     "clone-deep": "^4.0.1",
     "ts-node": "^10.9.1",
-    "axe-core": "^4.6.2",
+    "axe-core": "^4.6.3",
     "playwright-html-data-reporter": "^0.0.3"
   },
   "keywords": [
