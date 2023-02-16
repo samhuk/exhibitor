@@ -13,10 +13,5 @@
     "port": 4001,
     "title": "Test Component Library"
   },
-  "verbose": false,
-  "testers":[
-    {
-      "type": "playwright"
-    }
-  ]
+  "verbose": false
 }
