@@ -124,10 +124,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   state.verbose = earlyVerbose
 
   // Get config for command
-  if (state.verbose)
-    logStepHeader('Determining supplied configuration.')
-  else
-    logStep('Determining supplied configuration.')
+  logStepHeader('Determining supplied configuration.', true)
   const getConfigResult = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
   if (isExhError(getConfigResult))
     return getConfigResult
