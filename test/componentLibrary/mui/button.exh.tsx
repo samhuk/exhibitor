@@ -7,6 +7,9 @@ exhibit((props: Parameters<typeof Button>[0]) => <Button {...props}>{props.child
   .options({
     group: 'MUI',
   })
+  .events({
+    onClick: true,
+  })
   .defaults({
     variant: 'contained',
     children: 'Hello World!!!!!!',

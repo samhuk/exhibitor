@@ -18,8 +18,8 @@ const startRebuildWatch = (
     // Rebuild client
     buildResult.buildResult.rebuild()
       .then(_result => {
-        options.buildStatusReporter.update(BuildStatus.SUCCESS)
         logSuccess(`(${Date.now() - startTime} ms) Done.${!options.verbose ? ' Watching for changes...' : ''}`)
+        options.buildStatusReporter.update(BuildStatus.SUCCESS)
         // If verbose, print build info on every rebuild
         if (options.verbose) {
           printBuildResult(_result, startTime)

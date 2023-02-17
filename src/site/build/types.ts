@@ -27,6 +27,7 @@ export type WatchServerOptions = BuildServerOptions & {
   serverHost: string
   serverPort: number
   watchedDirPatterns: string[]
+  buildStatusReporter: BuildStatusReporter
 }
 
 export type BuildOutput = {

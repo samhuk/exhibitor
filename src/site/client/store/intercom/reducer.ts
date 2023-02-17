@@ -1,6 +1,6 @@
+import { ConnectionStatus } from 'sock-state/lib/common/connectionStatus'
 import { BuildStatus } from '../../../../common/building'
-import { IntercomConnectionStatus } from '../../../../intercom/client'
-import { IntercomIdentityType } from '../../../../intercom/types'
+import { BuiltExhIdentity } from '../../../../intercom/types'
 import {
   SET_STATUS,
   Actions,
@@ -9,12 +9,11 @@ import {
 } from './actions'
 
 const initialState: State = {
-  connectionStatus: IntercomConnectionStatus.NOT_CONNECTED,
+  connectionStatus: ConnectionStatus.DISCONNECTED,
   buildStatuses: {
-    [IntercomIdentityType.SITE_SERVER]: BuildStatus.NONE,
-    [IntercomIdentityType.COMP_LIB_WATCH]: BuildStatus.NONE,
-    [IntercomIdentityType.CLIENT_WATCH]: BuildStatus.NONE,
-    [IntercomIdentityType.CLI]: BuildStatus.NONE,
+    [BuiltExhIdentity.SITE_SERVER]: BuildStatus.NONE,
+    [BuiltExhIdentity.SITE_CLIENT]: BuildStatus.NONE,
+    [BuiltExhIdentity.COMP_LIB]: BuildStatus.NONE,
   },
 }
 

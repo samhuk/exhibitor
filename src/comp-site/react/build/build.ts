@@ -1,4 +1,4 @@
-import { build as esbuildBuild, Plugin } from 'esbuild'
+import { build as esbuildBuild, BuildFailure, formatMessages, Plugin } from 'esbuild'
 import * as fs from 'fs'
 import path from 'path'
 import sassPlugin from 'esbuild-sass-plugin'
@@ -79,20 +79,23 @@ const createBuilder = (options: BuildOptions) => {
     sourcemap: isDev,
     metafile: true,
     incremental: true,
-  }).then(result => {
-    // Copy over additional files to build output dir
-    fs.copyFileSync(paths.indexHtmlPath, paths.indexHtmlOutPath)
-
-    if (!isDev)
-      gzipLargeFiles(COMP_SITE_OUTDIR)
-
-    return {
-      buildResult: result,
-      additionalOutputs: [
-        { path: paths.indexHtmlOutPath, sizeBytes: Buffer.from(fs.readFileSync(paths.indexHtmlPath, { encoding: 'utf8' })).length },
-      ],
-    }
+    // Silent mode still shows build errors, but just less verbose.
+    logLevel: isDev ? undefined : 'silent',
   })
+    .then(result => {
+      // Copy over additional files to build output dir
+      fs.copyFileSync(paths.indexHtmlPath, paths.indexHtmlOutPath)
+
+      if (!isDev)
+        gzipLargeFiles(COMP_SITE_OUTDIR)
+
+      return {
+        buildResult: result,
+        additionalOutputs: [
+          { path: paths.indexHtmlOutPath, sizeBytes: Buffer.from(fs.readFileSync(paths.indexHtmlPath, { encoding: 'utf8' })).length },
+        ],
+      }
+    })
 }
 
 export const build = (options: BuildOptions) => _build('Component Site for React', options.config.verbose, createBuilder(options))

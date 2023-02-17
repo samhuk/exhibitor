@@ -6,11 +6,11 @@ import { NPM_PACKAGE_CAPITALIZED_NAME, NPM_PACKAGE_NAME } from '../../../common/
 import { SITE_SERVER_OUTFILE } from '../../../common/paths'
 import { Config } from '../../../common/config/types'
 import { ExhEnv, getEnv } from '../../../common/env'
-import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom'
 import { ExhString } from '../../../common/exhString/types'
 import { ExhError } from '../../../common/exhError/types'
 import { logStep } from '../../../common/logging'
 import { createExhError } from '../../../common/exhError'
+import { INTERCOM_PORT_ENV_VAR_NAME } from '../../../intercom/common'
 
 const exhEnv = getEnv()
 
@@ -50,7 +50,7 @@ export const startServer = async (options: {
     : path.join(`./node_modules/${NPM_PACKAGE_NAME}`, './lib/site/server/index.js').replace(/\\/g, '/')
 
   if (!fs.existsSync(serverJsPath))
-    return createStartServerError(c => `Could not find the ${NPM_PACKAGE_NAME} server javascript to execute at ${c.cyan(serverJsPath)}`)
+    return createStartServerError(c => `Could not find the ${NPM_PACKAGE_NAME} Site Server javascript to execute at ${c.cyan(serverJsPath)}`)
 
   // Build up the env for the Exhibitor Site server process
   const env: NodeJS.ProcessEnv = {

@@ -1,7 +1,15 @@
 import { BuildStatus } from '../../common/building'
-import { BuildStatuses, BuildStatusService, BuiltIntercomIdentity } from '../types'
+import { areAllBuildStatusesSuccessful } from '../../intercom/common'
+import { BuildStatuses, BuiltExhIdentity } from '../../intercom/types'
 
-export const areAllBuildStatusesSuccessful = (statuses: BuildStatuses) => !Object.values(statuses).some(s => s !== BuildStatus.SUCCESS)
+export type BuildStatusService = {
+  statuses: BuildStatuses
+  allSuccessful: boolean
+  updateStatus: (identity: BuiltExhIdentity, newStatus: BuildStatus) => void
+  updateStatuses: (newStatuses: BuildStatuses) => void
+  getUnsuccessfulBuilds: () => { identity: BuiltExhIdentity, status: Exclude<BuildStatus, BuildStatus.SUCCESS> }[]
+  waitUntilNextAllSuccessful: () => Promise<void>
+}
 
 export const createBuildStatusService = (initialStatuses?: Partial<BuildStatuses>): BuildStatusService => {
   let instance: BuildStatusService
@@ -10,20 +18,28 @@ export const createBuildStatusService = (initialStatuses?: Partial<BuildStatuses
 
   return instance = {
     statuses: {
-      CLI: initialStatuses.CLI ?? BuildStatus.NONE,
-      CLIENT_WATCH: initialStatuses.CLIENT_WATCH ?? BuildStatus.NONE,
-      COMP_LIB_WATCH: initialStatuses.COMP_LIB_WATCH ?? BuildStatus.NONE,
+      COMP_LIB: initialStatuses.COMP_LIB ?? BuildStatus.NONE,
       SITE_SERVER: initialStatuses.SITE_SERVER ?? BuildStatus.NONE,
+      SITE_CLIENT: initialStatuses.SITE_CLIENT ?? BuildStatus.NONE,
     },
     allSuccessful: false,
     getUnsuccessfulBuilds: () => Object.entries(instance.statuses)
       .filter(([identityType, status]) => status !== BuildStatus.SUCCESS)
       .map(([identityType, status]) => ({
-        identityType: identityType as BuiltIntercomIdentity,
+        identity: identityType as BuiltExhIdentity,
         status: status as Exclude<BuildStatus, BuildStatus.SUCCESS>,
       })),
-    update: (identityType, newStatus) => {
+    updateStatus: (identityType, newStatus) => {
       instance.statuses[identityType] = newStatus
+
+      instance.allSuccessful = areAllBuildStatusesSuccessful(instance.statuses)
+
+      if (instance.allSuccessful)
+        allSuccessfulListenerFns.forEach(fn => fn())
+      allSuccessfulListenerFns = []
+    },
+    updateStatuses: newStatuses => {
+      instance.statuses = newStatuses
 
       instance.allSuccessful = areAllBuildStatusesSuccessful(instance.statuses)
 
