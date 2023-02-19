@@ -1,6 +1,7 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../../store'
-import { applyWorkingViewportSize, updateWorkingViewportSize } from '../../../store/componentExhibits/actions'
+import { useAppDispatch, useAppSelector } from '../../../../store'
+import { applyWorkingViewportSize, updateWorkingViewportSize } from '../../../../store/componentExhibits/actions'
+import SwapButton from './swapButton'
 
 const determineSizeRestrictions = (
   el: Element,
@@ -101,6 +102,7 @@ export const render = () => {
         onKeyDown={onKeyDown}
         value={workingSize.height}
       />
+      <SwapButton />
     </div>
   )
 }

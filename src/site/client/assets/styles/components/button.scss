@@ -1,12 +1,19 @@
 button {
   padding: 5px;
-  cursor: pointer;
   background-color: $bg-color;
   color: $text-color;
   border: none;
   border-radius: 5px;
 
-  &:hover {
-    background-color: $bg-color-m7;
+  &:not([disabled]) {
+    cursor: pointer;
+
+    &:hover {
+      background-color: $bg-color-m7;
+    }
+  }
+
+  &[disabled] {
+    color: $text-color-m30;
   }
 }

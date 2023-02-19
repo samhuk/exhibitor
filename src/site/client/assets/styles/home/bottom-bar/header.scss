@@ -1,3 +1,12 @@
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(180deg);
+  }
+}
+
 @mixin header {
   >.header {
     padding: 5px;
@@ -56,6 +65,16 @@
 
           &.invalid {
             border-color: $red-color;
+          }
+        }
+
+        .swap-button {
+          margin-left: 5px;
+
+          &.clicked {
+            i {
+              animation: spin 0.2s ease-in-out 1;
+            }
           }
         }
       }
