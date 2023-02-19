@@ -6,7 +6,10 @@ import SwapButton from './swapButton'
 const determineSizeRestrictions = (
   el: Element,
   desiredSize: { width: number, height: number },
-): { width: boolean, height: boolean } => {
+): { width: boolean, height: boolean } | null => {
+  if (el == null)
+    return null
+
   const actualSize = el.getBoundingClientRect()
   const isWidthUnder = actualSize.width < desiredSize.width
   const isHeightUnder = actualSize.height < desiredSize.height
@@ -19,10 +22,13 @@ const determineSizeRestrictions = (
 
 const updateSizeRestrictions = (
   currentSizeRestrictions: { width: boolean, height: boolean },
-  newSizeRestrictions: { width: boolean, height: boolean },
+  newSizeRestrictions: { width: boolean, height: boolean } | null,
   setIsWidthRestricted: (newValue: boolean) => any,
   setIsHeightRestricted: (newValue: boolean) => any,
 ) => {
+  if (newSizeRestrictions == null)
+    return
+
   if (newSizeRestrictions.width !== currentSizeRestrictions.width)
     setIsWidthRestricted(newSizeRestrictions.width)
   if (newSizeRestrictions.height !== currentSizeRestrictions.height)
@@ -35,14 +41,19 @@ export const render = () => {
   const [isHeightRestricted, setIsHeightRestricted] = useState(false)
   const size = useAppSelector(s => s.componentExhibits.viewportRectSizePx)
   const workingSize = useAppSelector(s => s.componentExhibits.workingViewportRectSizePx)
-  const el = useRef(document.getElementsByClassName('iframe-container')[0])
+  const iframeContainerElRef = useRef<Element>()
 
-  updateSizeRestrictions(
-    { width: isWidthRestricted, height: isHeightRestricted },
-    determineSizeRestrictions(el.current, size),
-    setIsWidthRestricted,
-    setIsHeightRestricted,
-  )
+  setTimeout(() => {
+    if (iframeContainerElRef == null)
+      iframeContainerElRef.current = document.getElementsByClassName('iframe-container')[0]
+
+    updateSizeRestrictions(
+      { width: isWidthRestricted, height: isHeightRestricted },
+      determineSizeRestrictions(iframeContainerElRef.current, size),
+      setIsWidthRestricted,
+      setIsHeightRestricted,
+    )
+  }, 500)
 
   const _applyWorkingViewportSize = () => {
     dispatch(applyWorkingViewportSize())
@@ -75,13 +86,13 @@ export const render = () => {
     const timeoutId = setInterval(() => {
       updateSizeRestrictions(
         { width: isWidthRestricted, height: isHeightRestricted },
-        determineSizeRestrictions(el.current, size),
+        determineSizeRestrictions(iframeContainerElRef.current, size),
         setIsWidthRestricted,
         setIsHeightRestricted,
       )
     }, 1000)
     return () => clearTimeout(timeoutId)
-  }, [el, size, isWidthRestricted, isHeightRestricted])
+  }, [size, isWidthRestricted, isHeightRestricted])
 
   return (
     <div className="viewport-info-bar">
