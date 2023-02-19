@@ -53,6 +53,10 @@
             -webkit-appearance: none;
             margin: 0;
           }
+
+          &.invalid {
+            border-color: $red-color;
+          }
         }
       }
     }
