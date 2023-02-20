@@ -11,6 +11,7 @@ import { metaDataReducer } from './metadata/reducer'
 import { themeReducer } from './theme/reducer'
 import { AppDispatch, RootState } from './types'
 import { intercomReducer } from './intercom/reducer'
+import { bottomBarReducer } from './componentExhibits/bottomBar/reducer'
 
 // Set the root reducer. This defines the root state (see ./types.ts).
 export const rootReducer = combineReducers({
@@ -21,6 +22,7 @@ export const rootReducer = combineReducers({
   exhibitCode: exhibitCodeReducer,
   testing: testingReducer,
   intercom: intercomReducer,
+  bottomBar: bottomBarReducer,
 })
 
 export const store = configureStore({

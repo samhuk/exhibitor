@@ -1,3 +1,4 @@
+import { Size } from '../../../../common/geometry'
 import { eventLogService } from '../../services/eventLogService'
 import { LoadingState } from '../types'
 import {
@@ -13,7 +14,12 @@ import {
   SELECT_VARIANT,
   APPLY_WORKING_VIEWPORT_SIZE,
   UPDATE_WORKING_VIEWPORT_SIZE,
+  SWAP_VIEWPORT_DIMENSIONS,
 } from './actions'
+import {
+  Actions as BottomBarActions,
+  UPDATE_SELECTED_VIEWPORT_DIMENSION_PRESET_OPTION,
+} from './bottomBar/actions'
 
 const initialState: ComponentExhibitsState = {
   error: null,
@@ -32,7 +38,7 @@ const initialState: ComponentExhibitsState = {
 export const componentExhibitsReducer = (
   // eslint-disable-next-line default-param-last
   state = initialState,
-  action: ComponentExhibitsActions,
+  action: ComponentExhibitsActions | BottomBarActions,
 ): ComponentExhibitsState => {
   switch (action.type) {
     case READY:
@@ -90,6 +96,28 @@ export const componentExhibitsReducer = (
         ...state,
         viewportRectSizePx: state.workingViewportRectSizePx,
       }
+    case SWAP_VIEWPORT_DIMENSIONS: {
+      const newViewportRectSizePx: Size = {
+        height: state.viewportRectSizePx.width,
+        width: state.viewportRectSizePx.height,
+      }
+      return {
+        ...state,
+        viewportRectSizePx: newViewportRectSizePx,
+        workingViewportRectSizePx: newViewportRectSizePx,
+      }
+    }
+    case UPDATE_SELECTED_VIEWPORT_DIMENSION_PRESET_OPTION: {
+      const newViewportRectSizePx: Size = {
+        width: action.option.value[0],
+        height: action.option.value[1],
+      }
+      return {
+        ...state,
+        viewportRectSizePx: newViewportRectSizePx,
+        workingViewportRectSizePx: newViewportRectSizePx,
+      }
+    }
     default:
       return state
   }

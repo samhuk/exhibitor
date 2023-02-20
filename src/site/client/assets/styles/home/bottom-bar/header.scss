@@ -52,7 +52,7 @@
           background-color: $bg-color;
           border: $border;
           border-radius: 0px;
-          width: 50px;
+          width: 62px;
           color: $text-color;
           padding: 2px 5px;
 
@@ -70,6 +70,7 @@
 
         .swap-button {
           margin-left: 5px;
+          margin-right: 5px;
 
           &.clicked {
             i {

@@ -1,7 +1,8 @@
-import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { waitForElement } from '../../../../common/util/element'
+import React, { KeyboardEvent, useEffect, useState } from 'react'
+import { waitForNotNullish } from '../../../../../../common/function'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { applyWorkingViewportSize, updateWorkingViewportSize } from '../../../../store/componentExhibits/actions'
+import PresetDimensions from './presetDimensions'
 import SwapButton from './swapButton'
 
 const determineSizeRestrictions = (
@@ -56,7 +57,7 @@ export const render = () => {
   _updateSizeRestrictions()
 
   if (iframeContainerElRef == null) {
-    waitForElement(() => document.getElementsByClassName('iframe-container')[0], { timeoutS: 2 }).then(el => {
+    waitForNotNullish(() => document.getElementsByClassName('iframe-container')[0], { timeoutS: 2 }).then(el => {
       if (el !== iframeContainerElRef) {
         _updateSizeRestrictions()
         setIframeContainerElRef(el)
@@ -116,6 +117,7 @@ export const render = () => {
         value={workingSize.height}
       />
       <SwapButton />
+      <PresetDimensions />
     </div>
   )
 }

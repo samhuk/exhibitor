@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../../store'
-import { updateViewportSize } from '../../../../store/componentExhibits/actions'
+import { swapViewportDimensions } from '../../../../store/componentExhibits/actions'
 
 export const render = (props: {
   onClick?: () => void
@@ -13,10 +13,7 @@ export const render = (props: {
     elRef.current.classList.remove('clicked')
     elRef.current.classList.add('clicked')
     setTimeout(() => elRef.current.classList.remove('clicked'), 500)
-    dispatch(updateViewportSize({
-      width: size.height,
-      height: size.width,
-    }))
+    dispatch(swapViewportDimensions())
     props.onClick?.()
   }
 
