@@ -56,7 +56,7 @@ export const render = () => {
   _updateSizeRestrictions()
 
   if (iframeContainerElRef == null) {
-    waitForElement(() => document.getElementsByClassName('iframe-container')[0]).then(el => {
+    waitForElement(() => document.getElementsByClassName('iframe-container')[0], { timeoutS: 2 }).then(el => {
       if (el !== iframeContainerElRef) {
         _updateSizeRestrictions()
         setIframeContainerElRef(el)
@@ -115,6 +115,7 @@ export const render = () => {
         onKeyDown={onKeyDown}
         value={workingSize.height}
       />
+      <SwapButton />
     </div>
   )
 }
