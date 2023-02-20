@@ -2,7 +2,9 @@ import React, { useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { updateViewportSize } from '../../../../store/componentExhibits/actions'
 
-export const render = () => {
+export const render = (props: {
+  onClick?: () => void
+}) => {
   const size = useAppSelector(s => s.componentExhibits.viewportRectSizePx)
   const dispatch = useAppDispatch()
   const elRef = useRef<HTMLButtonElement>()
@@ -15,6 +17,7 @@ export const render = () => {
       width: size.height,
       height: size.width,
     }))
+    props.onClick?.()
   }
 
   return (

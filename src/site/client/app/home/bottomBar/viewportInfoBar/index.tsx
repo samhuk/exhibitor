@@ -1,4 +1,5 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
+import { waitForElement } from '../../../../common/util/element'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { applyWorkingViewportSize, updateWorkingViewportSize } from '../../../../store/componentExhibits/actions'
 import SwapButton from './swapButton'
@@ -41,19 +42,27 @@ export const render = () => {
   const [isHeightRestricted, setIsHeightRestricted] = useState(false)
   const size = useAppSelector(s => s.componentExhibits.viewportRectSizePx)
   const workingSize = useAppSelector(s => s.componentExhibits.workingViewportRectSizePx)
-  const iframeContainerElRef = useRef<Element>()
+  const [iframeContainerElRef, setIframeContainerElRef] = useState<Element>()
 
-  setTimeout(() => {
-    if (iframeContainerElRef == null)
-      iframeContainerElRef.current = document.getElementsByClassName('iframe-container')[0]
-
+  const _updateSizeRestrictions = () => {
     updateSizeRestrictions(
       { width: isWidthRestricted, height: isHeightRestricted },
-      determineSizeRestrictions(iframeContainerElRef.current, size),
+      determineSizeRestrictions(iframeContainerElRef, size),
       setIsWidthRestricted,
       setIsHeightRestricted,
     )
-  }, 500)
+  }
+
+  _updateSizeRestrictions()
+
+  if (iframeContainerElRef == null) {
+    waitForElement(() => document.getElementsByClassName('iframe-container')[0]).then(el => {
+      if (el !== iframeContainerElRef) {
+        _updateSizeRestrictions()
+        setIframeContainerElRef(el)
+      }
+    })
+  }
 
   const _applyWorkingViewportSize = () => {
     dispatch(applyWorkingViewportSize())
@@ -83,16 +92,9 @@ export const render = () => {
   }
 
   useEffect(() => {
-    const timeoutId = setInterval(() => {
-      updateSizeRestrictions(
-        { width: isWidthRestricted, height: isHeightRestricted },
-        determineSizeRestrictions(iframeContainerElRef.current, size),
-        setIsWidthRestricted,
-        setIsHeightRestricted,
-      )
-    }, 1000)
+    const timeoutId = setInterval(() => _updateSizeRestrictions(), 1000)
     return () => clearTimeout(timeoutId)
-  }, [size, isWidthRestricted, isHeightRestricted])
+  }, [iframeContainerElRef, size, isWidthRestricted, isHeightRestricted])
 
   return (
     <div className="viewport-info-bar">
@@ -113,7 +115,6 @@ export const render = () => {
         onKeyDown={onKeyDown}
         value={workingSize.height}
       />
-      <SwapButton />
     </div>
   )
 }
