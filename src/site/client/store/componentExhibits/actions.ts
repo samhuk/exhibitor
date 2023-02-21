@@ -1,3 +1,4 @@
+import { Size } from '../../../../common/geometry'
 import { LoadingState } from '../types'
 
 export enum BottomBarType {
@@ -26,6 +27,8 @@ export const APPLY_WORKING_VIEWPORT_SIZE = 'componentExhibits/applyWorkingViewpo
 
 export const UPDATE_WORKING_VIEWPORT_SIZE = 'componentExhibits/updateWorkingViewportSize'
 
+export const SWAP_VIEWPORT_DIMENSIONS = 'componentExhibits/swapViewportDimensions'
+
 export type ComponentExhibitsState = {
   ready: boolean
   selectedVariantPath: string
@@ -35,8 +38,8 @@ export type ComponentExhibitsState = {
   events: number[]
   hasUnseenEvents: boolean
   viewportSizeChangeEnabled: boolean
-  viewportRectSizePx: { width: number, height: number }
-  workingViewportRectSizePx: { width: number, height: number }
+  viewportRectSizePx: Size
+  workingViewportRectSizePx: Size
   exhibitCode: string
 }
 
@@ -84,6 +87,10 @@ type ApplyWorkingViewportSize = {
   type: typeof APPLY_WORKING_VIEWPORT_SIZE
 }
 
+type SwapViewportDimensions = {
+  type: typeof SWAP_VIEWPORT_DIMENSIONS
+}
+
 export type ComponentExhibitsActions = ReadyAction
   | SelectVariantAction
   | SelectBottomBarAction
@@ -93,6 +100,7 @@ export type ComponentExhibitsActions = ReadyAction
   | ToggleViewportSizeChangeEnabledAction
   | UpdateWorkingViewportSize
   | ApplyWorkingViewportSize
+  | SwapViewportDimensions
 
 export const componentExhibitsReady = (error: any): ComponentExhibitsActions => ({
   type: READY,
@@ -135,4 +143,8 @@ export const updateWorkingViewportSize = (viewportRectSizePx: { width: number, h
 
 export const applyWorkingViewportSize = (): ComponentExhibitsActions => ({
   type: APPLY_WORKING_VIEWPORT_SIZE,
+})
+
+export const swapViewportDimensions = (): ComponentExhibitsActions => ({
+  type: SWAP_VIEWPORT_DIMENSIONS,
 })

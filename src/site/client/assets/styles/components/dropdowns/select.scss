@@ -1,0 +1,34 @@
+.cl-select {
+  width: 200px;
+  display: flex;
+  border: $border;
+  
+  input {
+    flex-grow: 1;
+    border: none !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  button {
+    padding: 5px 10px;
+    border-radius: 0;
+  }
+
+  .options {
+    position: absolute;
+    border: $border;
+    background-color: $bg-color;
+    visibility: hidden;
+    z-index: 1;
+
+    .option {
+      cursor: pointer;
+      padding: 4px;
+
+      &:hover {
+        background-color: $bg-color-m7;
+      }
+    }
+  }
+}
