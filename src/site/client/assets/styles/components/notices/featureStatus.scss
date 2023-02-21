@@ -19,7 +19,7 @@
     border-top-right-radius: 0;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    background-color: #d14d00;
+    background-color: #d14d00 !important;
     color: white;
     font-size: 12px;
     padding: 2px 5px;
@@ -28,9 +28,14 @@
     box-shadow: 0px 0px 5px 2px $bg-color-m10;
     display: flex;
     align-items: center;
+    transition: box-shadow ease-out 0.2s;
 
     i {
       margin-left: 5px;
+    }
+
+    &:hover {
+      box-shadow: 0px 0px 10px 4px $bg-color-m10;
     }
   }
 

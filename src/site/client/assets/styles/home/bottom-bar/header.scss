@@ -15,7 +15,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
-    min-height: 39px; // Empirically measured when nav is present
+    min-height: 43px; // Empirically measured when nav is present
     flex-shrink: 0;
 
     .left {
