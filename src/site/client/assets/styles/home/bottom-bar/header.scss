@@ -40,6 +40,7 @@
       .viewport-info-bar {
         align-self: center;
         display: flex;
+        flex-wrap: wrap;
 
         .dimensions-seperator {
           margin-left: 5px;
@@ -84,6 +85,7 @@
     .right {
       display: flex;
       align-items: center;
+      flex-shrink: 0;
 
       input {
         cursor: pointer;
