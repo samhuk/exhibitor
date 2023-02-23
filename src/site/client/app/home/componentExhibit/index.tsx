@@ -1,32 +1,13 @@
 import { BoolDependant, TypeDependantBaseIntersection } from '@samhuk/type-helpers/dist/type-helpers/types'
-import cloneDeep from 'clone-deep'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
 import { ComponentExhibit, ExhibitNodeType, Variant } from '../../../../../api/exhibit/types'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
-import { eventLogService } from '../../../services/eventLogService'
 import { useAppSelector } from '../../../store'
-import { addEvent, updateViewportSize, selectVariant } from '../../../store/componentExhibits/actions'
-import { deepSetAllPropsOnMatch } from '../bottomBar/eventLog'
+import { updateViewportSize, selectVariant } from '../../../store/componentExhibits/actions'
 import Iframe from './iframe2'
-
-const VariantEl = (props: { exhibit: ComponentExhibit, variant: Variant }) => {
-  const dispatch = useDispatch()
-  const variantProps = props.exhibit.hasProps && props.exhibit.eventProps != null
-    ? deepSetAllPropsOnMatch(props.exhibit.eventProps, cloneDeep(props.variant.props), (args, path) => {
-      const item = eventLogService.add({ args, path })
-      dispatch(addEvent(item.id))
-    })
-    : props.variant.props
-
-  return (
-    <div className="variant">
-      <div>{props.exhibit.renderFn(variantProps)}</div>
-    </div>
-  )
-}
 
 enum GetSelectedVariantFailReason {
   EXHIBIT_NOT_FOUND,

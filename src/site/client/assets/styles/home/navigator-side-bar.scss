@@ -47,10 +47,11 @@
         }
   
         i {
-          width: 15px;
+          width: 17px;
           flex-shrink: 0;
+          margin-top: 3px;
         }
-  
+
         &.variant-group, &.exhibit-group {
           width: 100%;
           text-align: left;

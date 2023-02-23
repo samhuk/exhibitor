@@ -1,7 +1,7 @@
 const port = 4002
 
 module.exports = {
-  rootStyle: './styles.scss',
+  rootStyle: './styles/index-dark.scss',
   site: {
     port,
     title: 'Test Component Library',

@@ -1,5 +1,4 @@
-import React, { forwardRef, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import React, { forwardRef, useRef } from 'react'
 
 type BaseProps = React.DetailedHTMLProps<React.IframeHTMLAttributes<HTMLIFrameElement>, HTMLIFrameElement>
 
