@@ -1,198 +1,106 @@
 import * as fs from 'fs'
 import path from 'path'
 import { exhibit, resolve } from '.'
-import Toast, { ToastType } from '../../../test/componentLibrary/toast/toast'
-import Button from '../../../test/componentLibrary/button/button'
-import { buttonExhibit } from '../../../test/componentLibrary/button/button.exh'
-import ButtonWithGeneric from '../../../test/componentLibrary/buttonWithGeneric/buttonWithGeneric'
-import { buttonWithGenericExhibit } from '../../../test/componentLibrary/buttonWithGeneric/buttonWithGeneric.exh'
-import IconButton from '../../../test/componentLibrary/buttonWithGeneric/iconButton/iconButton'
-import { iconButtonExhibit } from '../../../test/componentLibrary/buttonWithGeneric/iconButton/iconButton.exh'
-import TypedIcon from '../../../test/componentLibrary/icons/typedIcon'
-import { typedIconExhibit } from '../../../test/componentLibrary/icons/typedIcon.exh'
-import LoadingSpinner from '../../../test/componentLibrary/loadingSpinner/loadingSpinner'
-import { loadingSpinnerExhibit } from '../../../test/componentLibrary/loadingSpinner/loadingSpinner.exh'
-import { toastExhibit } from '../../../test/componentLibrary/toast/toast.exh'
+
+import Button from '../../../test/componentLibrary/exhibitor/button'
+import { buttonExhibit } from '../../../test/componentLibrary/exhibitor/button/index.exh'
+
+import Counter from '../../../test/componentLibrary/exhibitor/counter'
+import { counterExhibit } from '../../../test/componentLibrary/exhibitor/counter/index.exh'
+
 import { ExhibitNodes, PathTree } from './types'
 
-const expectedPathTree: PathTree = {
-  GA: {
-    'GA/IconButton': {
-      'GA/IconButton/Default': true,
-      'GA/IconButton/paper-plane': true,
-    },
-    'GA/TypedIcon': {
-      'GA/TypedIcon/Success': true,
-      'GA/TypedIcon/Warn': true,
-      'GA/TypedIcon/Error': true,
-      'GA/TypedIcon/Info': true,
-    },
-  },
-  'Design%20Phase': {
-    'Design%20Phase/LoadingSpinner': true,
-    'Design%20Phase/Toast': {
-      'Design%20Phase/Toast/Default': true,
-      'Design%20Phase/Toast/W%2F%20close%20button': true,
-      'Design%20Phase/Toast/W%2Fo%20close%20button': {
-        'Design%20Phase/Toast/W%2Fo%20close%20button/Success': true,
-        'Design%20Phase/Toast/W%2Fo%20close%20button/Warn': true,
-        'Design%20Phase/Toast/W%2Fo%20close%20button/Error': true,
-        'Design%20Phase/Toast/W%2Fo%20close%20button/Info': true,
-      },
-      'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss': {
-        'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Long%20text': true,
-        'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Short%20text': true,
-      },
-    },
-  },
-  Button: {
-    'Button/Default': true,
-    'Button/green': true,
-    'Button/yellow': true,
-    'Button/red': true,
-    'Button/blue': true,
-    'Button/large': true,
-    'Button/with%20icon': true,
-  },
-  ButtonWithGeneric: {
-    'ButtonWithGeneric/Default': true,
-    'ButtonWithGeneric/yellow': true,
-    'ButtonWithGeneric/red': true,
-    'ButtonWithGeneric/blue': true,
-    'ButtonWithGeneric/green': true,
-    'ButtonWithGeneric/large': true,
-    'ButtonWithGeneric/with%20icon': true,
-  },
-}
+const expectedPathTree: PathTree = null
 
 describe('exhibit', () => {
   describe('exhibit', () => {
     const fn = exhibit
 
     test('basic test', () => {
-      const onCloseButtonClick = (): any => undefined
-      const result = fn(Toast, 'Toast')
+      const onClickFn = (e: any) => console.log(e)
+
+      const result = fn(Button, 'button')
         .tests('./test.spec.ts')
         .options({
           group: 'Design Phase',
         })
         .defaults({
-          text: '',
-          type: ToastType.INFO,
+          children: '[button text]',
         })
-        .group('W/o close button', ex => ex
-          .variant('Success', {
-            text: 'That completed successfully!',
-            type: ToastType.SUCCESS,
+        .group('Primary', ex => ex
+          .variant('W/ onclick', {
+            children: '[button text]',
+            onClick: onClickFn,
           })
-          .variant('Warn', {
-            text: 'That completed but something bad occured!',
-            type: ToastType.WARN,
-          })
-          .variant('Error', {
-            text: 'That didn\'t complete successfully.',
-            type: ToastType.ERROR,
-          })
-          .variant('Info', {
-            text: 'You can do this a better way.',
-            type: ToastType.INFO,
+          .variant('W/o onclick', {
+            children: '[button text]',
           }))
-        .group('Variable Text Lengths', ex => ex
+        .group('Varying text length', ex => ex
           .variant('Long text', {
-            // eslint-disable-next-line max-len
-            text: 'You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.',
-            type: ToastType.INFO,
+            children: '[button text button text button text button text]',
           })
           .variant('Short text', {
-            text: 'No.',
-            type: ToastType.INFO,
+            children: '[but]',
           }))
-        .variant('W/ close button', {
-          text: 'You can do this a better way',
-          showCloseButton: true,
-          onCloseButtonClick,
-          type: ToastType.INFO,
-        })
+        .variant('Secondary', p => ({ ...p }))
         .build()
 
       expect(result).toEqual({
         defaultProps: {
-          text: '',
-          type: 'info',
+          children: '[button text]',
         },
         eventProps: null,
         groupName: 'Design Phase',
         hasProps: true,
-        name: 'Toast',
-        renderFn: Toast,
+        name: 'button',
+        renderFn: Button,
         showDefaultVariant: true,
         srcPath: undefined,
         testSrcPath: './test.spec.ts',
         variantGroups: {
-          'Variable Text Lengths': {
-            name: 'Variable Text Lengths',
+          Primary: {
+            name: 'Primary',
+            variantGroups: {},
+            variants: {
+              'W/ onclick': {
+                name: 'W/ onclick',
+                props: {
+                  children: '[button text]',
+                  onClick: onClickFn,
+                },
+              },
+              'W/o onclick': {
+                name: 'W/o onclick',
+                props: {
+                  children: '[button text]',
+                },
+              },
+            },
+          },
+          'Varying text length': {
+            name: 'Varying text length',
             variantGroups: {},
             variants: {
               'Long text': {
                 name: 'Long text',
                 props: {
-                  // eslint-disable-next-line max-len
-                  text: 'You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way. You can do this a better way.',
-                  type: 'info',
+                  children: '[button text button text button text button text]',
                 },
               },
               'Short text': {
                 name: 'Short text',
                 props: {
-                  text: 'No.',
-                  type: 'info',
-                },
-              },
-            },
-          },
-          'W/o close button': {
-            name: 'W/o close button',
-            variantGroups: {},
-            variants: {
-              Error: {
-                name: 'Error',
-                props: {
-                  text: "That didn't complete successfully.",
-                  type: 'error',
-                },
-              },
-              Info: {
-                name: 'Info',
-                props: {
-                  text: 'You can do this a better way.',
-                  type: 'info',
-                },
-              },
-              Success: {
-                name: 'Success',
-                props: {
-                  text: 'That completed successfully!',
-                  type: 'success',
-                },
-              },
-              Warn: {
-                name: 'Warn',
-                props: {
-                  text: 'That completed but something bad occured!',
-                  type: 'warn',
+                  children: '[but]',
                 },
               },
             },
           },
         },
         variants: {
-          'W/ close button': {
-            name: 'W/ close button',
+          Secondary: {
+            name: 'Secondary',
             props: {
-              onCloseButtonClick,
-              showCloseButton: true,
-              text: 'You can do this a better way',
-              type: 'info',
+              children: '[button text]',
             },
           },
         },
@@ -205,53 +113,40 @@ describe('exhibit', () => {
 
     const result = fn({
       [buttonExhibit.name]: buttonExhibit,
-      [buttonWithGenericExhibit.name]: buttonWithGenericExhibit,
-      [iconButtonExhibit.name]: iconButtonExhibit,
-      [typedIconExhibit.name]: typedIconExhibit,
-      [loadingSpinnerExhibit.name]: loadingSpinnerExhibit,
-      [toastExhibit.name]: toastExhibit,
+      [counterExhibit.name]: counterExhibit,
     })
 
-    expect(result.pathTree).toEqual(expectedPathTree)
+    expect(result.pathTree).toEqual({
+      'Exhibitor%20Library': {
+        'Exhibitor%20Library/button': {
+          'Exhibitor%20Library/button/Default': true,
+          'Exhibitor%20Library/button/Icon%20only': true,
+          'Exhibitor%20Library/button/Text%20%2B%20Icon': true,
+          'Exhibitor%20Library/button/Text%20only': true,
+        },
+        'Exhibitor%20Library/counter': {
+          'Exhibitor%20Library/counter/5': true,
+          'Exhibitor%20Library/counter/50': true,
+          'Exhibitor%20Library/counter/500': true,
+          'Exhibitor%20Library/counter/5000': true,
+          'Exhibitor%20Library/counter/Default': true,
+        },
+      },
+    })
+    fs.writeFileSync('./data.json', JSON.stringify(Object.keys(result.nodes)))
     expect(Object.keys(result.nodes)).toEqual([
-      'GA',
-      'Design%20Phase',
-      'Button',
-      'Button/green',
-      'Button/yellow',
-      'Button/red',
-      'Button/blue',
-      'Button/large',
-      'Button/with%20icon',
-      'Button/Default',
-      'ButtonWithGeneric',
-      'ButtonWithGeneric/green',
-      'ButtonWithGeneric/yellow',
-      'ButtonWithGeneric/red',
-      'ButtonWithGeneric/blue',
-      'ButtonWithGeneric/large',
-      'ButtonWithGeneric/with%20icon',
-      'ButtonWithGeneric/Default',
-      'GA/IconButton',
-      'GA/IconButton/paper-plane',
-      'GA/IconButton/Default',
-      'GA/TypedIcon',
-      'GA/TypedIcon/Success',
-      'GA/TypedIcon/Warn',
-      'GA/TypedIcon/Error',
-      'GA/TypedIcon/Info',
-      'Design%20Phase/LoadingSpinner',
-      'Design%20Phase/Toast',
-      'Design%20Phase/Toast/W%2F%20close%20button',
-      'Design%20Phase/Toast/W%2Fo%20close%20button',
-      'Design%20Phase/Toast/W%2Fo%20close%20button/Success',
-      'Design%20Phase/Toast/W%2Fo%20close%20button/Warn',
-      'Design%20Phase/Toast/W%2Fo%20close%20button/Error',
-      'Design%20Phase/Toast/W%2Fo%20close%20button/Info',
-      'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss',
-      'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Long%20text',
-      'Design%20Phase/Toast/Variable%20Text%20Lengthsssss%20sss%20sss%20sss/Short%20text',
-      'Design%20Phase/Toast/Default',
+      'Exhibitor%20Library',
+      'Exhibitor%20Library/button',
+      'Exhibitor%20Library/button/Text%20only',
+      'Exhibitor%20Library/button/Icon%20only',
+      'Exhibitor%20Library/button/Text%20%2B%20Icon',
+      'Exhibitor%20Library/button/Default',
+      'Exhibitor%20Library/counter',
+      'Exhibitor%20Library/counter/5',
+      'Exhibitor%20Library/counter/50',
+      'Exhibitor%20Library/counter/500',
+      'Exhibitor%20Library/counter/5000',
+      'Exhibitor%20Library/counter/Default',
     ])
   })
 })

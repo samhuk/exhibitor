@@ -1,0 +1,19 @@
+.cl-button {
+  padding: 5px;
+  background-color: $bg-color;
+  color: $text-color;
+  border: none;
+  border-radius: 5px;
+
+  &:not([disabled]) {
+    cursor: pointer;
+
+    &:hover {
+      background-color: $bg-color-m7;
+    }
+  }
+
+  &[disabled] {
+    color: $text-color-m30;
+  }
+}

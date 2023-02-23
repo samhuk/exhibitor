@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { VariantExhibitNode } from '../../../api/exhibit/types'
+import { ComponentExhibit, VariantExhibitNode } from '../../../api/exhibit/types'
 import {
   getSelectedVariantNodePath,
   runAxe,
@@ -16,19 +16,22 @@ const addCustomEventListener = <TEvent extends CustomEvent>(el: EventTarget, eve
 
 export const useCompSiteEffect = (
   setSelectedVariantPathFn: (newPath: string) => any,
-) => {
-  useEffect(() => {
-    // Listen for the call to tell us that the selected variant changed
-    const remove1 = addCustomEventListener(window, SELECT_VARIANT_CHANGE_EVENT_NAME, () => setSelectedVariantPathFn(getSelectedVariantNodePath()))
-    // Listen for the call to run an accessibility test on the currently selected variant
-    const remove2 = addCustomEventListener(window, START_AXE_TEST_EVENT_NAME, () => runAxe())
+) => useEffect(() => {
+  // Listen for the call to tell us that the selected variant changed
+  const remove1 = addCustomEventListener(window, SELECT_VARIANT_CHANGE_EVENT_NAME, () => setSelectedVariantPathFn(getSelectedVariantNodePath()))
+  // Listen for the call to run an accessibility test on the currently selected variant
+  const remove2 = addCustomEventListener(window, START_AXE_TEST_EVENT_NAME, () => runAxe())
 
-    return () => {
-      remove1()
-      remove2()
-    }
-  }, [])
-}
+  return () => {
+    remove1()
+    remove2()
+  }
+}, [])
+
+// const VariantEl = (props: { variantExhibitNode: VariantExhibitNode }) => {
+//   const variantProps = attachEventLoggingToProps(props.variantExhibitNode)
+//   return props.variantExhibitNode.exhibit.renderFn(variantProps)
+// }
 
 export const ReactCompSiteWithHooks = () => {
   const doInitialLoad = useRef(true)
@@ -50,8 +53,16 @@ export const ReactCompSiteWithHooks = () => {
   if (selectedVariantPath === undefined)
     return <div className="component-exhibit not-found">Component variant not found.</div>
 
+  /* The below method of rendering the variant is *deliberate*. If done any other way, it
+   * causes the "used different hooks between renders" error. Using the JSX <... /> syntax
+   * seems to make it all okay.
+   */
   // @ts-ignore
-  const selectedVariantNode = exh.nodes[selectedVariantPath] as VariantExhibitNode
-  const variantProps = attachEventLoggingToProps(selectedVariantNode)
-  return selectedVariantNode.exhibit.renderFn(variantProps)
+  const variantNode = exh.nodes[selectedVariantPath] as VariantExhibitNode
+  const variantProps = attachEventLoggingToProps(variantNode)
+
+  const VariantEl = variantNode.exhibit.renderFn
+
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  return <VariantEl {...variantProps} />
 }

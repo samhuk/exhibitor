@@ -1,6 +1,6 @@
 {
   "$schema": "../../src/common/config/schema.json",
-  "rootStyle": "./styles.scss",
+  "rootStyle": "./styles/index-dark.scss",
   "include": [
     "./**/*.exh.ts",
     "./**/*.exh.tsx"

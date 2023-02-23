@@ -1,0 +1,44 @@
+.cl-select {
+  width: 200px;
+  display: flex;
+  border: $border;
+  background-color: $bg-color;
+  
+  input {
+    flex-grow: 1;
+    border: none !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: $bg-color;
+    color: $text-color;
+    padding-left: 5px;
+  }
+
+  button {
+    padding: 5px 8px;
+    border-radius: 0;
+  }
+
+  .options {
+    position: absolute;
+    border: $border;
+    background-color: $bg-color;
+    visibility: hidden;
+    z-index: 1;
+
+    .option {
+      cursor: pointer;
+      padding: 4px;
+
+      &:hover {
+        background-color: $bg-color-m7;
+      }
+    }
+
+    .no-options {
+      padding: 4px;
+      color: $text-color-m10;
+      font-style: italic;
+    }
+  }
+}

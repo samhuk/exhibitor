@@ -8,7 +8,7 @@ export const deepSetAllPropsOnMatch = (objTruther: any, objToModify: any, val: (
       const originalFn = objToModify[prop]
       objToModify[prop] = (...args: any[]) => {
         val(args, thisPath)
-        originalFn(args)
+        originalFn?.(args)
       }
     }
     else if (typeof objTruther[prop] === 'object') {

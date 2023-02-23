@@ -1,0 +1,24 @@
+.cl-external-link {
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:not(i) {
+    color: $link-color;
+  }
+
+  .lhs-icon {
+    color: $text-color-m20;
+    margin-right: 7px;
+  }
+
+  .rhs-arrow-icon {
+    margin-left: 7px;
+    color: $text-color-m20;
+    display: inline-block;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
