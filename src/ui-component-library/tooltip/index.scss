@@ -1,0 +1,66 @@
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.cl-tooltip {
+  z-index: $click-tooltip-z-index;
+  background-color: $bg-color;
+  border: $border;
+  border-radius: $border-radius;
+  padding: 5px;
+  max-width: 400px;
+
+  opacity: 0;
+  animation: fade-in 200ms ease-out forwards;
+
+  p {
+    margin-top: 1em;
+    margin-bottom: 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .cl-external-link {
+    display: inline;
+  }
+
+  .arrow, .arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    border-top: $border;
+    border-left: $border;
+    z-index: 999;
+  }
+
+  .arrow {
+    visibility: hidden;
+  }
+
+  .arrow::before {
+    visibility: visible;
+    content: '';
+    transform: rotate(45deg);
+  }
+
+  &[data-popper-placement^='top'] > .arrow {
+    bottom: -6px;
+  }
+  
+  &[data-popper-placement^='bottom'] > .arrow {
+    top: -6px;
+  }
+  
+  &[data-popper-placement^='left'] > .arrow {
+    right: -6px;
+  }
+  
+  &[data-popper-placement^='right'] > .arrow {
+    left: -6px;
+  }
+}

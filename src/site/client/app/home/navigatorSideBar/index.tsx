@@ -9,6 +9,7 @@ import { createTopLevelElFocusEffect } from './topLevelElFocusEffect'
 import { DEFAULT_WIDTH_PX, restoreNavBarState, saveNavBarState } from './persistence'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
 import { NavBarState } from './types'
+import Button from '../../../../../ui-component-library/button'
 
 const NodeEl = (props: {
   node: ExhibitNode
@@ -125,26 +126,23 @@ const Render = () => {
   return (
     <div className="navigator-side-bar" ref={setEl}>
       <div className="button-bar-1">
-        <button
-          type="button"
-          className="far fa-square-plus"
+        <Button
           onClick={() => onExpandAllButtonClick()}
           aria-label="Expand all"
           title="Expand all"
+          icon={{ name: 'square-plus', type: 'r' }}
         />
-        <button
-          type="button"
-          className="far fa-square-minus"
+        <Button
           onClick={() => onCollapseAllButtonClick()}
           aria-label="Collapse all"
           title="Collapse all"
+          icon={{ name: 'square-minus', type: 'r' }}
         />
-        <button
-          type="button"
-          className="fas fa-layer-group"
+        <Button
           onClick={() => onCollapseAllNonExhibitGroupButtonClick()}
           aria-label="Collapse variant groups"
           title="Collapse variant groups"
+          icon={{ name: 'layer-group' }}
         />
       </div>
       <div className="nodes">

@@ -2,15 +2,13 @@ import * as fs from 'fs'
 import path from 'path'
 import { exhibit, resolve } from '.'
 
-import Button from '../../../test/componentLibrary/exhibitor/button'
-import { buttonExhibit } from '../../../test/componentLibrary/exhibitor/button/index.exh'
+import Button from '../../ui-component-library/button/index'
+import { buttonExhibit } from '../../ui-component-library/button/index.exh'
 
-import Counter from '../../../test/componentLibrary/exhibitor/counter'
-import { counterExhibit } from '../../../test/componentLibrary/exhibitor/counter/index.exh'
+import Counter from '../../ui-component-library/counter/index'
+import { counterExhibit } from '../../ui-component-library/counter/index.exh'
 
-import { ExhibitNodes, PathTree } from './types'
-
-const expectedPathTree: PathTree = null
+import { PathTree } from './types'
 
 describe('exhibit', () => {
   describe('exhibit', () => {

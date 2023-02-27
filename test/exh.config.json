@@ -1,0 +1,20 @@
+{
+  "$schema": "../src/common/config/schema.json",
+  "rootStyles": "../src/ui-component-library/assets/styles/index-dark.scss",
+  "include": [
+    "./**/*.exh.ts",
+    "./**/*.exh.tsx",
+    "../src/ui-component-library/**/*.exh.ts",
+    "../src/ui-component-library/**/*.exh.tsx"
+  ],
+  "watch": [
+    "./**/*",
+    "../src/ui-component-library"
+  ],
+  "watchExclude": [],
+  "site": {
+    "port": 4001,
+    "title": "Test Component Library"
+  },
+  "verbose": false
+}

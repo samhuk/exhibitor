@@ -5,6 +5,10 @@
     height: 100%;
     width: 100%;
 
+    a:visited {
+      color: $link-color;
+    }
+
     main {
       display: flex;
       flex-direction: column;

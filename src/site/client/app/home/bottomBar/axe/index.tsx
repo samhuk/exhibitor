@@ -4,13 +4,14 @@ import { AxeResults, ImpactValue, Result } from 'axe-core'
 import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../../store'
 import { AXE_TEST_COMPLETED_EVENT_NAME, START_AXE_TEST_EVENT_NAME } from '../../../../../../common/exhibit'
-import TestResultCountSummary from '../../../../common/testReporting/testResultCountSummary'
-import SeverityIndicator, { Severity } from '../../../../common/testReporting/severityIndicator'
-import RunButton from '../../../../common/buttons/runButton'
-import ExternalLink from '../../../../common/text/externalLink'
-import Counter from '../../../../common/text/counter'
-import ErrorIcon from '../../../../common/testReporting/errorIcon'
-import SuccessIcon from '../../../../common/testReporting/successIcon'
+import Counter from '../../../../../../ui-component-library/counter'
+import RunButton from '../../../../../../ui-component-library/run-button'
+import SeverityIndicator, { Severity } from '../../../../../../ui-component-library/severity-indicator'
+import ExternalLink from '../../../../../../ui-component-library/external-link'
+import TestResultCountSummary from '../../../../../../ui-component-library/test-result-count-summary'
+import ErrorIcon from '../../../../../../ui-component-library/error-icon'
+import SuccessIcon from '../../../../../../ui-component-library/success-icon'
+import Button from '../../../../../../ui-component-library/button'
 
 const addOneTimeCustomEventListener = <
   TEl extends EventTarget,
@@ -120,14 +121,12 @@ const ViolationItemEl = (props: {
         <div className="text">
           {props.violation.help}
           <Counter count={props.violation.nodes.length} />
-          <button
+          <Button
             className={`toggle-show-details-button${showDetails ? ' active' : ''}`}
             title={showDetails ? 'Hide Details' : 'Show Details'}
-            type="button"
             onClick={() => setShowDetails(!showDetails)}
-          >
-            <i className="fas fa-ellipsis" />
-          </button>
+            icon={{ name: 'ellipsis' }}
+          />
         </div>
         {showDetails
           ? <ViolationItemDetailsEl violation={props.violation} />

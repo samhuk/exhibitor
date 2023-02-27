@@ -4,6 +4,9 @@
   "include": [
     "./**/*.spec.ts"
   ],
+  "exclude": [
+    "./ui-component-library/**/*"
+  ],
   "compilerOptions": {
     "jsx": "react",
     "declaration": false,

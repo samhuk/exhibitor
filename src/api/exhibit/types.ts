@@ -1,8 +1,9 @@
 import { BoolDependant, IsTrueAndFalse, TypeDependantBaseIntersection } from '@samhuk/type-helpers/dist/type-helpers/types'
+import { ReactElement } from 'react'
 
-export type ReactComponentWithProps<TProps extends any = any> = (props: TProps) => JSX.Element
+export type ReactComponentWithProps<TProps extends any = any> = (props: TProps) => ReactElement
 
-export type ReactComponentWithoutProps = () => JSX.Element
+export type ReactComponentWithoutProps = () => ReactElement
 
 export type ReactComponent<TProps extends any = any> = ReactComponentWithProps<TProps> | ReactComponentWithoutProps
 

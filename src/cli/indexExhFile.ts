@@ -98,11 +98,20 @@ export const createIndexExhTsFile = async (
 
   const textLines = [`import { resolve, __exhibits } from '${exhibitApiFunctionPath}'`]
 
+  // TODO: Deprecated
   if (config.rootStyle != null)
     // E.g. import '../src/button/index.scss'
     textLines.push(`import '${path.relative(BUILD_OUTPUT_ROOT_DIR, config.rootStyle).replace(/\\/g, '/')}'`)
 
-  // E.g.:
+  // -- Root styles
+  if (config.rootStyles != null) {
+    config.rootStyles.forEach(rootStyle => {
+      // E.g. import '../src/button/index.scss'
+      textLines.push(`import '${path.relative(BUILD_OUTPUT_ROOT_DIR, rootStyle).replace(/\\/g, '/')}'`)
+    })
+  }
+
+  // E.g.
   // import '!exhsrc/button/index.exh.ts'
   // export {} from '../src/button/index.exh.ts'
   textLines.push(includedFilePaths

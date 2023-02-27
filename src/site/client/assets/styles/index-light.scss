@@ -2,6 +2,8 @@
 @import './common/colors/light.scss';
 @import './common/index.scss';
 // Components
-@import './components/index.scss';
+@import '../../../../ui-component-library/assets/styles/index-light.scss';
+@import './resizer.scss';
 // Pages
+@import './header.scss';
 @import './home/index.scss';

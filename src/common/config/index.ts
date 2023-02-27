@@ -17,6 +17,7 @@ export const DEFAULT_CONFIG: Config = {
   configDir: undefined,
   rootConfigFile: undefined,
   rootStyle: undefined,
+  rootStyles: undefined,
   testers: [],
 }
 
@@ -43,6 +44,11 @@ export const resolveConfig = (config?: UnresolvedConfig, configFilePath?: string
     watch: makePathsRelativeToConfigDir(config?.watch ?? DEFAULT_CONFIG.watch, configDir),
     watchExclude: makePathsRelativeToConfigDir(config?.watchExclude ?? DEFAULT_CONFIG.watchExclude, configDir),
     rootStyle: config?.rootStyle != null ? makePathRelativeToConfigDir(config.rootStyle, configDir) : undefined,
+    rootStyles: config?.rootStyles != null
+      ? typeof config.rootStyles === 'string'
+        ? [makePathRelativeToConfigDir(config.rootStyles, configDir)]
+        : makePathsRelativeToConfigDir(config.rootStyles, configDir)
+      : undefined,
     site: {
       host: config?.site?.host != null ? config.site.host : DEFAULT_CONFIG.site.host,
       port: config?.site?.port != null ? config.site.port : DEFAULT_CONFIG.site.port,

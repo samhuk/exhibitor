@@ -20,7 +20,7 @@ Exhibitor is tested to Node.js versions back to 16.
 
 For a development deployment, run `npm start`.
 
-This starts a hot-reloading build of the Exhibitor Site Client, Server, and test component library (within `/test/componentLibrary`), and serves the Site by default at http://localhost:4001.
+This starts a hot-reloading build of the Exhibitor Site Client, Server, and test component library (within `/test`), and serves the Site by default at http://localhost:4001.
 
 ## Structure
 

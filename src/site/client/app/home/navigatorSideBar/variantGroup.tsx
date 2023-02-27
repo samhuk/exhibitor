@@ -1,5 +1,6 @@
 import React from 'react'
 import { ExhibitNode, ExhibitNodeType } from '../../../../../api/exhibit/types'
+import Button from '../../../../../ui-component-library/button'
 import { calcNodePaddingLeft } from './common'
 
 export const render = (props: {
@@ -7,15 +8,14 @@ export const render = (props: {
   isExpanded: boolean
   onClick: () => void
 }) => (
-  <button
-    type="button"
+  <Button
     className="variant-group"
     style={{ paddingLeft: calcNodePaddingLeft(props.node) }}
     onClick={props.onClick}
+    icon={{ name: props.isExpanded ? 'angle-down' : 'angle-right' }}
   >
-    <i className={`fas ${props.isExpanded ? 'fa-angle-down' : 'fa-angle-right'}`} />
     <div className="text">{props.node.variantGroup.name}</div>
-  </button>
+  </Button>
 )
 
 export default render

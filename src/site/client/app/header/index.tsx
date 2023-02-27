@@ -1,5 +1,6 @@
 import React from 'react'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../../common/name'
+import Button from '../../../../ui-component-library/button'
 import { useAppDispatch, useAppSelector } from '../../store'
 import { incrementTheme } from '../../store/theme/actions'
 import About from './about'
@@ -23,9 +24,11 @@ export const render = () => {
         <BuildStatuses />
         <Intercom />
         <About />
-        <button type="button" onClick={onThemeButtonClick} title={theme === 'dark' ? 'Light mode' : 'Dark mode'}>
-          <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`} />
-        </button>
+        <Button
+          onClick={onThemeButtonClick}
+          title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          icon={{ name: theme === 'dark' ? 'sun' : 'moon' }}
+        />
       </div>
     </div>
   )

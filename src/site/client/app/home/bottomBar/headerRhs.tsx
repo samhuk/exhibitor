@@ -1,4 +1,5 @@
 import React from 'react'
+import Button from '../../../../../ui-component-library/button'
 import { useAppDispatch, useAppSelector } from '../../../store'
 import { toggleViewportSizeChangeEnabled } from '../../../store/componentExhibits/actions'
 
@@ -9,28 +10,19 @@ export const render = (props: {
   const dispatch = useAppDispatch()
   const isViewportUnlocked = useAppSelector(s => s.componentExhibits.viewportSizeChangeEnabled)
 
-  const onUnlockViewportCheckboxChange = () => {
-    dispatch(toggleViewportSizeChangeEnabled())
-  }
-
-  const toggleViewportButtonLabel = isViewportUnlocked ? 'Lock Viewport' : 'Unlock Viewport'
-  const toggleCollapsedButtonLabel = props.isCollapsed ? 'Expand Panel' : 'Minimize Panel'
-
   return (
     <div className="header-buttons">
-      <button
-        type="button"
-        className={`unlock-viewport-button fas fa-tablet-screen-button${isViewportUnlocked ? ' active' : ''}`}
-        onClick={onUnlockViewportCheckboxChange}
-        aria-label={toggleViewportButtonLabel}
-        title={toggleViewportButtonLabel}
+      <Button
+        className={`unlock-viewport-button ${isViewportUnlocked ? ' active' : ''}`}
+        icon={{ name: 'tablet-screen-button' }}
+        title={isViewportUnlocked ? 'Lock Viewport' : 'Unlock Viewport'}
+        onClick={() => dispatch(toggleViewportSizeChangeEnabled())}
       />
-      <button
-        type="button"
-        className={`toggle-collapse-button fas ${props.isCollapsed ? 'fa-angle-up' : 'fa-angle-down'}`}
+      <Button
+        className={`toggle-collapse-button ${isViewportUnlocked ? ' active' : ''}`}
+        icon={{ name: props.isCollapsed ? 'angle-up' : 'angle-down' }}
+        title={props.isCollapsed ? 'Expand Panel' : 'Minimize Panel'}
         onClick={() => props.onCollapseButtonClick()}
-        aria-label={toggleCollapsedButtonLabel}
-        title={toggleCollapsedButtonLabel}
       />
     </div>
   )
