@@ -2,6 +2,8 @@
 @import './common/colors/dark.scss';
 @import './common/index.scss';
 // Components
-@import './components/index.scss';
+@import '../../../../ui-component-library/assets/styles/index-dark.scss';
+@import './resizer.scss';
 // Pages
+@import './header.scss';
 @import './home/index.scss';

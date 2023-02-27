@@ -1,47 +1,47 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { usePopper } from 'react-popper'
 // @ts-ignore
 import version from '../../../../../version.txt'
+import Button from '../../../../ui-component-library/button'
+import Tooltip from '../../../../ui-component-library/tooltip'
 import ExternalLink from '../../common/text/externalLink'
 
 export const render = () => {
-  const [referenceElement, setReferenceElement] = useState(null)
-  const [popperElement, setPopperElement] = useState(null)
-  const [arrowElement, setArrowElement] = useState(null)
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    modifiers: [
-      { name: 'arrow', options: { element: arrowElement } },
-      { name: 'offset', options: { offset: [0, 10] } },
-      { name: 'preventOverflow', options: { altAxis: true, padding: 5 } },
-    ],
-  })
-  const [show, setShow] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>()
+
+  const referenceEl = (
+    <Button
+      className="info-button"
+      ref={buttonRef}
+      icon={{ name: 'circle-info' }}
+    />
+  )
+
+  const tooltipComponent = () => (
+    <>
+      <div className="line">Exhibitor <b>{version}</b></div>
+      <div className="line">React <b>{React.version}</b></div>
+      <div className="cl-h-divider" />
+      <div className="line">
+        <ExternalLink text="Github" iconClass="fa-brands fa-github" href="https://github.com/samhuk/exhibitor" />
+      </div>
+      <div className="line">
+        <ExternalLink text="Wiki" iconClass="fas fa-circle-info" href="https://github.com/samhuk/exhibitor/wiki" />
+      </div>
+      <div className="line">
+        <ExternalLink text="Discussions" iconClass="fas fa-comments" href="https://github.com/samhuk/exhibitor/discussions" />
+      </div>
+    </>
+  )
 
   return (
-    <div className="about">
-      <button className={`info-button${show ? ' active' : ''}`} type="button" ref={setReferenceElement} onClick={() => setShow(!show)}>
-        <i className="fas fa-circle-info" />
-      </button>
-      {show
-        ? (
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          <div className="tooltip" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
-            <div className="arrow" ref={setArrowElement} style={styles.arrow} />
-            <div className="line">Exhibitor <b>{version}</b></div>
-            <div className="line">React <b>{React.version}</b></div>
-            <div className="cl-h-divider" />
-            <div className="line">
-              <ExternalLink text="Github" iconClass="fa-brands fa-github" href="https://github.com/samhuk/exhibitor" />
-            </div>
-            <div className="line">
-              <ExternalLink text="Wiki" iconClass="fas fa-circle-info" href="https://github.com/samhuk/exhibitor/wiki" />
-            </div>
-            <div className="line">
-              <ExternalLink text="Discussions" iconClass="fas fa-comments" href="https://github.com/samhuk/exhibitor/discussions" />
-            </div>
-          </div>
-        ) : null}
-    </div>
+    <Tooltip
+      className="about"
+      referenceEl={referenceEl}
+      tooltipEl={tooltipComponent}
+      onShowChange={newShow => buttonRef.current.classList.toggle('active', newShow)}
+      offset={{ y: 10 }}
+    />
   )
 }
 

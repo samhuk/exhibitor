@@ -20,10 +20,10 @@
     "start": "npm run build-start && npm run _start",
 
     "cli-dev": "env-cmd -e dev node ./build/cli/cli/index.js start --verbose",
-    "cli-dev-rel-config": "env-cmd -e dev-rel node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json",
-    "cli-dev-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.json --verbose",
-    "cli-dev-config-js": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.js --verbose",
-    "cli-dev-config-ts": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/componentLibrary/exh.config.ts --verbose"
+    "cli-dev-rel-config": "env-cmd -e dev-rel node ./build/cli/cli/index.js start -c ./test/exh.config.json",
+    "cli-dev-config": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/exh.config.json --verbose",
+    "cli-dev-config-js": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/exh.config.js --verbose",
+    "cli-dev-config-ts": "env-cmd -e dev node ./build/cli/cli/index.js start -c ./test/exh.config.ts --verbose"
   },
   "dependencies": {
     "@babel/core": "^7.20.12",

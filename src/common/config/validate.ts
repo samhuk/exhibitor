@@ -34,8 +34,17 @@ export const _validateConfig = (config: Config): ExhString | null => {
     return c => `config.site.port - cannot be greater than ${c.cyan('65535')}. Received: ${c.cyan(config.site.port.toString())}`
 
   // -- rootStyle
+  // TODO: Deprecated
   if (config.rootStyle != null && !fs.existsSync(config.rootStyle))
     return c => `config.rootStyle - path does not exist (${c.cyan(path.resolve(config.rootStyle))})`
+
+  // -- rootStyles
+  if (config.rootStyles != null) {
+    for (let i = 0; i < config.rootStyles.length; i += 1) {
+      if (!fs.existsSync(config.rootStyles[i]))
+        return c => `config.rootStyles[${c.cyan(i.toString())}] - path does not exist (${c.cyan(path.resolve(config.rootStyle))})`
+    }
+  }
 
   return null
 }

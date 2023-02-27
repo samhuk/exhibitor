@@ -1,5 +1,5 @@
 import React from 'react'
-import Select, { SelectOption } from '../../../../common/dropdowns/select'
+import Select, { SelectOption } from '../../../../../../ui-component-library/select'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { updateSelectedViewportDimensionPresetOption } from '../../../../store/componentExhibits/bottomBar/actions'
 

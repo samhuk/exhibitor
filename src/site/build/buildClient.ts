@@ -32,7 +32,7 @@ const createClientBuilder = (options: BuildClientOptions) => {
   // Define base entrypoints
   const entryPoints: { [name: string]: string } = {
     index: SITE_CLIENT_ENTRYPOINT,
-    fa: './src/site/client/assets/styles/fa.scss',
+    // fa: './src/site/client/assets/styles/fa.scss',
   }
   // Add themes
   THEMES.forEach(t => entryPoints[t] = `./src/site/client/assets/styles/index-${t}.scss`)

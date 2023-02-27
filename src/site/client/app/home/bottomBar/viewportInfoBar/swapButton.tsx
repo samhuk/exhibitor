@@ -1,4 +1,5 @@
 import React, { useRef } from 'react'
+import Button from '../../../../../../ui-component-library/button'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { swapViewportDimensions } from '../../../../store/componentExhibits/actions'
 
@@ -18,17 +19,14 @@ export const render = (props: {
   }
 
   return (
-    <button
+    <Button
       ref={elRef}
-      type="button"
       className="swap-button"
       disabled={size.height === size.width}
       onClick={onClick}
-      aria-label="Swap dimensions"
       title="Swap dimensions"
-    >
-      <i className="fas fa-arrows-rotate" />
-    </button>
+      icon={{ name: 'arrows-rotate' }}
+    />
   )
 }
 

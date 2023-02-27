@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 
-import { NavItemOptions } from '../../../../../common/nav/types'
-import Nav from '../../../../../common/nav'
 import Report from './report'
 import StdOut from './stdOut'
 import { useAppSelector } from '../../../../../store'
 import Times from './times'
 import LoadingCover from './loadingCover'
+import Nav from '../../../../../../../ui-component-library/nav'
+import { NavItemOptions } from '../../../../../../../ui-component-library/nav/types'
 
 enum Page {
   REPORT,

@@ -1,3 +1,4 @@
+import { ExoticComponent } from 'react'
 import {
   ComponentExhibit,
   ComponentExhibitBuilder,
@@ -172,10 +173,21 @@ export const resolve = (
   return { nodes, pathTree }
 }
 
+const determineIfComponentHasProps = (component: ReactComponent) => {
+  if (typeof component === 'function')
+    return component.length > 0
+
+  /* For now, the only case where this is encountered is when using React's forwardRef(). This
+   * doesn't create a function React component, but instead an object with a render function property
+   * that accepts props and a ref.
+   */
+  return (component as { render: Function }).render.length > 0
+}
+
 export const exhibit = <
   TReactComponent extends ReactComponent
 >(
-    renderFn: TReactComponent,
+    component: TReactComponent,
     name: string,
   ): ComponentExhibitBuilder<TReactComponent, false, false, false, false, undefined> => {
   let eventProps: any = null
@@ -184,7 +196,7 @@ export const exhibit = <
   let testSrcPath: string = null
   const variants: { [variantName: string]: Variant } = {}
 
-  const hasProps = renderFn.length > 0
+  const hasProps = determineIfComponentHasProps(component)
 
   const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
@@ -225,7 +237,7 @@ export const exhibit = <
         groupName: options?.group,
         showDefaultVariant: options?.showDefaultVariant ?? true,
         hasProps,
-        renderFn,
+        renderFn: component,
         defaultProps,
         eventProps,
         variants,

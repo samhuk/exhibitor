@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { VariantExhibitNode } from '../../../../../../api/exhibit/types'
+import ExternalLink from '../../../../../../ui-component-library/external-link'
+import FeatureStatusEl, { FeatureStatus } from '../../../../../../ui-component-library/feature-status'
+import RunButton from '../../../../../../ui-component-library/run-button'
 import { RunPlaywrightTestsOptions } from '../../../../../common/testing/playwright'
-import RunButton from '../../../../common/buttons/runButton'
-import FeatureStatusNotice, { FeatureStatus } from '../../../../common/notices/featureStatusNotice'
-import ExternalLink from '../../../../common/text/externalLink'
 import { useAppDispatch, useAppSelector } from '../../../../store'
 import { toggleHeadless } from '../../../../store/testing/playwright/actions'
 import { runPlaywrightTestsThunk } from '../../../../store/testing/playwright/reducer'
@@ -61,7 +61,7 @@ export const render = (props: {
   variantNode: VariantExhibitNode
 }) => (
   <div className="testing">
-    <FeatureStatusNotice featureName="Playwright testing" status={FeatureStatus.BETA} />
+    <FeatureStatusEl featureName="Playwright testing" status={FeatureStatus.BETA} />
     <HeaderEl variantNode={props.variantNode} />
     <PlaywrightTestResults />
   </div>

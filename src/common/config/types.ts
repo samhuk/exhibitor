@@ -91,8 +91,20 @@ export type UnresolvedConfig = {
    * Optional path to a CSS or SCSS stylesheet to include as a root style.
    * This is useful for defining styles shared by all components, i.e.
    * icon/style libraries like font-awesome, muicons, bootstrap, or your own.
+   *
+   * @deprecated Use `rootStyles` instead
    */
   rootStyle?: string
+  /**
+   * Optional path or paths to a CSS or SCSS stylesheet to include as a root style.
+   * This is useful for defining styles shared by all components, i.e.
+   * icon/style libraries like font-awesome, muicons, bootstrap, or your own.
+   *
+   * @example
+   * "./assets/styles/index-dark.scss"
+   * ["./assets/styles/index-dark.scss", "./assets/font-awesome/icons.scss"],
+   */
+  rootStyles?: string | string[]
   /**
    * List of testers to enable.
    *
@@ -129,6 +141,7 @@ export type Config = {
   }
   verbose: boolean
   rootStyle: string | undefined | null
+  rootStyles: string[] | undefined | null
   esbuildOptions?: CustomEsbuildBuildOptions
   testers: TesterOptions[]
 }

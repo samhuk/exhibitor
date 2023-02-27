@@ -7,7 +7,7 @@ export const BUNDLE_INPUT_FILE_NAME = 'index.exh.ts' as const
 export const BUNDLE_OUTPUT_FILE_NAME = 'index.exh.js' as const
 
 export const DEFAULT_CONFIG_FILE_NAME = 'exh.config.json' as const
-export const TEST_COMPONENT_LIBRARY_ROOT_DIR = './test/componentLibrary' as const
+export const TEST_COMPONENT_LIBRARY_ROOT_DIR = './test' as const
 
 // -- Site
 export const SITE_CLIENT_DIR = './src/site/client' as const
