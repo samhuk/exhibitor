@@ -82,6 +82,7 @@
             .label {
               font-weight: bold;
               width: 90px;
+              flex-shrink: 0;
             }
 
             .row {
@@ -117,6 +118,7 @@
         .toggle-show-details-button {
           padding: 1px 7px;
           align-self: start;
+          display: inline-block;
 
           &.active {
             color: $link-color;

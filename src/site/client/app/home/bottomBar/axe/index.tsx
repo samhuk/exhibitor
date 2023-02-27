@@ -11,6 +11,7 @@ import ExternalLink from '../../../../../../ui-component-library/external-link'
 import TestResultCountSummary from '../../../../../../ui-component-library/test-result-count-summary'
 import ErrorIcon from '../../../../../../ui-component-library/error-icon'
 import SuccessIcon from '../../../../../../ui-component-library/success-icon'
+import Button from '../../../../../../ui-component-library/button'
 
 const addOneTimeCustomEventListener = <
   TEl extends EventTarget,
@@ -120,14 +121,12 @@ const ViolationItemEl = (props: {
         <div className="text">
           {props.violation.help}
           <Counter count={props.violation.nodes.length} />
-          <button
+          <Button
             className={`toggle-show-details-button${showDetails ? ' active' : ''}`}
             title={showDetails ? 'Hide Details' : 'Show Details'}
-            type="button"
             onClick={() => setShowDetails(!showDetails)}
-          >
-            <i className="fas fa-ellipsis" />
-          </button>
+            icon={{ name: 'ellipsis' }}
+          />
         </div>
         {showDetails
           ? <ViolationItemDetailsEl violation={props.violation} />
