@@ -28,19 +28,19 @@
 
 ## Overview
 
-Exhibitor is a React component workshop. It allows you to see your individual React UI components in a hot-reloading website whilst you create them.
+Exhibitor is a React component workshop - a tool for creating React component libraries. It allows you to see your individual React UI components in a hot-reloading website whilst you create them.
 
 ## Usage Overview
 
-Exhibitor can be added to an existing React codebase that contains components or be used to bootstrap one from scratch. See the [Exhibitor Wiki](https://github.com/samhuk/exhibitor/wiki) for more information.
+Exhibitor is simple to setup. It can be added to an existing React codebase that contains components or be used to bootstrap one from scratch. See the [Exhibitor Wiki](https://github.com/samhuk/exhibitor/wiki) for more information.
 
 If you already have React components, using Exhibitor is as easy as this:
 
 ```
-npm install --save-dev exhibitor
+npm install --save-dev exhibitor react react-dom
 ```
 
-Declare exhibitions:
+Create exhibitions of your components:
 
 ```typescript
 // src/button.exh.ts (or .js, .jsx, .tsx, ...)
@@ -48,16 +48,15 @@ import exhibit from 'exhibitor'
 import Button from './button' // I.e. button.tsx
 
 exhibit(Button, 'Button')
-  // Define any default values for props
+  // Define any default props
   .defaults({
-    onClick: () => undefined,
     color: 'default',
   })
-  // Define which props correspond to events of the component
+  // Define which props are events of the component
   .events({ onClick: true })
   // Define miscellaneous options
   .options({ group: 'Final Review' })
-  // Define variants with varying prop values
+  // Define variants with different prop values
   .variant('Green', defaultProps => ({
     ...defaultProps,
     color: 'green',
@@ -90,11 +89,11 @@ npx exhibitor start
 * esbuild
 * Gives you the choice of React version to use
 * Accessibility testing
-* e2e testing integration **[Planned]**
+* Playwright end-to-end testing integration
 
 ## Development
 
-Want to join in and contibute to Exhibitor? See [./contributing/development.md](./contributing/development.md).
+Want to join in and contibute to Exhibitor? Awesome! See [./contributing/development.md](./contributing/development.md).
 
 ---
 
