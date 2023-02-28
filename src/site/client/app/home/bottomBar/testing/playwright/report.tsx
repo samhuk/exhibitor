@@ -3,7 +3,7 @@ import React from 'react'
 import { ReportView } from '../../../../../../../external/playwright-html-reporter/src/reportView'
 import { useAppSelector } from '../../../../../store'
 import { playwrightTestReportService } from '../../../../../services/playwrightTestReportService'
-import ErrorIcon from '../../../../../common/testReporting/errorIcon'
+import ErrorIcon from '../../../../../../../ui-component-library/error-icon'
 
 const render = () => {
   const variantPath = useAppSelector(s => s.componentExhibits.selectedVariantPath)

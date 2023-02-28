@@ -32,6 +32,7 @@
 
     i {
       margin-left: 5px;
+      margin-right: 0;
     }
 
     &:hover {
@@ -39,16 +40,8 @@
     }
   }
 
-  .tooltip {
-    z-index: $click-tooltip-z-index;
-    background-color: $bg-color;
-    border: $border;
-    border-radius: $border-radius;
+  .body {
     padding: 5px;
-    max-width: 400px;
-
-    opacity: 0;
-    animation: fade-in 200ms ease-out forwards;
 
     p {
       margin-top: 1em;
@@ -57,10 +50,6 @@
       &:first-child {
         margin-top: 0;
       }
-    }
-
-    .cl-external-link {
-      display: inline;
     }
   }
 }
