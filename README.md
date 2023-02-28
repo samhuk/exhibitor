@@ -1,4 +1,11 @@
-<h1 align="center">Exhibitor</h1>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./img/wordmark-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="./img/wordmark-light.png">
+    <img alt="Exhibitor" src="./img/wordmark-light.png">
+  </picture>
+</p>
+
 <p align="center">
   <em>Snappy and delightful React component workshop</em>
 </p>
