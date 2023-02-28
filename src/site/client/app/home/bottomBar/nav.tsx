@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { ComponentExhibit, ExhibitNodeType } from '../../../../../api/exhibit/types'
 import Nav from '../../../../../ui-component-library/nav'
-import { NavItemOptions } from '../../../common/nav/types'
+import { NavItemOptions } from '../../../../../ui-component-library/nav/types'
 import { useAppDispatch, useAppSelector } from '../../../store'
 import { BottomBarType, selectBottomBar } from '../../../store/componentExhibits/actions'
 

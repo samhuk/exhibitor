@@ -20,7 +20,7 @@ export const DEFAULT_PROPS: Props = {
 export const render = forwardRef<HTMLButtonElement, Props>((props, ref) => (
   // eslint-disable-next-line react/jsx-props-no-spreading, react/button-has-type, react/prop-types
   <button ref={ref} {...props} type={props.type ?? DEFAULT_PROPS.type} className={`${CLASS_NAME} ${props.children != null ? 'has-non-icon-content' : ''} ${props.className ?? ''}`}>
-    {props.icon != null ? <Icon iconName={props.icon.name} iconType={props.icon.type} /> : null}
+    {props.icon != null ? <Icon className="button-icon" iconName={props.icon.name} iconType={props.icon.type} /> : null}
     {props.children ?? null}
   </button>
 ))

@@ -1,10 +1,9 @@
-import React, { useRef, useState } from 'react'
-import { usePopper } from 'react-popper'
+import React, { useRef } from 'react'
 // @ts-ignore
 import version from '../../../../../version.txt'
 import Button from '../../../../ui-component-library/button'
+import ExternalLink from '../../../../ui-component-library/external-link'
 import Tooltip from '../../../../ui-component-library/tooltip'
-import ExternalLink from '../../common/text/externalLink'
 
 export const render = () => {
   const buttonRef = useRef<HTMLButtonElement>()

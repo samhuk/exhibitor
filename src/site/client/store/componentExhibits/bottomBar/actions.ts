@@ -1,4 +1,4 @@
-import { SelectOption } from '../../../common/dropdowns/select'
+import { SelectOption } from '../../../../../ui-component-library/select'
 
 export const UPDATE_SELECTED_VIEWPORT_DIMENSION_PRESET_OPTION = 'bottomBar/updateSelectedViewportDimensionPresetOption'
 

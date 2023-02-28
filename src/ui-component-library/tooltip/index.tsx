@@ -10,6 +10,7 @@ export type Props<T extends ReactComponent = ReactComponent> = {
   tooltipProps?: PropsOfReactComponent<T>
   onShowChange?: (showing: boolean) => void
   offset?: { x?: number, y?: number }
+  appearMode?: 'click' | 'hover'
 }
 
 export const NAME = 'tooltip'
@@ -18,9 +19,11 @@ export const DEFAULT_PROPS: Props = {
   referenceEl: undefined,
   tooltipEl: undefined,
   tooltipProps: undefined,
+  appearMode: 'click',
 }
 
 export const render = (props: Props) => {
+  const [show, setShow] = useState(false)
   const [referenceElement, setReferenceElement] = useState<HTMLElement>(null)
   const [popperElement, setPopperElement] = useState<HTMLElement>(null)
   const [arrowElement, setArrowElement] = useState<HTMLElement>(null)
@@ -37,40 +40,62 @@ export const render = (props: Props) => {
       { name: 'preventOverflow', options: { altAxis: true, padding: 5 } },
     ],
   })
-  const [show, setShow] = useState(false)
 
   const changeShow = (newShow: boolean) => {
     props.onShowChange?.(newShow)
     setShow(newShow)
   }
 
+  // -- Effect to hide the tooltip
   useEffect(() => {
-    // If we are not currently showing or there is not popper element then don't proceed
+    // If not showing or no popper el, then don't proceed
     if (!show || popperElement == null)
       return undefined
 
-    // Else, start listening for the next click anywhere on the screen to potentially close the popper.
-    const onPageClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement // Convenient cast
+    const appearMode = props.appearMode ?? DEFAULT_PROPS.appearMode
 
-      if (popperElement === target || popperElement.contains(target))
-        return
+    if (appearMode === 'click') {
+      const onPageClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement // Convenient cast
 
-      changeShow(false)
+        if (popperElement === target || popperElement.contains(target))
+          return
+
+        changeShow(false)
+      }
+      setTimeout(() => document.addEventListener('click', onPageClick), 10)
+      return () => document.removeEventListener('click', onPageClick)
     }
-    setTimeout(() => document.addEventListener('click', onPageClick), 10)
-
-    return () => {
-      document.removeEventListener('click', onPageClick)
+    if (appearMode === 'hover') {
+      const mouseLeaveListener = () => changeShow(false)
+      referenceElement.addEventListener('mouseleave', mouseLeaveListener)
+      return () => referenceElement.removeEventListener('mouseleave', mouseLeaveListener)
     }
-  }, [show, popperElement])
 
-  const onClick = () => {
-    if (show)
-      return
+    return undefined
+  }, [show, popperElement, props.appearMode])
 
-    changeShow(true)
-  }
+  // -- Effect to show the tooltip
+  useEffect(() => {
+    // If already showing or no reference el, then don't proceed
+    if (show || referenceElement == null)
+      return undefined
+
+    const appearMode = props.appearMode ?? DEFAULT_PROPS.appearMode
+
+    if (appearMode === 'click') {
+      const handler = () => changeShow(true)
+      referenceElement.addEventListener('click', handler)
+      return () => referenceElement.removeEventListener('click', handler)
+    }
+    if (appearMode === 'hover') {
+      const mouseEnterHandler = () => changeShow(true)
+      referenceElement.addEventListener('mouseenter', mouseEnterHandler)
+      return () => referenceElement.removeEventListener('mouseenter', mouseEnterHandler)
+    }
+
+    return undefined
+  }, [show, referenceElement, props.appearMode])
 
   const TooltipBodyEl = props.tooltipEl
 
@@ -81,7 +106,6 @@ export const render = (props: Props) => {
       <div
         className={`${props.className ?? ''} ${show ? ' active' : ''}`}
         ref={setReferenceElement}
-        onClick={() => onClick()}
       >
         {props.referenceEl}
       </div>
