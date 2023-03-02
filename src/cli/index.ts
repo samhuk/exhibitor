@@ -2,6 +2,7 @@
 import { Command } from 'commander'
 
 import { NPM_PACKAGE_NAME } from '../common/name'
+import { demo } from './commands/demo'
 import { init } from './commands/init'
 import { start } from './commands/start'
 
@@ -29,5 +30,11 @@ program
   // eslint-disable-next-line max-len
   .option('--root-style <path>', 'Optional path to a CSS or SCSS stylesheet to include as a root style. This is useful for defining styles shared by all components, i.e. icon/style libraries like font-awesome, muicons, bootstrap, or your own.')
   .action(start)
+
+// -- Demo command
+program
+  .command('demo')
+  .description('Builds and runs Exhibitor in demo mode.')
+  .action(demo)
 
 program.parse()

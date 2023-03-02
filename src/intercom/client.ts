@@ -1,5 +1,6 @@
 import createNodeStoreClient from 'sock-state/lib/client/node'
 import { BuildStatus, BuildStatusReporter, createBuildStatusReporter } from '../common/building'
+import { NetworkLocation } from '../common/network'
 import { BUILD_STATUSES_TOPIC, DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from './common'
 import { BuiltExhIdentity } from './types'
 
@@ -15,7 +16,7 @@ export const getIntercomNetworkLocationFromProcessEnvs = (_process: NodeJS.Proce
 })
 
 export const createBuiltExhIdentityClient = (identity: BuiltExhIdentity, options?: {
-  networkLocation?: { host: string, port: number },
+  networkLocation?: NetworkLocation,
 }) => {
   const networkLocation = options?.networkLocation ?? getIntercomNetworkLocationFromProcessEnvs(process)
   const client = createNodeStoreClient({ host: networkLocation.host, port: networkLocation.port })

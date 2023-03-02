@@ -22,6 +22,7 @@ import { DEFAULT_INTERCOM_PORT, INTERCOM_PORT_ENV_VAR_NAME } from '../../../inte
 import { createBuiltExhIdentityClient } from '../../../intercom/client'
 import { BuiltExhIdentity } from '../../../intercom/types'
 import { startIntercomServer } from '../../../intercom/server'
+import { NetworkLocation } from '../../../common/network'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
@@ -150,7 +151,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     return intercomPort
 
   // -- Start intercom
-  const intercomNetworkLocation = {
+  const intercomNetworkLocation: NetworkLocation = {
     host: config.site.host,
     port: intercomPort,
   }

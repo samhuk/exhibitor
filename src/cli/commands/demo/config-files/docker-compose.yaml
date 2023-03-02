@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  exh-site-client:
+    container_name: exh-site-client
+    build:
+      context: ./client
+    ports:
+    - "80:80"
+    # - "443:443"
+    # volumes:
+    # - ./certbot/www:/var/www/certbot/:ro
+    # - ./certbot/conf/:/etc/nginx/ssl/:ro
+  # certbot:
+  #   image: certbot/certbot:latest
+  #   volumes:
+  #     - ./certbot/www/:/var/www/certbot/:rw
+  #     - ./certbot/conf/:/etc/letsencrypt/:rw
+  exh-site-server:
+    container_name: exh-site-server
+    user: node
+    build:
+      context: ./server
+    # env_file:
+    #   - ./prod.env
+    ports:
+    - "81:80"
