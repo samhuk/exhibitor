@@ -80,7 +80,7 @@
       "program": "./build/cli/cli/index.js",
       "type": "node",
       "request": "launch",
-      "args": ["demo"],
+      "args": ["demo", "-c", "./test/exh.config.json", "--verbose",],
       "skipFiles": [
         "<node_internals>/**"
       ],

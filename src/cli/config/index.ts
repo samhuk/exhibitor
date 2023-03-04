@@ -20,7 +20,7 @@ const getConfigFilePath = (cliArgumentsOptions: BaseCliArgumentsOptions): ExhErr
   if (!fs.existsSync(cliArgumentsOptions.config)) {
     return createExhError({
       message: 'Invalid CLI command argument(s)',
-      causedBy: c => `Config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}`,
+      causedBy: c => `Config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}. Attempted: ${path.resolve(cliArgumentsOptions.config)}`,
     })
   }
 

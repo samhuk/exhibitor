@@ -14,10 +14,6 @@ export enum ExhEnv {
    * An environment solely for release.
    */
   REL = 'REL',
-  /**
-   * An environment for demoing Exhibitor. This toggles some features like intercom (therefore live-reloading), etc.
-   */
-  DEMO = 'DEMO',
 }
 
 const map: { [envVarValue: string]: ExhEnv } = {

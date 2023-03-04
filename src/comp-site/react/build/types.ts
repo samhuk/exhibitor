@@ -6,6 +6,18 @@ export type BuildOptions = {
   reactMajorVersion: number
   config: Config
   onIndexExhTsFileCreate?: (file: { includedFilePaths: string[] }) => void
-  buildStatusReporter: BuildStatusReporter
+  buildStatusReporter?: BuildStatusReporter
   onFirstSuccessfulBuild?: () => void
+  /**
+   * E.g. './.exh
+   */
+  serverRootDir: string
+  /**
+   * E.g. './.exh/comp-lib
+   */
+  indexExhOutDir: string
+  /**
+   * E.g. './.exh/comp-site
+   */
+  compSiteOutDir: string
 }

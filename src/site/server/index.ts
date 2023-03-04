@@ -20,8 +20,9 @@ import { ExhEnv, getEnv } from '../../common/env'
 import state from '../../common/state'
 import { getIntercomNetworkLocationFromProcessEnvs } from '../../intercom/client'
 import { createBuildStatusesReducer, BUILD_STATUSES_TOPIC } from '../../intercom/common'
-import { createBuildStatusService } from './buildStatusService'
+import { BuildStatusService, createBuildStatusService } from './buildStatusService'
 import { BuildStatuses, BuildStatusesActions } from '../../intercom/types'
+import { tryResolve } from '../../common/npm/resolve'
 
 const isDev = getEnv() === ExhEnv.DEV
 
@@ -55,97 +56,117 @@ const createIntercomClient = () => {
   }
 }
 
+const enableBuildStatusWaitUntilAllSuccessfullMiddleware = (
+  app: ReturnType<typeof express>,
+  buildStatusService: BuildStatusService,
+) => {
+  // For all requests to the http server, wait until all builds are successful.
+  // TODO: We could serve a very simple page that displays a "not all successfully built yet" notice that listens on intercom.
+  app.use('*', async (req, res, next) => {
+    if (!buildStatusService.allSuccessful) {
+      const unsuccessfulBuildStatusesString = buildStatusService.getUnsuccessfulBuilds().map(info => `${info.identity} (${info.status})`).join(', ')
+      logInfo(c => `Request ${c.cyan(req.url)} must wait until all builds are successful. Waiting on: ${unsuccessfulBuildStatusesString}`)
+      await buildStatusService.waitUntilNextAllSuccessful()
+      next()
+      return
+    }
+
+    next()
+  })
+}
+
+const handleAxeJsRequest = (app: ReturnType<typeof express>) => {
+  app.get('/axe.js', (req, res) => {
+    const resolveAxeCoreResult = tryResolve('axe-core')
+    if (resolveAxeCoreResult.success === false) {
+      sendErrorResponse(res, createExhError({ message: 'Could not resolve axe-core NPM dependency. Is it installed?', type: ErrorType.SERVER_ERROR }))
+      return
+    }
+    const minJsPath = path.join(path.dirname(resolveAxeCoreResult.path), 'axe.min.js')
+    res.sendFile(`/${minJsPath}`, { root: './' })
+  })
+}
+
+const handleApiRequest = (app: ReturnType<typeof express>) => {
+  app
+    .use('/api', api)
+    // Send 404 for api requests that don't match an api route
+    .use('/api', (req, res) => sendErrorResponse(res, createExhError({ message: 'unknown endpoint', type: ErrorType.NOT_FOUND })))
+}
+
+const handleThemeStylesheetRequest = (app: ReturnType<typeof express>, clientBuildDir: string) => {
+  app.get('/styles.css', (req, res) => {
+    const theme = req.cookies.theme ?? DEFAULT_THEME
+
+    if (fs.existsSync(path.join(clientBuildDir, `./${theme}.css`))) {
+      res.sendFile(`/${theme}.css`, { root: clientBuildDir })
+      return
+    }
+
+    sendErrorResponse(res, createExhError({ message: `Styles do not exist for theme '${theme}'`, type: ErrorType.NOT_FOUND }))
+  })
+}
+
 const main = async () => {
   // If verbose env var is true, then we can enable the verbose mode for the process earlier here
   state.verbose = process.env[VERBOSE_ENV_VAR_NAME] === 'true'
 
   await loadConfig()
 
-  const { buildStatusService } = createIntercomClient()
-
   const app = express()
   app.use(cookieParser())
 
-  // For all requests to the http server, wait until all builds are successful.
-  // TODO: We could serve a very simple page that displays a "not all successfully built yet" notice that listens on intercom.
-  app
-    .use('*', async (req, res, next) => {
-      if (!buildStatusService.allSuccessful) {
-        const unsuccessfulBuildStatusesString = buildStatusService.getUnsuccessfulBuilds().map(info => `${info.identity} (${info.status})`).join(', ')
-        logInfo(c => `Request ${c.cyan(req.url)} must wait until all builds are successful. Waiting on: ${unsuccessfulBuildStatusesString}`)
-        await buildStatusService.waitUntilNextAllSuccessful()
-        next()
-        return
-      }
+  // If in demo mode, everything is static and already built
+  if (process.env.EXH_DEMO !== 'true') {
+    const { buildStatusService } = createIntercomClient()
+    enableBuildStatusWaitUntilAllSuccessfullMiddleware(app, buildStatusService)
+  }
 
-      next()
-    })
+  handleApiRequest(app)
+  handleAxeJsRequest(app)
 
-  // Handle api requests
-  app
-    .use('/api', api)
-    // Send 404 for api requests that don't match an api route
-    .use('/api', (req, res) => sendErrorResponse(res, createExhError({ message: 'unknown endpoint', type: ErrorType.NOT_FOUND })))
+  // If not in demo-mode, then we will use the Site Server to serve Site Client files.
+  if (process.env.EXH_DEMO !== 'true') {
+    // We use the backend to serve client files
+    const clientBuildDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH)
 
-  // We use the backend to serve client files
-  const clientDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH)
+    handleThemeStylesheetRequest(app, clientBuildDir)
 
-  app
-    .get('*', (req, res) => {
-      if (req.path === '/') {
-        res.sendFile('/', { root: clientDir })
-        return
-      }
-
-      // -- axe
-      if (req.path === '/axe.js') {
-        const pathSuffix = 'node_modules/axe-core/axe.min.js'
-        const relPath = `./${pathSuffix}`
-        if (fs.existsSync(relPath)) {
-          res.sendFile(`/${pathSuffix}`, { root: './' })
+    app
+      .get('*', (req, res) => {
+        if (req.path === '/') {
+          res.sendFile('/', { root: clientBuildDir })
           return
         }
 
-        sendErrorResponse(res, createExhError({ message: `Cannot find axe script at ${relPath}'`, type: ErrorType.NOT_FOUND }))
-        return
-      }
+        // -- Component Site/Lib
+        // This essentially mimiks NGINX's "try files" directive by first trying to serve the req at a file then as a directory (index.html).
+        if (req.path.startsWith('/comp-site') || req.path.startsWith('/comp-lib')) {
+          const reqPathWithoutForwardSlashPrefix = req.path.startsWith('/') ? req.path.slice(1) : req.path
+          const relPath = path.join(BUILD_OUTPUT_ROOT_DIR, reqPathWithoutForwardSlashPrefix) // E.g.
+          if (!fs.existsSync(relPath)) {
+            sendErrorResponse(res, createExhError({ message: `Component Site/Lib file at '${relPath}' does not exist.`, type: ErrorType.NOT_FOUND }))
+            return
+          }
 
-      // -- Theme
-      if (req.path === '/styles.css') {
-        const theme = req.cookies.theme ?? DEFAULT_THEME
+          if (fs.lstatSync(relPath).isFile())
+            res.sendFile(reqPathWithoutForwardSlashPrefix, { root: BUILD_OUTPUT_ROOT_DIR })
+          else
+            res.sendFile(path.join(reqPathWithoutForwardSlashPrefix, 'index.html'), { root: BUILD_OUTPUT_ROOT_DIR })
 
-        if (fs.existsSync(path.join(clientDir, `./${theme}.css`))) {
-          res.sendFile(`/${theme}.css`, { root: clientDir })
           return
         }
 
-        sendErrorResponse(res, createExhError({ message: `Styles do not exist for theme '${theme}'`, type: ErrorType.NOT_FOUND }))
-        return
-      }
+        // -- Site Client files
+        if (fs.existsSync(path.resolve(clientBuildDir, `.${req.path}`))) {
+          res.sendFile(req.path, { root: clientBuildDir })
+          return
+        }
 
-      // -- comp-site
-      if (req.path.startsWith('/comp-site')) {
-        const _path = req.path.substring('/comp-site'.length)
-        const __path = _path.length === 0 ? '/index.html' : _path
-        res.sendFile(__path, { root: COMP_SITE_OUTDIR })
-        return
-      }
-
-      // -- ./.exh (build output root dir)
-      if (fs.existsSync(path.join(BUILD_OUTPUT_ROOT_DIR, `.${req.path}`))) {
-        res.sendFile(req.path, { root: BUILD_OUTPUT_ROOT_DIR })
-        return
-      }
-
-      // -- site client
-      if (fs.existsSync(path.resolve(clientDir, `.${req.path}`))) {
-        res.sendFile(req.path, { root: clientDir })
-        return
-      }
-
-      // -- site client index.html (SPA behavior)
-      res.sendFile('/', { root: clientDir })
-    })
+        // -- Fallback to Site Client index.html (SPA behavior)
+        res.sendFile('/', { root: clientBuildDir })
+      })
+  }
 
   const host = process.env.EXH_SITE_SERVER_HOST ?? 'localhost'
   const port = process.env.EXH_SITE_SERVER_PORT != null

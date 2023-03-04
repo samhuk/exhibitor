@@ -1,17 +1,19 @@
 import { Request, Response } from 'express'
 import * as fs from 'fs'
+import path from 'path'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { ExhError } from '../../../common/exhError/types'
 import { sendErrorResponse, sendSuccessResponse } from '../common/responses'
 
 const getExhibitCode = (req: Request): string | ExhError => {
   const exhibitSrcPath = req.query.exhibitSrcPath as string
+  const _exhibitSrcPath = process.env.EXH_DEMO === 'true' ? path.join('/mnt', exhibitSrcPath) : exhibitSrcPath
   try {
-    return fs.readFileSync(exhibitSrcPath, { encoding: 'utf8' })
+    return fs.readFileSync(_exhibitSrcPath, { encoding: 'utf8' })
   }
   catch (e: any) {
     return createExhError({
-      message: c => `Could not read the component exhibit source file at '${c.cyan(exhibitSrcPath)}`,
+      message: c => `Could not read the component exhibit source file. Recieved: '${c.cyan(_exhibitSrcPath)}. Attempted: ${c.cyan(path.resolve(_exhibitSrcPath))}`,
       causedBy: e,
     })
   }

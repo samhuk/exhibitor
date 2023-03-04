@@ -1,4 +1,4 @@
-import { build as esbuildBuild, BuildFailure, formatMessages, Plugin } from 'esbuild'
+import { build as esbuildBuild, Plugin } from 'esbuild'
 import * as fs from 'fs'
 import path from 'path'
 import sassPlugin from 'esbuild-sass-plugin'
@@ -7,10 +7,10 @@ import { build as _build } from '../../../common/esbuilder'
 import { gzipLargeFiles } from '../../../common/gzip'
 import { BuildOptions } from './types'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
-import { COMP_SITE_OUTDIR } from '../../../common/paths'
 
 import { createComponentLibraryIncluderPlugin } from '../../../cli/indexExhFile'
 import { ExhEnv, getEnv } from '../../../common/env'
+import { createIndexHtmlFileText } from '../../../common/esbuildHtmlFilePlugin2'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
@@ -25,8 +25,8 @@ const getPaths = (options: BuildOptions) => {
   const type = 'react'
   const subType = getComponentSiteSubType(options.reactMajorVersion)
 
-  const indexHtmlOutPath = path.relative(path.resolve('./'), path.resolve(COMP_SITE_OUTDIR, 'index.html'))
-  const outFile = path.resolve(COMP_SITE_OUTDIR, 'index.js')
+  const indexHtmlOutPath = path.relative(path.resolve('./'), path.resolve(options.compSiteOutDir, 'index.html'))
+  const outFile = path.resolve(options.compSiteOutDir, 'index.js')
 
   // If skipPrebuild is true then we will build the comp site directly from the local typescript
   if (options.skipPrebuild) {
@@ -68,7 +68,7 @@ const createBuilder = (options: BuildOptions) => {
     // Merge custom plugins with mandatory built-in ones
     plugins: [
       sassPlugin() as unknown as Plugin,
-      createComponentLibraryIncluderPlugin(options.config, options.onIndexExhTsFileCreate),
+      createComponentLibraryIncluderPlugin(options.config, options.indexExhOutDir, options.onIndexExhTsFileCreate),
       ...(options.config.esbuildOptions?.plugins ?? []),
     ],
     // Non-overrideable build options
@@ -83,16 +83,21 @@ const createBuilder = (options: BuildOptions) => {
     logLevel: isDev ? undefined : 'silent',
   })
     .then(result => {
+      // Doing path.dirname of the comp-site outdir such that extra esbuild outfiles end up with the path "/comp-site/{path}"
+      const indexHtmlText = createIndexHtmlFileText(result, null, paths.indexHtmlPath, path.dirname(options.compSiteOutDir))
       // Copy over additional files to build output dir
-      fs.copyFileSync(paths.indexHtmlPath, paths.indexHtmlOutPath)
+      fs.writeFileSync(paths.indexHtmlOutPath, indexHtmlText)
 
-      if (!isDev)
-        gzipLargeFiles(COMP_SITE_OUTDIR)
+      if (!isDev) {
+        gzipLargeFiles(options.indexExhOutDir)
+        if (options.compSiteOutDir !== options.indexExhOutDir)
+          gzipLargeFiles(options.compSiteOutDir)
+      }
 
       return {
         buildResult: result,
         additionalOutputs: [
-          { path: paths.indexHtmlOutPath, sizeBytes: Buffer.from(fs.readFileSync(paths.indexHtmlPath, { encoding: 'utf8' })).length },
+          { path: paths.indexHtmlOutPath, sizeBytes: Buffer.from(indexHtmlText).length },
         ],
       }
     })

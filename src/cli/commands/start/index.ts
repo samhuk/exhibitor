@@ -1,4 +1,6 @@
 import { ChildProcess } from 'child_process'
+import * as fs from 'fs'
+import path from 'path'
 import { getConfigForCommand } from '../../config'
 import { baseCommand } from '../common'
 import { startServer } from './startServer'
@@ -23,6 +25,7 @@ import { createBuiltExhIdentityClient } from '../../../intercom/client'
 import { BuiltExhIdentity } from '../../../intercom/types'
 import { startIntercomServer } from '../../../intercom/server'
 import { NetworkLocation } from '../../../common/network'
+import { COMP_SITE_OUTDIR, META_DATA_FILE } from '../../../common/paths'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
@@ -38,16 +41,24 @@ const watchCompSiteWaitForFirstSuccessfulBuild = async (
 
 export const createOnIndexExhTsFileCreateHandler = (
   config: Config,
-  intercom: { host: string, port: number, enableLogging: boolean },
-) => (file: { includedFilePaths: string[] }) => {
-  logStep('Creating metadata.json file', true)
-  setMetadata({
-    includedFilePaths: file.includedFilePaths,
-    siteTitle: config.site.title,
-    isAxeEnabled: tryResolve('axe-core').success === true,
-    env: exhEnv,
-    intercom,
-  })
+  intercom?: { host: string, port: number, enableLogging: boolean },
+  metaDataWritePath?: string,
+) => {
+  const _metaDataWritePath = metaDataWritePath ?? META_DATA_FILE
+  logStep(c => `Ensuring metadata.json file directory exists. Recieved: ${c.cyan(_metaDataWritePath)}. Attempting: ${c.cyan(path.resolve(_metaDataWritePath))}`, true)
+  if (_metaDataWritePath != null && !fs.existsSync(_metaDataWritePath))
+    fs.mkdirSync(path.dirname(_metaDataWritePath), { recursive: true })
+
+  return (file: { includedFilePaths: string[] }) => {
+    logStep(c => `Creating metadata.json file. Writing to ${c.cyan(_metaDataWritePath)}.`, true)
+    setMetadata({
+      includedFilePaths: file.includedFilePaths,
+      siteTitle: config.site.title,
+      isAxeEnabled: tryResolve('axe-core').success === true,
+      env: exhEnv,
+      intercom,
+    }, _metaDataWritePath)
+  }
 }
 
 const determineServerPort = async (config: Config): Promise<number | ExhError> => {
@@ -177,6 +188,9 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
         enableLogging: process.env.EXH_SHOW_INTERCOM_LOG === 'true',
       }),
       buildStatusReporter: compLibWatchIntercomClient.buildStatusReporter,
+      compSiteOutDir: './.exh/comp-site',
+      indexExhOutDir: './.exh/comp-lib',
+      serverRootDir: './.exh',
     })
   }
   catch (e: any) {
