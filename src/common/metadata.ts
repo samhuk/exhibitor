@@ -13,6 +13,7 @@ export type MetaData = {
     enableLogging: boolean
   }
   env: ExhEnv
+  isDemoMode: boolean
 }
 
 export const setMetadata = (

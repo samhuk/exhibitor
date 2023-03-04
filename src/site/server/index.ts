@@ -82,8 +82,8 @@ const handleAxeJsRequest = (app: ReturnType<typeof express>) => {
       sendErrorResponse(res, createExhError({ message: 'Could not resolve axe-core NPM dependency. Is it installed?', type: ErrorType.SERVER_ERROR }))
       return
     }
-    const minJsPath = path.join(path.dirname(resolveAxeCoreResult.path), 'axe.min.js')
-    res.sendFile(`/${minJsPath}`, { root: './' })
+    const minJsRelPath = path.relative('.', path.join(path.dirname(resolveAxeCoreResult.path), 'axe.min.js'))
+    res.sendFile(`/${minJsRelPath}`, { root: './' })
   })
 }
 

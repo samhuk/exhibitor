@@ -56,6 +56,7 @@ export const createOnIndexExhTsFileCreateHandler = (
       siteTitle: config.site.title,
       isAxeEnabled: tryResolve('axe-core').success === true,
       env: exhEnv,
+      isDemoMode: process.env.EXH_DEMO === 'true',
       intercom,
     }, _metaDataWritePath)
   }

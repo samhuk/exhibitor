@@ -6,9 +6,11 @@ import {
   Actions,
   State,
   SET_BUILD_STATUSES,
+  SET_ENABLED,
 } from './actions'
 
 const initialState: State = {
+  enabled: false,
   connectionStatus: ConnectionStatus.DISCONNECTED,
   buildStatuses: {
     [BuiltExhIdentity.SITE_SERVER]: BuildStatus.NONE,
@@ -33,6 +35,12 @@ export const intercomReducer = (
       return {
         ...state,
         buildStatuses: action.buildStatuses,
+      }
+    }
+    case SET_ENABLED: {
+      return {
+        ...state,
+        enabled: true,
       }
     }
     default:

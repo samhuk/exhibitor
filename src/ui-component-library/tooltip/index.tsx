@@ -4,7 +4,12 @@ import { PropsOfReactComponent, ReactComponent } from '../../api/exhibit/types'
 import { CLASS_NAME_PREFIX } from '../common'
 
 export type Props<T extends ReactComponent = ReactComponent> = {
+  /**
+   * @deprecated
+   */
   className?: string
+  refClassName?: string
+  tooltipClassName?: string
   referenceEl: ReactNode
   tooltipEl: T
   tooltipProps?: PropsOfReactComponent<T>
@@ -104,7 +109,7 @@ export const render = (props: Props) => {
     <>
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
-        className={`${props.className ?? ''} ${show ? ' active' : ''}`}
+        className={`${props.className ?? ''} ${props.refClassName ?? ''} ${show ? ' active' : ''}`}
         ref={setReferenceElement}
       >
         {props.referenceEl}
@@ -112,7 +117,7 @@ export const render = (props: Props) => {
       {show
         ? (
           // eslint-disable-next-line react/jsx-props-no-spreading
-          <div className={`${CLASS_NAME} ${props.className ?? ''}`} ref={setPopperElement} style={styles.popper} {...attributes.popper}>
+          <div className={`${CLASS_NAME} ${props.className ?? ''} ${props.tooltipClassName ?? ''}`} ref={setPopperElement} style={styles.popper} {...attributes.popper}>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             <div className="body"><TooltipBodyEl {...props.tooltipProps} /></div>
             <div className="arrow" ref={setArrowElement} style={styles.arrow} />

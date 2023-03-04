@@ -9,5 +9,4 @@ FROM node as release
 COPY ./index.js /server/index.js
 COPY ./metadata.json /.exh/metadata.json
 COPY --from=deps /usr/app/node_modules ./node_modules
-EXPOSE 80
 CMD ["node", "/server/index.js"]
