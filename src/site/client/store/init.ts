@@ -46,7 +46,7 @@ export const init = async (dispatch: AppDispatch) => {
   await waitUntilComponentExhibitsAreLoaded()
   dispatch(componentExhibitsReady(null))
   dispatch(fetchMetaDataThunk(metaData => {
-    if (metaData.intercom != null) {
+    if (metaData?.intercom != null) {
       dispatch(setEnabled(true))
       createIntercomClient(metaData, dispatch)
     }

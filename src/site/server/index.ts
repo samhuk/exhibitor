@@ -94,6 +94,13 @@ const handleApiRequest = (app: ReturnType<typeof express>) => {
     .use('/api', (req, res) => sendErrorResponse(res, createExhError({ message: 'unknown endpoint', type: ErrorType.NOT_FOUND })))
 }
 
+const enableRequestLogging = (app: ReturnType<typeof express>) => {
+  app.use('*', (req, res, next) => {
+    logInfo(c => `Recieved request | URL: ${c.cyan(req.url)} | X-FORWARDED-FOR: ${req.headers['x-forwarded-for']} | REMOTE ADDR: ${req.socket.remoteAddress}`)
+    next()
+  })
+}
+
 const handleThemeStylesheetRequest = (app: ReturnType<typeof express>, clientBuildDir: string) => {
   app.get('/styles.css', (req, res) => {
     const theme = req.cookies.theme ?? DEFAULT_THEME
@@ -115,6 +122,9 @@ const main = async () => {
 
   const app = express()
   app.use(cookieParser())
+
+  if (state.verbose)
+    enableRequestLogging(app)
 
   // If in demo mode, everything is static and already built
   if (process.env.EXH_DEMO !== 'true') {

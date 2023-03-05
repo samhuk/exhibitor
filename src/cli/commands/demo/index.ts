@@ -16,6 +16,7 @@ import { DemoCliArgumentsOptions } from './types'
 import { applyDemoOptionsToConfig } from './config'
 import { createOnIndexExhTsFileCreateHandler } from '../start'
 import { VERBOSE_ENV_VAR_NAME } from '../../../common/config'
+import { logFeatureStatus } from '../../../common/logging/notices'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
@@ -86,6 +87,8 @@ const createSiteServerPackageJsonForDocker = (
 }
 
 export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions): Promise<ExhError | null | undefined> => {
+  logFeatureStatus('demo CLI command', 'alpha')
+
   // If verbose is specified in CLI arguments or env var, then we can globally set it earlier
   const earlyVerbose = options.verbose != null
     ? options.verbose

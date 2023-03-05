@@ -176,6 +176,13 @@ build-comp-site-ts:
 clean-all:
 	rm -rf ./.exh && rm -rf ./build && rm -rf ./build-test
 
+build-all-dev:
+	@$(MAKE) --no-print-directory \
+		build-site-dev \
+		build-api \
+		build-cli-dev \
+		prebuild-comp-sites
+
 build-all:
 	@$(MAKE) --no-print-directory \
 		build-site-rel \
