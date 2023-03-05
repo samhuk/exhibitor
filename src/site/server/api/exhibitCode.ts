@@ -4,9 +4,20 @@ import path from 'path'
 import { createExhError, isExhError } from '../../../common/exhError'
 import { ExhError } from '../../../common/exhError/types'
 import { sendErrorResponse, sendSuccessResponse } from '../common/responses'
+import { getMetaData } from './metaData'
 
 const getExhibitCode = (req: Request): string | ExhError => {
   const exhibitSrcPath = req.query.exhibitSrcPath as string
+
+  const includedFilePaths = getMetaData()?.includedFilePaths ?? []
+
+  if (includedFilePaths.indexOf(exhibitSrcPath) === -1) {
+    return createExhError({
+      message: c => `Could not read the component exhibit source file. Recieved: '${c.cyan(exhibitSrcPath)}.}`,
+      causedBy: 'Path was not an included exhibit source file.',
+    })
+  }
+
   const _exhibitSrcPath = process.env.EXH_DEMO === 'true' ? path.join('/mnt', exhibitSrcPath) : exhibitSrcPath
   try {
     return fs.readFileSync(_exhibitSrcPath, { encoding: 'utf8' })

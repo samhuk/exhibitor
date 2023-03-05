@@ -6,9 +6,12 @@ import { ExhResponse } from '../../common/responses'
 import { SerializedExhError } from '../../../common/exhError/serialization/types'
 import { ErrorType } from '../../../common/errorTypes'
 import { MimeType } from '../../../common/mimeType'
+import { ExhEnv, getEnv } from '../../../common/env'
 
 export type AnyRequest = Request<any, any, any>
 export type AnyResponse = Response<any>
+
+const env = getEnv()
 
 const setContentTypeHeader = (res: Response, type: MimeType) => {
   res.setHeader('Content-Type', type)
@@ -25,6 +28,10 @@ export const sendErrorResponse = (
       causedBy: error.message,
       stack: error.stack,
     }
+
+  // TODO: This is not elegant. Could be better?
+  if (env !== ExhEnv.DEV)
+    delete serializedExhError.stack
 
   const response: ExhResponse = serializedExhError
   setContentTypeHeader(res, 'application/json')
