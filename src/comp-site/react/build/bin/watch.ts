@@ -24,6 +24,9 @@ const main = async () => {
       enableLogging: isIntercomLoggingEnabled,
     }),
     buildStatusReporter: intercomClient.buildStatusReporter,
+    compSiteOutDir: './.exh/comp-site',
+    indexExhOutDir: './.exh/comp-lib',
+    serverRootDir: './.exh/client',
   })
 }
 

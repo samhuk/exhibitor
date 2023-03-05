@@ -21,6 +21,15 @@
     display: flex;
     align-items: center;
 
+    .demo-mode-indicator {
+      font-size: 12px;
+      font-weight: bold;
+      background-color: orangered;
+      padding: 2px 5px;
+      border-radius: 5px;
+      cursor: default;
+    }
+
     .build-statuses {
       margin-right: 15px;
       display: flex;

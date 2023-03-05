@@ -5,11 +5,13 @@ import { useAppDispatch, useAppSelector } from '../../store'
 import { incrementTheme } from '../../store/theme/actions'
 import About from './about'
 import BuildStatuses from './buildStatuses'
+import DemoModeIndicator from './demoModeIndicator'
 import Intercom from './intercom'
 
 export const render = () => {
   const dispatch = useAppDispatch()
   const theme = useAppSelector(s => s.theme.theme)
+  const isIntercomEnabled = useAppSelector(s => s.intercom.enabled)
 
   const onThemeButtonClick = () => {
     dispatch(incrementTheme())
@@ -21,8 +23,14 @@ export const render = () => {
         {NPM_PACKAGE_CAPITALIZED_NAME}
       </div>
       <div className="right">
-        <BuildStatuses />
-        <Intercom />
+        <DemoModeIndicator />
+        {isIntercomEnabled
+          ? (
+            <>
+              <BuildStatuses />
+              <Intercom />
+            </>
+          ) : null}
         <About />
         <Button
           onClick={onThemeButtonClick}

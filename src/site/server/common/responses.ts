@@ -10,6 +10,10 @@ import { MimeType } from '../../../common/mimeType'
 export type AnyRequest = Request<any, any, any>
 export type AnyResponse = Response<any>
 
+const setContentTypeHeader = (res: Response, type: MimeType) => {
+  res.setHeader('Content-Type', type)
+}
+
 export const sendErrorResponse = (
   res: AnyResponse,
   error: ExhError | Error,
@@ -23,7 +27,7 @@ export const sendErrorResponse = (
     }
 
   const response: ExhResponse = serializedExhError
-
+  setContentTypeHeader(res, 'application/json')
   res.status(STATUS_CODES[serializedExhError.type ?? ErrorType.SERVER_ERROR] ?? 500).send(response)
 }
 

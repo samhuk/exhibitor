@@ -2,7 +2,7 @@ import { BuildResult } from 'esbuild'
 import * as fs from 'fs'
 import { JSDOM } from 'jsdom'
 import * as path from 'path'
-import { createExhError } from '../../common/exhError'
+import { createExhError } from './exhError'
 
 const includeJsFile = (document: Document, href: string) => {
   const scriptEl = document.createElement('script')
@@ -26,12 +26,12 @@ const includeIcoFile = (document: Document, href: string) => {
   document.head.appendChild(linkEl)
 }
 
-const includeFile = (document: Document, outputDir: string, outputPath: string) => {
+const includeFile = (document: Document, serverRootDir: string, outputPath: string) => {
   // These are dynamically included
   if (outputPath.endsWith('dark.css') || outputPath.endsWith('light.css'))
     return
 
-  const relativizedPath = path.relative(outputDir, outputPath)
+  const relativizedPath = path.relative(serverRootDir, outputPath)
   const href = `/${relativizedPath}`
   if (outputPath.endsWith('.js'))
     includeJsFile(document, href)
@@ -50,7 +50,7 @@ export const createIndexHtmlFileText = (
   result: BuildResult,
   faviconOutputPath: string | null,
   indexHtmlFilePath: string,
-  outputDir: string,
+  serverRootDir: string,
 ): string => {
   let htmlFileText: string = null
   try {
@@ -66,10 +66,10 @@ export const createIndexHtmlFileText = (
   if (document.head == null)
     createExhError({ message: 'index.html file does not have a <head> element. Please add one.' }).log()
 
-  Object.entries(result.metafile.outputs).forEach(([outputPath]) => includeFile(document, outputDir, outputPath))
+  Object.entries(result.metafile.outputs).forEach(([outputPath]) => includeFile(document, serverRootDir, outputPath))
 
   if (faviconOutputPath != null)
-    includeIcoFile(document, `/${path.relative(outputDir, faviconOutputPath)}`)
+    includeIcoFile(document, `/${path.relative(serverRootDir, faviconOutputPath)}`)
 
   return jsdom.serialize()
 }

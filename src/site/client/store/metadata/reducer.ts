@@ -11,11 +11,19 @@ import {
 import { fetchMetaData as fetchMetaDataRequest } from '../../connectors/metaData'
 import { MetaData } from '../../../../common/metadata'
 import { isSerializedExhError } from '../../misc'
+import { ExhEnv } from '../../../../common/env'
 
 const initialState: MetaDataState = {
   doFetch: true,
   loadingState: LoadingState.IDLE,
-  metaData: null,
+  metaData: {
+    env: ExhEnv.REL,
+    includedFilePaths: [],
+    isAxeEnabled: false,
+    isDemoMode: false,
+    intercom: null,
+    siteTitle: 'Exhibitor',
+  },
   error: null,
 }
 

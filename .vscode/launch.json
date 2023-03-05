@@ -75,6 +75,21 @@
         "EXH_INTERCOM_PORT": "4002"
       }
     },
+    {
+      "name": "Run CLI demo command",
+      "program": "./build/cli/cli/index.js",
+      "type": "node",
+      "request": "launch",
+      "args": ["demo", "-c", "./test/exh.config.json", "--verbose",],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "EXH_ENV": "dev-rel",
+        "EXH_CONFIG_FILE_PATH": "./test/exh.config.json"
+      }
+    },
     // TODO: Get this working again
     // {
     //   "name": "CLI Start",

@@ -7,18 +7,20 @@ export type MetaData = {
   includedFilePaths: string[]
   siteTitle: string
   isAxeEnabled: boolean
-  intercom: {
+  intercom?: {
     host: string
     port: number
     enableLogging: boolean
   }
   env: ExhEnv
+  isDemoMode: boolean
 }
 
 export const setMetadata = (
   metaData: MetaData,
+  writePath: string,
 ): void => {
-  fs.writeFileSync(META_DATA_FILE, JSON.stringify(metaData, null, 2))
+  fs.writeFileSync(writePath, JSON.stringify(metaData, null, 2))
 }
 
 export const getMetadata = (): MetaData => {

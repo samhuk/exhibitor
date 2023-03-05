@@ -123,6 +123,9 @@ build-cli-build:
 clean-cli:
 	rm -rf ./build/cli/cli
 
+copy-over-demo-files:
+	cp -r ./src/cli/commands/demo/config-files/ ./build/cli/cli/demo-cmd-config-files
+
 _build-cli-dev:
 	npx env-cmd -e dev node ./build/cli/build/cli/build/bin/buildCli.js
 
@@ -133,13 +136,16 @@ build-cli-dev:
 	@$(MAKE) --no-print-directory \
 		build-cli-build \
 		clean-cli \
-		_build-cli-dev
+		_build-cli-dev \
+		copy-over-demo-files
 
 build-cli-rel:
 	@$(MAKE) --no-print-directory \
 		build-cli-build \
 		clean-cli \
-		_build-cli-rel
+		_build-cli-rel \
+		copy-over-demo-files
+
 #endregion
 
 #region CLI TS check
@@ -169,6 +175,13 @@ build-comp-site-ts:
 #region Complete builds
 clean-all:
 	rm -rf ./.exh && rm -rf ./build && rm -rf ./build-test
+
+build-all-dev:
+	@$(MAKE) --no-print-directory \
+		build-site-dev \
+		build-api \
+		build-cli-dev \
+		prebuild-comp-sites
 
 build-all:
 	@$(MAKE) --no-print-directory \

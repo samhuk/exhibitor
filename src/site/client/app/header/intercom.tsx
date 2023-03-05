@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { usePopper } from 'react-popper'
+import React from 'react'
 import { ConnectionStatus } from 'sock-state/lib/common/connectionStatus'
 import ErrorIcon from '../../../../ui-component-library/error-icon'
 import SuccessIcon from '../../../../ui-component-library/success-icon'

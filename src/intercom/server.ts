@@ -1,13 +1,11 @@
 import { CONSOLE_LOG_SERVER_REPORTER, createStoreServer, Reducer, StoreServerReporter } from 'sock-state'
 import { BuildStatus } from '../common/building'
+import { NetworkLocation } from '../common/network'
 import { getIntercomNetworkLocationFromProcessEnvs } from './client'
 import { createBuildStatusesReducer, INITIAL_STATE } from './common'
 
 export const startIntercomServer = (options?: {
-  networkLocation?: {
-    host: string
-    port: number
-  }
+  networkLocation?: NetworkLocation,
   reporter?: StoreServerReporter
   isSiteAlreadyBuilt?: boolean
 }) => {

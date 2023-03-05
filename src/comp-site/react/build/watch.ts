@@ -1,5 +1,5 @@
 import chokidar, { FSWatcher } from 'chokidar'
-import { BuildIncremental, BuildResult } from 'esbuild'
+import { BuildIncremental } from 'esbuild'
 import { BuildStatus } from '../../../common/building'
 import { printBuildResult } from '../../../common/esbuilder'
 import { debounce } from '../../../common/function'
@@ -15,7 +15,7 @@ const rebuildIteration = async (
   options: BuildOptions,
 ) => {
   logStep(`[${new Date().toLocaleTimeString()}] Changes detected, rebuilding component library...`)
-  options.buildStatusReporter.update(BuildStatus.IN_PROGRESS)
+  options.buildStatusReporter?.update(BuildStatus.IN_PROGRESS)
 
   const startTime = Date.now()
   let rebuildResult: BuildIncremental
@@ -25,11 +25,11 @@ const rebuildIteration = async (
   }
   catch {
     // Silence errors, since esbuild prints them already. But report the error to reporter still.
-    options.buildStatusReporter.update(BuildStatus.ERROR)
+    options.buildStatusReporter?.update(BuildStatus.ERROR)
     return
   }
 
-  options.buildStatusReporter.update(BuildStatus.SUCCESS)
+  options.buildStatusReporter?.update(BuildStatus.SUCCESS)
   logSuccess(`(${Date.now() - startTime} ms) Done.${!options.config.verbose ? ' Watching for changes...' : ''}`)
   // If verbose, print build info on every rebuild
   if (options.config.verbose) {
@@ -48,12 +48,12 @@ export const watchCompSite = async (
   let buildResult: CustomBuildResult
 
   try {
-    options.buildStatusReporter.update(BuildStatus.IN_PROGRESS)
+    options.buildStatusReporter?.update(BuildStatus.IN_PROGRESS)
     // First-build iteration
     buildResult = await build(options)
   }
   catch {
-    options.buildStatusReporter.update(BuildStatus.ERROR)
+    options.buildStatusReporter?.update(BuildStatus.ERROR)
     // If the first-build has already failed, then we don't need to start a watch
     if (initialBuildWatcher != null)
       return
@@ -79,7 +79,7 @@ export const watchCompSite = async (
     .watch(options.config.watch, { ignored: ignoredWatchPatterns })
     .on('ready', () => {
       logStep('Watching for changes...')
-      options.buildStatusReporter.update(BuildStatus.SUCCESS)
+      options.buildStatusReporter?.update(BuildStatus.SUCCESS)
       watcher.on('add', fn).on('change', fn).on('unlink', fn)
     })
 }

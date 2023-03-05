@@ -6,9 +6,9 @@ import path from 'path'
 import { THEMES } from '../../common/theme'
 import { createBuilder } from '../../common/esbuilder'
 import { SITE_CLIENT_ENTRYPOINT, SITE_CLIENT_FAVICON_PATH, SITE_CLIENT_HTML_PATH } from '../../common/paths'
-import { createIndexHtmlFileText } from './esbuildHtmlFilePlugin'
 import { gzipLargeFiles } from '../../common/gzip'
 import { BuildClientOptions } from './types'
+import { createIndexHtmlFileText } from '../../common/esbuildHtmlFilePlugin'
 
 const createClientBuilder = (options: BuildClientOptions) => {
   const indexHtmlFileOutputPath = path.relative(path.resolve('./'), path.resolve(options.outDir, 'index.html'))
