@@ -18,7 +18,7 @@ export const render = () => {
     </>
   )
 
-  return !isDemoMode
+  return isDemoMode
     ? (
       <Tooltip
         referenceEl={referenceEl}

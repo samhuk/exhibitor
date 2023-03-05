@@ -37,7 +37,7 @@ const buildCompSite = async (config: Config, demoBuildOutDir: string): Promise<E
     skipPrebuild: isDev,
     reactMajorVersion: checkPackagesResult.reactMajorVersion,
     config,
-    onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, null, path.join(demoBuildOutDir, 'server/metadata.json')),
+    onIndexExhTsFileCreate: createOnIndexExhTsFileCreateHandler(config, null, true, path.join(demoBuildOutDir, 'server/metadata.json')),
     compSiteOutDir: path.join(demoBuildOutDir, 'client/comp-site'),
     indexExhOutDir: path.join(demoBuildOutDir, 'client/comp-lib'),
     serverRootDir: path.join(demoBuildOutDir, 'client'),

@@ -14,8 +14,6 @@ import { BUILD_OUTPUT_ROOT_DIR, BUNDLE_INPUT_FILE_NAME, BUNDLE_OUTPUT_FILE_NAME 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
 
-const DEFAULT_COMP_LIB_BUILD_OUTDIR = './.exh/comp-lib'
-
 /**
  * esbuild plugin that includes the user's component library in a web browser javascript bundle.
  *

@@ -42,6 +42,7 @@ const watchCompSiteWaitForFirstSuccessfulBuild = async (
 export const createOnIndexExhTsFileCreateHandler = (
   config: Config,
   intercom?: { host: string, port: number, enableLogging: boolean },
+  isDemoMode?: boolean,
   metaDataWritePath?: string,
 ) => {
   const _metaDataWritePath = metaDataWritePath ?? META_DATA_FILE
@@ -56,7 +57,7 @@ export const createOnIndexExhTsFileCreateHandler = (
       siteTitle: config.site.title,
       isAxeEnabled: tryResolve('axe-core').success === true,
       env: exhEnv,
-      isDemoMode: process.env.EXH_DEMO === 'true',
+      isDemoMode,
       intercom,
     }, _metaDataWritePath)
   }

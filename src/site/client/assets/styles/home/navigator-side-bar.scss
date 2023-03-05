@@ -40,6 +40,7 @@
         cursor: pointer;
         padding: 2px 5px;
         align-self: stretch;
+        margin-right: 1px; // To avoid partially obscuring the pseudo-focus blue 1px border
   
         &>:first-child {
           margin-left: 3px;

@@ -10,6 +10,7 @@ export const render = () => {
   const selectedType = useAppSelector(s => s.componentExhibits.selectedBottomBarType)
   const isAxeEnabled = useAppSelector(s => s.metaData.metaData?.isAxeEnabled)
   const hasUnseenEvents = useAppSelector(s => s.componentExhibits.hasUnseenEvents)
+  const isDemoMode = useAppSelector(s => s.metaData.metaData?.isDemoMode)
   const dispatch = useAppDispatch()
   const selectedVariant = useMemo(
     () => {
@@ -24,7 +25,8 @@ export const render = () => {
   const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<true>).eventProps
   const showCode = selectedVariant != null // TODO
   const showAxe = selectedVariant != null && isAxeEnabled
-  const showTesting = selectedVariant != null && selectedVariant.exhibit.testSrcPath != null
+  // TODO: If demo mode, we should show but *disable* the button with a helpful tooltip explaining that.
+  const showTesting = selectedVariant != null && selectedVariant.exhibit.testSrcPath != null && !isDemoMode
 
   const navItemOptionsList: NavItemOptions[] = []
 
