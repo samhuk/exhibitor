@@ -8,6 +8,7 @@ import { createResizer, ResizerLocation } from '../../../common/resizer'
 import { useAppSelector } from '../../../store'
 import { updateViewportSize, selectVariant } from '../../../store/componentExhibits/actions'
 import Iframe from './iframe2'
+import ResponsivenessInfo from './responsivenessInfo'
 
 enum GetSelectedVariantFailReason {
   EXHIBIT_NOT_FOUND,
@@ -60,6 +61,7 @@ export const render = () => {
     ? selectedNode
     : null
   const [iframeContainerEl, setIframeContainerEl] = useState<HTMLDivElement>(null)
+  const [iframeEl, setIframeEl] = useState<HTMLIFrameElement>(null)
   const viewportSizeChangeEnabled = useAppSelector(s => s.componentExhibits.viewportSizeChangeEnabled)
 
   const onResizeStart = () => {
@@ -88,6 +90,8 @@ export const render = () => {
     if (viewportSizeChangeEnabled) {
       iframeContainerEl.style.height = `${height}px`
       iframeContainerEl.style.width = `${width}px`
+      // You have to do a bit extra because the parent element is display: flex.
+      iframeContainerEl.style.minWidth = `${width}px`
     }
     else {
       iframeContainerEl.style.height = '100%'
@@ -103,6 +107,7 @@ export const render = () => {
     onResizeStart,
     sizeChangeScale: 2,
     minSizePx: 50,
+    includeMinSize: true,
   }) : (): any => undefined), [iframeContainerEl, viewportSizeChangeEnabled])
   const rightResizer = useMemo(() => (viewportSizeChangeEnabled ? createResizer({
     el: iframeContainerEl,
@@ -112,6 +117,7 @@ export const render = () => {
     onResizeStart,
     sizeChangeScale: 2,
     minSizePx: 50,
+    includeMinSize: true,
   }) : (): any => undefined), [iframeContainerEl, viewportSizeChangeEnabled])
   const topResizer = useMemo(() => (viewportSizeChangeEnabled ? createResizer({
     el: iframeContainerEl,
@@ -161,12 +167,14 @@ export const render = () => {
 
   return (
     <div className={`component-exhibit found ${viewportSizeChangeEnabled ? 'viewport-size-change-enabled' : 'viewport-size-change-disabled'}`}>
+      {viewportSizeChangeEnabled ? <ResponsivenessInfo iframeEl={iframeEl} /> : null}
       <div className="iframe-container" ref={el => setIframeContainerEl(el)}>
         <Iframe
           height="100%"
           width="100%"
           title="comp-site"
           src="/comp-site"
+          ref={el => setIframeEl(el)}
         />
       </div>
     </div>

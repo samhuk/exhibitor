@@ -32,6 +32,11 @@ type Options = {
    */
   sizeChangeScale?: number
   minSizePx?: number
+  /**
+   * When resizing, also applies min-width/min-height style properties too.
+   * @default false
+   */
+  includeMinSize?: boolean
 }
 
 type State = {
@@ -52,10 +57,20 @@ const INITIAL_STATE: State = {
   initialUserSelectStyleValue: null,
 }
 
-const createSizeSetter = (el: HTMLElement, dimension: Dimension2D) => (
+const createSizeSetter = (el: HTMLElement, dimension: Dimension2D, includeMinSize: boolean) => (
   dimension === Dimension2D.X
-    ? (newSizePx: number) => el.style.width = `${newSizePx}px`
-    : (newSizePx: number) => el.style.height = `${newSizePx}px`
+    ? includeMinSize
+      ? (newSizePx: number) => {
+        el.style.width = `${newSizePx}px`
+        el.style.minWidth = `${newSizePx}px`
+      }
+      : (newSizePx: number) => el.style.width = `${newSizePx}px`
+    : includeMinSize
+      ? (newSizePx: number) => {
+        el.style.height = `${newSizePx}px`
+        el.style.minHeight = `${newSizePx}px`
+      }
+      : (newSizePx: number) => el.style.height = `${newSizePx}px`
 )
 
 const createSizeGetter = (el: HTMLElement, dimension: Dimension2D) => (
@@ -85,8 +100,9 @@ export const createResizer = (options: Options): EffectCallback => () => {
     : Dimension2D.Y
 
   const minSizePx = options.minSizePx ?? 0
+  const includeMinSize = options.includeMinSize ?? false
 
-  const setSize = createSizeSetter(options.el, dimension)
+  const setSize = createSizeSetter(options.el, dimension, includeMinSize)
   const getSize = createSizeGetter(options.el, dimension)
   const getClickEventPos = createClickEventPosGetter(dimension)
   const sizeChangeScale = options.sizeChangeScale ?? 1

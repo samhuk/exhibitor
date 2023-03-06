@@ -7,9 +7,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 100%;
     min-height: 0;
     min-width: 0;
+    position: relative;
 
     &.found {
       background-size: 5px 5px;
@@ -22,8 +22,6 @@
 
     .iframe-container {
       position: relative;
-      max-width: 100%;
-      max-height: 100%;
 
       iframe {
         border: $border;
@@ -52,6 +50,54 @@
 
         iframe {
           border: none;
+        }
+      }
+    }
+
+    &.viewport-size-change-enabled {
+      overflow: scroll;
+    }
+
+    .responsiveness-info {
+      position: absolute;
+      top: 8px; // TODO: Not sure why this needs to be more than 5px yet.
+      left: 5px;
+      z-index: 1;
+      cursor: default;
+
+      span {
+        padding: 2px 5px;
+        background-color: $blue-color;
+        color: #fff;
+        border: $border;
+        border-radius: $border-radius;
+        font-size: 11px;
+      }
+    }
+
+    .responsiveness-info-tooltip {
+      max-width: 270px;
+
+      .body {
+        p {
+          margin-bottom: 15px;
+        }
+
+        ul {
+          li {
+            .label {
+              font-weight: bold;
+              width: 110px;
+              display: inline-block;
+            }
+
+            .range {
+              margin-left: 5px;
+              .cl-icon {
+                font-size: 11px;
+              }
+            }
+          }
         }
       }
     }
