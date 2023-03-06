@@ -7,6 +7,7 @@
   flex-grow: 1;
   display: flex;
   height: calc(100vh - 38px); // Screen minus header
+  position: relative;
 
   @include navigator-side-bar;
 
