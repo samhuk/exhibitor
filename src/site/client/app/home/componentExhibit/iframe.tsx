@@ -5,6 +5,11 @@ const iframeTest = document.createElement('iframe')
 
 type BaseProps = Omit<React.DetailedHTMLProps<React.IframeHTMLAttributes<HTMLIFrameElement>, HTMLIFrameElement>, 'srcDoc' | 'src'>
 
+type Props = BaseProps & {
+  stylesheethrefs?: string[]
+  inlinestyle: string
+}
+
 const createInitialContent = (
   stylesheetHrefs?: string[],
   inlineStyle?: string,
@@ -32,10 +37,7 @@ const createSrcProp = (
  * * For the onload workaround for firefox bug with react's `ref`:
  *     https://github.com/adrid/slate/blob/c9ca4902de8f9c5504dba1ad40e9b34f2a3f28b9/site/examples/iframe.tsx#L107
  */
-export const render = forwardRef((props: BaseProps & {
-  stylesheethrefs?: string[]
-  inlinestyle: string
-}, ref) => {
+export const render = forwardRef<HTMLIFrameElement, Props>((props, ref) => {
   const [iframeBodyEl, setIframeBodyEl] = useState<HTMLBodyElement>(null)
   const iframeElRef = useRef<HTMLIFrameElement>()
 

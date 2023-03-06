@@ -2,10 +2,8 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import * as fs from 'fs'
 import path from 'path'
-import createNodeStoreClient from 'sock-state/lib/client/node'
-import { CONSOLE_LOG_CLIENT_REPORTER } from 'sock-state'
 
-import { BUILD_OUTPUT_ROOT_DIR, COMP_SITE_OUTDIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
+import { BUILD_OUTPUT_ROOT_DIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import api from './api'
 import { sendErrorResponse } from './common/responses'
@@ -14,68 +12,18 @@ import { createExhError } from '../../common/exhError'
 import { ErrorType } from '../../common/errorTypes'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
-import { log, logInfo, logStep } from '../../common/logging'
-import { BuildStatus } from '../../common/building'
+import { log } from '../../common/logging'
 import { ExhEnv, getEnv } from '../../common/env'
 import state from '../../common/state'
-import { getIntercomNetworkLocationFromProcessEnvs } from '../../intercom/client'
-import { createBuildStatusesReducer, BUILD_STATUSES_TOPIC } from '../../intercom/common'
-import { BuildStatusService, createBuildStatusService } from './buildStatusService'
-import { BuildStatuses, BuildStatusesActions } from '../../intercom/types'
 import { tryResolve } from '../../common/npm/resolve'
+import { ExpressApp } from './types'
+import { enableRequestLogging } from './logging'
+import { createIntercomClient, enableBuildStatusWaitUntilAllSuccessfullMiddleware } from './intercom'
 
 const isDev = getEnv() === ExhEnv.DEV
+const isDemo = process.env.EXH_DEMO === 'true'
 
-const createIntercomClient = () => {
-  logStep('Creating build status service for Site Server.', true)
-  const buildStatusService = createBuildStatusService({
-    // Well, we are the site server, so if we are running then we must have successfully built!
-    SITE_SERVER: BuildStatus.SUCCESS,
-    // If the server is started by the CLI, then the site client and server is already built
-    SITE_CLIENT: process.env.EXH_CLI === 'true' ? BuildStatus.SUCCESS : BuildStatus.NONE,
-  })
-
-  const networkLocation = getIntercomNetworkLocationFromProcessEnvs(process)
-  const client = createNodeStoreClient({
-    host: networkLocation.host,
-    port: networkLocation.port,
-    reporter: isDev ? CONSOLE_LOG_CLIENT_REPORTER : null,
-  })
-
-  const buildStatusesTopic = client.topic<BuildStatuses, BuildStatusesActions>(BUILD_STATUSES_TOPIC)
-
-  buildStatusesTopic.on('state-change', createBuildStatusesReducer(), buildStatuses => {
-    logInfo(c => `Site Server received build status update: ${c.cyan(JSON.stringify(buildStatuses))}`, true)
-    buildStatusService.updateStatuses(buildStatuses)
-  })
-
-  client.connect()
-
-  return {
-    buildStatusService,
-  }
-}
-
-const enableBuildStatusWaitUntilAllSuccessfullMiddleware = (
-  app: ReturnType<typeof express>,
-  buildStatusService: BuildStatusService,
-) => {
-  // For all requests to the http server, wait until all builds are successful.
-  // TODO: We could serve a very simple page that displays a "not all successfully built yet" notice that listens on intercom.
-  app.use('*', async (req, res, next) => {
-    if (!buildStatusService.allSuccessful) {
-      const unsuccessfulBuildStatusesString = buildStatusService.getUnsuccessfulBuilds().map(info => `${info.identity} (${info.status})`).join(', ')
-      logInfo(c => `Request ${c.cyan(req.url)} must wait until all builds are successful. Waiting on: ${unsuccessfulBuildStatusesString}`)
-      await buildStatusService.waitUntilNextAllSuccessful()
-      next()
-      return
-    }
-
-    next()
-  })
-}
-
-const handleAxeJsRequest = (app: ReturnType<typeof express>) => {
+const handleAxeJsRequest = (app: ExpressApp) => {
   app.get('/axe.js', (req, res) => {
     const resolveAxeCoreResult = tryResolve('axe-core')
     if (resolveAxeCoreResult.success === false) {
@@ -87,18 +35,11 @@ const handleAxeJsRequest = (app: ReturnType<typeof express>) => {
   })
 }
 
-const handleApiRequest = (app: ReturnType<typeof express>) => {
+const handleApiRequest = (app: ExpressApp) => {
   app
     .use('/api', api)
     // Send 404 for api requests that don't match an api route
     .use('/api', (req, res) => sendErrorResponse(res, createExhError({ message: 'unknown endpoint', type: ErrorType.NOT_FOUND })))
-}
-
-const enableRequestLogging = (app: ReturnType<typeof express>) => {
-  app.use('*', (req, res, next) => {
-    logInfo(c => `Recieved request | URL: ${c.cyan(req.url)} | X-FORWARDED-FOR: ${req.headers['x-forwarded-for']} | REMOTE ADDR: ${req.socket.remoteAddress}`)
-    next()
-  })
 }
 
 const handleThemeStylesheetRequest = (app: ReturnType<typeof express>, clientBuildDir: string) => {
@@ -123,20 +64,22 @@ const main = async () => {
   const app = express()
   app.use(cookieParser())
 
-  if (state.verbose)
+  // In dev, enable logging for each request.
+  if (isDev)
     enableRequestLogging(app)
 
-  // If in demo mode, everything is static and already built
-  if (process.env.EXH_DEMO !== 'true') {
+  // In demo mode, everything is already and always built, so we don't need to integrate with Intercom.
+  if (!isDemo) {
     const { buildStatusService } = createIntercomClient()
     enableBuildStatusWaitUntilAllSuccessfullMiddleware(app, buildStatusService)
   }
 
+  // Handle /api and /axe.js requests
   handleApiRequest(app)
   handleAxeJsRequest(app)
 
   // If not in demo-mode, then we will use the Site Server to serve Site Client files.
-  if (process.env.EXH_DEMO !== 'true') {
+  if (!isDemo) {
     // We use the backend to serve client files
     const clientBuildDir = path.resolve(__dirname, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH)
 
@@ -149,8 +92,8 @@ const main = async () => {
           return
         }
 
-        // -- Component Site/Lib
-        // This essentially mimiks NGINX's "try files" directive by first trying to serve the req at a file then as a directory (index.html).
+        // -- Component Site/Lib files
+        // This essentially mimiks NGINX's "try files" directive by first trying to serve the req as a file then as a directory (index.html).
         if (req.path.startsWith('/comp-site') || req.path.startsWith('/comp-lib')) {
           const reqPathWithoutForwardSlashPrefix = req.path.startsWith('/') ? req.path.slice(1) : req.path
           const relPath = path.join(BUILD_OUTPUT_ROOT_DIR, reqPathWithoutForwardSlashPrefix) // E.g.

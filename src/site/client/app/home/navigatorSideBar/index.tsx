@@ -6,7 +6,7 @@ import ExhibitGroupEl from './exhibitGroup'
 import VariantGroupEl from './variantGroup'
 import VariantEl from './variant'
 import { createTopLevelElFocusEffect } from './topLevelElFocusEffect'
-import { DEFAULT_WIDTH_PX, restoreNavBarState, saveNavBarState } from './persistence'
+import { getDefaultWidthPx, restoreNavBarState, saveNavBarState } from './persistence'
 import { createResizer, ResizerLocation } from '../../../common/resizer'
 import { NavBarState } from './types'
 import Button from '../../../../../ui-component-library/button'
@@ -61,7 +61,7 @@ const Render = () => {
   hasRestoredNavBarState.current = true
 
   const [expandedPaths, setExpandedPaths] = useState<{ [path: string]: boolean }>(initialState?.expandedPaths)
-  const widthPxRef = useRef(initialState?.widthPx ?? DEFAULT_WIDTH_PX)
+  const widthPxRef = useRef(initialState?.widthPx ?? getDefaultWidthPx())
 
   const [el, setEl] = useState<HTMLElement>(null)
   const isElFocus = useRef(false)

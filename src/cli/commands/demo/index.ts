@@ -10,7 +10,7 @@ import { build } from '../../../comp-site/react/build/build'
 import { checkPackages } from '../start/checkPackages'
 import { isExhError } from '../../../common/exhError'
 import { Config } from '../../../common/config/types'
-import { log, logStep, logStepHeader } from '../../../common/logging'
+import { log, logInfo, logStep, logStepHeader, logSuccess } from '../../../common/logging'
 import { getConfigForCommand } from '../../config'
 import { DemoCliArgumentsOptions } from './types'
 import { applyDemoOptionsToConfig } from './config'
@@ -124,7 +124,10 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   const siteClientDemoConfigDir = path.join(demoConfigDir, 'client')
   const siteServerDemoConfigDir = path.join(demoConfigDir, 'server')
 
-  fs.rmSync(demoBuildOutputDir, { recursive: true })
+  // Remove demo /client dir
+  fs.rmSync(demoBuildOutputClientDir, { recursive: true })
+  // Remove demo /server dir
+  fs.rmSync(demoBuildOutputServerDir, { recursive: true })
 
   const error = await buildCompSite(config, demoBuildOutputDir)
   if (error != null)
@@ -142,19 +145,28 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   // -- Create the package.json file that contains only the parts needed to install Site Server dependencies
   createSiteServerPackageJsonForDocker(npmLibDir, demoBuildOutputServerDir)
 
-  // -- Docker compose build and up commands
-  logStepHeader('Running docker compose build')
-  const dockerComposeFilePath = path.join(demoBuildOutputDir, 'docker-compose.yaml')
-  const proc = spawn('docker', ['compose', '-f', dockerComposeFilePath, 'build'])
-  enablePrettyProcessLogging(proc, 'docker compose build')
+  const prettyDemoBuildOutputDir = demoBuildOutputDir.replace(/\\/g, '/')
+  const prettyDockerComposeFilePath = path.join(demoBuildOutputDir, 'docker-compose.yaml').replace(/\\/g, '/')
 
-  proc.on('exit', (code, signal) => {
-    handleProcessExit(code, signal, 'docker compose build')
+  logSuccess(c => `${c.green('Done!')} See output at ${c.cyan(prettyDemoBuildOutputDir)}.`)
+  logInfo(c => `To proceed with deployment, first run: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} build`)}`)
+  logInfo(c => `Then run: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} up -d`)}`)
+  logInfo(c => `Proceed with caution when modifying key configuration files such as ${c.cyan(prettyDockerComposeFilePath)} and ${c.cyan(path.join(demoBuildOutputClientDir, 'nginx.conf').replace(/\\/g, '/'))}.`)
 
-    logStepHeader('Running docker compose up', true)
-    const proc2 = spawn('docker', ['compose', '-f', dockerComposeFilePath, 'up'])
-    enablePrettyProcessLogging(proc2, 'docker compose up')
-  })
+  // TODO: This could either be made optional or somehow improved.
+  // // -- Docker compose build and up commands
+  // logStepHeader('Running docker compose build')
+  // const dockerComposeFilePath = path.join(demoBuildOutputDir, 'docker-compose.yaml')
+  // const proc = spawn('docker', ['compose', '-f', dockerComposeFilePath, 'build'])
+  // enablePrettyProcessLogging(proc, 'docker compose build')
+
+  // proc.on('exit', (code, signal) => {
+  //   handleProcessExit(code, signal, 'docker compose build')
+
+  //   logStepHeader('Running docker compose up', true)
+  //   const proc2 = spawn('docker', ['compose', '-f', dockerComposeFilePath, 'up'])
+  //   enablePrettyProcessLogging(proc2, 'docker compose up')
+  // })
 
   return undefined
-}, { exitWhenReturns: false })
+}, { exitWhenReturns: true })

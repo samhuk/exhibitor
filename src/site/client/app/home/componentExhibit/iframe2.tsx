@@ -10,7 +10,7 @@ type BaseProps = React.DetailedHTMLProps<React.IframeHTMLAttributes<HTMLIFrameEl
  * * For the onload workaround for firefox bug with react's `ref`:
  *     https://github.com/adrid/slate/blob/c9ca4902de8f9c5504dba1ad40e9b34f2a3f28b9/site/examples/iframe.tsx#L107
  */
-export const render = forwardRef((props: BaseProps, ref) => {
+export const render = forwardRef<HTMLIFrameElement, BaseProps>((props: BaseProps, ref) => {
   const iframeElRef = useRef<HTMLIFrameElement>()
 
   const onLoad = (e: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
