@@ -51,7 +51,7 @@ export const determineWindowWidthType = (_window?: Window): WindowWidthType | nu
 }
 
 export const determineWidthWidthInfo = (_window?: Window): WindowWidthInfo | null => {
-  if (_window == null)
+  if (_window === null)
     return null
 
   const __window = _window ?? window
@@ -72,11 +72,13 @@ export const determineWidthWidthInfo = (_window?: Window): WindowWidthInfo | nul
 }
 
 export const determineIfWindowWidthIsAtOrBelow = (maxWindowWidthType: WindowWidthType, _window?: Window) => {
-  const widthType = determineWidthWidthInfo(_window).type
-  return widthType <= maxWindowWidthType
+  const widthTypeIndex = ORDERED_WINDOW_WIDTH_TYPES.indexOf(determineWidthWidthInfo(_window).type)
+  const maxWidthTypeIndex = ORDERED_WINDOW_WIDTH_TYPES.indexOf(maxWindowWidthType)
+  return widthTypeIndex <= maxWidthTypeIndex
 }
 
 export const determineIfWindowWidthIsAtOrAbove = (minWindowWidthType: WindowWidthType, _window?: Window) => {
-  const widthType = determineWidthWidthInfo(_window).type
-  return widthType >= minWindowWidthType
+  const widthTypeIndex = ORDERED_WINDOW_WIDTH_TYPES.indexOf(determineWidthWidthInfo(_window).type)
+  const minWidthTypeIndex = ORDERED_WINDOW_WIDTH_TYPES.indexOf(minWindowWidthType)
+  return widthTypeIndex >= minWidthTypeIndex
 }
