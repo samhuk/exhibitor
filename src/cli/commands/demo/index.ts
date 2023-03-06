@@ -169,4 +169,4 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   // })
 
   return undefined
-}, { exitWhenReturns: false })
+}, { exitWhenReturns: true })
