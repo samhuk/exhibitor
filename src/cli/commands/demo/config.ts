@@ -9,13 +9,17 @@ const createError = (causedBy: ExhString): ExhError => createExhError({
   causedBy,
 })
 
+const createInvalidBooleanError = (argName: string, recievedValue: any) => (
+  createError(c => `argument '${c.bold(argName)}' is not a valid boolean. Received: ${c.cyan(JSON.stringify(recievedValue))}`)
+)
+
 export const applyDemoOptionsToConfig = (
   config: Config,
   options: DemoCliArgumentsOptions,
 ): ExhError | null => {
   if (options.verbose != null) {
     if (typeof options.verbose !== 'boolean')
-      return createError(c => `argument 'verbose' is not a valid boolean. Received: ${c.cyan(JSON.stringify(options.verbose))}`)
+      return createInvalidBooleanError('verbose', options.verbose)
 
     config.verbose = options.verbose
   }

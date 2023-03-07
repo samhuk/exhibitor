@@ -63,12 +63,45 @@
       "description": "Enables/disables verbose output for Exhibitor CLI.",
       "type": "boolean"
     },
-    "testers": {
-      "type": "array",
-      "description": "List of the testers to integrate with Exhibitor.",
-      "default":  [
-        { "type": "playwright" }
-      ]
+    "demo": {
+      "description": "Optional configuration for the demo deployment (CLI 'demo' command).",
+      "type": "object",
+      "properties": {
+        "outDir": {
+          "description": "Directory that the demo deployment files are built to.",
+          "type": "string",
+          "default": "./.exh/demo"
+        },
+        "httpPort": {
+          "description": "The port the HTTP demo deployment binds to.",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 65535,
+          "type": "number",
+          "default": 80
+        },
+        "enableHttps": {
+          "description": "Enables HTTPS functionality for the demo deployment.",
+          "type": "boolean",
+          "default": false
+        },
+        "httpsPort": {
+          "description": "The port the HTTPS demo deployment binds to.",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 65535,
+          "type": "number",
+          "default": 443
+        },
+        "httpsDomains": {
+          "description": "The domains that the HTTPS certificate will be for. This must be defined if demo.enableHttps is true.",
+          "type": "array",
+          "default": ["example.org"]
+        },
+        "certDir": {
+          "description": "Directory that the certificates for HTTPS functionality will be stored.",
+          "type": "string",
+          "default": "./certbot"
+        }
+      }
     }
   }
 }

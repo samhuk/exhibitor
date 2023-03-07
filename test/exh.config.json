@@ -16,5 +16,17 @@
     "port": 4001,
     "title": "Test Component Library"
   },
-  "verbose": false
+  "verbose": false,
+  "demo": {
+    "certDir": "./certbot",
+    "includeCertbot": true,
+    "enableHttps": false,
+    "httpPort": 80,
+    "httpsPort": 443,
+    "httpsDomains": [
+      "example.org",
+      "demo.example.org"
+    ],
+    "outDir": "./.exh/demo"
+  }
 }

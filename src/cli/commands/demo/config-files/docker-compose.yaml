@@ -6,16 +6,18 @@ services:
     build:
       context: ./client
     ports:
-    - 80:80
-    # - "443:443"
-    # volumes:
-    # - ./certbot/www:/var/www/certbot/:ro
-    # - ./certbot/conf/:/etc/nginx/ssl/:ro
-  # certbot:
-  #   image: certbot/certbot:latest
-  #   volumes:
-  #     - ./certbot/www/:/var/www/certbot/:rw
-  #     - ./certbot/conf/:/etc/letsencrypt/:rw
+    - ${config.demo.httpPort}:80
+    # START config.demo.enableHttps
+    - "${config.demo.httpsPort}:443"
+    volumes:
+    - ${config.demo.certDir}/www:/var/www/certbot/:ro
+    - ${config.demo.certDir}/conf/:/etc/nginx/ssl/:ro
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ${config.demo.certDir}/www/:/var/www/certbot/:rw
+      - ${config.demo.certDir}/conf/:/etc/letsencrypt/:rw
+  # END config.demo.enableHttps
   api:
     container_name: api
     user: node
