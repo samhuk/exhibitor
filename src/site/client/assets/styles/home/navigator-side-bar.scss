@@ -1,4 +1,8 @@
 @mixin navigator-side-bar {
+  .navigator-side-bar-toggle-expanded-button {
+    display: none;
+  }
+
   .navigator-side-bar {
     border-right: $border;
     display: flex;
@@ -49,7 +53,7 @@
         i {
           width: 17px;
           flex-shrink: 0;
-          margin-top: 3px;
+          margin-top: 1px; // Emperically seems to center them.
           margin-right: 0;
         }
 
@@ -104,6 +108,34 @@
           color: $link-color;
         }
       }
+    }
+  }
+}
+
+@media only screen and (max-width: $tablet-max-width) {
+  .navigator-side-bar-toggle-expanded-button {
+    display: block !important;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 20px;
+    z-index: 1000;
+  }
+
+  .navigator-side-bar {
+    position: absolute !important;
+    left: 5px;
+    top: 40px;
+    background-color: $bg-color;
+    z-index: 1000;
+    max-height: calc(100vh - 100px) !important;
+    max-width: calc(100vw - 10px) !important;
+    border: $border;
+    box-shadow: 0px 0px 3px 3px $bg-color-m7;
+    display: none !important;
+
+    &.expanded {
+      display: flex !important;
     }
   }
 }

@@ -5,6 +5,7 @@ import { calcNodePaddingLeft } from './common'
 
 export const render = (props: {
   node: VariantExhibitNode
+  onSelect: () => void
 }) => (
   <NavLinkKeeyQuery
     to={props.node.path}
@@ -14,6 +15,7 @@ export const render = (props: {
     }}
     className="variant"
     style={{ paddingLeft: calcNodePaddingLeft(props.node) }}
+    onClick={props.onSelect}
   >
     <i className="far fa-file" />
     <span className="name">{props.node.variant.name}</span>

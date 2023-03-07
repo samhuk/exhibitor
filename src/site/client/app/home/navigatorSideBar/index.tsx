@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { ExhibitNode, ExhibitNodeType, PathTree } from '../../../../../api/exhibit/types'
 import { useAppSelector } from '../../../store'
 import { LoadingState } from '../../../store/types'
@@ -11,34 +11,46 @@ import { createResizer, ResizerLocation } from '../../../common/resizer'
 import { NavBarState } from './types'
 import Button from '../../../../../ui-component-library/button'
 
-const NodeEl = (props: {
-  node: ExhibitNode
-  isExpanded: boolean
-  onClick: () => void
-}) => {
-  if (props.node.type === ExhibitNodeType.EXHIBIT_GROUP)
-    return <ExhibitGroupEl node={props.node} isExpanded={props.isExpanded} onClick={props.onClick} />
-  if (props.node.type === ExhibitNodeType.VARIANT_GROUP)
-    return <VariantGroupEl node={props.node} isExpanded={props.isExpanded} onClick={props.onClick} />
-  if (props.node.type === ExhibitNodeType.VARIANT)
-    return <VariantEl node={props.node} />
-  return null
-}
-
 type GroupTypeNode = ExhibitNode<ExhibitNodeType.EXHIBIT_GROUP | ExhibitNodeType.VARIANT_GROUP>
 
 const PathTreeEl = (props: {
   pathTree: PathTree
   expandedPaths: { [path: string]: boolean }
   onDirExpansionChange: (node: GroupTypeNode, isExpanded: boolean) => void
+  onVariantNodeSelect: () => void
 }) => (
   <>
     {Object.entries(props.pathTree).map(([path, childPathTree]) => {
       const node = exh.nodes[path]
       const isExpanded = props.expandedPaths[node.path] === true
+
+      let NodeEl: ReactNode
+
+      if (node.type === ExhibitNodeType.EXHIBIT_GROUP) {
+        NodeEl = (
+          <ExhibitGroupEl
+            node={node}
+            isExpanded={isExpanded}
+            onClick={() => props.onDirExpansionChange(node as GroupTypeNode, !isExpanded)}
+          />
+        )
+      }
+      else if (node.type === ExhibitNodeType.VARIANT_GROUP) {
+        NodeEl = (
+          <VariantGroupEl
+            node={node}
+            isExpanded={isExpanded}
+            onClick={() => props.onDirExpansionChange(node as GroupTypeNode, !isExpanded)}
+          />
+        )
+      }
+      else {
+        NodeEl = <VariantEl node={node} onSelect={() => props.onVariantNodeSelect()} />
+      }
+
       return (
         <>
-          <NodeEl node={node} isExpanded={isExpanded} onClick={() => props.onDirExpansionChange(node as GroupTypeNode, !isExpanded)} />
+          {NodeEl}
           {(!isExpanded || typeof childPathTree === 'boolean')
             ? null
             : (
@@ -46,6 +58,7 @@ const PathTreeEl = (props: {
                 pathTree={childPathTree}
                 expandedPaths={props.expandedPaths}
                 onDirExpansionChange={props.onDirExpansionChange}
+                onVariantNodeSelect={props.onVariantNodeSelect}
               />
             )}
         </>
@@ -65,6 +78,12 @@ const Render = () => {
 
   const [el, setEl] = useState<HTMLElement>(null)
   const isElFocus = useRef(false)
+
+  const toggleExpanded = () => {
+    el.classList.toggle('expanded')
+  }
+
+  const collapse = () => el.classList.remove('expanded')
 
   const onResizeFinish = (newWidthPx: number) => {
     widthPxRef.current = newWidthPx
@@ -124,31 +143,41 @@ const Render = () => {
   }
 
   return (
-    <div className="navigator-side-bar" ref={setEl}>
-      <div className="button-bar-1">
-        <Button
-          onClick={() => onExpandAllButtonClick()}
-          aria-label="Expand all"
-          title="Expand all"
-          icon={{ name: 'square-plus', type: 'r' }}
-        />
-        <Button
-          onClick={() => onCollapseAllButtonClick()}
-          aria-label="Collapse all"
-          title="Collapse all"
-          icon={{ name: 'square-minus', type: 'r' }}
-        />
-        <Button
-          onClick={() => onCollapseAllNonExhibitGroupButtonClick()}
-          aria-label="Collapse variant groups"
-          title="Collapse variant groups"
-          icon={{ name: 'layer-group' }}
-        />
+    <>
+      <div className="navigator-side-bar-toggle-expanded-button">
+        <Button title="Toggle component navigator" icon={{ name: 'bars' }} onClick={toggleExpanded} />
       </div>
-      <div className="nodes">
-        <PathTreeEl pathTree={exh.pathTree} expandedPaths={expandedPaths} onDirExpansionChange={onGroupDirExpansionChange} />
+      <div className="navigator-side-bar" ref={setEl}>
+        <div className="button-bar-1">
+          <Button
+            onClick={() => onExpandAllButtonClick()}
+            aria-label="Expand all"
+            title="Expand all"
+            icon={{ name: 'square-plus', type: 'r' }}
+          />
+          <Button
+            onClick={() => onCollapseAllButtonClick()}
+            aria-label="Collapse all"
+            title="Collapse all"
+            icon={{ name: 'square-minus', type: 'r' }}
+          />
+          <Button
+            onClick={() => onCollapseAllNonExhibitGroupButtonClick()}
+            aria-label="Collapse variant groups"
+            title="Collapse variant groups"
+            icon={{ name: 'layer-group' }}
+          />
+        </div>
+        <div className="nodes">
+          <PathTreeEl
+            pathTree={exh.pathTree}
+            expandedPaths={expandedPaths}
+            onDirExpansionChange={onGroupDirExpansionChange}
+            onVariantNodeSelect={collapse}
+          />
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
