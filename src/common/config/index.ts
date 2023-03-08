@@ -19,6 +19,14 @@ export const DEFAULT_CONFIG: Config = {
   rootStyle: undefined,
   rootStyles: undefined,
   testers: [],
+  demo: {
+    outDir: './.exh/demo',
+    certDir: './certbot',
+    enableHttps: false,
+    httpPort: 80,
+    httpsDomains: undefined,
+    httpsPort: 443,
+  },
 }
 
 export const CONFIG_FILE_PATH_ENV_VAR_NAME = 'EXH_CONFIG_FILE_PATH'
@@ -57,6 +65,18 @@ export const resolveConfig = (config?: UnresolvedConfig, configFilePath?: string
     verbose: config?.verbose ?? DEFAULT_CONFIG.verbose,
     esbuildOptions: config?.esbuildOptions,
     testers: config?.testers ?? DEFAULT_CONFIG.testers,
+    demo: {
+      outDir: config?.demo?.outDir ?? DEFAULT_CONFIG.demo.outDir,
+      certDir: config?.demo?.certDir ?? DEFAULT_CONFIG.demo.certDir,
+      enableHttps: config?.demo?.enableHttps ?? DEFAULT_CONFIG.demo.enableHttps,
+      httpPort: config?.demo?.httpPort ?? DEFAULT_CONFIG.demo.httpPort,
+      httpsDomains: config?.demo?.httpsDomains != null
+        ? typeof config.demo.httpsDomains === 'string'
+          ? [config.demo.httpsDomains]
+          : config.demo.httpsDomains
+        : DEFAULT_CONFIG.demo.httpsDomains,
+      httpsPort: config?.demo?.httpsPort ?? DEFAULT_CONFIG.demo.httpsPort,
+    },
   }
 }
 

@@ -17,10 +17,10 @@ import { applyDemoOptionsToConfig } from './config'
 import { createOnIndexExhTsFileCreateHandler } from '../start'
 import { VERBOSE_ENV_VAR_NAME } from '../../../common/config'
 import { logFeatureStatus } from '../../../common/logging/notices'
+import { modifyFileText } from './fileModifier'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
-const DEFAULT_DEMO_BUILD_OUTDIR = './.exh/demo'
 
 const copyFilesFromSrcDirToDestDir = (srcDir: string, destDir: string, srcFileNames: string[]) => {
   for (let i = 0; i < srcFileNames.length; i += 1)
@@ -113,7 +113,7 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   const siteClientBuildDir = path.join(siteBuildDir, 'client')
   const siteServerBuildDir = path.join(siteBuildDir, 'server')
 
-  const demoBuildOutputDir = options.outdir ?? DEFAULT_DEMO_BUILD_OUTDIR // E.g. ./.exh/demo
+  const demoBuildOutputDir = config.demo.outDir // E.g. ./.exh/demo
   logStep(c => `Ensuring demo build output directory exists. Received: ${c.cyan(demoBuildOutputDir)}. Attempting: ${c.cyan(path.resolve(demoBuildOutputDir))}`, true)
   if (!fs.existsSync(demoBuildOutputDir))
     fs.mkdirSync(demoBuildOutputDir)
@@ -124,32 +124,88 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   const siteClientDemoConfigDir = path.join(demoConfigDir, 'client')
   const siteServerDemoConfigDir = path.join(demoConfigDir, 'server')
 
-  // Remove demo /client dir
+  // Remove existing demo /client out dir
   fs.rmSync(demoBuildOutputClientDir, { recursive: true })
-  // Remove demo /server dir
+  // Remove existing demo /server out dir
   fs.rmSync(demoBuildOutputServerDir, { recursive: true })
 
   const error = await buildCompSite(config, demoBuildOutputDir)
   if (error != null)
     return error
 
-  // -- Copy client and server build files to their corresponding demo dir
+  // -- Copy built Site Client and Site Server files to their corresponding demo out dir
   copySync(siteClientBuildDir, demoBuildOutputClientDir)
   copySync(siteServerBuildDir, demoBuildOutputServerDir)
 
-  // -- Copy over Docker-related (and other demo config) files
-  copyFilesFromSrcDirToDestDir(siteClientDemoConfigDir, demoBuildOutputClientDir, ['Dockerfile', 'nginx.conf'])
+  // -- Copy over Dockerfiles files
+  copyFilesFromSrcDirToDestDir(siteClientDemoConfigDir, demoBuildOutputClientDir, ['Dockerfile'])
   copyFilesFromSrcDirToDestDir(siteServerDemoConfigDir, demoBuildOutputServerDir, ['Dockerfile'])
-  copyFilesFromSrcDirToDestDir(demoConfigDir, demoBuildOutputDir, ['docker-compose.yaml'])
+
+  // -- Copy over and modify nginx.conf file
+  logStepHeader('Creating nginx.conf file', true)
+  const nginxConfPath = path.join(siteClientDemoConfigDir, 'nginx.conf')
+  logStep(c => `Reading nginx.conf file at ${c.cyan(nginxConfPath)}.`, true)
+  const nginxConfText = fs.readFileSync(nginxConfPath, { encoding: 'utf8' })
+  logStep('Applying configuration parameters to nginx.conf file.', true)
+  const modifiedNginxConfText = modifyFileText(nginxConfText, {
+    parameters: {
+      'config.demo.httpsDomains': config.demo.httpsDomains?.join(' ') ?? '',
+      'config.demo.httpsDomains0': config.demo.httpsDomains?.[0] ?? '',
+    },
+    sectionToggles: {
+      'config.demo.enableHttps': config.demo.enableHttps,
+    },
+  })
+  const nginxConfOutPath = path.join(demoBuildOutputClientDir, 'nginx.conf')
+  logStep(c => `Writing new nginx.conf file to ${c.cyan(nginxConfOutPath)}.`, true)
+  fs.writeFileSync(nginxConfOutPath, modifiedNginxConfText)
+
+  // -- Copy over and modify docker-compose.yaml file
+  logStepHeader('Creating docker-compose configuration file', true)
+  const dockerComposeYamlPath = path.join(demoConfigDir, 'docker-compose.yaml')
+  logStep(c => `Reading in docker-compose configuration file at ${c.cyan(dockerComposeYamlPath)}.`, true)
+  const dockerComposeYamlText = fs.readFileSync(dockerComposeYamlPath, { encoding: 'utf8' })
+  logStep('Applying configuration parameters to docker-compose configuration file.', true)
+  const modifiedDockerComposeYamlText = modifyFileText(dockerComposeYamlText, {
+    parameters: {
+      'config.demo.httpPort': config.demo.httpPort,
+      'config.demo.httpsPort': config.demo.httpsPort,
+      'config.demo.certDir': config.demo.certDir,
+    },
+    sectionToggles: {
+      'config.demo.enableHttps': config.demo.enableHttps,
+    },
+  })
+  const dockerComposeYamlOutPath = path.join(demoBuildOutputDir, 'docker-compose.yaml')
+  logStep(c => `Writing new docker-compose configuration file to ${c.cyan(dockerComposeYamlOutPath)}.`, true)
+  fs.writeFileSync(dockerComposeYamlOutPath, modifiedDockerComposeYamlText)
+
+  // -- Copy over and modify docker-compose.certbot.yaml file
+  logStepHeader('Creating docker-compose (certbot) configuration file', true)
+  const dockerComposeCertbotYamlPath = path.join(demoConfigDir, 'docker-compose.certbot.yaml')
+  logStep(c => `Reading in docker-compose (certbot) configuration file at ${c.cyan(dockerComposeCertbotYamlPath)}.`, true)
+  const dockerComposeCertbotYamlText = fs.readFileSync(dockerComposeCertbotYamlPath, { encoding: 'utf8' })
+  logStep('Applying configuration parameters to docker-compose (certbot) configuration file.', true)
+  const modifiedDockerComposeCertbotYamlText = modifyFileText(dockerComposeCertbotYamlText, {
+    parameters: {
+      'config.demo.certDir': config.demo.certDir,
+    },
+  })
+  const dockerComposeCertbotYamlOutPath = path.join(demoBuildOutputDir, 'docker-compose.certbot.yaml')
+  logStep(c => `Writing new docker-compose (certbot) configuration file to ${c.cyan(dockerComposeCertbotYamlOutPath)}.`, true)
+  fs.writeFileSync(dockerComposeCertbotYamlOutPath, modifiedDockerComposeCertbotYamlText)
 
   // -- Create the package.json file that contains only the parts needed to install Site Server dependencies
   createSiteServerPackageJsonForDocker(npmLibDir, demoBuildOutputServerDir)
 
   const prettyDemoBuildOutputDir = demoBuildOutputDir.replace(/\\/g, '/')
-  const prettyDockerComposeFilePath = path.join(demoBuildOutputDir, 'docker-compose.yaml').replace(/\\/g, '/')
+  const prettyDockerComposeFilePath = dockerComposeYamlOutPath.replace(/\\/g, '/')
+  const prettyDockerComposeCertbotFilePath = dockerComposeCertbotYamlOutPath.replace(/\\/g, '/')
 
-  logSuccess(c => `${c.green('Done!')} See output at ${c.cyan(prettyDemoBuildOutputDir)}.`)
-  logInfo(c => `To proceed with deployment, first run: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} build`)}`)
+  logSuccess(c => `${c.green('Done!')} See output files at ${c.cyan(prettyDemoBuildOutputDir)}.\n`)
+  const areHttpsDomainsProvided = config.demo.httpsDomains != null && config.demo.httpsDomains.length > 0
+  logInfo(c => `If you first require a HTTPS certificate, you will first need to ${!areHttpsDomainsProvided ? `specify ${c.bold('demo.httpsDomains')} in configuration, then ` : ''}run this command with HTTPS disabled in config (${c.bold('demo.enableHttps = false')}) and Docker build & up (such that a port-80 HTTP instance is accessible to Let's Encrypt), then run: ${c.bold(`docker compose -f ${prettyDockerComposeCertbotFilePath} run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ -d ${areHttpsDomainsProvided ? config.demo.httpsDomains.join(',') : '{config.demo.httpsDomains}'}`)}`)
+  logInfo(c => `Else, if you already have a HTTPS certificate, then you can proceed by first building the docker images by running: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} build`)}`)
   logInfo(c => `Then run: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} up -d`)}`)
   logInfo(c => `Proceed with caution when modifying key configuration files such as ${c.cyan(prettyDockerComposeFilePath)} and ${c.cyan(path.join(demoBuildOutputClientDir, 'nginx.conf').replace(/\\/g, '/'))}.`)
 

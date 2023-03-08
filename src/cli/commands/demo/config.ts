@@ -9,15 +9,28 @@ const createError = (causedBy: ExhString): ExhError => createExhError({
   causedBy,
 })
 
+const createInvalidTypeError = (argName: string, recievedValue: any, expectedType: string) => (
+  createError(c => `argument '${c.bold(argName)}' is not a valid ${expectedType}. Received: ${c.cyan(JSON.stringify(recievedValue))}`)
+)
+
 export const applyDemoOptionsToConfig = (
   config: Config,
   options: DemoCliArgumentsOptions,
 ): ExhError | null => {
   if (options.verbose != null) {
     if (typeof options.verbose !== 'boolean')
-      return createError(c => `argument 'verbose' is not a valid boolean. Received: ${c.cyan(JSON.stringify(options.verbose))}`)
+      return createInvalidTypeError('verbose', options.verbose, 'boolean')
 
     config.verbose = options.verbose
+  }
+
+  if (options.outDir != null) {
+    if (typeof options.outDir !== 'string')
+      return createInvalidTypeError('outDir', options.outDir, 'string')
+    if (options.outDir.length === 0)
+      return createError(c => `argument '${c.bold('outDir')}' cannot be empty. Received: ${c.cyan(JSON.stringify(options.outDir))}`)
+
+    config.demo.outDir = options.outDir
   }
 
   return null

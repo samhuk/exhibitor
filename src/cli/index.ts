@@ -36,8 +36,9 @@ program
   .command('demo')
   .option('-c, --config <path>', 'path to config file to use.')
   .option('--verbose', 'enable verbose output.')
-  .option('--outdir <path>', 'directory to output files used for the demo deployment to.')
-  .description('Builds and runs Exhibitor in demo mode.')
+  .option('--outdir <path>', 'directory to output files to that are used for the demo deployment.')
+  // eslint-disable-next-line max-len
+  .description('Builds the demo deployment of Exhibitor to the configured demo output directory. Note that this does not run it, but instead just prepares the files, ready for building and running with Docker.')
   .action(demo)
 
 program.parse()

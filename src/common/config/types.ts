@@ -125,6 +125,49 @@ export type UnresolvedConfig = {
    * Note that some options are excluded such as `format`, since these must be set internally by Exhibitor.
    */
   esbuildOptions?: CustomEsbuildBuildOptions
+  /**
+   * Optional configuration for the demo deployment (`demo` CLI command).
+   */
+  demo?: {
+    /**
+     * Directory that the demo deployment files are built to.
+     *
+     * @default './.exh/demo'
+     */
+    outDir?: string
+    /**
+     * The port the HTTP demo deployment binds to.
+     *
+     * @default 80
+     */
+    httpPort?: number
+    /**
+     * Enables HTTPS functionality for the demo deployment.
+     *
+     * @default false
+     */
+    enableHttps?: boolean
+    /**
+     * The port the HTTPS demo deployment binds to.
+     *
+     * @default 443
+     */
+    httpsPort?: number
+    /**
+     * The domains that the HTTPS certificate will be for.
+     *
+     * This must be defined if `demo.enableHttps` is `true`.
+     *
+     * @example "example.org", ["example.org", "www.samhuk.com"]
+     */
+    httpsDomains?: string | string[]
+    /**
+     * Directory that the certificates for HTTPS functionality will be stored.
+     *
+     * @default './certbot'
+     */
+    certDir?: string
+  }
 }
 
 export type Config = {
@@ -144,4 +187,12 @@ export type Config = {
   rootStyles: string[] | undefined | null
   esbuildOptions?: CustomEsbuildBuildOptions
   testers: TesterOptions[]
+  demo: {
+    outDir: string
+    httpPort: number
+    enableHttps: boolean
+    httpsPort: number
+    httpsDomains: string[]
+    certDir: string
+  }
 }

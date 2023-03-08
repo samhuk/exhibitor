@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ${config.demo.certDir}/www/:/var/www/certbot/:rw
+      - ${config.demo.certDir}/conf/:/etc/letsencrypt/:rw
+
