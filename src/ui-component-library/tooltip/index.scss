@@ -5,7 +5,7 @@
 }
 
 .cl-tooltip {
-  z-index: $click-tooltip-z-index;
+  z-index: 1000;
   background-color: $bg-color;
   border: $border;
   border-radius: $border-radius;
@@ -36,7 +36,7 @@
     background: inherit;
     border-top: $border;
     border-left: $border;
-    z-index: 999;
+    z-index: 1000;
   }
 
   .arrow {

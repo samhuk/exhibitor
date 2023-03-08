@@ -103,13 +103,13 @@
           color: $green-color;
         }
       }
+    }
 
-      .cl-tooltip {
-        z-index: $hover-tooltip-z-index;
+    .cl-tooltip.intercom {
+      z-index: $hover-tooltip-z-index;
 
-        .cl-success-icon, .cl-error-icon {
-          margin-right: 5px;
-        }
+      .cl-success-icon, .cl-error-icon {
+        margin-right: 5px;
       }
     }
 

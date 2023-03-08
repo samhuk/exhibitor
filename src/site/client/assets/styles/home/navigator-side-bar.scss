@@ -119,7 +119,7 @@
     top: 5px;
     left: 5px;
     font-size: 20px;
-    z-index: 1000;
+    z-index: 999;
   }
 
   .navigator-side-bar {
@@ -127,7 +127,7 @@
     left: 5px;
     top: 40px;
     background-color: $bg-color;
-    z-index: 1000;
+    z-index: 999;
     max-height: calc(100vh - 100px) !important;
     max-width: calc(100vw - 10px) !important;
     border: $border;

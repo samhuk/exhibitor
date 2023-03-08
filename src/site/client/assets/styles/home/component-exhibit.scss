@@ -63,8 +63,11 @@
       position: absolute;
       top: 3px;
       left: 3px;
+      right: 3px;
+      justify-content: center;
       z-index: 1;
       cursor: default;
+      display: flex;
 
       span {
         padding: 2px 5px;
