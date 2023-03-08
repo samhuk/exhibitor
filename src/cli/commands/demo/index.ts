@@ -125,9 +125,13 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   const siteServerDemoConfigDir = path.join(demoConfigDir, 'server')
 
   // Remove existing demo /client out dir
-  fs.rmSync(demoBuildOutputClientDir, { recursive: true })
+  logStep(c => `Removing demo /client out dir if it exists (${c.cyan(demoBuildOutputClientDir)})`, true)
+  if (fs.existsSync(demoBuildOutputClientDir))
+    fs.rmSync(demoBuildOutputClientDir, { recursive: true })
   // Remove existing demo /server out dir
-  fs.rmSync(demoBuildOutputServerDir, { recursive: true })
+  logStep(c => `Removing demo /server out dir if it exists (${c.cyan(demoBuildOutputServerDir)})`, true)
+  if (fs.existsSync(demoBuildOutputServerDir))
+    fs.rmSync(demoBuildOutputServerDir, { recursive: true })
 
   const error = await buildCompSite(config, demoBuildOutputDir)
   if (error != null)
