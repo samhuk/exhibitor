@@ -46,6 +46,22 @@ export const _validateConfig = (config: Config): ExhString | null => {
     }
   }
 
+  // -- demo
+  if (config.demo.httpPort < 1)
+    return c => `config.demo.httpPort - cannot be less than ${c.cyan('1')}. Received: ${c.cyan(config.demo.httpPort.toString())}`
+
+  if (config.demo.httpPort > 65535)
+    return c => `config.demo.httpPort - cannot be greater than ${c.cyan('65535')}. Received: ${c.cyan(config.demo.httpPort.toString())}`
+
+  if (config.demo.httpsPort < 1)
+    return c => `config.demo.httpsPort - cannot be less than ${c.cyan('1')}. Received: ${c.cyan(config.demo.httpsPort.toString())}`
+
+  if (config.demo.httpsPort > 65535)
+    return c => `config.demo.httpsPort - cannot be greater than ${c.cyan('65535')}. Received: ${c.cyan(config.demo.httpsPort.toString())}`
+
+  if (config.demo.enableHttps === true && (config.demo.httpsDomains == null || config.demo.httpsDomains.length === 0))
+    return c => `config.demo.httpsDomains - must be defined and have at least one entry if ${c.bold('config.demo.enableHttps')} is ${c.cyan('true')}. Received: ${c.cyan(JSON.stringify(config.demo.httpsDomains))}`
+
   return null
 }
 

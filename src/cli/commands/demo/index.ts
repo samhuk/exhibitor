@@ -149,8 +149,8 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   logStep('Applying configuration parameters to nginx.conf file.', true)
   const modifiedNginxConfText = modifyFileText(nginxConfText, {
     parameters: {
-      'config.demo.httpsDomains': config.demo.httpsDomains.join(' '),
-      'config.demo.httpsDomains0': config.demo.httpsDomains[0],
+      'config.demo.httpsDomains': config.demo.httpsDomains?.join(' ') ?? '',
+      'config.demo.httpsDomains0': config.demo.httpsDomains?.[0] ?? '',
     },
     sectionToggles: {
       'config.demo.enableHttps': config.demo.enableHttps,
@@ -202,9 +202,10 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   const prettyDockerComposeFilePath = dockerComposeYamlOutPath.replace(/\\/g, '/')
   const prettyDockerComposeCertbotFilePath = dockerComposeCertbotYamlOutPath.replace(/\\/g, '/')
 
-  logSuccess(c => `${c.green('Done!')} See output files at ${c.cyan(prettyDemoBuildOutputDir)}.`)
-  logInfo(c => `If you first require a HTTPS certificate, you will first need to run the demo command with HTTPS disabled in config (${c.bold('demo.enableHttps = false')}), then run: ${c.bold(`docker compose -f ${prettyDockerComposeCertbotFilePath} run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ -d ${config.demo.httpsDomains.join(',')}`)}`)
-  logInfo(c => `Else if you already have a HTTPS certificate, then you can proceed by first building the docker images via running: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} build`)}`)
+  logSuccess(c => `${c.green('Done!')} See output files at ${c.cyan(prettyDemoBuildOutputDir)}.\n`)
+  const areHttpsDomainsProvided = config.demo.httpsDomains != null && config.demo.httpsDomains.length > 0
+  logInfo(c => `If you first require a HTTPS certificate, you will first need to ${!areHttpsDomainsProvided ? `specify ${c.bold('demo.httpsDomains')} in configuration, then ` : ''}run this command with HTTPS disabled in config (${c.bold('demo.enableHttps = false')}) and Docker build & up (such that a port-80 HTTP instance is accessible to Let's Encrypt), then run: ${c.bold(`docker compose -f ${prettyDockerComposeCertbotFilePath} run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ -d ${areHttpsDomainsProvided ? config.demo.httpsDomains.join(',') : '{config.demo.httpsDomains}'}`)}`)
+  logInfo(c => `Else, if you already have a HTTPS certificate, then you can proceed by first building the docker images by running: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} build`)}`)
   logInfo(c => `Then run: ${c.bold(`docker compose -f ${prettyDockerComposeFilePath} up -d`)}`)
   logInfo(c => `Proceed with caution when modifying key configuration files such as ${c.cyan(prettyDockerComposeFilePath)} and ${c.cyan(path.join(demoBuildOutputClientDir, 'nginx.conf').replace(/\\/g, '/'))}.`)
 
