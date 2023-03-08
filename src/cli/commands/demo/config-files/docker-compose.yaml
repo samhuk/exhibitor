@@ -12,11 +12,6 @@ services:
     volumes:
     - ${config.demo.certDir}/www:/var/www/certbot/:ro
     - ${config.demo.certDir}/conf/:/etc/nginx/ssl/:ro
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ${config.demo.certDir}/www/:/var/www/certbot/:rw
-      - ${config.demo.certDir}/conf/:/etc/letsencrypt/:rw
   # END config.demo.enableHttps
   api:
     container_name: api
