@@ -30,7 +30,7 @@ const component = (props: Parameters<typeof Select>[0]) => (
   </ThemeProvider>
 )
 
-exhibit(component, 'select')
+exhibit(component, 'Select')
   .options({
     group: 'MUI',
   })
