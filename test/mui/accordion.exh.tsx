@@ -1,14 +1,9 @@
-import { Accordion, AccordionSummary, Typography, AccordionDetails, ThemeProvider, createTheme } from '@mui/material'
+import { Accordion, AccordionSummary, Typography, AccordionDetails, ThemeProvider } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import React from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import exhibit from '../../src/api'
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-})
+import { darkTheme } from './theme'
 
 exhibit(() => (
   <ThemeProvider theme={darkTheme}>
