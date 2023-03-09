@@ -47,6 +47,12 @@ const PropsValueEl = (props: {
             // eslint-disable-next-line react/no-unstable-nested-components
             () => '[Function]' as any,
           ),
+          // Handle symbols, which cause exceptions
+          createDataType(
+            v => typeof v === 'symbol',
+            // eslint-disable-next-line react/no-unstable-nested-components
+            p => (p.value as Symbol).toString() as any,
+          ),
         ]}
       />
     )
