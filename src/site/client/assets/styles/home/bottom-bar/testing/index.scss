@@ -17,4 +17,8 @@
     @include testing-header;
     @include results;
   }
+
+  .MuiPaper-root {
+    background-color: $bg-color !important;
+  }
 }
