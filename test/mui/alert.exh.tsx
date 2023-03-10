@@ -22,6 +22,12 @@ exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.childre
       init: props => props.severity,
       apply: (newSeverity, currentProps) => ({ ...currentProps, severity: newSeverity as AlertColor }),
     },
+    {
+      label: 'Alert text',
+      type: PropModifierType.TEXT_INPUT,
+      init: props => props.children.toString(),
+      apply: (newAlertText, currentProps) => ({ ...currentProps, children: newAlertText }),
+    },
   ])
   .variant('error', p => ({
     ...p,

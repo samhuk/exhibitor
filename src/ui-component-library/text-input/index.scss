@@ -1,0 +1,16 @@
+.cl-text-input {
+  width: 200px;
+  display: flex;
+  border: $border;
+  background-color: $bg-color;
+  
+  input {
+    flex-grow: 1;
+    border: none !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: $bg-color;
+    color: $text-color;
+    padding-left: 5px;
+  }
+}

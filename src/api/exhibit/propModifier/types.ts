@@ -6,7 +6,7 @@ export enum PropModifierType {
   BOOLEAN_CHECKBOX = 'BOOLEAN_CHECKBOX',
   NUMBER_INPUT = 'NUMBER_INPUT',
   NUMBER_SLIDER = 'NUMBER_SLIDER',
-  STRING_INPUT = 'STRING_INPUT',
+  TEXT_INPUT = 'TEXT_INPUT',
   SELECT = 'SELECT'
 }
 
@@ -26,7 +26,7 @@ export type PropModifier<
     init: (currentProps: TProps) => number
     apply: (newValue: number, currentProps: TProps) => TProps
   },
-  [PropModifierType.STRING_INPUT]: {
+  [PropModifierType.TEXT_INPUT]: {
     init: (currentProps: TProps) => string
     apply: (newValue: string, currentProps: TProps) => TProps
   },

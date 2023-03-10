@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { PropModifier, PropModifierType } from '../../../../../../api/exhibit/propModifier/types'
 import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
 import Select, { SelectOption } from '../../../../../../ui-component-library/select'
+import TextInput from '../../../../../../ui-component-library/text-input'
 
 const SelectPropModifierEl = (props: {
   exhibit: ComponentExhibit<true>
@@ -45,6 +46,42 @@ const SelectPropModifierEl = (props: {
   )
 }
 
+const TextInputPropModifierEl = (props: {
+  exhibit: ComponentExhibit<true>
+  variant: Variant
+  textInputPropModifier: PropModifier<any, PropModifierType.TEXT_INPUT>
+  onChange: (newProps: any) => void
+}) => {
+  const initialValue = useMemo(() => props.textInputPropModifier.init(props.variant.props), [props.variant])
+  const [value, setValue] = useState<{ forVariant: Variant, value: string }>({
+    forVariant: props.variant,
+    value: initialValue,
+  })
+
+  if (value.forVariant !== props.variant) {
+    setValue({
+      forVariant: props.variant,
+      value: initialValue,
+    })
+  }
+
+  return (
+    <div className="prop-modifier">
+      <div className="label">{props.textInputPropModifier.label}</div>
+      <TextInput
+        value={value.value}
+        onChange={newValue => {
+          props.onChange(props.textInputPropModifier.apply(newValue, props.variant.props))
+          setValue({
+            forVariant: props.variant,
+            value: newValue,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
 const PropModifierEl = (props: {
   exhibit: ComponentExhibit<true>
   variant: Variant
@@ -58,6 +95,15 @@ const PropModifierEl = (props: {
           exhibit={props.exhibit}
           variant={props.variant}
           selectPropModifier={props.propModifier}
+          onChange={props.onChange}
+        />
+      )
+    case PropModifierType.TEXT_INPUT:
+      return (
+        <TextInputPropModifierEl
+          exhibit={props.exhibit}
+          variant={props.variant}
+          textInputPropModifier={props.propModifier}
           onChange={props.onChange}
         />
       )
