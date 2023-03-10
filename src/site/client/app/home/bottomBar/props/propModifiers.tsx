@@ -1,44 +1,40 @@
 import React, { useMemo, useState } from 'react'
 import { PropModifier, PropModifierType } from '../../../../../../api/exhibit/propModifier/types'
 import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
+import Button from '../../../../../../ui-component-library/button'
+import Checkbox from '../../../../../../ui-component-library/checkbox'
 import Select, { SelectOption } from '../../../../../../ui-component-library/select'
 import TextInput from '../../../../../../ui-component-library/text-input'
 
 const SelectPropModifierEl = (props: {
-  variant: Variant
+  variantProps: any
   selectPropModifier: PropModifier<any, PropModifierType.SELECT>
   onChange: (newProps: any) => void
 }) => {
-  const initialSelectedValue = props.selectPropModifier.init(props.variant.props)
-  const selectOptions: SelectOption[] = props.selectPropModifier.options.map(option => (Array.isArray(option)
+  const selectOptions: SelectOption[] = useMemo(() => props.selectPropModifier.options.map(option => (Array.isArray(option)
     ? ({ value: option[0], displayText: option.length > 1 ? option[1] : option[0] })
-    : ({ value: option, displayText: option })))
-  const initialSelectedOption = selectOptions.find(o => o.value === initialSelectedValue)
+    : ({ value: option, displayText: option }))), [props.selectPropModifier.options])
 
-  const [selectedOption, setSelectedOption] = useState<{ forVariant: Variant, option: SelectOption }>({
-    forVariant: props.variant,
-    option: initialSelectedOption,
-  })
+  const initialValue = useMemo(() => props.selectPropModifier.init(props.variantProps), [props.selectPropModifier, props.variantProps])
+  const initialSelectedOption = useMemo(() => selectOptions.find(o => o.value === initialValue), [selectOptions, initialValue])
 
-  if (selectedOption.forVariant !== props.variant) {
-    setSelectedOption({
-      forVariant: props.variant,
-      option: initialSelectedOption,
-    })
-  }
+  const [value, setValue] = useState(initialValue)
+  const [selectedOption, setSelectedOption] = useState(initialSelectedOption)
+
+  if (initialValue !== value)
+    setValue(initialValue)
+  if (initialSelectedOption !== selectedOption)
+    setSelectedOption(initialSelectedOption)
 
   return (
     <div className="prop-modifier">
       <Select
         label={props.selectPropModifier.label}
-        selectedOption={selectedOption.option}
+        selectedOption={selectedOption}
         options={selectOptions}
         onChange={(newValue, newSelectedOption) => {
-          props.onChange(props.selectPropModifier.apply(newValue, props.variant.props))
-          setSelectedOption({
-            forVariant: props.variant,
-            option: newSelectedOption,
-          })
+          setSelectedOption(newSelectedOption)
+          props.onChange(props.selectPropModifier.apply(newValue, props.variantProps))
         }}
       />
     </div>
@@ -46,34 +42,49 @@ const SelectPropModifierEl = (props: {
 }
 
 const TextInputPropModifierEl = (props: {
-  variant: Variant
+  variantProps: any
   textInputPropModifier: PropModifier<any, PropModifierType.TEXT_INPUT>
   onChange: (newProps: any) => void
 }) => {
-  const initialValue = useMemo(() => props.textInputPropModifier.init(props.variant.props), [props.variant])
-  const [value, setValue] = useState<{ forVariant: Variant, value: string }>({
-    forVariant: props.variant,
-    value: initialValue,
-  })
+  const initialValue = useMemo(() => props.textInputPropModifier.init(props.variantProps), [props.textInputPropModifier, props.variantProps])
+  const [value, setValue] = useState(initialValue)
 
-  if (value.forVariant !== props.variant) {
-    setValue({
-      forVariant: props.variant,
-      value: initialValue,
-    })
-  }
+  if (initialValue !== value)
+    setValue(initialValue)
 
   return (
     <div className="prop-modifier">
       <TextInput
         label={props.textInputPropModifier.label}
-        value={value.value}
+        value={value}
         onChange={newValue => {
-          props.onChange(props.textInputPropModifier.apply(newValue, props.variant.props))
-          setValue({
-            forVariant: props.variant,
-            value: newValue,
-          })
+          props.onChange(props.textInputPropModifier.apply(newValue, props.variantProps))
+          setValue(newValue)
+        }}
+      />
+    </div>
+  )
+}
+
+const CheckboxPropModifierEl = (props: {
+  variantProps: any
+  checkboxPropModifier: PropModifier<any, PropModifierType.CHECKBOX>
+  onChange: (newProps: any) => void
+}) => {
+  const initialValue = useMemo(() => props.checkboxPropModifier.init(props.variantProps), [props.checkboxPropModifier, props.variantProps])
+  const [value, setValue] = useState(initialValue)
+
+  if (initialValue !== value)
+    setValue(initialValue)
+
+  return (
+    <div className="prop-modifier">
+      <Checkbox
+        label={props.checkboxPropModifier.label}
+        value={value}
+        onChange={newValue => {
+          props.onChange(props.checkboxPropModifier.apply(newValue, props.variantProps))
+          setValue(newValue)
         }}
       />
     </div>
@@ -81,7 +92,7 @@ const TextInputPropModifierEl = (props: {
 }
 
 const PropModifierEl = (props: {
-  variant: Variant
+  variantProps: any
   propModifier: PropModifier
   onChange: (newProps: any) => void
 }) => {
@@ -89,7 +100,7 @@ const PropModifierEl = (props: {
     case PropModifierType.SELECT:
       return (
         <SelectPropModifierEl
-          variant={props.variant}
+          variantProps={props.variantProps}
           selectPropModifier={props.propModifier}
           onChange={props.onChange}
         />
@@ -97,8 +108,16 @@ const PropModifierEl = (props: {
     case PropModifierType.TEXT_INPUT:
       return (
         <TextInputPropModifierEl
-          variant={props.variant}
+          variantProps={props.variantProps}
           textInputPropModifier={props.propModifier}
+          onChange={props.onChange}
+        />
+      )
+    case PropModifierType.CHECKBOX:
+      return (
+        <CheckboxPropModifierEl
+          variantProps={props.variantProps}
+          checkboxPropModifier={props.propModifier}
           onChange={props.onChange}
         />
       )
@@ -116,9 +135,11 @@ const dispatchCustomEvent = <
 }
 
 export const render = (props: {
+  variantProps: any
   exhibit: ComponentExhibit<true>
   variant: Variant
   onChange: (newProps: any) => void
+  onResetButtonClick: () => void
 }) => {
   const onChange = (newProps: any): void => {
     const iframeEl = document.getElementsByTagName('iframe')[0]
@@ -130,8 +151,22 @@ export const render = (props: {
 
   return (
     <div className="prop-modifiers">
+      <Button
+        className="reset-button"
+        icon={{ name: 'arrow-rotate-left' }}
+        onClick={() => {
+          props.onResetButtonClick()
+          onChange(props.variant.props)
+        }}
+      >
+        Reset
+      </Button>
       {props.exhibit.propModifiers.map(propModifier => (
-        <PropModifierEl variant={props.variant} propModifier={propModifier} onChange={onChange} />
+        <PropModifierEl
+          variantProps={props.variantProps}
+          propModifier={propModifier}
+          onChange={onChange}
+        />
       ))}
     </div>
   )

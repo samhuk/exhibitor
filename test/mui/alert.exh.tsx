@@ -36,6 +36,12 @@ exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.childre
       init: props => props.children.toString(),
       apply: (newAlertText, currentProps) => ({ ...currentProps, children: newAlertText }),
     },
+    {
+      label: 'Square',
+      type: PropModifierType.CHECKBOX,
+      init: props => props.square,
+      apply: (newEnabled, currentProps) => ({ ...currentProps, square: newEnabled }),
+    },
   ])
   .variant('error', p => ({
     ...p,

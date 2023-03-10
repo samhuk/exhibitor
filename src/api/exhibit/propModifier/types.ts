@@ -3,7 +3,7 @@ import { TypeDependantBaseIntersection } from '@samhuk/type-helpers'
 export type SelectPropModifierOption = string | [value: string, displayText?: string]
 
 export enum PropModifierType {
-  BOOLEAN_CHECKBOX = 'BOOLEAN_CHECKBOX',
+  CHECKBOX = 'CHECKBOX',
   NUMBER_INPUT = 'NUMBER_INPUT',
   NUMBER_SLIDER = 'NUMBER_SLIDER',
   TEXT_INPUT = 'TEXT_INPUT',
@@ -14,7 +14,7 @@ export type PropModifier<
   TProps extends any = any,
   TPropModifierType extends PropModifierType = PropModifierType,
 > = TypeDependantBaseIntersection<PropModifierType, {
-  [PropModifierType.BOOLEAN_CHECKBOX]: {
+  [PropModifierType.CHECKBOX]: {
     init: (currentProps: TProps) => boolean
     apply: (newValue: boolean, currentProps: TProps) => TProps
   },

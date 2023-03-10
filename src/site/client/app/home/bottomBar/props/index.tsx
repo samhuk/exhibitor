@@ -69,22 +69,31 @@ export const render = (props: {
   exhibit: ComponentExhibit<true>
   variant: Variant
 }) => {
-  const [customVariantProps, setCustomVariantProps] = useState<{ forVariant: Variant, props: any }>(undefined)
+  const [variantProps, setCustomVariantProps] = useState<{ forVariant: Variant, props: any }>({
+    forVariant: props.variant,
+    props: props.variant.props,
+  })
 
-  if (customVariantProps != null && customVariantProps.forVariant !== props.variant)
-    setCustomVariantProps(undefined)
+  if (variantProps != null && variantProps.forVariant !== props.variant) {
+    setCustomVariantProps({
+      forVariant: props.variant,
+      props: props.variant.props,
+    })
+  }
 
   return (
     <div className="props">
-      <PropsValueEl value={customVariantProps?.props ?? props.variant.props} />
+      <PropsValueEl value={variantProps?.props ?? props.variant.props} />
       {props.exhibit.propModifiers != null && props.exhibit.propModifiers.length > 0
         ? (
           <>
             <HDivider />
             <PropModifiers
+              variantProps={variantProps.props}
               exhibit={props.exhibit}
               variant={props.variant}
               onChange={newProps => setCustomVariantProps({ forVariant: props.variant, props: newProps })}
+              onResetButtonClick={() => setCustomVariantProps({ forVariant: props.variant, props: props.variant.props })}
             />
           </>
         ) : null}

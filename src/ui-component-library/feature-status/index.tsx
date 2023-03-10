@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { usePopper } from 'react-popper'
+import React from 'react'
 import Button from '../button'
 import { CLASS_NAME_PREFIX } from '../common'
 import ExternalLink from '../external-link'
