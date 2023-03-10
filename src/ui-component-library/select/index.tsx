@@ -92,7 +92,12 @@ export const render = <T extends any = any>(props: Props<T>) => {
 
       clickHandler.current = e => {
         const clickedEl = e.target as Node
-        if (!optionsEl.contains(clickedEl)) {
+        const wasClickInsideTextAndButtonEl = clickedEl === elRef.current || elRef.current.contains(clickedEl)
+        if (wasClickInsideTextAndButtonEl)
+          return
+
+        const wasClickInsideOptionsEl = optionsEl.contains(clickedEl)
+        if (!wasClickInsideOptionsEl) {
           close()
           return
         }
@@ -134,7 +139,7 @@ export const render = <T extends any = any>(props: Props<T>) => {
         ? <label>{props.label}</label>
         : null}
       <div className="text-and-button" ref={elRef}>
-        <input type="text" value={displayText} title={displayText} />
+        <input type="text" value={displayText} title={displayText} onFocus={() => open()} />
         <Button
           className="toggle-expand-button"
           onClick={toggleExpanded}

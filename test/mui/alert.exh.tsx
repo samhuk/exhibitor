@@ -3,6 +3,7 @@ import Alert, { AlertColor } from '@mui/material/Alert'
 import exhibit from '../../src/api'
 import { PropModifierType } from '../../src/api/exhibit/propModifier/types'
 
+// eslint-disable-next-line react/jsx-props-no-spreading
 exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.children}</Alert>, 'Alert')
   .options({
     group: 'MUI',
