@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { CLASS_NAME_PREFIX } from '../common'
 
 type Props = OmitTyped<React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>, 'onChange'> & {
+  label?: string
   value?: string
   onChange?: (value: string) => void
   className?: string
@@ -32,6 +33,9 @@ export const render = (props: Props) => {
 
   return (
     <div className={`${CLASS_NAME} ${props.className ?? ''}`}>
+      {props.label != null
+        ? <label>{props.label}</label>
+        : null}
       <input placeholder={props.placeholder} type="text" value={value} onInput={e => updateValue((e.target as HTMLInputElement).value)} />
     </div>
   )

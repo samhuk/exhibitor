@@ -2,5 +2,11 @@
   .props {
     overflow: auto;
     padding: 5px;
+
+    .prop-modifiers {
+      .prop-modifier {
+        margin-bottom: 10px;
+      }
+    }
   }
 }

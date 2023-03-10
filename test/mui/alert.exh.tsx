@@ -16,6 +16,13 @@ exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.childre
   })
   .propModifiers([
     {
+      label: 'Variant',
+      type: PropModifierType.SELECT,
+      options: ['standard', 'filled', 'outlined'],
+      init: props => props.variant,
+      apply: (newVariant, currentProps) => ({ ...currentProps, variant: newVariant as 'standard' | 'filled' | 'outlined' }),
+    },
+    {
       label: 'Severity',
       type: PropModifierType.SELECT,
       options: ['success', 'info', 'warning', 'error'],

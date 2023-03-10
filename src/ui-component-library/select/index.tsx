@@ -16,6 +16,7 @@ type Rect = {
 }
 
 type Props<T extends any = any> = {
+  label?: string
   options: SelectOption<T>[]
   onChange?: (value: T, option: SelectOption<T>) => void
   selectedOption?: SelectOption<T>
@@ -127,16 +128,21 @@ export const render = <T extends any = any>(props: Props<T>) => {
   const options = props.options ?? DEFAULT_PROPS.options
 
   return (
-    <div className="cl-select" ref={elRef}>
-      <input type="text" value={displayText} title={displayText} />
-      <Button
-        className="toggle-expand-button"
-        onClick={toggleExpanded}
-        title={expanded ? 'Hide available options' : 'Show available options'}
-        icon={{
-          name: expanded ? 'angle-up' : 'angle-down',
-        }}
-      />
+    <div className="cl-select">
+      {props.label != null
+        ? <label>{props.label}</label>
+        : null}
+      <div className="text-and-button" ref={elRef}>
+        <input type="text" value={displayText} title={displayText} />
+        <Button
+          className="toggle-expand-button"
+          onClick={toggleExpanded}
+          title={expanded ? 'Hide available options' : 'Show available options'}
+          icon={{
+            name: expanded ? 'angle-up' : 'angle-down',
+          }}
+        />
+      </div>
       {expanded
         ? (
           <div className="options" ref={optionsElRef}>

@@ -30,8 +30,8 @@ const SelectPropModifierEl = (props: {
 
   return (
     <div className="prop-modifier">
-      <div className="label">{props.selectPropModifier.label}</div>
       <Select
+        label={props.selectPropModifier.label}
         selectedOption={selectedOption.option}
         options={selectOptions}
         onChange={(newValue, newSelectedOption) => {
@@ -67,8 +67,8 @@ const TextInputPropModifierEl = (props: {
 
   return (
     <div className="prop-modifier">
-      <div className="label">{props.textInputPropModifier.label}</div>
       <TextInput
+        label={props.textInputPropModifier.label}
         value={value.value}
         onChange={newValue => {
           props.onChange(props.textInputPropModifier.apply(newValue, props.variant.props))
