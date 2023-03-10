@@ -130,6 +130,7 @@ export const render = <T extends any = any>(props: Props<T>) => {
   return (
     <div className="cl-select">
       {props.label != null
+        // eslint-disable-next-line jsx-a11y/label-has-associated-control
         ? <label>{props.label}</label>
         : null}
       <div className="text-and-button" ref={elRef}>

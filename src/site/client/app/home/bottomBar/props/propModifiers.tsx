@@ -5,7 +5,6 @@ import Select, { SelectOption } from '../../../../../../ui-component-library/sel
 import TextInput from '../../../../../../ui-component-library/text-input'
 
 const SelectPropModifierEl = (props: {
-  exhibit: ComponentExhibit<true>
   variant: Variant
   selectPropModifier: PropModifier<any, PropModifierType.SELECT>
   onChange: (newProps: any) => void
@@ -47,7 +46,6 @@ const SelectPropModifierEl = (props: {
 }
 
 const TextInputPropModifierEl = (props: {
-  exhibit: ComponentExhibit<true>
   variant: Variant
   textInputPropModifier: PropModifier<any, PropModifierType.TEXT_INPUT>
   onChange: (newProps: any) => void
@@ -83,7 +81,6 @@ const TextInputPropModifierEl = (props: {
 }
 
 const PropModifierEl = (props: {
-  exhibit: ComponentExhibit<true>
   variant: Variant
   propModifier: PropModifier
   onChange: (newProps: any) => void
@@ -92,7 +89,6 @@ const PropModifierEl = (props: {
     case PropModifierType.SELECT:
       return (
         <SelectPropModifierEl
-          exhibit={props.exhibit}
           variant={props.variant}
           selectPropModifier={props.propModifier}
           onChange={props.onChange}
@@ -101,7 +97,6 @@ const PropModifierEl = (props: {
     case PropModifierType.TEXT_INPUT:
       return (
         <TextInputPropModifierEl
-          exhibit={props.exhibit}
           variant={props.variant}
           textInputPropModifier={props.propModifier}
           onChange={props.onChange}
@@ -136,7 +131,7 @@ export const render = (props: {
   return (
     <div className="prop-modifiers">
       {props.exhibit.propModifiers.map(propModifier => (
-        <PropModifierEl exhibit={props.exhibit} variant={props.variant} propModifier={propModifier} onChange={onChange} />
+        <PropModifierEl variant={props.variant} propModifier={propModifier} onChange={onChange} />
       ))}
     </div>
   )

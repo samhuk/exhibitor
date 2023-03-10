@@ -34,6 +34,7 @@ export const render = (props: Props) => {
   return (
     <div className={`${CLASS_NAME} ${props.className ?? ''}`}>
       {props.label != null
+        // eslint-disable-next-line jsx-a11y/label-has-associated-control
         ? <label>{props.label}</label>
         : null}
       <input placeholder={props.placeholder} type="text" value={value} onInput={e => updateValue((e.target as HTMLInputElement).value)} />
