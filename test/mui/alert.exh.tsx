@@ -1,6 +1,7 @@
 import React from 'react'
-import Alert from '@mui/material/Alert'
+import Alert, { AlertColor } from '@mui/material/Alert'
 import exhibit from '../../src/api'
+import { PropModifierType } from '../../src/api/exhibit/propModifier/types'
 
 exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.children}</Alert>, 'Alert')
   .options({
@@ -13,6 +14,15 @@ exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.childre
     variant: 'standard',
     children: 'This is an alert — check it out!',
   })
+  .propModifiers([
+    {
+      label: 'Severity',
+      type: PropModifierType.SELECT,
+      options: ['success', 'info', 'warning', 'error'],
+      init: props => props.severity,
+      apply: (newSeverity, currentProps) => ({ ...currentProps, severity: newSeverity as AlertColor }),
+    },
+  ])
   .variant('error', p => ({
     ...p,
     severity: 'error',

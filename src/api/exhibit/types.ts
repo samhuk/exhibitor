@@ -1,5 +1,7 @@
+/* eslint-disable max-len */
 import { BoolDependant, IsTrueAndFalse, TypeDependantBaseIntersection } from '@samhuk/type-helpers/dist/type-helpers/types'
 import { ReactElement } from 'react'
+import { PropModifier } from './propModifier/types'
 
 export type ReactComponentWithProps<TProps extends any = any> = (props: TProps) => ReactElement
 
@@ -36,13 +38,14 @@ type _ComponentExhibitBuilder<
   THasDefinedDefaultProps extends boolean = boolean,
   THasDefinedOptions extends boolean = boolean,
   THasDefinedTests extends boolean = boolean,
+  THasDefinedPropModifiers extends boolean = boolean,
   TDefaultProps extends TProps = TProps,
   TIsGroup extends boolean = false,
 > =
   IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedTests, {
     tests: (
       testFilePath: string
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, true, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, true, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
   }>>
   & IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedOptions, {
     /**
@@ -60,7 +63,7 @@ type _ComponentExhibitBuilder<
       & IncludeIfTrue<THasProps, IncludeIfTrue<THasDefinedDefaultProps, {
         showDefaultVariant?: boolean
       }>>
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, true, THasDefinedTests, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, true, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
   }>>
   & IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedEvents, {
     /**
@@ -73,15 +76,20 @@ type _ComponentExhibitBuilder<
      */
     events: (
       eventProps: EventsOptions<TProps>
-    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
   }>>>
+  & IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, {
+    propModifiers: (
+      propModifiers: PropModifier<TProps>[]
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
+  }>>
   & IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedDefaultProps, {
     /**
      * Specify the default props for any variants in this exhibit group.
      */
     defaults: <TNewDefaultProps extends TProps>(
       defaultProps: THasDefinedDefaultProps extends true ? (TNewDefaultProps | ((defaults: TDefaultProps) => TNewDefaultProps)) : TNewDefaultProps,
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, THasDefinedOptions, THasDefinedTests, TNewDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TNewDefaultProps, TIsGroup>
   }>>
   & IncludeIfTrue<THasProps, {
     /**
@@ -100,8 +108,7 @@ type _ComponentExhibitBuilder<
        * that takes the default props and returns the props of the variant.
        */
       props: THasDefinedDefaultProps extends true ? (TProps | ((defaults: TDefaultProps) => TProps)) : TProps,
-    // eslint-disable-next-line max-len
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, TDefaultProps, TIsGroup>
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
   }>
   & IncludeIfTrue<THasProps, {
     /**
@@ -109,8 +116,12 @@ type _ComponentExhibitBuilder<
      * with related props. For example, if your component has a "darkMode" prop,
      * a "dark" and "light" variant group can be defined.
      */
-    // eslint-disable-next-line max-len
-    group: (name: string, fn: (ex: _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, false, THasDefinedOptions, THasDefinedTests, TDefaultProps, true>) => void) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, TDefaultProps, TIsGroup>
+    group: (
+      name: string,
+      fn: (
+        ex: _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, false, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, true>
+      ) => void
+    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
   }>
   & IncludeIfFalse<TIsGroup, {
     /**
@@ -136,6 +147,7 @@ export type NonRootComponentExhibitBuilder<
   THasDefinedDefaultProps,
   THasDefinedOptions,
   false,
+  false,
   TDefaultProps,
   true
 >
@@ -146,6 +158,7 @@ export type ComponentExhibitBuilder<
   THasDefinedDefaultProps extends boolean = boolean,
   THasDefinedOptions extends boolean = boolean,
   THasDefinedTests extends boolean = boolean,
+  THasDefinedPropModifiers extends boolean = boolean,
   TDefaultProps extends undefined = undefined,
 > = _ComponentExhibitBuilder<
   PropsOfReactComponent<TReactComponent>,
@@ -154,6 +167,7 @@ export type ComponentExhibitBuilder<
   THasDefinedDefaultProps,
   THasDefinedOptions,
   THasDefinedTests,
+  THasDefinedPropModifiers,
   TDefaultProps
 >
 
@@ -190,6 +204,10 @@ export type ComponentExhibit<
        */
       showDefaultVariant?: boolean
       eventProps?: EventsOptions<TProps> | null
+      /**
+       * @default []
+       */
+      propModifiers?: PropModifier<TProps>[]
     } & VariantGroup<TProps>
     false: { }
   },

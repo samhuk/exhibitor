@@ -16,15 +16,20 @@ const addCustomEventListener = <TEvent extends CustomEvent>(el: EventTarget, eve
 
 export const useCompSiteEffect = (
   setSelectedVariantPathFn: (newPath: string) => any,
+  updateVariantProps: (newProps: any) => any,
 ) => useEffect(() => {
   // Listen for the call to tell us that the selected variant changed
   const remove1 = addCustomEventListener(window, SELECT_VARIANT_CHANGE_EVENT_NAME, () => setSelectedVariantPathFn(getSelectedVariantNodePath()))
   // Listen for the call to run an accessibility test on the currently selected variant
   const remove2 = addCustomEventListener(window, START_AXE_TEST_EVENT_NAME, () => runAxe())
+  const remove3 = addCustomEventListener(window, 'variant-props-change', e => {
+    updateVariantProps(e.detail)
+  })
 
   return () => {
     remove1()
     remove2()
+    remove3()
   }
 }, [])
 
@@ -36,8 +41,15 @@ export const useCompSiteEffect = (
 export const ReactCompSiteWithHooks = () => {
   const doInitialLoad = useRef(true)
   const [selectedVariantPath, setSelectedVariantPath] = useState(null)
+  const [customVariantProps, setCustomVariantProps] = useState(undefined)
 
-  useCompSiteEffect(setSelectedVariantPath)
+  useCompSiteEffect(
+    newPath => {
+      setCustomVariantProps(undefined)
+      setSelectedVariantPath(newPath)
+    },
+    setCustomVariantProps,
+  )
 
   if (doInitialLoad.current) {
     doInitialLoad.current = false
@@ -64,5 +76,5 @@ export const ReactCompSiteWithHooks = () => {
   const VariantEl = variantNode.exhibit.renderFn
 
   // eslint-disable-next-line react/jsx-props-no-spreading
-  return <VariantEl {...variantProps} />
+  return <VariantEl {...(customVariantProps ?? variantProps)} />
 }

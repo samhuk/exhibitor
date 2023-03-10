@@ -1,4 +1,4 @@
-import { ExoticComponent } from 'react'
+import { PropModifier } from './propModifier/types'
 import {
   ComponentExhibit,
   ComponentExhibitBuilder,
@@ -189,18 +189,19 @@ export const exhibit = <
 >(
     component: TReactComponent,
     name: string,
-  ): ComponentExhibitBuilder<TReactComponent, false, false, false, false, undefined> => {
+  ): ComponentExhibitBuilder<TReactComponent, false, false, false, false, false, undefined> => {
   let eventProps: any = null
   let defaultProps: any = null
   let options: any = null
   let testSrcPath: string = null
+  let propModifiers: PropModifier[] = []
   const variants: { [variantName: string]: Variant } = {}
 
   const hasProps = determineIfComponentHasProps(component)
 
   const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
-  const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, false, false, undefined> = {
+  const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, false, false, false, undefined> = {
     tests: _testSrcPath => {
       testSrcPath = _testSrcPath
       delete (componentExhibitBuilder as any).tests
@@ -231,11 +232,16 @@ export const exhibit = <
       fn(nonRootExhibit(defaultProps, variantGroups[groupName]))
       return componentExhibitBuilder
     }) : undefined,
+    propModifiers: hasProps ? (_propModifiers => {
+      propModifiers = _propModifiers
+      return componentExhibitBuilder
+    }) : undefined,
     build: () => {
       const componentExhibit: ComponentExhibit = {
         name,
         groupName: options?.group,
         showDefaultVariant: options?.showDefaultVariant ?? true,
+        propModifiers: propModifiers ?? [],
         hasProps,
         renderFn: component,
         defaultProps,

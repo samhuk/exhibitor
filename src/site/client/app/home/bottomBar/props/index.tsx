@@ -1,9 +1,11 @@
 import { prettyDOM } from '@testing-library/dom'
 import { createDataType } from '@textea/json-viewer'
-import React from 'react'
+import React, { useState } from 'react'
+import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
+import HDivider from '../../../../../../ui-component-library/h-divider'
+import JsonViewer from '../../../../common/jsonViewer'
 
-import { ComponentExhibit, Variant } from '../../../../../api/exhibit/types'
-import JsonViewer from '../../../common/jsonViewer'
+import PropModifiers from './propModifiers'
 
 export const getCircularReplacer = () => {
   const seen = new WeakSet()
@@ -66,10 +68,28 @@ const PropsValueEl = (props: {
 export const render = (props: {
   exhibit: ComponentExhibit<true>
   variant: Variant
-}) => (
-  <div className="props">
-    <PropsValueEl value={props.variant.props} />
-  </div>
-)
+}) => {
+  const [customVariantProps, setCustomVariantProps] = useState<{ forVariant: Variant, props: any }>(undefined)
+
+  if (customVariantProps != null && customVariantProps.forVariant !== props.variant)
+    setCustomVariantProps(undefined)
+
+  return (
+    <div className="props">
+      <PropsValueEl value={customVariantProps?.props ?? props.variant.props} />
+      {props.exhibit.propModifiers != null && props.exhibit.propModifiers.length > 0
+        ? (
+          <>
+            <HDivider />
+            <PropModifiers
+              exhibit={props.exhibit}
+              variant={props.variant}
+              onChange={newProps => setCustomVariantProps({ forVariant: props.variant, props: newProps })}
+            />
+          </>
+        ) : null}
+    </div>
+  )
+}
 
 export default render
