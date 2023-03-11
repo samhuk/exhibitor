@@ -42,6 +42,15 @@ exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.childre
       init: props => props.square,
       apply: (newEnabled, currentProps) => ({ ...currentProps, square: newEnabled }),
     },
+    {
+      label: 'Elevation',
+      type: PropModifierType.NUMBER_SLIDER,
+      min: 1,
+      max: 24,
+      step: 6,
+      init: props => props.elevation,
+      apply: (newElevation, currentProps) => ({ ...currentProps, elevation: newElevation }),
+    },
   ])
   .variant('error', p => ({
     ...p,

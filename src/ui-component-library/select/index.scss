@@ -34,10 +34,14 @@
   background-color: $bg-color;
   visibility: hidden;
   z-index: 1;
+  overflow-y: auto;
 
   .option {
     cursor: pointer;
     padding: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover {
       background-color: $bg-color-m7;
