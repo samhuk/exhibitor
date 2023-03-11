@@ -30,18 +30,56 @@ export const DEFAULT_PROPS: Props = {
   options: [],
 }
 
+type DropdownDir = 'above' | 'below'
+
+type DropdownDirectionInfo = { availableSpace: number, dir: DropdownDir }
+
+const determineDropdownDirectionInfo = (
+  refElRect: Rect,
+  dropdownElRect: Rect,
+): DropdownDirectionInfo => {
+  const availableHeightBelow = window.innerHeight - refElRect.y - refElRect.height
+  const availableHeightAbove = refElRect.y
+
+  // If there is enough space below to fit the dropdown, then below
+  if (dropdownElRect.height < availableHeightBelow)
+    return { availableSpace: availableHeightBelow, dir: 'below' }
+
+  // Else, if the available space below is more than above, then below
+  if (availableHeightBelow >= availableHeightAbove)
+    return { availableSpace: availableHeightBelow, dir: 'below' }
+
+  // Else, above
+  return { availableSpace: availableHeightAbove, dir: 'above' }
+}
+
+const convertDomRectToRect = (domRect: DOMRect): Rect => ({
+  x: domRect.left,
+  y: domRect.top,
+  height: domRect.height,
+  width: domRect.width,
+})
+
 const determineDropdownRect = (
   parentEl: HTMLElement,
   dropdownEl: HTMLElement,
 ): Rect => {
-  const parentElBoundingRect = parentEl.getBoundingClientRect()
-  const dropdownRect = dropdownEl.getBoundingClientRect()
-  const width = Math.max(parentElBoundingRect.width, dropdownRect.width)
+  const parentElRect = convertDomRectToRect(parentEl.getBoundingClientRect())
+  const dropdownElRect = convertDomRectToRect(dropdownEl.getBoundingClientRect())
+  const dropdownDirectionInfo = determineDropdownDirectionInfo(parentElRect, dropdownElRect)
+  const dropdownHeight = Math.min(dropdownElRect.height, dropdownDirectionInfo.availableSpace)
+  const dropdownWidth = Math.min(Math.max(parentElRect.width, dropdownElRect.width), window.innerWidth)
+  const dropdownY = dropdownDirectionInfo.dir === 'below'
+    ? parentElRect.y + parentElRect.height
+    : parentElRect.y - dropdownHeight
+  const dropdownXRhsOverRun = Math.max(0, parentElRect.x + dropdownWidth - window.innerWidth)
+  const dropdownX = parentElRect.x - dropdownXRhsOverRun
+
   return {
-    x: parentElBoundingRect.left,
-    y: parentElBoundingRect.top + parentElBoundingRect.height,
-    width,
-    height: dropdownRect.height,
+    x: dropdownX,
+    y: dropdownY,
+    width: dropdownWidth,
+    height: dropdownHeight,
   }
 }
 
@@ -54,6 +92,12 @@ const applyDropdownRect = (dropdownEl: HTMLElement, rect: Rect) => {
 
 const NoOptionsEl = () => (
   <div className="no-options">[No options]</div>
+)
+
+const OptionEl = (props: { option: SelectOption }) => (
+  <div className="option" title={props.option.displayText}>
+    {props.option.displayText}
+  </div>
 )
 
 let bodyEl: HTMLBodyElement
@@ -76,15 +120,9 @@ const OptionsEl = (props: {
   })
 
   return createPortal(
-    (
-      props.options.length > 0
-        ? (props.options ?? DEFAULT_PROPS.options).map(o => (
-          <div className="option">
-            {o.displayText}
-          </div>
-        ))
-        : <NoOptionsEl />
-    ),
+    props.options.length > 0
+      ? (props.options ?? DEFAULT_PROPS.options).map(option => <OptionEl option={option} />)
+      : <NoOptionsEl />,
     optionsEl,
   )
 }
