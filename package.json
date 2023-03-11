@@ -82,6 +82,7 @@
     "playwright-core": "^1.30.0",
     "playwright-html-data-reporter": "^0.0.3",
     "pretty-format": "^29.4.3",
+    "rc-slider": "^10.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",

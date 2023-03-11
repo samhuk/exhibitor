@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from 'react'
+import Slider from 'rc-slider'
+import Handle from 'rc-slider/lib/Handles/Handle'
 import { PropModifier, PropModifierType } from '../../../../../../api/exhibit/propModifier/types'
 import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
 import Button from '../../../../../../ui-component-library/button'
@@ -27,7 +29,7 @@ const SelectPropModifierEl = (props: {
     setSelectedOption(initialSelectedOption)
 
   return (
-    <div className="prop-modifier">
+    <div className="prop-modifier select">
       <Select
         label={props.selectPropModifier.label}
         selectedOption={selectedOption}
@@ -53,7 +55,7 @@ const TextInputPropModifierEl = (props: {
     setValue(initialValue)
 
   return (
-    <div className="prop-modifier">
+    <div className="prop-modifier text-input">
       <TextInput
         label={props.textInputPropModifier.label}
         value={value}
@@ -78,13 +80,56 @@ const CheckboxPropModifierEl = (props: {
     setValue(initialValue)
 
   return (
-    <div className="prop-modifier">
+    <div className="prop-modifier checkbox">
       <Checkbox
         label={props.checkboxPropModifier.label}
         value={value}
         onChange={newValue => {
           props.onChange(props.checkboxPropModifier.apply(newValue, props.variantProps))
           setValue(newValue)
+        }}
+      />
+    </div>
+  )
+}
+
+const NumberSliderTooltip = (props: {
+  value: number
+}) => <div title={props.value?.toString()}>{props.value}</div>
+
+const NumberSliderPropModifierEl = (props: {
+  variantProps: any
+  numberSliderPropModifier: PropModifier<any, PropModifierType.NUMBER_SLIDER>
+  onChange: (newProps: any) => void
+}) => {
+  const initialValue = useMemo(() => props.numberSliderPropModifier.init(props.variantProps), [props.numberSliderPropModifier, props.variantProps])
+  const [value, setValue] = useState(initialValue)
+
+  if (initialValue !== value)
+    setValue(initialValue)
+
+  return (
+    <div className="prop-modifier number-slider">
+      <label>{props.numberSliderPropModifier.label}</label>
+      <Slider
+        min={props.numberSliderPropModifier.min}
+        max={props.numberSliderPropModifier.max}
+        step={props.numberSliderPropModifier.step ?? 1}
+        value={value}
+        // handleRender={tooltipProps => (
+        //   <div {...tooltipProps.props}>
+        //     <NumberSliderTooltip value={tooltipProps.props.value} />
+        //   </div>
+        // )}
+        handleRender={renderProps => (
+          <div {...renderProps.props}>
+            <NumberSliderTooltip value={(renderProps.props as any)['aria-valuenow']} />
+          </div>
+        )}
+        onChange={newValue => {
+          const _newValue = newValue as number // Convenient cast
+          props.onChange(props.numberSliderPropModifier.apply(_newValue, props.variantProps))
+          setValue(_newValue)
         }}
       />
     </div>
@@ -118,6 +163,14 @@ const PropModifierEl = (props: {
         <CheckboxPropModifierEl
           variantProps={props.variantProps}
           checkboxPropModifier={props.propModifier}
+          onChange={props.onChange}
+        />
+      )
+    case PropModifierType.NUMBER_SLIDER:
+      return (
+        <NumberSliderPropModifierEl
+          variantProps={props.variantProps}
+          numberSliderPropModifier={props.propModifier}
           onChange={props.onChange}
         />
       )

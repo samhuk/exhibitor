@@ -2,6 +2,7 @@
   .props {
     overflow: auto;
     padding: 5px;
+    flex-grow: 1;
 
     .prop-modifiers {
       .reset-button {
@@ -11,6 +12,32 @@
 
       .prop-modifier {
         margin-bottom: 10px;
+
+        &.number-slider {
+          label {
+            display: inline-block;
+            margin-bottom: 10px;
+            color: $text-color-m10;
+          }
+
+          .rc-slider {
+            max-width: 400px;
+            margin-left: 10px;
+            margin-right: 10px;
+  
+            .rc-slider-handle {
+              div {
+                user-select: none;
+                position: absolute;
+                top: 17px;
+                left: -4px;
+                padding: 2px 5px;
+                background-color: $bg-color-m7;
+                border-radius: 3px;
+              }
+            }
+          }
+        }
       }
     }
   }
