@@ -110,6 +110,7 @@ const NumberSliderPropModifierEl = (props: {
 
   return (
     <div className="prop-modifier number-slider">
+      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label>{props.numberSliderPropModifier.label}</label>
       <Slider
         min={props.numberSliderPropModifier.min}
@@ -121,7 +122,9 @@ const NumberSliderPropModifierEl = (props: {
         //     <NumberSliderTooltip value={tooltipProps.props.value} />
         //   </div>
         // )}
+        // eslint-disable-next-line react/no-unstable-nested-components
         handleRender={renderProps => (
+          // eslint-disable-next-line react/jsx-props-no-spreading
           <div {...renderProps.props}>
             <NumberSliderTooltip value={(renderProps.props as any)['aria-valuenow']} />
           </div>
