@@ -26,27 +26,27 @@
       border-radius: 0;
     }
   }
+}
 
-  .options {
-    position: absolute;
-    border: $border;
-    background-color: $bg-color;
-    visibility: hidden;
-    z-index: 1;
+.cl-select-options {
+  position: absolute;
+  border: $border;
+  background-color: $bg-color;
+  visibility: hidden;
+  z-index: 1;
 
-    .option {
-      cursor: pointer;
-      padding: 4px;
+  .option {
+    cursor: pointer;
+    padding: 4px;
 
-      &:hover {
-        background-color: $bg-color-m7;
-      }
+    &:hover {
+      background-color: $bg-color-m7;
     }
+  }
 
-    .no-options {
-      padding: 4px;
-      color: $text-color-m10;
-      font-style: italic;
-    }
+  .no-options {
+    padding: 4px;
+    color: $text-color-m10;
+    font-style: italic;
   }
 }
