@@ -12,5 +12,6 @@ import { exhibit } from './exhibit'
 export { preparePlaywrightTest } from './test/playwright'
 
 export * from './types'
+export { PropModifierType } from './exhibit/propModifier/types'
 
 export default exhibit

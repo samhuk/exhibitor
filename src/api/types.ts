@@ -8,4 +8,4 @@
  */
 
 export type { UnresolvedConfig as Config } from '../common/config/types'
-export type { PropModifier, PropModifierType, SelectPropModifierOption } from './exhibit/propModifier/types'
+export type { PropModifier, SelectPropModifierOption } from './exhibit/propModifier/types'
