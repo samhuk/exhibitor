@@ -51,6 +51,7 @@ describe('exhibit', () => {
         groupName: 'Design Phase',
         hasProps: true,
         name: 'button',
+        propModifiers: [],
         renderFn: Button,
         showDefaultVariant: true,
         srcPath: undefined,

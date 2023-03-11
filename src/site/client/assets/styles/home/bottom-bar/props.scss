@@ -2,5 +2,16 @@
   .props {
     overflow: auto;
     padding: 5px;
+
+    .prop-modifiers {
+      .reset-button {
+        margin-bottom: 10px;
+        border: 1px solid $bg-color-m7;
+      }
+
+      .prop-modifier {
+        margin-bottom: 10px;
+      }
+    }
   }
 }
