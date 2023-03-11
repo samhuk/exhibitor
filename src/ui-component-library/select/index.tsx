@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react'
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { waitForNotNullish } from '../../common/function'
 import Button from '../button'
 import { CLASS_NAME_PREFIX } from '../common'
@@ -33,12 +34,12 @@ const determineDropdownRect = (
   parentEl: HTMLElement,
   dropdownEl: HTMLElement,
 ): Rect => {
-  const parentRect = { x: parentEl.offsetLeft, y: parentEl.offsetTop, height: parentEl.clientHeight, width: parentEl.clientWidth }
+  const parentElBoundingRect = parentEl.getBoundingClientRect()
   const dropdownRect = dropdownEl.getBoundingClientRect()
-  const width = Math.max(parentRect.width, dropdownRect.width) + 2
+  const width = Math.max(parentElBoundingRect.width, dropdownRect.width)
   return {
-    x: parentRect.x,
-    y: parentRect.y + parentRect.height,
+    x: parentElBoundingRect.left,
+    y: parentElBoundingRect.top + parentElBoundingRect.height,
     width,
     height: dropdownRect.height,
   }
@@ -54,6 +55,39 @@ const applyDropdownRect = (dropdownEl: HTMLElement, rect: Rect) => {
 const NoOptionsEl = () => (
   <div className="no-options">[No options]</div>
 )
+
+let bodyEl: HTMLBodyElement
+
+waitForNotNullish(() => document.getElementsByTagName('body')[0]).then(el => bodyEl = el)
+
+const OptionsEl = (props: {
+  optionsElRef: MutableRefObject<HTMLDivElement>
+  options: SelectOption[]
+}) => {
+  const optionsEl = document.createElement('div')
+  optionsEl.classList.add('cl-select-options')
+  props.optionsElRef.current = optionsEl
+
+  useEffect(() => {
+    bodyEl.appendChild(optionsEl)
+    return () => {
+      bodyEl.removeChild(optionsEl)
+    }
+  })
+
+  return createPortal(
+    (
+      props.options.length > 0
+        ? (props.options ?? DEFAULT_PROPS.options).map(o => (
+          <div className="option">
+            {o.displayText}
+          </div>
+        ))
+        : <NoOptionsEl />
+    ),
+    optionsEl,
+  )
+}
 
 export const render = <T extends any = any>(props: Props<T>) => {
   const [expanded, setExpanded] = useState(false)
@@ -150,17 +184,7 @@ export const render = <T extends any = any>(props: Props<T>) => {
         />
       </div>
       {expanded
-        ? (
-          <div className="options" ref={optionsElRef}>
-            {options.length > 0
-              ? (props.options ?? DEFAULT_PROPS.options).map(o => (
-                <div className="option">
-                  {o.displayText}
-                </div>
-              ))
-              : <NoOptionsEl />}
-          </div>
-        )
+        ? <OptionsEl optionsElRef={optionsElRef} options={options} />
         : null}
     </div>
   )
