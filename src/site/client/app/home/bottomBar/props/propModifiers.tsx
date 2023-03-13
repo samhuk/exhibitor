@@ -7,6 +7,7 @@ import Button from '../../../../../../ui-component-library/button'
 import Checkbox from '../../../../../../ui-component-library/checkbox'
 import Select, { SelectOption } from '../../../../../../ui-component-library/select'
 import TextInput from '../../../../../../ui-component-library/text-input'
+import NumberInput from '../../../../../../ui-component-library/number-input'
 
 const SelectPropModifierEl = (props: {
   variantProps: any
@@ -117,11 +118,6 @@ const NumberSliderPropModifierEl = (props: {
         max={props.numberSliderPropModifier.max}
         step={props.numberSliderPropModifier.step ?? 1}
         value={value}
-        // handleRender={tooltipProps => (
-        //   <div {...tooltipProps.props}>
-        //     <NumberSliderTooltip value={tooltipProps.props.value} />
-        //   </div>
-        // )}
         // eslint-disable-next-line react/no-unstable-nested-components
         handleRender={renderProps => (
           // eslint-disable-next-line react/jsx-props-no-spreading
@@ -133,6 +129,34 @@ const NumberSliderPropModifierEl = (props: {
           const _newValue = newValue as number // Convenient cast
           props.onChange(props.numberSliderPropModifier.apply(_newValue, props.variantProps))
           setValue(_newValue)
+        }}
+      />
+    </div>
+  )
+}
+
+const NumberInputPropModifierEl = (props: {
+  variantProps: any
+  numberInputPropModifier: PropModifier<any, PropModifierType.NUMBER_INPUT>
+  onChange: (newProps: any) => void
+}) => {
+  const initialValue = useMemo(() => props.numberInputPropModifier.init(props.variantProps), [props.numberInputPropModifier, props.variantProps])
+  const [value, setValue] = useState(initialValue)
+
+  if (initialValue !== value)
+    setValue(initialValue)
+
+  return (
+    <div className="prop-modifier number-input">
+      <NumberInput
+        min={props.numberInputPropModifier.min}
+        max={props.numberInputPropModifier.max}
+        step={props.numberInputPropModifier.step ?? 1}
+        label={props.numberInputPropModifier.label}
+        value={value}
+        onChange={newValue => {
+          props.onChange(props.numberInputPropModifier.apply(newValue, props.variantProps))
+          setValue(newValue)
         }}
       />
     </div>
@@ -174,6 +198,14 @@ const PropModifierEl = (props: {
         <NumberSliderPropModifierEl
           variantProps={props.variantProps}
           numberSliderPropModifier={props.propModifier}
+          onChange={props.onChange}
+        />
+      )
+    case PropModifierType.NUMBER_INPUT:
+      return (
+        <NumberInputPropModifierEl
+          variantProps={props.variantProps}
+          numberInputPropModifier={props.propModifier}
           onChange={props.onChange}
         />
       )
