@@ -211,7 +211,7 @@ export const render = <T extends any = any>(props: Props<T>) => {
         ? <label>{props.label}</label>
         : null}
       <div className="text-and-button" ref={elRef}>
-        <input type="text" value={displayText} title={displayText} onFocus={() => open()} />
+        <input type="text" value={displayText} title={displayText} onFocus={() => open()} readOnly />
         <Button
           className="toggle-expand-button"
           onClick={toggleExpanded}
