@@ -3,6 +3,7 @@ import { createDataType } from '@textea/json-viewer'
 import React, { useState } from 'react'
 import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
 import HDivider from '../../../../../../ui-component-library/h-divider'
+import VDivider from '../../../../../../ui-component-library/v-divider'
 import JsonViewer from '../../../../common/jsonViewer'
 
 import PropModifiers from './propModifiers'
@@ -83,11 +84,9 @@ export const render = (props: {
 
   return (
     <div className="props">
-      <PropsValueEl value={variantProps?.props ?? props.variant.props} />
       {props.exhibit.propModifiers != null && props.exhibit.propModifiers.length > 0
         ? (
           <>
-            <HDivider />
             <PropModifiers
               variantProps={variantProps.props}
               exhibit={props.exhibit}
@@ -95,8 +94,11 @@ export const render = (props: {
               onChange={newProps => setCustomVariantProps({ forVariant: props.variant, props: newProps })}
               onResetButtonClick={() => setCustomVariantProps({ forVariant: props.variant, props: props.variant.props })}
             />
+            <HDivider />
+            <VDivider />
           </>
         ) : null}
+      <PropsValueEl value={variantProps?.props ?? props.variant.props} />
     </div>
   )
 }

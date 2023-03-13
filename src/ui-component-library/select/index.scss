@@ -1,4 +1,7 @@
 .cl-select {
+  max-width: 400px;
+  width: 100%;
+
   label {
     display: inline-block;
     margin-bottom: 5px;
@@ -6,7 +9,6 @@
   }
 
   .text-and-button {
-    width: 200px;
     display: flex;
     border: $border;
     background-color: $bg-color;

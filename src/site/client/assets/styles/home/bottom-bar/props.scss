@@ -3,8 +3,28 @@
     overflow: auto;
     padding: 5px;
     flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+
+    .cl-h-divider {
+      display: none;
+    }
+    
+    @media only screen and (max-width: $tablet-max-width) {
+      display: block;
+
+      .cl-h-divider {
+        display: block;
+      }
+
+      .cl-v-divider {
+        display: none;
+      }
+    }
 
     .prop-modifiers {
+      flex-basis: 50%;
+
       .reset-button {
         margin-bottom: 10px;
         border: 1px solid $bg-color-m7;
@@ -24,6 +44,7 @@
             max-width: 400px;
             width: calc(100% - 40px);
             margin-left: 5px;
+            margin-bottom: 35px;
   
             .rc-slider-handle {
               div {
