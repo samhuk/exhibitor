@@ -23,7 +23,7 @@
 </p>
 
 <div align="center">
-  <img src="./img/img1.png" />
+  <img src="./img/preview-small.png" />
 </div>
 
 ## Overview
