@@ -97,4 +97,4 @@ Want to join in and contibute to Exhibitor? Awesome! See [./contributing/develop
 
 ---
 
-If you would like to support my work, feel free to [buy me a coffee](https://www.buymeacoffee.com/samhuk) or sponsor me on GitHub ✨
+If you would like to support my work, feel free to [sponsor me on GitHub](https://github.com/sponsors/samhuk) or [buy me a coffee](https://www.buymeacoffee.com/samhuk) ✨
