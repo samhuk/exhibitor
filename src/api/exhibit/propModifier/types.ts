@@ -1,6 +1,9 @@
 import { TypeDependantBaseIntersection } from '@samhuk/type-helpers'
 
-type NumberPropModifierBase = {
+export type ExtractPropNamesOfType<TProps extends any = any, TPropType extends any = any> =
+  keyof { [TPropName in keyof TProps as TProps[TPropName] extends TPropType ? TPropName : never]: true }
+
+export type NumberPropModifierBase = {
   min?: number
   max?: number
   /**
@@ -19,7 +22,8 @@ export enum PropModifierType {
   SELECT = 'SELECT'
 }
 
-type PropModifierBase<TProps extends any = any, TProp extends any = any> = {
+export type PropModifierBase<TProps extends any = any, TProp extends any = any> = {
+  label: string
   init: (currentProps: TProps) => TProp
   apply: (newValue: TProp, currentProps: TProps) => TProps
 }
@@ -35,4 +39,4 @@ export type PropModifier<
   [PropModifierType.SELECT]: PropModifierBase<TProps, string | number> & {
     options: SelectPropModifierOption[]
   },
-}, TPropModifierType> & { label: string }
+}, TPropModifierType>

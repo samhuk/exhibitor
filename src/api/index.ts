@@ -12,6 +12,13 @@ import { exhibit } from './exhibit'
 export { preparePlaywrightTest } from './test/playwright'
 
 export * from './types'
+
+export { simpleCheckboxModifier } from './exhibit/propModifier/checkbox'
+export { simpleNumberSliderModifier } from './exhibit/propModifier/numberSlider'
+export { simpleNumberInputModifier } from './exhibit/propModifier/numberInput'
+export { simpleTextInputModifier } from './exhibit/propModifier/textInput'
+export { simpleSelectModifier } from './exhibit/propModifier/select'
+
 export { PropModifierType } from './exhibit/propModifier/types'
 
 export default exhibit
