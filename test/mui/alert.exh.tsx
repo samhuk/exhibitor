@@ -2,6 +2,10 @@ import React from 'react'
 import Alert, { AlertColor } from '@mui/material/Alert'
 import exhibit from '../../src/api'
 import { PropModifierType } from '../../src/api/exhibit/propModifier/types'
+import { simpleCheckboxModifier } from '../../src/api/exhibit/propModifier/checkbox'
+import { simpleNumberInputModifier } from '../../src/api/exhibit/propModifier/numberInput'
+import { simpleNumberSliderModifier } from '../../src/api/exhibit/propModifier/numberSlider'
+import { simpleSelectModifier } from '../../src/api/exhibit/propModifier/select'
 
 // eslint-disable-next-line react/jsx-props-no-spreading
 exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.children}</Alert>, 'Alert')
@@ -16,50 +20,17 @@ exhibit((props: Parameters<typeof Alert>[0]) => <Alert {...props}>{props.childre
     children: 'This is an alert — check it out!',
   })
   .propModifiers([
-    {
-      label: 'Variant',
-      type: PropModifierType.SELECT,
-      options: ['standard', 'filled', 'outlined'],
-      init: props => props.variant,
-      apply: (newVariant, currentProps) => ({ ...currentProps, variant: newVariant as 'standard' | 'filled' | 'outlined' }),
-    },
-    {
-      label: 'Severity',
-      type: PropModifierType.SELECT,
-      options: ['success', 'info', 'warning', 'error'],
-      init: props => props.severity,
-      apply: (newSeverity, currentProps) => ({ ...currentProps, severity: newSeverity as AlertColor }),
-    },
+    simpleSelectModifier('variant', ['standard', 'filled', 'outlined']),
+    simpleSelectModifier('severity', ['success', 'info', 'warning', 'error']),
     {
       label: 'Alert text',
       type: PropModifierType.TEXT_INPUT,
       init: props => props.children.toString(),
       apply: (newAlertText, currentProps) => ({ ...currentProps, children: newAlertText }),
     },
-    {
-      label: 'Square',
-      type: PropModifierType.CHECKBOX,
-      init: props => props.square,
-      apply: (newEnabled, currentProps) => ({ ...currentProps, square: newEnabled }),
-    },
-    {
-      label: 'Elevation (slider)',
-      type: PropModifierType.NUMBER_SLIDER,
-      min: 1,
-      max: 24,
-      step: 6,
-      init: props => props.elevation,
-      apply: (newElevation, currentProps) => ({ ...currentProps, elevation: newElevation }),
-    },
-    {
-      label: 'Elevation (input)',
-      type: PropModifierType.NUMBER_INPUT,
-      min: 1,
-      max: 24,
-      step: 3,
-      init: props => props.elevation,
-      apply: (newElevation, currentProps) => ({ ...currentProps, elevation: newElevation }),
-    },
+    simpleCheckboxModifier('square'),
+    simpleNumberSliderModifier('elevation', { min: 1, max: 24, step: 3 }),
+    simpleNumberInputModifier('elevation', { min: 1, max: 24, step: 3 }),
   ])
   .variant('error', p => ({
     ...p,
