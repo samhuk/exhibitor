@@ -12,7 +12,7 @@ import { createExhError } from '../../common/exhError'
 import { ErrorType } from '../../common/errorTypes'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
-import { log } from '../../common/logging'
+import { log, logStep } from '../../common/logging'
 import { ExhEnv, getEnv } from '../../common/env'
 import state from '../../common/state'
 import { tryResolve } from '../../common/npm/resolve'
@@ -42,7 +42,7 @@ const handleApiRequest = (app: ExpressApp) => {
     .use('/api', (req, res) => sendErrorResponse(res, createExhError({ message: 'unknown endpoint', type: ErrorType.NOT_FOUND })))
 }
 
-const handleThemeStylesheetRequest = (app: ReturnType<typeof express>, clientBuildDir: string) => {
+const handleThemeStylesheetRequest = (app: ExpressApp, clientBuildDir: string) => {
   app.get('/styles.css', (req, res) => {
     const theme = req.cookies.theme ?? DEFAULT_THEME
 
@@ -52,6 +52,26 @@ const handleThemeStylesheetRequest = (app: ReturnType<typeof express>, clientBui
     }
 
     sendErrorResponse(res, createExhError({ message: `Styles do not exist for theme '${theme}'`, type: ErrorType.NOT_FOUND }))
+  })
+}
+
+const getRequestDelayMs = (): number | null => {
+  const envVarValue = process.env.REQUEST_DELAY_MS
+  if (envVarValue == null || envVarValue.length === 0)
+    return null
+
+  const parsedValue = Number.parseInt(envVarValue)
+  if (Number.isNaN(parsedValue) || parsedValue < 1)
+    return null
+
+  return parsedValue
+}
+
+const enableRequestDelay = (app: ExpressApp, delayMs: number) => {
+  app.use('*', (req, res, next) => {
+    setTimeout(() => {
+      next()
+    }, delayMs)
   })
 }
 
@@ -67,6 +87,15 @@ const main = async () => {
   // In dev, enable logging for each request.
   if (isDev)
     enableRequestLogging(app)
+
+  if (isDev) {
+    logStep('Parsing request delay value.')
+    const requestDelayMs = getRequestDelayMs()
+    if (requestDelayMs != null) {
+      logStep(c => `Request delay defined (${c.cyan(`${requestDelayMs} ms`)}), registering request delay middleware.`)
+      enableRequestDelay(app, requestDelayMs)
+    }
+  }
 
   // In demo mode, everything is already and always built, so we don't need to integrate with Intercom.
   if (!isDemo) {

@@ -28,6 +28,7 @@ export const exhibitCodeReducer = (
       return {
         ...state,
         doFetch: false,
+        loadingState: LoadingState.FETCHING,
       }
     case FETCHED:
       return {
