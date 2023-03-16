@@ -1,4 +1,4 @@
-import exhibit from '../../api'
+import exhibit, { simpleSelectModifier } from '../../api'
 import Component, { DEFAULT_PROPS, NAME } from '.'
 import { GROUP_NAME } from '../common'
 
@@ -8,6 +8,14 @@ export const severityIndicatorExhibit = exhibit(Component, NAME)
   .events({
     onClick: true,
   })
+  .propModifiers([
+    simpleSelectModifier('severity', [
+      [0, 'Minor'],
+      [1, 'Moderate'],
+      [2, 'Severe'],
+      [3, 'Critical'],
+    ]),
+  ])
   // .tests('e2e.spec.ts')
   .variant('0 (Minor)', {
     severity: 0,

@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from '@mui/material/Button'
-import exhibit from '../../src/api'
+import exhibit, { PropModifierType } from '../../src/api'
 
 // eslint-disable-next-line react/jsx-props-no-spreading
 exhibit((props: Parameters<typeof Button>[0]) => <Button {...props}>{props.children}</Button>, 'Button')
@@ -12,6 +12,14 @@ exhibit((props: Parameters<typeof Button>[0]) => <Button {...props}>{props.child
   })
   .defaults({
     variant: 'contained',
-    children: 'Hello World!!!!!!',
+    children: 'Button Text',
   })
+  .propModifiers([
+    {
+      label: 'Text',
+      type: PropModifierType.TEXT_INPUT,
+      init: props => props.children.toString(),
+      apply: (newValue, currentProps) => ({ ...currentProps, children: newValue }),
+    },
+  ])
   .build()

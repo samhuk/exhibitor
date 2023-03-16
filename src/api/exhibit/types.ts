@@ -50,6 +50,10 @@ type _ComponentExhibitBuilder<
   & IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedOptions, {
     /**
      * Miscellaneous options for the exhibit.
+     *
+     * @example
+     * exhibit(Button, 'Button')
+     *   .options({ group: 'Final Review' })
      */
     options: (
       options: {
@@ -73,12 +77,48 @@ type _ComponentExhibitBuilder<
      * When these events occur while the component is being interacted with, the calls to
      * these event handler functions will be logged in the Event Log bottom-bar page in the
      * Exhibitor site.
+     *
+     * @example
+     * exhibit(Button, 'Button')
+     *   .events({
+     *     onClick: true,
+     *     onValueChange: true,
+     *   })
      */
     events: (
       eventProps: EventsOptions<TProps>
     ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
   }>>>
   & IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, {
+    /**
+     * Specify what prop modifiers exist for all Variants of this Component Exhibit.
+     *
+     * @example
+     * import { PropModifierType} from 'exhibitor'
+     *
+     * exhibit(Button, 'Button')
+     *   .defaults({ ... })
+     *   .propModifiers([
+     *     {
+     *       label: 'Color',
+     *       type: PropModifierType.SELECT,
+     *       options: ['blue', 'green', 'red', 'yellow'],
+     *       // Tells Exhibitor how this prop is retrieved from props
+     *       init: props => props.variant,
+     *       // Tells Exhibitor how this prop's value is set to props
+     *       apply: (newColor, currentProps) => ({ ...currentProps, color: newColor }),
+     *     },
+     *   ])
+     *
+     * @example
+     * import { simpleSelectModifier } from 'exhibitor'
+     *
+     * exhibit(Button, 'Button')
+     *   .defaults({ ... })
+     *   .propModifiers([
+     *     simpleSelectModifier('color', ['blue', 'green', 'red', 'yellow']),
+     *   ])
+     */
     propModifiers: (
       propModifiers: PropModifier<TProps>[]
     ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
@@ -86,6 +126,17 @@ type _ComponentExhibitBuilder<
   & IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedDefaultProps, {
     /**
      * Specify the default props for any variants in this exhibit group.
+     *
+     * @example
+     * exhibit(Button, 'Button')
+     *   .defaults({
+     *     onClick: () => undefined,
+     *     color: 'default',
+     *     iconPosition: 'left',
+     *     text: 'Button Text',
+     *     size: 'normal',
+     *     disabled: false,
+     *   })
      */
     defaults: <TNewDefaultProps extends TProps>(
       defaultProps: THasDefinedDefaultProps extends true ? (TNewDefaultProps | ((defaults: TDefaultProps) => TNewDefaultProps)) : TNewDefaultProps,
@@ -95,6 +146,14 @@ type _ComponentExhibitBuilder<
     /**
      * Specify a variant of the component. This enables you to show the component
      * with different props.
+     *
+     * @example
+     * exhibit(Button, 'Button')
+     *   .defaults({ color: 'blue' })
+     *   .variant('green', defaultProps => ({
+     *     ...defaultProps,
+     *     color: ButtonColor.GREEN,
+     *   }))
      */
     variant: (
       /**
@@ -115,6 +174,19 @@ type _ComponentExhibitBuilder<
      * Specify a group of variants. This is useful for grouping variant together
      * with related props. For example, if your component has a "darkMode" prop,
      * a "dark" and "light" variant group can be defined.
+     *
+     * @example
+     * exhibit(Button, 'Button')
+     *   .group('large', ex => ex
+     *     .variant('w/o icon', defaultProps => {
+     *       ...defaultProps,
+     *       size: 'large',
+     *     })
+     *     .variant('w/o icon', defaultProps => {
+     *       ...defaultProps,
+     *       size: 'large',
+     *       iconName: 'paper-plane',
+     *     }))
      */
     group: (
       name: string,
@@ -126,6 +198,13 @@ type _ComponentExhibitBuilder<
   & IncludeIfFalse<TIsGroup, {
     /**
      * Builds the component exhibit, stating that the exhibit building is completed.
+     *
+     * This should be the last call to `exhibit(...)`.
+     *
+     * @example
+     * exhibit(Button, 'Button')
+     *   ...
+     *   .build()
      */
     build: () => ComponentExhibit<THasProps, TProps, TDefaultProps>
   }>

@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { ExtractPropNamesOfType, PropModifier, PropModifierBase, PropModifierType } from './types'
 
 export const textInputModifier = <TProps extends any>(
@@ -30,7 +31,7 @@ export const textInputModifier = <TProps extends any>(
  * ```
  */
 export const simpleTextInputModifier = <TProps extends any>(
-  propName: ExtractPropNamesOfType<TProps, string>,
+  propName: ExtractPropNamesOfType<TProps, string | ReactNode>,
 ): PropModifier<TProps, PropModifierType.TEXT_INPUT> => ({
     type: PropModifierType.TEXT_INPUT,
     label: propName as string,

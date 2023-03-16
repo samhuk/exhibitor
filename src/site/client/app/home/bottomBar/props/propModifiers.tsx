@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
 import Slider from 'rc-slider'
-import Handle from 'rc-slider/lib/Handles/Handle'
 import { PropModifier, PropModifierType } from '../../../../../../api/exhibit/propModifier/types'
 import { ComponentExhibit, Variant } from '../../../../../../api/exhibit/types'
 import Button from '../../../../../../ui-component-library/button'
@@ -14,9 +13,20 @@ const SelectPropModifierEl = (props: {
   selectPropModifier: PropModifier<any, PropModifierType.SELECT>
   onChange: (newProps: any) => void
 }) => {
-  const selectOptions: SelectOption[] = useMemo(() => props.selectPropModifier.options.map(option => (Array.isArray(option)
-    ? ({ value: option[0], displayText: option.length > 1 ? option[1] : option[0] })
-    : ({ value: option, displayText: option }))), [props.selectPropModifier.options])
+  const selectOptions: SelectOption[] = useMemo(
+    () => (
+      props.selectPropModifier.options.map(option => (Array.isArray(option)
+        ? ({
+          value: option[0],
+          displayText: option.length > 1 ? option[1] : (typeof option[0] === 'number' ? option[0].toString() : option[0]),
+        })
+        : ({
+          value: option,
+          displayText: typeof option === 'number' ? option.toString() : option,
+        })))
+    ),
+    [props.selectPropModifier.options],
+  )
 
   const initialValue = useMemo(() => props.selectPropModifier.init(props.variantProps), [props.selectPropModifier, props.variantProps])
   const initialSelectedOption = useMemo(() => selectOptions.find(o => o.value === initialValue), [selectOptions, initialValue])
