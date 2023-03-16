@@ -6,7 +6,7 @@ import FormControl from '@mui/material/FormControl'
 import { ThemeProvider } from '@emotion/react'
 import { Box, CssBaseline } from '@mui/material'
 
-import exhibit from '../../src/api'
+import exhibit, { simpleTextInputModifier } from '../../src/api'
 import { darkTheme } from './theme'
 
 const DIRECTIONS: [value: string, displayText: string][] = [
@@ -42,6 +42,9 @@ exhibit(component, 'Select')
     label: 'Direction',
     variant: 'filled',
   })
+  .propModifiers([
+    simpleTextInputModifier('label'),
+  ])
   .variant('filled', p => ({
     ...p,
     variant: 'filled',

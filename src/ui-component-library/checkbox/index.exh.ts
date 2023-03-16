@@ -1,4 +1,4 @@
-import exhibit from '../../api'
+import exhibit, { simpleCheckboxModifier, simpleTextInputModifier } from '../../api'
 import Component, { NAME } from '.'
 import { GROUP_NAME } from '../common'
 
@@ -9,5 +9,10 @@ export const checkboxExhibit = exhibit(Component, NAME)
   })
   .defaults({
     label: '[Checkbox Label]',
+    value: false,
   })
+  .propModifiers([
+    simpleTextInputModifier('label'),
+    simpleCheckboxModifier('value'),
+  ])
   .build()

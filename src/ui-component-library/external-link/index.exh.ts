@@ -1,4 +1,4 @@
-import exhibit from '../../api'
+import exhibit, { simpleTextInputModifier } from '../../api'
 import Component, { DEFAULT_PROPS, NAME } from '.'
 import { GROUP_NAME } from '../common'
 
@@ -11,6 +11,10 @@ export const externalLinkExhibit = exhibit(Component, NAME)
     onClick: true,
   })
   .tests('e2e.spec.ts')
+  .propModifiers([
+    simpleTextInputModifier('text'),
+    simpleTextInputModifier('href'),
+  ])
   .variant('Small text length', {
     text: 'Discussion',
     href,

@@ -1,4 +1,4 @@
-import exhibit from '../../api'
+import exhibit, { simpleNumberInputModifier } from '../../api'
 import Component, { DEFAULT_PROPS, NAME } from '.'
 import { GROUP_NAME } from '../common'
 
@@ -8,7 +8,11 @@ export const testResultCountSummaryExhibit = exhibit(Component, NAME)
   .events({
     onClick: true,
   })
-  // .tests('e2e.spec.ts')
+  .propModifiers([
+    simpleNumberInputModifier('numFail'),
+    simpleNumberInputModifier('numPass'),
+    simpleNumberInputModifier('numSkip'),
+  ])
   .variant('0 skipped', {
     numFail: 2,
     numPass: 1,

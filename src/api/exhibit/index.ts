@@ -184,6 +184,18 @@ const determineIfComponentHasProps = (component: ReactComponent) => {
   return (component as { render: Function }).render.length > 0
 }
 
+/**
+ * Declares a Component Exhibit.
+ *
+ * [Documentation](https://github.com/samhuk/exhibitor/wiki/Javascript-API-Reference#exhibit)
+ *
+ * @example
+ * // button.exh.ts
+ * import exhibit from 'exhibitor'
+ * import Button from './button' // I.e. ./button.[t|j]sx
+ *
+ * exhibit(Button, 'Button')
+ */
 export const exhibit = <
   TReactComponent extends ReactComponent
 >(
