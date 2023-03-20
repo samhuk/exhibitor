@@ -28,7 +28,9 @@
 
 ## Overview
 
-Exhibitor is a React component workshop - a tool for creating React component libraries. It allows you to see your individual React UI components in a hot-reloading website whilst you create them.
+Exhibitor is a [React](https://react.dev/) component workshop - a tool for creating React component libraries. It allows you to see your front-end components (or pages) in a hot-reloading website whilst you create them, with the ability to tweak their props and test them in a variety of domains such as accessibility, responsiveness, and automated end-to-end testing.
+
+[See the live demo](https://demo.exhibitor.dev)!
 
 ## Usage Overview
 
@@ -44,7 +46,7 @@ Create exhibitions of your components:
 
 ```typescript
 // src/button.exh.ts (or .js, .jsx, .tsx, ...)
-import exhibit from 'exhibitor'
+import exhibit, { simpleTextInputModifier } from 'exhibitor'
 import Button from './button' // I.e. button.tsx
 
 exhibit(Button, 'Button')
@@ -56,6 +58,10 @@ exhibit(Button, 'Button')
   .events({ onClick: true })
   // Define miscellaneous options
   .options({ group: 'Final Review' })
+  // Define how props can be tweaked
+  .propModifiers([
+    simpleTextInputModifier('textContent'),
+  ])
   // Define variants with different prop values
   .variant('Green', defaultProps => ({
     ...defaultProps,
@@ -82,14 +88,15 @@ npx exhibitor start
 
 ## Major Features
 
-* Extremely fast
-* Simple
+* Extremely fast and lightweight
+* Simple and no magic
 * Sane defaults
-* Delightful Javascript API with Typescript-centric design for zero guesswork.
-* esbuild
-* Gives you the choice of React version to use
+* Expressive Javascript API
+* [esbuild](https://esbuild.github.io/)
 * Accessibility testing
-* Playwright end-to-end testing integration
+* Responsiveness testing
+* Playwright end-to-end testing
+* Uses your choice of React version to use for your components
 
 ## Development
 
@@ -97,4 +104,4 @@ Want to join in and contibute to Exhibitor? Awesome! See [./contributing/develop
 
 ---
 
-If you would like to support my work, feel free to [sponsor me on GitHub](https://github.com/sponsors/samhuk) or [buy me a coffee](https://www.buymeacoffee.com/samhuk) ✨
+If you would like to support the development of Exhibitor, feel free to [sponsor me on GitHub](https://github.com/sponsors/samhuk) or [buy me a coffee](https://www.buymeacoffee.com/samhuk) ✨
