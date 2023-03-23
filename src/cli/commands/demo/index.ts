@@ -1,14 +1,13 @@
 import path from 'path'
 import * as fs from 'fs'
-import { ChildProcess, spawn } from 'child_process'
+import { ChildProcess } from 'child_process'
 import { copySync } from 'fs-extra'
+import { GFError } from 'good-flow'
 
 import { ExhEnv, getEnv } from '../../../common/env'
-import { ExhError } from '../../../common/exhError/types'
 import { baseCommand } from '../common'
 import { build } from '../../../comp-site/react/build/build'
 import { checkPackages } from '../start/checkPackages'
-import { isExhError } from '../../../common/exhError'
 import { Config } from '../../../common/config/types'
 import { log, logInfo, logStep, logStepHeader, logSuccess } from '../../../common/logging'
 import { getConfigForCommand } from '../../config'
@@ -27,11 +26,11 @@ const copyFilesFromSrcDirToDestDir = (srcDir: string, destDir: string, srcFileNa
     fs.copyFileSync(path.join(srcDir, srcFileNames[i]), path.join(destDir, srcFileNames[i]))
 }
 
-const buildCompSite = async (config: Config, demoBuildOutDir: string): Promise<ExhError | undefined> => {
+const buildCompSite = async (config: Config, demoBuildOutDir: string): Promise<GFError | null> => {
   // Check packages required to build the Component Site for React, getting version numbers
-  const checkPackagesResult = checkPackages()
-  if (isExhError(checkPackagesResult))
-    return checkPackagesResult
+  const [checkPackagesResult, checkPackagesError] = checkPackages()
+  if (checkPackagesError != null)
+    return checkPackagesError
 
   await build({
     skipPrebuild: isDev,
@@ -43,7 +42,7 @@ const buildCompSite = async (config: Config, demoBuildOutDir: string): Promise<E
     serverRootDir: path.join(demoBuildOutDir, 'client'),
   })
 
-  return undefined
+  return null
 }
 
 const enablePrettyProcessLogging = (process: ChildProcess, processName: string) => {
@@ -86,7 +85,7 @@ const createSiteServerPackageJsonForDocker = (
   fs.writeFileSync(outPath, JSON.stringify(newPackageInfo, null, 2))
 }
 
-export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions): Promise<ExhError | null | undefined> => {
+export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions): Promise<GFError | null | undefined> => {
   logFeatureStatus('demo CLI command', 'alpha')
 
   // If verbose is specified in CLI arguments or env var, then we can globally set it earlier
@@ -97,11 +96,9 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
 
   // Get config for command
   logStepHeader('Determining supplied configuration', true)
-  const getConfigResult = await getConfigForCommand(options, applyDemoOptionsToConfig)
-  if (isExhError(getConfigResult))
-    return getConfigResult
-
-  const config = getConfigResult // Convenient alias
+  const [config, getConfigError] = await getConfigForCommand(options, applyDemoOptionsToConfig)
+  if (getConfigError != null)
+    return getConfigError
 
   // Update global verbosity according to config
   state.verbose = config.verbose
@@ -133,9 +130,9 @@ export const demo = baseCommand('demo', async (options: DemoCliArgumentsOptions)
   if (fs.existsSync(demoBuildOutputServerDir))
     fs.rmSync(demoBuildOutputServerDir, { recursive: true })
 
-  const error = await buildCompSite(config, demoBuildOutputDir)
-  if (error != null)
-    return error
+  const buildCompSiteError = await buildCompSite(config, demoBuildOutputDir)
+  if (buildCompSiteError != null)
+    return buildCompSiteError
 
   // -- Copy built Site Client and Site Server files to their corresponding demo out dir
   copySync(siteClientBuildDir, demoBuildOutputClientDir)

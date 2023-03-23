@@ -1,12 +1,11 @@
+import { createGFError, GFError } from 'good-flow'
+import { GFString } from 'good-flow/lib/good-flow/string/types'
 import { DemoCliArgumentsOptions } from './types'
 import { Config } from '../../../common/config/types'
-import { ExhString } from '../../../common/exhString/types'
-import { ExhError } from '../../../common/exhError/types'
-import { createExhError } from '../../../common/exhError'
 
-const createError = (causedBy: ExhString): ExhError => createExhError({
-  message: 'Could not parse CLI arguments',
-  causedBy,
+const createError = (cause: GFString): GFError => createGFError({
+  msg: 'Could not parse CLI arguments',
+  inner: createGFError({ msg: cause }),
 })
 
 const createInvalidTypeError = (argName: string, recievedValue: any, expectedType: string) => (
@@ -16,7 +15,7 @@ const createInvalidTypeError = (argName: string, recievedValue: any, expectedTyp
 export const applyDemoOptionsToConfig = (
   config: Config,
   options: DemoCliArgumentsOptions,
-): ExhError | null => {
+): GFError | null => {
   if (options.verbose != null) {
     if (typeof options.verbose !== 'boolean')
       return createInvalidTypeError('verbose', options.verbose, 'boolean')

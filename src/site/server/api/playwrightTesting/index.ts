@@ -2,8 +2,8 @@
 import { PlaywrightTestConfig } from '@playwright/test/types/test'
 import { fork } from 'child_process'
 import * as fs from 'fs'
+import { createGFError } from 'good-flow'
 import path from 'path'
-import { createExhError, isExhError } from '../../../../common/exhError'
 import { logStep, logSuccess, logWarn } from '../../../../common/logging'
 import { checkPackages } from '../../../../common/npm/checkPackages'
 import { VARIANT_PATH_ENV_VAR_NAME } from '../../../../common/testing'
@@ -37,15 +37,17 @@ export const runPlaywrightTests = (
   const result = checkPackages(REQUIRED_PACKAGES, { stopOnError: true })
   if (result.hasErrors === true) {
     const recommendedPackageName = result.error.name === 'playwright-core/cli' ? 'playwright-core' : result.error.name
-    res({
-      success: false,
-      error: createExhError({
-        message: 'Could not execute Playwright test(s).',
-        causedBy: c => `Could not resolve ${c.underline(result.error.name)}. Error: ${result.error}`,
-        advice: c => `Try ${c.bold(`npm i --save-dev ${recommendedPackageName}`)}.`,
-        log: true,
+    const err = createGFError({
+      msg: 'Could not execute Playwright test(s).',
+      inner: createGFError({
+        msg: c => `Could not resolve ${c.underline(result.error.name)}.`,
+        inner: createGFError(result.error.errorMsg),
       }),
+      advice: {
+        tips: c => `Try ${c.bold(`npm i --save-dev ${recommendedPackageName}`)}.`,
+      },
     })
+    res([undefined, err])
     return
   }
 
@@ -107,15 +109,15 @@ export const runPlaywrightTests = (
     stdErrList.push(dataStr)
     console.log(dataStr)
   })
-  testProcess.on('exit', (code, signal) => getResults().then(results => {
+  testProcess.on('exit', (code, signal) => getResults().then(([results, getResultsError]) => {
     if (code === 0)
       logSuccess('Playwright successfully exited.')
     if (code !== 0)
       logWarn(c => `Playwright exited with code ${c.yellow(code.toString())}. This could indicate that either test(s) failed, there was test compilation errors, or Playwright is incorrectly configured or on an unsupported version.`)
 
-    if (isExhError(results))
-      res({ success: false, error: results })
+    if (getResultsError != null)
+      res([undefined, getResultsError])
     else
-      res({ success: true, htmlReportData: results, stdOutList, variantPath: options.variantPath, nonTestErrorCount })
+      res([{ htmlReportData: results, stdOutList, variantPath: options.variantPath, nonTestErrorCount }])
   }))
 })

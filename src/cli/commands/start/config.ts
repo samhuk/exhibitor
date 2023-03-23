@@ -1,19 +1,18 @@
+import { createGFError, GFError } from 'good-flow'
+import { GFString } from 'good-flow/lib/good-flow/string/types'
 import { StartCliArgumentsOptions } from './types'
 import { Config } from '../../../common/config/types'
 import { isValidHost } from '../../../common/network'
-import { ExhString } from '../../../common/exhString/types'
-import { ExhError } from '../../../common/exhError/types'
-import { createExhError } from '../../../common/exhError'
 
-const createError = (causedBy: ExhString): ExhError => createExhError({
-  message: 'Could not parse CLI arguments',
-  causedBy,
+const createError = (cause: GFString): GFError => createGFError({
+  msg: 'Could not parse CLI arguments',
+  inner: createGFError({ msg: cause }),
 })
 
 export const applyStartOptionsToConfig = (
   config: Config,
   options: StartCliArgumentsOptions,
-): ExhError | null => {
+): GFError | null => {
   if (options.host != null) {
     if (!isValidHost(options.host))
       return createError(c => `argument 'host' is not a valid hostname or IP address. Received: ${c.cyan(JSON.stringify(options.host))}`)

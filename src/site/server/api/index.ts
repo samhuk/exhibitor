@@ -17,12 +17,14 @@ const router = Router()
   .post('/run-pw-tests', async (req, res) => {
     const options: RunPlaywrightTestsOptions = req.body
 
-    const results = await runPlaywrightTests(options)
+    const [response, err] = await runPlaywrightTests(options)
 
-    if (results.success === true)
-      sendResponse(res, results)
-    else
-      sendErrorResponse(res, results.error)
+    if (err != null) {
+      sendErrorResponse(res, err)
+      return
+    }
+
+    sendResponse(res, response)
   })
 
 export default router

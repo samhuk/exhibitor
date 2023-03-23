@@ -1,6 +1,8 @@
 import { ChildProcess } from 'child_process'
 import * as fs from 'fs'
 import path from 'path'
+import { createGFError, GFError, GFResult } from 'good-flow'
+
 import { getConfigForCommand } from '../../config'
 import { baseCommand } from '../common'
 import { startServer } from './startServer'
@@ -15,8 +17,6 @@ import { tryResolve } from '../../../common/npm/resolve'
 import { BuildOptions } from '../../../comp-site/react/build/types'
 import { Config } from '../../../common/config/types'
 import { logIntercomError, logIntercomStep, logIntercomSuccess, logStep, logStepHeader, logSuccess } from '../../../common/logging'
-import { ExhError } from '../../../common/exhError/types'
-import { createExhError, isExhError } from '../../../common/exhError'
 import { findFreePort } from '../../common/isPortFree'
 import { ExhEnv, getEnv } from '../../../common/env'
 import { VERBOSE_ENV_VAR_NAME } from '../../../common/config'
@@ -25,7 +25,7 @@ import { createBuiltExhIdentityClient } from '../../../intercom/client'
 import { BuiltExhIdentity } from '../../../intercom/types'
 import { startIntercomServer } from '../../../intercom/server'
 import { NetworkLocation } from '../../../common/network'
-import { COMP_SITE_OUTDIR, META_DATA_FILE } from '../../../common/paths'
+import { META_DATA_FILE } from '../../../common/paths'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
@@ -63,8 +63,8 @@ export const createOnIndexExhTsFileCreateHandler = (
   }
 }
 
-const determineServerPort = async (config: Config): Promise<number | ExhError> => {
-  let err: ExhError = null
+const determineServerPort = async (config: Config): Promise<GFResult<number>> => {
+  let err: GFError = null
   const port = await findFreePort({
     host: config.site.host,
     preferredPort: config.site.port,
@@ -72,35 +72,32 @@ const determineServerPort = async (config: Config): Promise<number | ExhError> =
     events: {
       onAttemptStart: p => logStep(c => `Determining if port ${c.cyan(p.toString())} is available to use for Exhibitor.`, true),
       onAttemptSuccess: p => logSuccess(c => `Port ${c.cyan(p.toString())} is available to use.`, true),
-      onAttemptFail: p => createExhError({ message: c => `Port ${c.cyan(p.toString())} is not available to use.` }).log(),
+      onAttemptFail: p => createGFError({ msg: c => `Port ${c.cyan(p.toString())} is not available to use.` }).log(),
       onAttemptUnexpectedError: (p, _err) => {
-        err = createExhError({
-          message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
-          // eslint-disable-next-line no-loop-func
-          causedBy: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use.\n\n    Details: ${_err}.`,
+        err = createGFError({
+          msg: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use.\n\n    Details: ${_err}.`,
         })
         return { exit: true }
       },
-      onMaxAttempts: () => createExhError({ message: 'Max attempts exceeded for finding an available port to use.' }).log(),
+      onMaxAttempts: () => {
+        err = createGFError({ msg: 'Max attempts exceeded for finding an available port to use.' })
+      },
     },
   })
-  if (err != null)
-    return err
 
-  return port
+  return [port, err]
 }
 
-const determineIntercomPort = async (host: string, serverPort: number): Promise<number | ExhError> => {
+const determineIntercomPort = async (host: string, serverPort: number): Promise<GFResult<number>> => {
   const portFromEnv = process.env[INTERCOM_PORT_ENV_VAR_NAME]
   const parsedPortFromEnv = portFromEnv != null ? parseInt(portFromEnv) : null
   if (parsedPortFromEnv != null && Number.isNaN(parsedPortFromEnv)) {
-    return createExhError({
-      message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
-      causedBy: c => `The ${c.bold(INTERCOM_PORT_ENV_VAR_NAME)} environment variable is present however not a valid integer. Recieved: ${c.cyan(portFromEnv)}`,
-    })
+    return [undefined, createGFError({
+      msg: c => `The ${c.bold(INTERCOM_PORT_ENV_VAR_NAME)} environment variable is present however not a valid integer. Recieved: ${c.cyan(portFromEnv)}`,
+    })]
   }
 
-  let err: ExhError = null
+  let err: GFError = null
   const port = await findFreePort({
     host,
     preferredPort: parsedPortFromEnv ?? DEFAULT_INTERCOM_PORT,
@@ -112,23 +109,24 @@ const determineIntercomPort = async (host: string, serverPort: number): Promise<
       onAttemptFail: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for Exhibitor Intercom.`),
       onAttemptExcluded: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for Exhibitor Intercom because the ${NPM_PACKAGE_CAPITALIZED_NAME} Exhibitor Server is already using it.`),
       onAttemptUnexpectedError: (p, _err) => {
-        err = createExhError({
-          message: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
-          // eslint-disable-next-line no-loop-func
-          causedBy: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for Intercom.\n\n    Details: ${_err}.`,
+        err = createGFError({
+          msg: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for Intercom.\n\n    Details: ${_err}.`,
         })
         return { exit: true }
       },
       onMaxAttempts: () => logIntercomError(c => `Max attempts exceeded for finding an available port to use. Try using the ${c.bold(INTERCOM_PORT_ENV_VAR_NAME)} environment variable to set a different preferred port.`),
     },
   })
-  if (err != null)
-    return err
 
-  return port
+  return [port, err]
 }
 
-export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<ExhError> => {
+const createStartError = (inner?: GFError): GFError => createGFError({
+  msg: `Could not start ${NPM_PACKAGE_CAPITALIZED_NAME}`,
+  inner,
+})
+
+export const start = baseCommand('start', async (startOptions: StartCliArgumentsOptions): Promise<GFError> => {
   // -- Config
   // If verbose is specified in CLI arguments or env var, then we can globally set it earlier
   const earlyVerbose = startOptions.verbose != null
@@ -138,30 +136,28 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
 
   // Get config for command
   logStepHeader('Determining supplied configuration.', true)
-  const getConfigResult = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
-  if (isExhError(getConfigResult))
-    return getConfigResult
-
-  const config = getConfigResult // Convenient alias
+  const [config, getConfigError] = await getConfigForCommand(startOptions, applyStartOptionsToConfig)
+  if (getConfigError != null)
+    return getConfigError
 
   // Update global verbosity according to config
   state.verbose = config.verbose
 
   // -- Logic
   // Check packages required to build the Component Site for React, getting version numbers
-  const checkPackagesResult = checkPackages()
-  if (isExhError(checkPackagesResult))
-    return checkPackagesResult
+  const [checkPackagesResult, checkPackagesError] = checkPackages()
+  if (checkPackagesError != null)
+    return checkPackagesError.wrap(createStartError())
 
   // Determine server port
-  const serverPort = await determineServerPort(config)
-  if (isExhError(serverPort))
-    return serverPort
+  const [serverPort, determineServerPortError] = await determineServerPort(config)
+  if (determineServerPortError != null)
+    return determineServerPortError.wrap(createStartError())
 
   // Determine intercom port
-  const intercomPort = await determineIntercomPort(config.site.host, serverPort)
-  if (isExhError(intercomPort))
-    return intercomPort
+  const [intercomPort, determineIntercomPortError] = await determineIntercomPort(config.site.host, serverPort)
+  if (determineIntercomPortError != null)
+    return determineIntercomPortError.wrap(createStartError())
 
   // -- Start intercom
   const intercomNetworkLocation: NetworkLocation = {
@@ -196,15 +192,15 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     })
   }
   catch (e: any) {
-    return createExhError({
-      message: `Failed to start ${NPM_PACKAGE_CAPITALIZED_NAME}. Could not build the Component Site for React.\n\n    This could be because you have a version of React that isn't supported. Otherwise, you may have some custom npm setup that ${NPM_PACKAGE_CAPITALIZED_NAME} can't handle.`,
-      causedBy: e,
-    })
+    return createGFError({
+      msg: `Could not build the Component Site for React. This could be because you have a version of React that isn't supported. Otherwise, you may have some custom npm setup that ${NPM_PACKAGE_CAPITALIZED_NAME} can't handle.`,
+      inner: e,
+    }).wrap(createStartError())
   }
 
   // Start the site server
   logStep(`Starting ${NPM_PACKAGE_CAPITALIZED_NAME}`)
-  const startServerResult = await startServer({
+  const [serverProcess, startServerError] = await startServer({
     serverPort,
     intercomPort,
     config,
@@ -212,9 +208,8 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
     onServerProcessKill: () => process.exit(0),
   })
 
-  // If start server result is not a child process, then it's an error, therefore return.
-  if (!(startServerResult instanceof ChildProcess))
-    return startServerResult
+  if (startServerError != null)
+    return startServerError
 
   return null
 }, { exitWhenReturns: false })

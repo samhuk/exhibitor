@@ -1,14 +1,12 @@
 import * as fs from 'fs'
-import { createExhError } from '../../../common/exhError'
-import { ExhError } from '../../../common/exhError/types'
-import { ExhString } from '../../../common/exhString/types'
+import { createGFError, GFError } from 'good-flow'
 
-const createError = (causedBy: ExhString): ExhError => createExhError({
-  message: 'Could not add git ignore entry.',
-  causedBy,
+const createError = (inner: GFError): GFError => createGFError({
+  msg: 'Could not add git ignore entry.',
+  inner,
 })
 
-export const addGitIgnoreEntries = (): ExhError | null => {
+export const addGitIgnoreEntries = (): GFError | null => {
   const gitIgnorePath = './.gitignore'
   const gitIgnoreEntries: string[] = [
     '/node_modules',
@@ -19,7 +17,10 @@ export const addGitIgnoreEntries = (): ExhError | null => {
     alreadyExists = fs.existsSync(gitIgnorePath)
   }
   catch (e: any) {
-    return createError(c => `Could not determine if git ignore file already exists (${c.cyan(gitIgnorePath)}) - ${e.message}`)
+    return createError(createGFError({
+      msg: c => `Could not determine if git ignore file already exists (${c.cyan(gitIgnorePath)}).`,
+      inner: e,
+    }))
   }
 
   let newGitIgnoreContent: string
@@ -29,7 +30,10 @@ export const addGitIgnoreEntries = (): ExhError | null => {
       gitIgnoreContent = fs.readFileSync(gitIgnorePath, { encoding: 'utf8' })
     }
     catch (e: any) {
-      return createError(c => `Could not read in existing git ignore file content (${c.cyan(gitIgnorePath)}) - ${e.message}`)
+      return createError(createGFError({
+        msg: c => `Could not read in existing git ignore file content (${c.cyan(gitIgnorePath)}).`,
+        inner: e,
+      }))
     }
     const missingGitIgnoreEntries = gitIgnoreEntries.filter(entry => !gitIgnoreContent.split('\n').some(line => line.trim() === entry))
     newGitIgnoreContent = gitIgnoreContent.concat(missingGitIgnoreEntries.join('\n'))
@@ -42,7 +46,10 @@ export const addGitIgnoreEntries = (): ExhError | null => {
     fs.writeFileSync(gitIgnorePath, newGitIgnoreContent)
   }
   catch (e: any) {
-    return createError(c => `Could not create new git ignore file (${c.cyan(gitIgnorePath)}) - ${e.message}`)
+    return createError(createGFError({
+      msg: c => `Could not create new git ignore file (${c.cyan(gitIgnorePath)}).`,
+      inner: e,
+    }))
   }
   return null
 }

@@ -30,6 +30,7 @@ export type ExhErrorOptions<TData extends any = any> = {
   /**
    * Determines whether the error is logged when it's created. Otherwise, it can be logged
    * later or set as the inner error of another error.
+   *
    * @default false
    */
   log?: boolean

@@ -1,4 +1,7 @@
 import { Request, Response } from 'express'
+import { GFError } from 'good-flow'
+import { isGFError } from 'good-flow/lib/good-flow/error'
+
 import { isExhError } from '../../../common/exhError'
 import { ExhError } from '../../../common/exhError/types'
 import { STATUS_CODES } from '../../../common/exhError/statusCodes'
@@ -17,17 +20,31 @@ const setContentTypeHeader = (res: Response, type: MimeType) => {
   res.setHeader('Content-Type', type)
 }
 
+const serializeError = (error: GFError | ExhError | Error): SerializedExhError => {
+  if (isExhError(error))
+    return error.serialize()
+
+  // Shim in GFError for now. We will remove all of the ExhError stuff soon.
+  if (isGFError(error)) {
+    const serializedError = error.serialize()
+    return {
+      message: serializedError.msg,
+      type: ErrorType.SERVER_ERROR,
+    }
+  }
+
+  return {
+    message: 'An unexpected error occured.',
+    causedBy: error.message,
+    stack: error.stack,
+  }
+}
+
 export const sendErrorResponse = (
   res: AnyResponse,
-  error: ExhError | Error,
+  error: GFError | ExhError | Error,
 ) => {
-  const serializedExhError: SerializedExhError = isExhError(error)
-    ? error.serialize()
-    : {
-      message: 'An unexpected error occured.',
-      causedBy: error.message,
-      stack: error.stack,
-    }
+  const serializedExhError = serializeError(error)
 
   // TODO: This is not elegant. Could be better?
   if (env !== ExhEnv.DEV)

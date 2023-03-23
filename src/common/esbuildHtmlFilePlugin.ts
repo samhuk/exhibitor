@@ -1,8 +1,8 @@
 import { BuildResult } from 'esbuild'
 import * as fs from 'fs'
+import { createGFError } from 'good-flow'
 import { JSDOM } from 'jsdom'
 import * as path from 'path'
-import { createExhError } from './exhError'
 
 const includeJsFile = (document: Document, href: string) => {
   const scriptEl = document.createElement('script')
@@ -57,14 +57,14 @@ export const createIndexHtmlFileText = (
     htmlFileText = fs.readFileSync(indexHtmlFilePath, { encoding: 'utf8' })
   }
   catch (e) {
-    createExhError({ message: 'Could not access index.html file.' }).log()
+    createGFError('Could not access index.html file.').log()
     return ''
   }
   const jsdom = new JSDOM(htmlFileText)
   const document = jsdom.window.document
 
   if (document.head == null)
-    createExhError({ message: 'index.html file does not have a <head> element. Please add one.' }).log()
+    createGFError('index.html file does not have a <head> element. Please add one.').log()
 
   Object.entries(result.metafile.outputs).forEach(([outputPath]) => includeFile(document, serverRootDir, outputPath))
 

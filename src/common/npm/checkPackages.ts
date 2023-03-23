@@ -1,7 +1,7 @@
 import { BoolDependant, TypeDependantBaseIntersection } from '@samhuk/type-helpers'
 import * as fs from 'fs'
+import { createGFError, GFError, GFString } from 'good-flow'
 import path from 'path'
-import { ExhString } from '../exhString/types'
 import { tryResolve } from './resolve'
 
 export type SemVer = {
@@ -42,10 +42,11 @@ export type CheckPackageResult<
   }
   [CheckPackageResultType.SUCCESS_NO_VERSION]: {
     path: string
-    warningMsg: ExhString
+    warningMsg: GFString
   }
   [CheckPackageResultType.ERROR]: {
-    errorMsg: ExhString
+    errorMsg: GFString
+    error: GFError
   }
 }, TCheckPackageResultType, 'type'> & { name: string }
 
@@ -60,6 +61,16 @@ const checkPackage = (packageName: string): CheckPackageResult => {
       type: CheckPackageResultType.ERROR,
       name: packageName,
       errorMsg: c => `Package ${c.underline(packageName)} could not be resolved. Is it installed (if not, try ${c.bold(`npm i -S ${packageName}`)})?. Else, this could be an issue with the package.json file of the package.\n\n  Specific details: ${resolveResult.error}`,
+      error: createGFError({
+        msg: c => `Package ${c.underline(packageName)} could not be resolved`,
+        advice: {
+          tips: [
+            c => `The package could not be installed. Run ${c.cyan(`npm i -S ${packageName}`)} to install it.`,
+            'There could be an issue with the package.json file of the package.',
+          ],
+        },
+        inner: resolveResult.error,
+      }),
     }
   }
 

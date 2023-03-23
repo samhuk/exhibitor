@@ -1,22 +1,21 @@
 import * as fs from 'fs'
-import { createExhError } from '../../../common/exhError'
-import { ExhError } from '../../../common/exhError/types'
-import { ExhString } from '../../../common/exhString/types'
+import { createGFError, GFError } from 'good-flow'
 
-const createError = (causedBy: ExhString): ExhError => createExhError({
-  message: 'Could not create example component',
-  causedBy,
+const createError = (inner: GFError): GFError => createGFError({
+  msg: 'Could not create example component',
+  inner,
 })
 
-export const createExampleComponentCode = (): ExhError | null => {
+export const createExampleComponentCode = (): GFError | null => {
   try {
     if (!fs.existsSync('./src/button'))
       fs.mkdirSync('./src/button', { recursive: true })
   }
   catch (e: any) {
-    return createError(
-      c => `Could not create ${c.cyan('./src/button')} directory.\n${e.message}`,
-    )
+    return createError(createGFError({
+      msg: c => `Could not create ${c.cyan('./src/button')} directory.`,
+      inner: e,
+    }))
   }
 
   const buttonComponentCode = `import React from 'react'
@@ -49,9 +48,10 @@ export default render`
     fs.writeFileSync('./src/button/index.tsx', buttonComponentCode)
   }
   catch (e: any) {
-    return createError(
-      c => `Could not create ${c.cyan('./src/button/index.tsx')} file.\n${e.message}`,
-    )
+    return createError(createGFError({
+      msg: c => `Could not create ${c.cyan('./src/button/index.tsx')} file.`,
+      inner: e,
+    }))
   }
 
   const buttonComponentScssCode = `$bg-color: #fff;
@@ -93,9 +93,10 @@ $border-radius: 5px;
     fs.writeFileSync('./src/button/index.scss', buttonComponentScssCode)
   }
   catch (e: any) {
-    return createError(
-      c => `Could not create ${c.cyan('./src/button/index.scss')} file.\n${e.message}`,
-    )
+    return createError(createGFError({
+      msg: c => `Could not create ${c.cyan('./src/button/index.scss')} file.`,
+      inner: e,
+    }))
   }
 
   const buttonComponentExhibitCode = `import exhibit from 'exhibitor'
@@ -131,9 +132,10 @@ exhibit(Button, 'Button')
     fs.writeFileSync('./src/button/index.exh.ts', buttonComponentExhibitCode)
   }
   catch (e: any) {
-    return createError(
-      c => `Could not create ${c.cyan('./src/button/index.exh.ts')} file.\n${e.message}`,
-    )
+    return createError(createGFError({
+      msg: c => `Could not create ${c.cyan('./src/button/index.exh.ts')} file.\n${e.message}`,
+      inner: e,
+    }))
   }
 
   return null

@@ -1,7 +1,6 @@
+import { createGFError } from 'good-flow'
 import { exit } from 'process'
 import readline from 'readline'
-import { createExhError } from '../../common/exhError'
-import { logError } from '../../common/logging'
 
 const r1 = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -35,7 +34,7 @@ export const tryGetInput = (options: {
         options.onComplete(val)
       }
       else {
-        createExhError({ message: errMsg }).log()
+        createGFError(errMsg).log()
         tryGetInput(options)
       }
     }

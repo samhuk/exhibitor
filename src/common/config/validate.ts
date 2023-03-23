@@ -1,16 +1,10 @@
 import path from 'path'
 import * as fs from 'fs'
+import { createGFError, GFError } from 'good-flow'
+import { GFString } from 'good-flow/lib/good-flow/string/types'
 import { Config } from './types'
-import { ExhString } from '../exhString/types'
-import { ExhError } from '../exhError/types'
-import { createExhError } from '../exhError'
 
-const createValidateConfigError = (causedBy: ExhString): ExhError => createExhError({
-  message: 'Invalid configuration',
-  causedBy,
-})
-
-export const _validateConfig = (config: Config): ExhString | null => {
+export const _validateConfig = (config: Config): GFString | null => {
   // -- include
   if (config.include.length < 1)
     return c => `config.include - must have at least one entry, if defined. Received: ${c.cyan(JSON.stringify(config.include))}`
@@ -65,10 +59,13 @@ export const _validateConfig = (config: Config): ExhString | null => {
   return null
 }
 
-export const validateConfig = (config: Config): ExhError | null => {
+export const validateConfig = (config: Config): GFError | null => {
   const errorMessage = _validateConfig(config)
 
   return errorMessage != null
-    ? createValidateConfigError(errorMessage)
+    ? createGFError({
+      msg: 'Invalid configuration',
+      inner: createGFError({ msg: errorMessage }),
+    })
     : null
 }
