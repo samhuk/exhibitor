@@ -5,6 +5,7 @@ import { addGitIgnoreEntries } from './addGitIgnoreEntries'
 import { initPackageJson } from './packageJsonFile'
 import { installNpmDependencies } from './npmDependencies'
 import { logStep, logSuccess } from '../../../common/logging'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 
 export const init = baseCommand('init', async () => {
   let err = await initPackageJson()
@@ -18,7 +19,7 @@ export const init = baseCommand('init', async () => {
     { name: '@types/react', isDev: true },
   ])
 
-  logStep('Creating Exhibitor config file')
+  logStep(`Creating ${NPM_PACKAGE_CAPITALIZED_NAME} configuration file`)
   err = await createExhConfigFile()
   if (err != null)
     return err

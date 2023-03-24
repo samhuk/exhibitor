@@ -70,7 +70,7 @@ const determineServerPort = async (config: Config): Promise<GFResult<number>> =>
     preferredPort: config.site.port,
     maxAttempts: 10,
     events: {
-      onAttemptStart: p => logStep(c => `Determining if port ${c.cyan(p.toString())} is available to use for Exhibitor.`, true),
+      onAttemptStart: p => logStep(c => `Determining if port ${c.cyan(p.toString())} is available to use for ${NPM_PACKAGE_CAPITALIZED_NAME}.`, true),
       onAttemptSuccess: p => logSuccess(c => `Port ${c.cyan(p.toString())} is available to use.`, true),
       onAttemptFail: p => createGFError({ msg: c => `Port ${c.cyan(p.toString())} is not available to use.` }).log(),
       onAttemptUnexpectedError: (p, _err) => {
@@ -105,16 +105,16 @@ const determineIntercomPort = async (host: string, serverPort: number): Promise<
     maxAttempts: 10,
     events: {
       onAttemptStart: p => logIntercomStep(c => `Determining if port ${c.cyan(p.toString())} is available to use.`),
-      onAttemptSuccess: p => logIntercomSuccess(c => `Port ${c.cyan(p.toString())} is available to use for Exhibitor Intercom.`),
-      onAttemptFail: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for Exhibitor Intercom.`),
-      onAttemptExcluded: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for Exhibitor Intercom because the ${NPM_PACKAGE_CAPITALIZED_NAME} Exhibitor Server is already using it.`),
+      onAttemptSuccess: p => logIntercomSuccess(c => `Port ${c.cyan(p.toString())} is available to use for ${NPM_PACKAGE_CAPITALIZED_NAME} Intercom.`),
+      onAttemptFail: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for ${NPM_PACKAGE_CAPITALIZED_NAME} Intercom.`),
+      onAttemptExcluded: p => logIntercomError(c => `Port ${c.cyan(p.toString())} is not available to use for ${NPM_PACKAGE_CAPITALIZED_NAME} Intercom because the ${NPM_PACKAGE_CAPITALIZED_NAME} Server is already using it.`),
       onAttemptUnexpectedError: (p, _err) => {
         err = createGFError({
-          msg: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for Intercom.\n\n    Details: ${_err}.`,
+          msg: c => `An unexpected error occured while determining whether port ${c.cyan(port.toString())} is available to use for ${NPM_PACKAGE_CAPITALIZED_NAME} Intercom.\n\n    Details: ${_err}.`,
         })
         return { exit: true }
       },
-      onMaxAttempts: () => logIntercomError(c => `Max attempts exceeded for finding an available port to use. Try using the ${c.bold(INTERCOM_PORT_ENV_VAR_NAME)} environment variable to set a different preferred port.`),
+      onMaxAttempts: () => logIntercomError(c => `Max attempts exceeded for finding an available port to use for ${NPM_PACKAGE_CAPITALIZED_NAME} Intercom. Try using the ${c.bold(INTERCOM_PORT_ENV_VAR_NAME)} environment variable to explicitly set a different preferred port.`),
     },
   })
 

@@ -1,9 +1,10 @@
 import * as fs from 'fs'
 import { createGFError, GFError } from 'good-flow'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { askBooleanQuestion } from '../../common/input'
 
 const createError = (inner: GFError): GFError => createGFError({
-  msg: 'Could not create Exhibitor configuration file \'exh.config.json\'.',
+  msg: `Could not create ${NPM_PACKAGE_CAPITALIZED_NAME} configuration file 'exh.config.json'.`,
   inner,
 })
 
