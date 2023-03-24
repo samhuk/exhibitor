@@ -74,7 +74,7 @@ export const startServer = async (options: {
   }
 
   // Execute the built site server js script
-  logStep(c => `Starting the ${NPM_PACKAGE_CAPITALIZED_NAME} server process (${c.cyan(serverJsPath)})`, true)
+  logStep(c => `Starting the ${NPM_PACKAGE_CAPITALIZED_NAME} server process (${c.cyan(serverJsPath)}).`, true)
   const serverProcess = fork(serverJsPath, { env })
 
   modifyServerProcessForKeyboardInput(serverProcess, options.onServerProcessKill)

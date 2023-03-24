@@ -34,6 +34,9 @@ export const createBuiltExhIdentityClient = (identity: BuiltExhIdentity, options
     onChange: dispatchBuildStatusUpdateToIntercom,
   })
 
+  /* We don't have to wait (await) for the connect to occur because any messages
+   * sent before it connects are queued and dispatched later when it *does* connect.
+   */
   client.connect()
 
   dispatchBuildStatusUpdateToIntercom(buildStatusReporter.status)

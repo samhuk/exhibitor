@@ -189,6 +189,9 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
       compSiteOutDir: './.exh/comp-site',
       indexExhOutDir: './.exh/comp-lib',
       serverRootDir: './.exh',
+      onBuildFail: () => {
+        createGFError('Your component library failed to build. See above error(s) for more information.').log({ customStackTraceRenderer: () => [] })
+      },
     })
   }
   catch (e: any) {
@@ -199,7 +202,7 @@ export const start = baseCommand('start', async (startOptions: StartCliArguments
   }
 
   // Start the site server
-  logStep(`Starting ${NPM_PACKAGE_CAPITALIZED_NAME}`)
+  logStep(`Starting ${NPM_PACKAGE_CAPITALIZED_NAME}.`)
   const [serverProcess, startServerError] = await startServer({
     serverPort,
     intercomPort,

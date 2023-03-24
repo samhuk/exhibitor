@@ -26,7 +26,7 @@ const setPlaywrightConfig = (
     },
     testDir: PLAYWRIGHT_BASE_CONFIG_TEST_DIR,
   }
-  logStep(c => `Writing playwright config to ${c.cyan(PLAYWRIGHT_BASE_CONFIG_FILE)}`, true)
+  logStep(c => `Writing Playwright configuration to ${c.cyan(PLAYWRIGHT_BASE_CONFIG_FILE)}`, true)
   fs.writeFileSync(PLAYWRIGHT_BASE_CONFIG_FILE, JSON.stringify(playwrightConfig, null, 2))
 }
 

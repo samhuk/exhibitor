@@ -11,13 +11,13 @@ import { BaseCliArgumentsOptions } from '../types'
 const getConfigFilePath = (cliArgumentsOptions: BaseCliArgumentsOptions): GFResult<string | null> => {
   if (cliArgumentsOptions.config == null) {
     const defaultPath = path.join('./', DEFAULT_CONFIG_FILE_NAME)
-    logStep(c => `'${c.underline('config')}' CLI argument not provided. Checking whether config file at default path exists (${c.cyan(defaultPath)}).`, true)
+    logStep(c => `'${c.underline('config')}' CLI argument not provided. Checking whether configuration file at default path exists (${c.cyan(defaultPath)}).`, true)
     if (fs.existsSync(defaultPath)) {
-      logInfo('Config file at default path exists.', true)
+      logInfo('Configuration file at default path exists. Using it.', true)
       return [defaultPath]
     }
 
-    logInfo('Config file at default path does not exists. Using default config.', true)
+    logInfo('Configuration file at default path does not exists. Using default configuration.', true)
     return [null]
   }
 
@@ -26,7 +26,7 @@ const getConfigFilePath = (cliArgumentsOptions: BaseCliArgumentsOptions): GFResu
     return [undefined, createGFError({
       msg: 'Invalid CLI command argument(s)',
       inner: createGFError({
-        msg: c => `Config file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}. Attempted: ${path.resolve(cliArgumentsOptions.config)}`,
+        msg: c => `Configuration file path does not exist. Received: ${c.cyan(cliArgumentsOptions.config)}. Attempted: ${path.resolve(cliArgumentsOptions.config)}`,
       }),
     })]
   }
