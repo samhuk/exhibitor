@@ -24,11 +24,10 @@ export const baseCommand = <TFn extends (...args: any[]) => Promise<GFError | nu
       }
     }
     catch (e: any) {
-      const err = createGFError({
+      createGFError({
         msg: c => `An unexpected error occured for the '${c.bold(commandName)}' command.`,
         inner: e,
-      })
-      err.log()
+      }).log()
       exit(1)
     }
   }
