@@ -2,18 +2,18 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import * as fs from 'fs'
 import path from 'path'
+import StatusCode from 'status-code-enum'
+import { createGFError } from 'good-flow'
 
 import { BUILD_OUTPUT_ROOT_DIR, SITE_SERVER_BUILD_DIR_TO_CLIENT_BUILD_DIR_REL_PATH } from '../../common/paths'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../common/name'
 import api from './api'
 import { sendErrorResponse } from './common/responses'
 import { DEFAULT_THEME } from '../../common/theme'
-import { createExhError } from '../../common/exhError'
-import { ErrorType } from '../../common/errorTypes'
 import { loadConfig } from './config'
 import { VERBOSE_ENV_VAR_NAME } from '../../common/config'
 import { log, logStep } from '../../common/logging'
-import { ExhEnv, getEnv } from '../../common/env'
+import { ExhEnv, getEnv, getIsDemo } from '../../common/env'
 import state from '../../common/state'
 import { tryResolve } from '../../common/npm/resolve'
 import { ExpressApp } from './types'
@@ -21,13 +21,13 @@ import { enableRequestLogging } from './logging'
 import { createIntercomClient, enableBuildStatusWaitUntilAllSuccessfullMiddleware } from './intercom'
 
 const isDev = getEnv() === ExhEnv.DEV
-const isDemo = process.env.EXH_DEMO === 'true'
+const isDemo = getIsDemo()
 
 const handleAxeJsRequest = (app: ExpressApp) => {
   app.get('/axe.js', (req, res) => {
     const resolveAxeCoreResult = tryResolve('axe-core')
     if (resolveAxeCoreResult.success === false) {
-      sendErrorResponse(res, createExhError({ message: 'Could not resolve axe-core NPM dependency. Is it installed?', type: ErrorType.SERVER_ERROR }))
+      sendErrorResponse(res, createGFError({ msg: 'Could not resolve axe-core NPM dependency. Is it installed?' }))
       return
     }
     const minJsRelPath = path.relative('.', path.join(path.dirname(resolveAxeCoreResult.path), 'axe.min.js'))
@@ -39,7 +39,7 @@ const handleApiRequest = (app: ExpressApp) => {
   app
     .use('/api', api)
     // Send 404 for api requests that don't match an api route
-    .use('/api', (req, res) => sendErrorResponse(res, createExhError({ message: 'unknown endpoint', type: ErrorType.NOT_FOUND })))
+    .use('/api', (req, res) => sendErrorResponse(res, createGFError({ msg: 'unknown endpoint' }), { status: StatusCode.ClientErrorNotFound }))
 }
 
 const handleThemeStylesheetRequest = (app: ExpressApp, clientBuildDir: string) => {
@@ -51,7 +51,7 @@ const handleThemeStylesheetRequest = (app: ExpressApp, clientBuildDir: string) =
       return
     }
 
-    sendErrorResponse(res, createExhError({ message: `Styles do not exist for theme '${theme}'`, type: ErrorType.NOT_FOUND }))
+    sendErrorResponse(res, createGFError({ msg: `Styles do not exist for theme '${theme}'` }), { status: StatusCode.ClientErrorNotFound })
   })
 }
 
@@ -127,7 +127,7 @@ const main = async () => {
           const reqPathWithoutForwardSlashPrefix = req.path.startsWith('/') ? req.path.slice(1) : req.path
           const relPath = path.join(BUILD_OUTPUT_ROOT_DIR, reqPathWithoutForwardSlashPrefix) // E.g.
           if (!fs.existsSync(relPath)) {
-            sendErrorResponse(res, createExhError({ message: `Component Site/Lib file at '${relPath}' does not exist.`, type: ErrorType.NOT_FOUND }))
+            sendErrorResponse(res, createGFError({ msg: `Component Site/Lib file at '${relPath}' does not exist.` }), { status: StatusCode.ClientErrorNotFound })
             return
           }
 

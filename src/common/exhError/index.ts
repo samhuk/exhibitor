@@ -13,7 +13,6 @@ export const createExhError = (options: ExhErrorOptions): ExhError => {
     message: options.message,
     causedBy: options.causedBy,
     advice: options.advice,
-    type: options.type,
     data: options.data,
     inner: options.inner,
     serialize: dataSerializer => serializeExhError(error, dataSerializer),

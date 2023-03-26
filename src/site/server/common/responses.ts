@@ -1,48 +1,38 @@
 import { Request, Response } from 'express'
-import { GFError } from 'good-flow'
-import { isGFError } from 'good-flow/lib/good-flow/error'
+import { GFError, SerializeGFErrorOptions } from 'good-flow'
+import { SerializedGFError } from 'good-flow/lib/serialized'
+import { StatusCode } from 'status-code-enum'
 
-import { isExhError } from '../../../common/exhError'
-import { ExhError } from '../../../common/exhError/types'
-import { STATUS_CODES } from '../../../common/exhError/statusCodes'
 import { ExhResponse } from '../../common/responses'
-import { SerializedExhError } from '../../../common/exhError/serialization/types'
-import { ErrorType } from '../../../common/errorTypes'
 import { MimeType } from '../../../common/mimeType'
-import { ExhEnv, getEnv } from '../../../common/env'
+import { ExhEnv, getEnv, getIsDemo } from '../../../common/env'
 
 export type AnyRequest = Request<any, any, any>
 export type AnyResponse = Response<any>
 
 const env = getEnv()
+const isDemo = getIsDemo()
+
+const errorSerializeOptions: SerializeGFErrorOptions = isDemo
+  // Exclude stack traces when not in dev mode
+  ? {
+    customStackTraceSerializer: false,
+    nativeStackTraceSerializer: false,
+  }
+  : undefined
 
 const setContentTypeHeader = (res: Response, type: MimeType) => {
   res.setHeader('Content-Type', type)
 }
 
-const serializeError = (error: GFError | ExhError | Error): SerializedExhError => {
-  if (isExhError(error))
-    return error.serialize()
-
-  // Shim in GFError for now. We will remove all of the ExhError stuff soon.
-  if (isGFError(error)) {
-    const serializedError = error.serialize()
-    return {
-      message: serializedError.msg,
-      type: ErrorType.SERVER_ERROR,
-    }
-  }
-
-  return {
-    message: 'An unexpected error occured.',
-    causedBy: error.message,
-    stack: error.stack,
-  }
-}
+const serializeError = (error: GFError): SerializedGFError => error.serialize(errorSerializeOptions)
 
 export const sendErrorResponse = (
   res: AnyResponse,
-  error: GFError | ExhError | Error,
+  error: GFError,
+  options?: {
+    status?: StatusCode
+  },
 ) => {
   const serializedExhError = serializeError(error)
 
@@ -52,7 +42,7 @@ export const sendErrorResponse = (
 
   const response: ExhResponse = serializedExhError
   setContentTypeHeader(res, 'application/json')
-  res.status(STATUS_CODES[serializedExhError.type ?? ErrorType.SERVER_ERROR] ?? 500).send(response)
+  res.status(options?.status ?? StatusCode.ServerErrorInternal).send(response)
 }
 
 export const sendSuccessResponse = <TData extends any = any>(
@@ -66,15 +56,4 @@ export const sendSuccessResponse = <TData extends any = any>(
   const response: ExhResponse<TData> = data
 
   res.status(200).send(response)
-}
-
-export const sendResponse = <TData extends any = any>(
-  res: AnyResponse,
-  data: TData | ExhError | Error,
-  options?: { contentType: MimeType },
-) => {
-  if (isExhError(data) || (data instanceof Error))
-    sendErrorResponse(res, data)
-  else
-    sendSuccessResponse(res, data, options)
 }

@@ -17,7 +17,6 @@ export const serializeExhError = (e: ExhError, dataSerializer: 'json' | ((data: 
         ? JSON.stringify(e.data)
         : dataSerializer(e.data)
       : e.data,
-    type: e.type,
     inner: e.inner != null
       ? isExhError(e.inner)
         ? serializeExhError(e.inner, dataSerializer)

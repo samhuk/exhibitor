@@ -1,4 +1,3 @@
-import { ErrorType } from '../errorTypes'
 import { ExhString } from '../exhString/types'
 import { SerializedExhError } from './serialization/types'
 
@@ -9,7 +8,6 @@ export type ExhError<TData extends any = any> = {
   inner?: ExhError | Error
   data?: TData
   stack?: string
-  type?: ErrorType
   /**
    * @default undefined
    */
@@ -23,10 +21,6 @@ export type ExhErrorOptions<TData extends any = any> = {
   advice?: ExhString
   inner?: ExhError | Error
   data?: TData
-  /**
-   * @default ErrorType.SERVER_ERROR
-   */
-  type?: ErrorType
   /**
    * Determines whether the error is logged when it's created. Otherwise, it can be logged
    * later or set as the inner error of another error.
