@@ -1,3 +1,3 @@
-import { SerializedExhError } from '../../common/exhError/serialization/types'
+import { SerializedGFError } from 'good-flow/lib/serialized'
 
-export type ExhResponse<TData = any> = SerializedExhError | TData
+export type ExhResponse<TData = any> = { data: TData | undefined, error?: SerializedGFError }

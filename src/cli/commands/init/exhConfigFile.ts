@@ -1,15 +1,14 @@
 import * as fs from 'fs'
-import { createExhError } from '../../../common/exhError'
-import { ExhError } from '../../../common/exhError/types'
-import { ExhString } from '../../../common/exhString/types'
+import { createGFError, GFError } from 'good-flow'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { askBooleanQuestion } from '../../common/input'
 
-const createError = (causedBy: ExhString): ExhError => createExhError({
-  message: 'Could not create Exhibitor configuration file \'exh.config.json\'.',
-  causedBy,
+const createError = (inner: GFError): GFError => createGFError({
+  msg: `Could not create ${NPM_PACKAGE_CAPITALIZED_NAME} configuration file.`,
+  inner,
 })
 
-export const createExhConfigFile = async (): Promise<ExhError | null> => {
+export const createExhConfigFile = async (): Promise<GFError | null> => {
   const writePath = './exh.config.json'
 
   const doesExhConfigFileExist = fs.existsSync(writePath)
@@ -28,8 +27,11 @@ export const createExhConfigFile = async (): Promise<ExhError | null> => {
   try {
     fs.writeFileSync(writePath, JSON.stringify(config, null, 2))
   }
-  catch (e) {
-    return createError(`Could not write to ${writePath}. Error: ${e}`)
+  catch (e: any) {
+    return createError(createGFError({
+      msg: c => `Could not write to ${c.cyan(writePath)}.`,
+      inner: e,
+    }))
   }
 
   return null

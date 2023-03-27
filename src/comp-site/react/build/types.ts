@@ -8,6 +8,7 @@ export type BuildOptions = {
   onIndexExhTsFileCreate?: (file: { includedFilePaths: string[] }) => void
   buildStatusReporter?: BuildStatusReporter
   onFirstSuccessfulBuild?: () => void
+  onBuildFail?: () => void
   /**
    * E.g. './.exh
    */

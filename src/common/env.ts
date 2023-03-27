@@ -26,3 +26,5 @@ export const getEnv = (): ExhEnv => {
   const exhEnvEnvVarValue = process.env[EXH_ENV_ENV_VAR_NAME]
   return map[exhEnvEnvVarValue] ?? ExhEnv.REL
 }
+
+export const getIsDemo = () => process.env.EXH_DEMO === 'true'

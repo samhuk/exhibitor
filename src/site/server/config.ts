@@ -9,9 +9,9 @@ export let config: Config = null
 export const loadConfig = async () => {
   const configFilePath = process.env[CONFIG_FILE_PATH_ENV_VAR_NAME]
   if (configFilePath != null)
-    logStep(`Site Server is loading config from ${configFilePath}`, true)
+    logStep(`Site Server is loading configuration from ${configFilePath}`, true)
   else
-    logStep('Site Server is loading default config as no config file path has been provided.', true)
+    logStep('Site Server is loading default configuration as no configuration file path has been provided.', true)
   config = await getConfig(configFilePath)
   // If verbose mode has not already been enabled, refer to the value from config
   if (!state.verbose)

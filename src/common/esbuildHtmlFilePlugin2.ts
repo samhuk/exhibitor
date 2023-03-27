@@ -1,7 +1,7 @@
 import { BuildResult } from 'esbuild'
 import * as fs from 'fs'
+import { createGFError } from 'good-flow'
 import * as path from 'path'
-import { createExhError } from './exhError'
 
 const convertOutputPathToHref = (outputPath: string, serverRootDir: string): string => {
   const relativizedPath = path.relative(serverRootDir, outputPath)
@@ -64,7 +64,7 @@ export const createIndexHtmlFileText = (
     originalHtmlFileText = fs.readFileSync(indexHtmlFilePath, { encoding: 'utf8' })
   }
   catch (e) {
-    createExhError({ message: 'Could not access index.html file.' }).log()
+    createGFError({ msg: 'Could not access index.html file.' }).log()
     return ''
   }
 

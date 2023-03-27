@@ -1,8 +1,10 @@
 import { exit } from 'process'
-import { createExhError } from '../../common/exhError'
-import { ExhError } from '../../common/exhError/types'
+import { createGFError, GFError } from 'good-flow'
+import { ExhEnv, getEnv } from '../../common/env'
 
-export const baseCommand = <TFn extends (...args: any[]) => Promise<ExhError | null>>(
+const isDev = getEnv() === ExhEnv.DEV
+
+export const baseCommand = <TFn extends (...args: any[]) => Promise<GFError | null>>(
   commandName: string,
   fn: TFn,
   options?: { exitWhenReturns?: boolean },
@@ -10,7 +12,11 @@ export const baseCommand = <TFn extends (...args: any[]) => Promise<ExhError | n
     try {
       const err = await fn(...args)
       if (err != null) {
-        err.log()
+        err.log({
+          customStackTraceRenderer: isDev ? undefined : () => [],
+          nativeStackTraceRenderer: isDev ? undefined : () => [],
+          linesBetweenNodes: 0,
+        })
         exit(1)
       }
       else if (options?.exitWhenReturns ?? true) {
@@ -18,9 +24,9 @@ export const baseCommand = <TFn extends (...args: any[]) => Promise<ExhError | n
       }
     }
     catch (e: any) {
-      createExhError({
-        message: c => `An unexpected error occured for the '${c.bold(commandName)}' command.`,
-        causedBy: e,
+      createGFError({
+        msg: c => `An unexpected error occured for the '${c.bold(commandName)}' command.`,
+        inner: e,
       }).log()
       exit(1)
     }

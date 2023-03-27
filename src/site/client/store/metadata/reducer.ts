@@ -10,8 +10,8 @@ import {
 } from './actions'
 import { fetchMetaData as fetchMetaDataRequest } from '../../connectors/metaData'
 import { MetaData } from '../../../../common/metadata'
-import { isSerializedExhError } from '../../misc'
 import { ExhEnv } from '../../../../common/env'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../../common/name'
 
 const initialState: MetaDataState = {
   doFetch: true,
@@ -22,7 +22,7 @@ const initialState: MetaDataState = {
     isAxeEnabled: false,
     isDemoMode: false,
     intercom: null,
-    siteTitle: 'Exhibitor',
+    siteTitle: NPM_PACKAGE_CAPITALIZED_NAME,
   },
   error: null,
 }
@@ -57,7 +57,7 @@ export const fetchMetaDataThunk = (onComplete?: (metadata: MetaData) => void): T
   dispatch(fetchMetaData())
   fetchMetaDataRequest().then(response => {
     dispatch(metaDataFetched(response))
-    if (!isSerializedExhError(response))
-      onComplete?.(response)
+    if (response.data != null)
+      onComplete?.(response.data)
   })
 }

@@ -4,11 +4,13 @@ import { NetworkLocation } from '../common/network'
 import { getIntercomNetworkLocationFromProcessEnvs } from './client'
 import { createBuildStatusesReducer, INITIAL_STATE } from './common'
 
-export const startIntercomServer = (options?: {
-  networkLocation?: NetworkLocation,
+type StartIntercomServerOptions = {
+  networkLocation?: NetworkLocation
   reporter?: StoreServerReporter
   isSiteAlreadyBuilt?: boolean
-}) => {
+}
+
+export const startIntercomServer = (options?: StartIntercomServerOptions) => {
   const reporter = options?.reporter ?? (process.env.EXH_SHOW_INTERCOM_LOG ? CONSOLE_LOG_SERVER_REPORTER : null)
   const networkLocation = options?.networkLocation ?? getIntercomNetworkLocationFromProcessEnvs(process)
 

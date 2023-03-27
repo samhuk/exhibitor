@@ -1,28 +1,22 @@
 import colors from 'colors/safe'
-import { isExhError } from '../exhError'
-import { ExhError } from '../exhError/types'
+import { GFString } from 'good-flow/lib/good-flow/string/types'
 import { normalizeExhString } from '../exhString'
 import { ExhString } from '../exhString/types'
 import state from '../state'
 
+const LOG_INTERCOM_PREFIX = (colors.bgWhite as any).black('[ IC ]')
+
 const _logText = (msg: ExhString) => console.log(normalizeExhString(msg))
 
 export const log = (
-  msg: ExhString | ExhError,
+  msg: GFString,
   verbose: boolean = false,
 ) => {
   // If log msg is verbose and the current state is not verbose, then dont log
   if (verbose && !state.verbose)
     return
 
-  if (isExhError(msg)) {
-    console.log(colors.red('Error:'), normalizeExhString(msg.message))
-    if (msg.causedBy != null)
-      console.log('\n  Caused by:', normalizeExhString(msg.causedBy))
-  }
-  else {
-    _logText(msg)
-  }
+  _logText(msg)
 }
 
 export const logText = (
@@ -127,28 +121,6 @@ export const logWarn = (
 }
 
 /**
- * Prints an error message to console stdout.
- *
- * @example
- * logError({
- *   message: 'Did not do a thing',
- *   causedBy: 'Because it did not',
- * })
- * // Error: Did not do a thing
- * //    Caused by: Because it did not
- */
-export const logError = (
-  error: ExhError,
-) => {
-  const normalizedMessage = normalizeExhString(error.message)
-  const normalizedCausedBy = error.causedBy != null ? normalizeExhString(error.causedBy) : null
-
-  console.log(colors.red('Error:'), normalizedMessage)
-  if (normalizedCausedBy != null)
-    console.log('\n  Caused by:', normalizedCausedBy)
-}
-
-/**
  * Prints a message to console stdout that is related to the intercom functionality.
  *
  * @example
@@ -162,7 +134,7 @@ export const logIntercomInfo = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.blue('i')}  ${normalizedMessage}`)
+  console.log(`${LOG_INTERCOM_PREFIX} ${colors.blue('i')}  ${normalizedMessage}`)
 }
 
 /**
@@ -179,7 +151,7 @@ export const logIntercomStep = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.blue('⚫')} ${normalizedMessage}`)
+  console.log(`${LOG_INTERCOM_PREFIX} ${colors.blue('⚫')} ${normalizedMessage}`)
 }
 
 /**
@@ -196,7 +168,7 @@ export const logIntercomSuccess = (
     return
 
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.green('✔')}  ${normalizedMessage}`)
+  console.log(`${LOG_INTERCOM_PREFIX} ${colors.green('✔')}  ${normalizedMessage}`)
 }
 
 /**
@@ -209,5 +181,5 @@ export const logIntercomError = (
   msg: ExhString,
 ) => {
   const normalizedMessage = normalizeExhString(msg)
-  console.log(`${(colors.bgWhite as any).black('-- IC --')} ${colors.red('x')}  ${normalizedMessage}`)
+  console.log(`${LOG_INTERCOM_PREFIX} ${colors.red('x')}  ${normalizedMessage}`)
 }

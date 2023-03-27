@@ -7,7 +7,6 @@ import { build as _build } from '../../../common/esbuilder'
 import { gzipLargeFiles } from '../../../common/gzip'
 import { BuildOptions } from './types'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
-
 import { createComponentLibraryIncluderPlugin } from '../../../cli/indexExhFile'
 import { ExhEnv, getEnv } from '../../../common/env'
 import { createIndexHtmlFileText } from '../../../common/esbuildHtmlFilePlugin2'

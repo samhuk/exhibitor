@@ -1,4 +1,5 @@
 import React from 'react'
+import { NPM_PACKAGE_CAPITALIZED_NAME, NPM_PACKAGE_NAME } from '../../common/name'
 import Button from '../button'
 import { CLASS_NAME_PREFIX } from '../common'
 import ExternalLink from '../external-link'
@@ -37,7 +38,10 @@ export const render = (props: Props) => {
       </p>
       <p>
         If you would like something added or changed, head over to the&nbsp;
-        <ExternalLink text="Exhibitor Discussion 💬" href="https://github.com/samhuk/exhibitor/discussions/categories/ideas" />.
+        <ExternalLink
+          text={`${NPM_PACKAGE_CAPITALIZED_NAME} Discussion 💬`}
+          href={`https://github.com/samhuk/${NPM_PACKAGE_NAME}/discussions/categories/ideas`}
+        />.
       </p>
     </>
   )

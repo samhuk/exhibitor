@@ -1,4 +1,5 @@
 import React from 'react'
+import { SerializedGFError } from 'good-flow/lib/serialized'
 import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../../common/name'
 import Button from '../../../../ui-component-library/button'
 import { useAppDispatch, useAppSelector } from '../../store'

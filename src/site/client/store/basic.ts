@@ -1,6 +1,5 @@
 import { ThunkAction } from 'redux-thunk'
 import { ExhResponse } from '../../common/responses'
-import { isSerializedExhError, normalizeExhResponse } from '../misc'
 import { LoadingState } from './types'
 
 export type State<TValue extends any = any> = {
@@ -55,14 +54,11 @@ export const createBasicStoreSegmentArtifacts = <
     type: FETCH,
   })
 
-  const fetchedAction = (response: ExhResponse<TValue>): FetchedAction<typeof FETCHED, TValue> => {
-    const res = normalizeExhResponse(response)
-    return {
-      type: FETCHED,
-      value: res.data,
-      error: res.error,
-    }
-  }
+  const fetchedAction = (response: ExhResponse<TValue>): FetchedAction<typeof FETCHED, TValue> => ({
+    type: FETCHED,
+    value: response.data,
+    error: response.error,
+  })
 
   const fetchThunk = (...args: any[]): ThunkAction<void, any, any, any> => dispatch => {
     // Start the fetching state

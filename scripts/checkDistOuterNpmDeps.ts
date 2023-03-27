@@ -7,9 +7,10 @@
 
 import * as fs from 'fs'
 import { exit } from 'process'
+import { createGFError } from 'good-flow'
 import { TypeDependantBaseIntersection } from '@samhuk/type-helpers'
+
 import { log, logSuccess } from '../src/common/logging'
-import { createExhError } from '../src/common/exhError'
 
 type PackageDeps = { [packageName: string]: string }
 
@@ -69,11 +70,11 @@ const logDepComparsionResult = (result: DepComparisonResult): boolean => {
       return true
     }
     case DepComparisonResultType.DIFFERENT: {
-      createExhError({ message: c => `Dist dependency '${result.packageName}' does not agree with outer (dist=${c.cyan(result.distVersion)}, outer=${c.cyan(result.outerVersion)})` }).log()
+      createGFError(c => `Dist dependency '${result.packageName}' does not agree with outer (dist=${c.cyan(result.distVersion)}, outer=${c.cyan(result.outerVersion)})`).log()
       return false
     }
     case DepComparisonResultType.OUTER_MISSING: {
-      createExhError({ message: c => `Dist dependency '${result.packageName}' is not an outer dependency (dist version: ${c.cyan(result.distVersion)})` }).log()
+      createGFError(c => `Dist dependency '${result.packageName}' is not an outer dependency (dist version: ${c.cyan(result.distVersion)})`).log()
       return false
     }
   }

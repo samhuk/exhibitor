@@ -24,6 +24,7 @@ const rebuildIteration = async (
     rebuildResult = await buildResult.buildResult.rebuild()
   }
   catch {
+    options.onBuildFail?.()
     // Silence errors, since esbuild prints them already. But report the error to reporter still.
     options.buildStatusReporter?.update(BuildStatus.ERROR)
     return
@@ -53,6 +54,7 @@ export const watchCompSite = async (
     buildResult = await build(options)
   }
   catch {
+    options.onBuildFail?.()
     options.buildStatusReporter?.update(BuildStatus.ERROR)
     // If the first-build has already failed, then we don't need to start a watch
     if (initialBuildWatcher != null)
@@ -70,8 +72,6 @@ export const watchCompSite = async (
     return
   }
 
-  options.onFirstSuccessfulBuild?.()
-
   // Start rebuild loop
   initialBuildWatcher?.close()
   const fn = debounce(() => rebuildIteration(buildResult, options), 200)
@@ -81,5 +81,6 @@ export const watchCompSite = async (
       logStep('Watching for changes...')
       options.buildStatusReporter?.update(BuildStatus.SUCCESS)
       watcher.on('add', fn).on('change', fn).on('unlink', fn)
+      options.onFirstSuccessfulBuild?.()
     })
 }

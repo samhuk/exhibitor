@@ -1,16 +1,16 @@
 import * as fs from 'fs'
-import { createExhError } from '../../../common/exhError'
-import { ExhError } from '../../../common/exhError/types'
-import { ExhString } from '../../../common/exhString/types'
+import { createGFError, GFError } from 'good-flow'
+import { GFString } from 'good-flow/lib/good-flow/string/types'
 import { logStep } from '../../../common/logging'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../common/name'
 import { askBooleanQuestion } from '../../common/input'
 
-const createError = (causedBy: ExhString): ExhError => createExhError({
-  message: 'Could not modify package.json for exhibitor use.',
-  causedBy,
+const createError = (cause: GFString): GFError => createGFError({
+  msg: `Could not modify package.json for ${NPM_PACKAGE_CAPITALIZED_NAME} Demo use.`,
+  inner: createGFError({ msg: cause }),
 })
 
-const modifyPackageJsonFile = async (): Promise<ExhError | null> => {
+const modifyPackageJsonFile = async (): Promise<GFError | null> => {
   const packageJson = fs.readFileSync('./package.json', { encoding: 'utf8' })
   let packageJsonObj: any
   try {
@@ -42,7 +42,7 @@ const modifyPackageJsonFile = async (): Promise<ExhError | null> => {
   return null
 }
 
-export const initPackageJson = async (): Promise<ExhError | null> => {
+export const initPackageJson = async (): Promise<GFError | null> => {
   // Ensure that package.json exists
   const doesPackageJsonFileExists = fs.existsSync('./package.json')
   if (!doesPackageJsonFileExists)

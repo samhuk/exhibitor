@@ -1,5 +1,5 @@
+import { SerializedGFError } from 'good-flow/lib/serialized'
 import { ExhResponse } from '../../../../common/responses'
-import { isSerializedExhError, normalizeExhResponse } from '../../../misc'
 import { LoadingState } from '../../types'
 
 export const FETCH = 'exhibitCode/fetch'
@@ -10,7 +10,7 @@ export type ExhibitCodeState = {
   doFetch: boolean
   loadingState: LoadingState
   exhibitCode: string
-  error: any
+  error: SerializedGFError
 }
 
 type FetchExhibitCodeAction = {
@@ -29,11 +29,8 @@ export const fetchExhibitCode = (): Actions => ({
   type: FETCH,
 })
 
-export const exhibitCodeFetched = (response: ExhResponse<string>): Actions => {
-  const res = normalizeExhResponse(response)
-  return {
-    type: FETCHED,
-    exhibitCode: res.data,
-    error: res.error,
-  }
-}
+export const exhibitCodeFetched = (res: ExhResponse<string>): Actions => ({
+  type: FETCHED,
+  exhibitCode: res.data,
+  error: res.error,
+})
