@@ -1,6 +1,5 @@
 import colors from 'colors/safe'
 import { GFString } from 'good-flow/lib/good-flow/string/types'
-import { ExhError } from '../exhError/types'
 import { normalizeExhString } from '../exhString'
 import { ExhString } from '../exhString/types'
 import state from '../state'
@@ -119,28 +118,6 @@ export const logWarn = (
 
   const normalizedMessage = normalizeExhString(msg)
   console.log(`${colors.yellow('Warn:')} ${normalizedMessage}`)
-}
-
-/**
- * Prints an error message to console stdout.
- *
- * @example
- * logError({
- *   message: 'Did not do a thing',
- *   causedBy: 'Because it did not',
- * })
- * // Error: Did not do a thing
- * //    Caused by: Because it did not
- */
-export const logError = (
-  error: ExhError,
-) => {
-  const normalizedMessage = normalizeExhString(error.message)
-  const normalizedCausedBy = error.causedBy != null ? normalizeExhString(error.causedBy) : null
-
-  console.log(colors.red('Error:'), normalizedMessage)
-  if (normalizedCausedBy != null)
-    console.log('\n  Caused by:', normalizedCausedBy)
 }
 
 /**

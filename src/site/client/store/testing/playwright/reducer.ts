@@ -13,7 +13,6 @@ import { runPlaywrightTests as runPlaywrightTestsRequest } from '../../../connec
 import { SELECT_VARIANT } from '../../componentExhibits/actions'
 import { RunPlaywrightTestsOptions } from '../../../../common/testing/playwright'
 import { playwrightTestReportService } from '../../../services/playwrightTestReportService'
-import { normalizeExhResponse } from '../../../misc'
 
 const initialState: State = {
   loadingState: LoadingState.IDLE,
@@ -66,18 +65,17 @@ export const playwrightReducer = (
 const _runPlaywrightTestsThunk = async (options: RunPlaywrightTestsOptions, dispatch: AppDispatch) => {
   dispatch(run())
   const res = await runPlaywrightTestsRequest(options)
-  const _res = normalizeExhResponse(res)
-  if (_res.data != null) {
+  if (res.data != null) {
     const existingItemForVariantPath = playwrightTestReportService.getByVariantPath(options.variantPath)
     if (existingItemForVariantPath != null)
       playwrightTestReportService.remove(existingItemForVariantPath.id)
 
     await playwrightTestReportService.add({
-      variantPath: _res.data.variantPath,
-      reportData: _res.data.htmlReportData,
+      variantPath: res.data.variantPath,
+      reportData: res.data.htmlReportData,
     })
   }
-  dispatch(runComplete(_res))
+  dispatch(runComplete(res))
 }
 
 export const runPlaywrightTestsThunk = (options: RunPlaywrightTestsOptions): ThunkAction<void, RootState, any, Actions> => dispatch => {

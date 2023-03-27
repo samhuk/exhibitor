@@ -1,7 +1,7 @@
+import { SerializedGFError } from 'good-flow/lib/serialized'
 import { LoadingState } from '../types'
 import { MetaData } from '../../../../common/metadata'
 import { ExhResponse } from '../../../common/responses'
-import { normalizeExhResponse } from '../../misc'
 
 export const FETCH = 'metaData/fetch'
 
@@ -11,7 +11,7 @@ export type MetaDataState = {
   doFetch: boolean
   loadingState: LoadingState
   metaData: MetaData
-  error: any
+  error: SerializedGFError
 }
 
 type FetchMetaDataAction = {
@@ -21,7 +21,7 @@ type FetchMetaDataAction = {
 type MetaDataFetchedAction = {
   type: typeof FETCHED
   metaData: MetaData
-  error: any
+  error: SerializedGFError
 }
 
 export type Actions = FetchMetaDataAction | MetaDataFetchedAction
@@ -30,11 +30,8 @@ export const fetchMetaData = (): Actions => ({
   type: FETCH,
 })
 
-export const metaDataFetched = (response: ExhResponse<MetaData>): Actions => {
-  const res = normalizeExhResponse(response)
-  return {
-    type: FETCHED,
-    metaData: res.data,
-    error: res.error,
-  }
-}
+export const metaDataFetched = (res: ExhResponse<MetaData>): Actions => ({
+  type: FETCHED,
+  metaData: res.data,
+  error: res.error,
+})

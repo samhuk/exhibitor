@@ -1,7 +1,6 @@
-import { SerializedExhError } from '../../../../../common/exhError/serialization/types'
+import { SerializedGFError } from 'good-flow/lib/serialized'
 import { ExhResponse } from '../../../../common/responses'
 import { RunPlayrightTestsResponse } from '../../../../common/testing/playwright'
-import { NormalizedExhResponse } from '../../../misc'
 import { LoadingState } from '../../types'
 
 export const RUN = 'testing/playwright/run'
@@ -20,7 +19,7 @@ export type State = {
   dateLastStarted: number
   dateLastCompleted: number
   options: Options
-  error: SerializedExhError
+  error: SerializedGFError
 }
 
 type RunAction = {
@@ -44,10 +43,10 @@ export const run = (): Actions => ({
 })
 
 // TODO: These response types are getting a bit tedious...
-export const runComplete = (normalizedExhResponse: NormalizedExhResponse<ExhResponse<RunPlayrightTestsResponse>>): Actions => ({
+export const runComplete = (res: ExhResponse<RunPlayrightTestsResponse>): Actions => ({
   type: RUN_COMPLETE,
-  results: normalizedExhResponse.data,
-  error: normalizedExhResponse.error,
+  results: res.data,
+  error: res.error,
 })
 
 export const toggleHeadless = (): Actions => ({

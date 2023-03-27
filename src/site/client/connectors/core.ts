@@ -1,7 +1,7 @@
+import { SerializedGFError } from 'good-flow/lib/serialized'
 import { of, lastValueFrom } from 'rxjs'
 import { ajax, AjaxError, AjaxResponse } from 'rxjs/ajax'
 import { map, catchError } from 'rxjs/operators'
-import { SerializedExhError } from '../../../common/exhError/serialization/types'
 import { ExhResponse } from '../../common/responses'
 
 const DEFAULT_HEADERS = { 'Content-Type': 'application/json' }
@@ -45,8 +45,8 @@ export const get = <TResponseData>(
     map(res => (res as AjaxResponse<ExhResponse<TResponseData>>).response),
     catchError((err: AjaxError) => {
       if (err.name === 'AjaxTimeoutError') {
-        const serializedError: SerializedExhError = {
-          message: 'request timeout',
+        const serializedError: SerializedGFError = {
+          msg: 'request timeout',
         }
         // eslint-disable-next-line no-param-reassign
         err.response = serializedError
@@ -79,8 +79,8 @@ export const post = <TResponseData>(
     map(res => (res as AjaxResponse<ExhResponse<TResponseData>>).response),
     catchError((err: AjaxError) => {
       if (err.name === 'AjaxTimeoutError') {
-        const serializedError: SerializedExhError = {
-          message: 'request timeout',
+        const serializedError: SerializedGFError = {
+          msg: 'request timeout',
         }
         // eslint-disable-next-line no-param-reassign
         err.response = serializedError

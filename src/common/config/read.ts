@@ -158,7 +158,7 @@ const resolveConfigFilePath = (
   if (isFile(absolutePath))
     return absolutePath
 
-  return null // TODO: ExhError?
+  return null // TODO: GFError?
 }
 
 /**
