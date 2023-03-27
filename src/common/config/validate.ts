@@ -14,6 +14,9 @@ export const _validateConfig = (config: Config): GFString | null => {
     return c => `config.watch - must have at least one entry, if defined. Received: ${c.cyan(JSON.stringify(config.watch))}`
 
   // -- site.host
+  if (typeof config.site.host !== 'string')
+    return c => `config.site.host - must be a string. Received: ${c.cyan(JSON.stringify(config.site.host))}`
+
   if (config.site.host.length < 1)
     return 'config.site.host - cannot be empty'
 

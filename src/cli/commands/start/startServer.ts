@@ -48,7 +48,7 @@ const getExhibitorSiteServerIndexJsFilePath = (): GFResult<string> => {
   if (npmDir.success === false)
     return [undefined, createStartServerError(c => `Could not find the ${NPM_PACKAGE_CAPITALIZED_NAME} Site Server Javascript file to execute. Make sure the ${c.underline(NPM_PACKAGE_NAME)} NPM package is resolvable.`)]
 
-  return [path.join(path.dirname(npmDir.path), './lib/site/server/index.js').replace(/\\/g, '/')]
+  return [path.join(path.dirname(npmDir.path), '../../site/server/index.js').replace(/\\/g, '/')]
 }
 
 export const startServer = async (options: {
