@@ -9,7 +9,7 @@ import { fetchExhibitCodeThunk } from '../../../store/componentExhibits/exhibitC
 import { LoadingState } from '../../../store/types'
 
 export const render = (props: {
-  exhibit: ComponentExhibit<true>
+  exhibit: ComponentExhibit
   variant: Variant
 }) => {
   const dispatch = useAppDispatch()

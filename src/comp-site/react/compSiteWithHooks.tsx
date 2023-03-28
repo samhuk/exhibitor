@@ -73,7 +73,7 @@ export const ReactCompSiteWithHooks = () => {
   const variantNode = exh.nodes[selectedVariantPath] as VariantExhibitNode
   const variantProps = attachEventLoggingToProps(variantNode)
 
-  const VariantEl = variantNode.exhibit.renderFn
+  const VariantEl = variantNode.exhibit.component
 
   // eslint-disable-next-line react/jsx-props-no-spreading
   return <VariantEl {...(customVariantProps ?? variantProps)} />

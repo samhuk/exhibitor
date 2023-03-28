@@ -5,10 +5,7 @@ import {
   ComponentExhibits,
   ExhibitNodes,
   ExhibitNodeType,
-  NonRootComponentExhibitBuilder,
   PathTree,
-  ReactComponent,
-  ReactComponentWithProps,
   Variant,
   VariantGroup,
 } from './types'
@@ -111,7 +108,7 @@ const nonRootExhibit = (
   variantGroup: VariantGroup,
 ) => {
   let _defaultProps: any = defaultProps
-  const _nonRootExhibit: NonRootComponentExhibitBuilder<ReactComponentWithProps, boolean, boolean, boolean, any> = {
+  const _nonRootExhibit: ComponentExhibitBuilder<any, any, boolean, boolean, boolean, boolean, false, false, any, true> = {
     defaults: __defaultProps => {
       _defaultProps = typeof __defaultProps === 'function' ? (__defaultProps as Function)(_defaultProps) : __defaultProps
       delete (nonRootExhibit as any).defaults
@@ -173,17 +170,6 @@ export const resolve = (
   return { nodes, pathTree }
 }
 
-const determineIfComponentHasProps = (component: ReactComponent) => {
-  if (typeof component === 'function')
-    return component.length > 0
-
-  /* For now, the only case where this is encountered is when using React's forwardRef(). This
-   * doesn't create a function React component, but instead an object with a render function property
-   * that accepts props and a ref.
-   */
-  return (component as { render: Function }).render.length > 0
-}
-
 /**
  * Declares a Component Exhibit.
  *
@@ -197,11 +183,14 @@ const determineIfComponentHasProps = (component: ReactComponent) => {
  * exhibit(Button, 'Button')
  */
 export const exhibit = <
-  TReactComponent extends ReactComponent
+  TComponent extends any,
+  TProps extends any,
+  THasProps extends boolean,
 >(
-    component: TReactComponent,
+    component: TComponent,
     name: string,
-  ): ComponentExhibitBuilder<TReactComponent, false, false, false, false, false, undefined> => {
+    componentHasPropsDetiminator: (component: TComponent) => boolean,
+  ): ComponentExhibitBuilder<TComponent, TProps, THasProps, undefined, false, false, false, false, false> => {
   let eventProps: any = null
   let defaultProps: any = null
   let options: any = null
@@ -209,11 +198,11 @@ export const exhibit = <
   let propModifiers: PropModifier[] = []
   const variants: { [variantName: string]: Variant } = {}
 
-  const hasProps = determineIfComponentHasProps(component)
+  const hasProps = componentHasPropsDetiminator(component)
 
   const variantGroups: { [variantGroupName: string]: VariantGroup } = {}
 
-  const componentExhibitBuilder: ComponentExhibitBuilder<TReactComponent, false, false, false, false, false, undefined> = {
+  const componentExhibitBuilder: ComponentExhibitBuilder<TComponent, TProps, THasProps, undefined, false, false, false, false, false> = {
     tests: _testSrcPath => {
       testSrcPath = _testSrcPath
       delete (componentExhibitBuilder as any).tests
@@ -255,7 +244,7 @@ export const exhibit = <
         showDefaultVariant: options?.showDefaultVariant ?? true,
         propModifiers: propModifiers ?? [],
         hasProps,
-        renderFn: component,
+        component,
         defaultProps,
         eventProps,
         variants,
@@ -271,7 +260,7 @@ export const exhibit = <
 
       return componentExhibit as any
     },
-  }
+  } as ComponentExhibitBuilder<TComponent, TProps, THasProps, undefined, false, false, false, false, false>
 
   return componentExhibitBuilder
 }

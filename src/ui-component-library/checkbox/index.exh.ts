@@ -1,4 +1,5 @@
-import exhibit, { simpleCheckboxModifier, simpleTextInputModifier } from '../../api'
+import { simpleCheckboxModifier, simpleTextInputModifier } from '../../api'
+import exhibit from '../../api/react'
 import Component, { NAME } from '.'
 import { GROUP_NAME } from '../common'
 

@@ -152,7 +152,7 @@ const NoViolationsEl = () => (
 )
 
 export const render = (props: {
-  exhibit: ComponentExhibit<true>
+  exhibit: ComponentExhibit
   variant: Variant
 }) => {
   const variantPathLastRanFor = useRef(null)
