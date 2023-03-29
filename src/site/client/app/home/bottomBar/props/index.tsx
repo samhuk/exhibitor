@@ -67,7 +67,7 @@ const PropsValueEl = (props: {
 }
 
 export const render = (props: {
-  exhibit: ComponentExhibit<true>
+  exhibit: ComponentExhibit<any, any, true>
   variant: Variant
 }) => {
   const [variantProps, setCustomVariantProps] = useState<{ forVariant: Variant, props: any }>({

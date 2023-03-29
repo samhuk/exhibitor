@@ -234,7 +234,7 @@ const dispatchCustomEvent = <
 
 export const render = (props: {
   variantProps: any
-  exhibit: ComponentExhibit<true>
+  exhibit: ComponentExhibit<any, any, true>,
   variant: Variant
   onChange: (newProps: any) => void
   onResetButtonClick: () => void

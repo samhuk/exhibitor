@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 import { usePopper } from 'react-popper'
-import { PropsOfReactComponent, ReactComponent } from '../../api/exhibit/types'
+import { PropsOfReactComponent, ReactComponent } from '../../api/react/exhibit/types'
 import { CLASS_NAME_PREFIX } from '../common'
 
 export type Props<T extends ReactComponent = ReactComponent> = {

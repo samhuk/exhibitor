@@ -1,4 +1,5 @@
-import exhibit, { simpleSelectModifier, simpleTextInputModifier } from '../../api'
+import { simpleSelectModifier, simpleTextInputModifier } from '../../api'
+import exhibit from '../../api/react'
 import Component, { DEFAULT_PROPS, FeatureStatus, NAME } from '.'
 import { GROUP_NAME } from '../common'
 

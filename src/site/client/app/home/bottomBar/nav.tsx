@@ -22,7 +22,7 @@ export const render = () => {
     [selectedVariantPath],
   )
   const showProps = selectedVariant != null && selectedVariant.exhibit.hasProps
-  const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<true>).eventProps
+  const showEventLog = showProps && (selectedVariant.exhibit as ComponentExhibit<any, any, true>).eventProps
   const showCode = selectedVariant != null // TODO
   const showAxe = selectedVariant != null && isAxeEnabled
   // TODO: If demo mode, we should show but *disable* the button with a helpful tooltip explaining that.

@@ -1,21 +1,6 @@
 /* eslint-disable max-len */
 import { BoolDependant, IsTrueAndFalse, TypeDependantBaseIntersection } from '@samhuk/type-helpers/dist/type-helpers/types'
-import { ReactElement } from 'react'
 import { PropModifier } from './propModifier/types'
-
-export type ReactComponentWithProps<TProps extends any = any> = (props: TProps) => ReactElement
-
-export type ReactComponentWithoutProps = () => ReactElement
-
-export type ReactComponent<TProps extends any = any> = ReactComponentWithProps<TProps> | ReactComponentWithoutProps
-
-export type PropsOfReactComponent<
-  TReactComponent extends ReactComponent = ReactComponent,
-> = Parameters<TReactComponent>[0]
-
-export type DoesReactComponentHavePropsArg<
-  TReactComponent extends ReactComponent = ReactComponent,
-> = Parameters<TReactComponent> extends { 0: any } ? true : false
 
 type IncludeIfTrue<TBool extends boolean, ObjToInclude, ExplicitElseObj extends any = {}> = IsTrueAndFalse<TBool> extends true
   ? ObjToInclude
@@ -31,21 +16,22 @@ export type EventsOptions<
   [K in keyof TProps as TProps[K] extends Function ? K : never]: TProps[K] extends Function ? boolean : (TProps[K] & EventsOptions<TProps[K]>)
 }>
 
-type _ComponentExhibitBuilder<
+export type ComponentExhibitBuilder<
+  TComponent extends any = any,
   TProps extends any = any,
   THasProps extends boolean = boolean,
+  TDefaultProps extends TProps = TProps,
   THasDefinedEvents extends boolean = boolean,
   THasDefinedDefaultProps extends boolean = boolean,
   THasDefinedOptions extends boolean = boolean,
   THasDefinedTests extends boolean = boolean,
   THasDefinedPropModifiers extends boolean = boolean,
-  TDefaultProps extends TProps = TProps,
   TIsGroup extends boolean = false,
 > =
   IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedTests, {
     tests: (
       testFilePath: string
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, true, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
+    ) => ComponentExhibitBuilder<TComponent, TProps, THasProps, TDefaultProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, true, THasDefinedPropModifiers, TIsGroup>
   }>>
   & IncludeIfFalse<TIsGroup, IncludeIfFalse<THasDefinedOptions, {
     /**
@@ -67,7 +53,7 @@ type _ComponentExhibitBuilder<
       & IncludeIfTrue<THasProps, IncludeIfTrue<THasDefinedDefaultProps, {
         showDefaultVariant?: boolean
       }>>
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, true, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
+    ) => ComponentExhibitBuilder<TComponent, TProps, THasProps, TDefaultProps, THasDefinedEvents, THasDefinedDefaultProps, true, THasDefinedTests, THasDefinedPropModifiers, TIsGroup>
   }>>
   & IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedEvents, {
     /**
@@ -87,7 +73,7 @@ type _ComponentExhibitBuilder<
      */
     events: (
       eventProps: EventsOptions<TProps>
-    ) => _ComponentExhibitBuilder<TProps, THasProps, true, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
+    ) => ComponentExhibitBuilder<TComponent, TProps, THasProps, TDefaultProps, true, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TIsGroup>
   }>>>
   & IncludeIfFalse<TIsGroup, IncludeIfTrue<THasProps, {
     /**
@@ -121,7 +107,7 @@ type _ComponentExhibitBuilder<
      */
     propModifiers: (
       propModifiers: PropModifier<TProps>[]
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
+    ) => ComponentExhibitBuilder<TComponent, TProps, THasProps, TDefaultProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TIsGroup>
   }>>
   & IncludeIfTrue<THasProps, IncludeIfFalse<THasDefinedDefaultProps, {
     /**
@@ -140,7 +126,7 @@ type _ComponentExhibitBuilder<
      */
     defaults: <TNewDefaultProps extends TProps>(
       defaultProps: THasDefinedDefaultProps extends true ? (TNewDefaultProps | ((defaults: TDefaultProps) => TNewDefaultProps)) : TNewDefaultProps,
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, true, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TNewDefaultProps, TIsGroup>
+    ) => ComponentExhibitBuilder<TComponent, TProps, THasProps, TNewDefaultProps, THasDefinedEvents, true, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TIsGroup>
   }>>
   & IncludeIfTrue<THasProps, {
     /**
@@ -167,7 +153,7 @@ type _ComponentExhibitBuilder<
        * that takes the default props and returns the props of the variant.
        */
       props: THasDefinedDefaultProps extends true ? (TProps | ((defaults: TDefaultProps) => TProps)) : TProps,
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
+    ) => ComponentExhibitBuilder<TComponent, TProps, THasProps, TDefaultProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TIsGroup>
   }>
   & IncludeIfTrue<THasProps, {
     /**
@@ -191,9 +177,9 @@ type _ComponentExhibitBuilder<
     group: (
       name: string,
       fn: (
-        ex: _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, false, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, true>
+        ex: ComponentExhibitBuilder<TComponent, TProps, THasProps, TDefaultProps, THasDefinedEvents, false, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, true>
       ) => void
-    ) => _ComponentExhibitBuilder<TProps, THasProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TDefaultProps, TIsGroup>
+    ) => ComponentExhibitBuilder<TComponent, TProps, THasProps, TDefaultProps, THasDefinedEvents, THasDefinedDefaultProps, THasDefinedOptions, THasDefinedTests, THasDefinedPropModifiers, TIsGroup>
   }>
   & IncludeIfFalse<TIsGroup, {
     /**
@@ -206,49 +192,12 @@ type _ComponentExhibitBuilder<
      *   ...
      *   .build()
      */
-    build: () => ComponentExhibit<THasProps, TProps, TDefaultProps>
+    build: () => ComponentExhibit<TComponent, TProps, THasProps, TDefaultProps>
   }>
 
 export type ComponentExhibitOptions = {
   group?: string
 }
-
-export type NonRootComponentExhibitBuilder<
-  TReactComponent extends ReactComponent = ReactComponent,
-  THasDefinedEvents extends boolean = boolean,
-  THasDefinedDefaultProps extends boolean = boolean,
-  THasDefinedOptions extends boolean = boolean,
-  TDefaultProps extends undefined = undefined,
-> = _ComponentExhibitBuilder<
-  PropsOfReactComponent<TReactComponent>,
-  DoesReactComponentHavePropsArg<TReactComponent>,
-  THasDefinedEvents,
-  THasDefinedDefaultProps,
-  THasDefinedOptions,
-  false,
-  false,
-  TDefaultProps,
-  true
->
-
-export type ComponentExhibitBuilder<
-  TReactComponent extends ReactComponent = ReactComponent,
-  THasDefinedEvents extends boolean = boolean,
-  THasDefinedDefaultProps extends boolean = boolean,
-  THasDefinedOptions extends boolean = boolean,
-  THasDefinedTests extends boolean = boolean,
-  THasDefinedPropModifiers extends boolean = boolean,
-  TDefaultProps extends undefined = undefined,
-> = _ComponentExhibitBuilder<
-  PropsOfReactComponent<TReactComponent>,
-  DoesReactComponentHavePropsArg<TReactComponent>,
-  THasDefinedEvents,
-  THasDefinedDefaultProps,
-  THasDefinedOptions,
-  THasDefinedTests,
-  THasDefinedPropModifiers,
-  TDefaultProps
->
 
 export type Variant<TProps extends any = any> = {
   name: string
@@ -262,8 +211,9 @@ export type VariantGroup<TProps extends any = any> = {
 }
 
 export type ComponentExhibit<
-  THasProps extends boolean = boolean,
+  TComponent extends any = any,
   TProps extends any = any,
+  THasProps extends boolean = boolean,
   TDefaultProps extends TProps = TProps,
 > = {
   name: string
@@ -273,7 +223,7 @@ export type ComponentExhibit<
    */
   testSrcPath: string
   groupName?: string
-  renderFn: ReactComponent<TProps>
+  component: TComponent
 } & BoolDependant<
   {
     true: {

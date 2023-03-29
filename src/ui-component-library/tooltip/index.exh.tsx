@@ -1,5 +1,5 @@
 import React from 'react'
-import exhibit from '../../api'
+import exhibit from '../../api/react'
 import Component, { DEFAULT_PROPS, NAME } from '.'
 import { GROUP_NAME } from '../common'
 import Button from '../button'

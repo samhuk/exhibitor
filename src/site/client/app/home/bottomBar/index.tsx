@@ -64,7 +64,7 @@ export const render = () => {
     [selectedVariantPath],
   )
   const showProps = variantNode != null && variantNode.exhibit.hasProps
-  const showEventLog = showProps && (variantNode.exhibit as ComponentExhibit<true>).eventProps
+  const showEventLog = showProps && (variantNode.exhibit as ComponentExhibit<any, any, true>).eventProps
   const showCode = variantNode != null // TODO
   const showAxe = variantNode != null // TODO
   const showTesting = variantNode != null // TODO
@@ -163,13 +163,13 @@ export const render = () => {
       {variantNode == null || isCollapsed ? null : (() => {
         switch (selectedBarType) {
           case BottomBarType.Props:
-            return <PropsComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
+            return <PropsComponent exhibit={variantNode.exhibit as ComponentExhibit<any, any, true>} variant={variantNode.variant} />
           case BottomBarType.EventLog:
-            return <EventLogComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
+            return <EventLogComponent exhibit={variantNode.exhibit as ComponentExhibit<any, any, true>} variant={variantNode.variant} />
           case BottomBarType.Code:
-            return <CodeComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
+            return <CodeComponent exhibit={variantNode.exhibit} variant={variantNode.variant} />
           case BottomBarType.axe:
-            return <AxeComponent exhibit={variantNode.exhibit as ComponentExhibit<true>} variant={variantNode.variant} />
+            return <AxeComponent exhibit={variantNode.exhibit} variant={variantNode.variant} />
           case BottomBarType.Testing:
             return <TestingComponent variantNode={variantNode} />
           default:

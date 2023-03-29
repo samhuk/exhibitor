@@ -7,7 +7,7 @@
  *
  * This is composed of functions like `exhibit()`.
  */
-import { exhibit } from './exhibit'
+import { exhibit } from './react'
 
 export { preparePlaywrightTest } from './test/playwright'
 
