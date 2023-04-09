@@ -34,7 +34,8 @@
     "axe-core": "^4.6.3",
     "playwright-html-data-reporter": "^0.0.3",
     "fs-extra": "^11.1.0",
-    "good-flow": "^0.0.19"
+    "good-flow": "^0.0.19",
+    "@samhuk/type-helpers": "^1.0.3"
   },
   "keywords": [
     "react",
