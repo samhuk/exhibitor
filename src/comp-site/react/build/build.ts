@@ -75,7 +75,7 @@ const createBuilder = (options: BuildOptions) => {
     outfile: paths.outFile,
     bundle: true,
     minify: !isDev,
-    sourcemap: isDev,
+    sourcemap: true,
     metafile: true,
     incremental: true,
     // Silent mode still shows build errors, but just less verbose.
