@@ -1,13 +1,14 @@
-import React from 'react'
-import { SerializedGFError } from 'good-flow/lib/serialized'
-import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../../common/name'
-import Button from '../../../../ui-component-library/button'
 import { useAppDispatch, useAppSelector } from '../../store'
-import { incrementTheme } from '../../store/theme/actions'
+
 import About from './about'
 import BuildStatuses from './buildStatuses'
+import Button from '../../../../ui-component-library/button'
 import DemoModeIndicator from './demoModeIndicator'
 import Intercom from './intercom'
+import { NPM_PACKAGE_CAPITALIZED_NAME } from '../../../../common/name'
+// eslint-disable-next-line import/order
+import React from 'react'
+import { incrementTheme } from '../../store/theme/actions'
 
 export const render = () => {
   const dispatch = useAppDispatch()

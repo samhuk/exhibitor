@@ -1,19 +1,32 @@
+import { DEFAULT_THEME, THEMES } from '../../../../common/theme'
 import {
   INCREMENT,
   SET,
   ThemeActions,
   ThemeState,
 } from './actions'
-import { DEFAULT_THEME, THEMES } from '../../../../common/theme'
+
 import { saveTheme } from '../../connectors/theme'
 
 const initialState: ThemeState = {
   theme: DEFAULT_THEME,
 }
 
-const applyNewThemeToIndexHtml = (theme: string) => {
-  const el = document.querySelector('#styles-link') as any
+export const applyNewThemeToIndexHtml = (theme: string) => {
+  let isNew = false
+  let el = document.querySelector('#styles-link') as any
+
+  if (el == null) {
+    el = document.createElement('link')
+    el.id = 'styles-link'
+    el.rel = 'stylesheet'
+    isNew = true
+  }
+
   el.href = `/${theme}.css`
+
+  if (isNew)
+    document.head.appendChild(el)
 }
 
 export const themeReducer = (

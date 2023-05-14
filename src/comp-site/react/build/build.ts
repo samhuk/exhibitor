@@ -8,11 +8,12 @@ import { gzipLargeFiles } from '../../../common/gzip'
 import { BuildOptions } from './types'
 import { NPM_PACKAGE_NAME } from '../../../common/name'
 import { createComponentLibraryIncluderPlugin } from '../../../cli/indexExhFile'
-import { ExhEnv, getEnv } from '../../../common/env'
+import { ExhEnv, getEnv, getIsDemo } from '../../../common/env'
 import { createIndexHtmlFileText } from '../../../common/esbuildHtmlFilePlugin2'
 
 const exhEnv = getEnv()
 const isDev = exhEnv === ExhEnv.DEV
+const isDemo = getIsDemo()
 
 const getComponentSiteSubType = (
   reactMajorVersion: number,
@@ -74,7 +75,7 @@ const createBuilder = (options: BuildOptions) => {
     entryPoints: [paths.entrypoint],
     outfile: paths.outFile,
     bundle: true,
-    minify: !isDev,
+    minify: isDemo ? !isDev : false,
     sourcemap: true,
     metafile: true,
     incremental: true,
