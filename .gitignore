@@ -8,3 +8,7 @@
 /dist/npm/exhibitor/node_modules
 /dist/npm/exhibitor/package-lock.json
 /build-test
+
+# TODO: Delete later.
+/src/comp-site/angular/node_modules
+/src/comp-site/angular/.angular
