@@ -1,3 +1,6 @@
+>[!NOTE]
+> Hey there 👋 This project has been archived. It was a fun side-project to work on to learn about esbuild, React, Web Sockets, and more. Thank you for you're support.
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./img/wordmark-dark.png">
